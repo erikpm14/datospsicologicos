@@ -1,124 +1,141 @@
 import { useEffect, useState } from 'react';
-import { Film, RefreshCw, Youtube, ExternalLink, Clock, Zap, ChevronDown, ChevronUp } from 'lucide-react';
+import { Film, RefreshCw, Youtube, ChevronDown, ChevronUp, Clock, Zap, ExternalLink } from 'lucide-react';
 import axios from 'axios';
 
 const TOPIC_LABELS = {
-  body_language:    'Lenguaje corporal',
-  cognitive_biases: 'Sesgos cognitivos',
-  relationships:    'Relaciones',
-  workplace:        'Trabajo',
-  first_impressions:'Primera impresión',
-  social_skills:    'Habilidades sociales',
-  habits:           'Hábitos',
-  communication:    'Comunicación',
-  emotions:         'Emociones',
-  memory:           'Memoria',
-  motivation:       'Motivación',
-  dark_psychology:  'Psicología oscura',
-  self_esteem:      'Autoestima',
+  body_language:'Lenguaje corporal', cognitive_biases:'Sesgos cognitivos',
+  relationships:'Relaciones',        workplace:'Trabajo',
+  first_impressions:'1ª impresión',  social_skills:'Habilidades sociales',
+  habits:'Hábitos',                  communication:'Comunicación',
+  emotions:'Emociones',              memory:'Memoria',
+  motivation:'Motivación',           dark_psychology:'Psicología oscura',
+  self_esteem:'Autoestima',
 };
 
-function ScoreBadge({ score }) {
-  if (!score) return <span className="text-xs px-2 py-0.5 rounded-full bg-slate-700 text-slate-400">?</span>;
-  const cls =
-    score >= 80 ? 'bg-emerald-900/50 text-emerald-400 border border-emerald-700/40' :
-    score >= 65 ? 'bg-yellow-900/50 text-yellow-400 border border-yellow-700/40' :
-                  'bg-red-900/50 text-red-400 border border-red-700/40';
+function ScoreRing({ score }) {
+  const color = !score ? '#374151' : score >= 80 ? '#10b981' : score >= 65 ? '#f59e0b' : '#ef4444';
   return (
-    <span className={`text-xs px-2 py-0.5 rounded-full font-bold ${cls}`}>
-      {score}/100
-    </span>
+    <div className="relative w-12 h-12 shrink-0">
+      <svg className="w-12 h-12 -rotate-90" viewBox="0 0 48 48">
+        <circle cx="24" cy="24" r="20" fill="none" stroke="#1f2937" strokeWidth="4" />
+        <circle
+          cx="24" cy="24" r="20" fill="none"
+          stroke={color} strokeWidth="4"
+          strokeDasharray={`${((score || 0) / 100) * 125.6} 125.6`}
+          strokeLinecap="round"
+        />
+      </svg>
+      <span className="absolute inset-0 flex items-center justify-center text-xs font-black" style={{ color }}>
+        {score || '?'}
+      </span>
+    </div>
   );
 }
 
-function VideoCard({ v, onUpload, uploading }) {
-  const [expanded, setExpanded] = useState(false);
-  const script = v.script || {};
-  const score  = script.viralityScore;
-  const topic  = TOPIC_LABELS[script.topic] || script.topic || '—';
+function VideoCard({ v }) {
+  const [open, setOpen]   = useState(false);
+  const [busy, setBusy]   = useState(false);
+  const [result, setResult] = useState(null);
+
+  const s = v.script || {};
+
+  async function upload() {
+    setBusy(true);
+    setResult(null);
+    try {
+      const r = await axios.post('/api/videos/upload-youtube', { videoId: v.id });
+      setResult({ ok: true, url: r.data.data?.url });
+    } catch (e) {
+      setResult({ ok: false, msg: e.response?.data?.error || e.message });
+    } finally { setBusy(false); }
+  }
 
   return (
-    <div className="rounded-2xl border border-slate-700 bg-slate-800/40 overflow-hidden">
-      {/* Cabecera */}
-      <div
-        className="p-4 cursor-pointer active:bg-slate-700/30 transition-colors"
-        onClick={() => setExpanded((e) => !e)}
+    <div className="bg-gray-900 rounded-2xl border border-gray-800 overflow-hidden">
+      {/* Fila principal */}
+      <button
+        onClick={() => setOpen((x) => !x)}
+        className="w-full flex items-center gap-4 p-4 text-left hover:bg-gray-800/50 active:bg-gray-800 transition-colors"
       >
-        <div className="flex items-start gap-3">
-          {/* Score circular */}
-          <div className={`shrink-0 w-11 h-11 rounded-xl flex items-center justify-center text-sm font-black border ${
-            score >= 80 ? 'bg-emerald-900/40 border-emerald-700/40 text-emerald-400' :
-            score >= 65 ? 'bg-yellow-900/40 border-yellow-700/40 text-yellow-400' :
-                          'bg-slate-700/60 border-slate-600 text-slate-400'
-          }`}>
-            {score || '?'}
-          </div>
+        <ScoreRing score={s.viralityScore} />
 
-          <div className="flex-1 min-w-0">
-            <p className="text-sm font-semibold leading-snug line-clamp-2">
-              {script.hook || 'Sin hook'}
-            </p>
-            <div className="flex items-center gap-2 mt-1.5 flex-wrap">
-              <span className="text-[11px] bg-slate-700 text-slate-300 px-2 py-0.5 rounded-full">
-                {topic}
+        <div className="flex-1 min-w-0">
+          <p className="text-white text-sm font-semibold leading-snug line-clamp-2">
+            {s.hook || 'Sin guión'}
+          </p>
+          <div className="flex items-center flex-wrap gap-x-3 gap-y-1 mt-1.5">
+            {s.topic && (
+              <span className="text-xs text-violet-400 font-medium">
+                {TOPIC_LABELS[s.topic] || s.topic}
               </span>
-              {script.durationSeconds && (
-                <span className="text-[11px] text-slate-500 flex items-center gap-1">
-                  <Clock size={10} />
-                  {script.durationSeconds}s
-                </span>
-              )}
-              {script.viralTrigger && (
-                <span className="text-[11px] text-slate-500 flex items-center gap-1">
-                  <Zap size={10} />
-                  {script.viralTrigger}
-                </span>
-              )}
-            </div>
-          </div>
-
-          <div className="shrink-0 text-slate-500">
-            {expanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+            )}
+            {s.durationSeconds && (
+              <span className="text-xs text-gray-500 flex items-center gap-1">
+                <Clock size={10} />{s.durationSeconds}s
+              </span>
+            )}
+            {s.viralTrigger && (
+              <span className="text-xs text-gray-500 flex items-center gap-1">
+                <Zap size={10} />{s.viralTrigger}
+              </span>
+            )}
           </div>
         </div>
-      </div>
 
-      {/* Expandido */}
-      {expanded && (
-        <div className="border-t border-slate-700/60 px-4 pb-4 pt-3 space-y-3">
-          {/* Guión */}
+        <div className="shrink-0 text-gray-600">
+          {open ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
+        </div>
+      </button>
+
+      {/* Detalle expandible */}
+      {open && (
+        <div className="border-t border-gray-800 p-4 space-y-3">
           {[
-            { label: 'Hook',        text: script.hook,        color: 'text-yellow-300' },
-            { label: 'Claim',       text: script.claim,       color: 'text-blue-300'   },
-            { label: 'Explicación', text: script.explanation, color: 'text-slate-300'  },
-            { label: 'CTA',         text: script.cta,         color: 'text-emerald-300'},
-          ].filter((s) => s.text).map(({ label, text, color }) => (
-            <div key={label}>
-              <p className="text-[10px] text-slate-500 font-mono mb-0.5">{label.toUpperCase()}</p>
-              <p className={`text-sm leading-relaxed ${color}`}>{text}</p>
+            { key: 'hook',        label: 'HOOK',        border: 'border-amber-500',   text: 'text-amber-200'   },
+            { key: 'claim',       label: 'CLAIM',       border: 'border-blue-500',    text: 'text-blue-200'    },
+            { key: 'explanation', label: 'EXPLICACIÓN', border: 'border-gray-600',    text: 'text-gray-200'    },
+            { key: 'cta',         label: 'CTA',         border: 'border-emerald-500', text: 'text-emerald-200' },
+          ].map(({ key, label, border, text }) => s[key] && (
+            <div key={key} className={`border-l-4 ${border} pl-3`}>
+              <p className="text-[10px] font-bold text-gray-500 font-mono mb-0.5">{label}</p>
+              <p className={`text-sm leading-relaxed ${text}`}>{s[key]}</p>
             </div>
           ))}
 
-          {script.psychologicalFact && (
-            <div className="bg-indigo-900/20 border border-indigo-700/30 rounded-xl px-3 py-2">
-              <p className="text-[10px] text-indigo-300 font-medium mb-0.5">Dato psicológico</p>
-              <p className="text-xs text-slate-300 italic">"{script.psychologicalFact}"</p>
+          {s.psychologicalFact && (
+            <div className="bg-violet-950 border border-violet-800 rounded-xl px-3 py-2.5 mt-1">
+              <p className="text-violet-300 text-xs font-semibold mb-0.5">Dato psicológico</p>
+              <p className="text-gray-300 text-xs italic">"{s.psychologicalFact}"</p>
             </div>
           )}
 
-          {/* Acciones */}
-          <div className="flex gap-2 pt-1">
-            <button
-              onClick={() => onUpload(v.id)}
-              disabled={uploading}
-              className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-red-900/40 hover:bg-red-800/60 active:scale-95 border border-red-700/40 text-red-300 text-xs font-semibold disabled:opacity-50 transition-all"
-            >
-              {uploading
-                ? <div className="w-3 h-3 border border-red-400 border-t-transparent rounded-full animate-spin" />
-                : <Youtube size={13} />}
-              {uploading ? 'Subiendo...' : 'Subir a YouTube'}
-            </button>
-          </div>
+          <button
+            onClick={upload}
+            disabled={busy}
+            className="mt-1 flex items-center gap-2 bg-red-950 hover:bg-red-900 border border-red-800 text-red-300 text-sm font-semibold px-4 py-2.5 rounded-xl disabled:opacity-50 active:scale-95 transition-all"
+          >
+            {busy
+              ? <span className="w-4 h-4 border-2 border-red-400 border-t-transparent rounded-full animate-spin" />
+              : <Youtube size={15} />}
+            {busy ? 'Subiendo a YouTube...' : 'Subir a YouTube'}
+          </button>
+
+          {result && (
+            <div className={`flex items-start gap-2 px-3 py-2.5 rounded-xl text-sm ${
+              result.ok
+                ? 'bg-emerald-950 border border-emerald-800 text-emerald-300'
+                : 'bg-red-950 border border-red-800 text-red-300'
+            }`}>
+              {result.ok ? (
+                <>
+                  <ExternalLink size={14} className="shrink-0 mt-0.5" />
+                  <span>¡Subido! {result.url && <a href={result.url} target="_blank" rel="noreferrer" className="underline">{result.url}</a>}</span>
+                </>
+              ) : (
+                <span>Error: {result.msg}</span>
+              )}
+            </div>
+          )}
         </div>
       )}
     </div>
@@ -126,10 +143,8 @@ function VideoCard({ v, onUpload, uploading }) {
 }
 
 export default function VideoList() {
-  const [videos,   setVideos]   = useState([]);
-  const [loading,  setLoading]  = useState(true);
-  const [uploading, setUploading] = useState({});
-  const [uploadMsg, setUploadMsg] = useState({});
+  const [videos,  setVideos]  = useState([]);
+  const [loading, setLoading] = useState(true);
 
   const load = () => {
     setLoading(true);
@@ -141,70 +156,37 @@ export default function VideoList() {
 
   useEffect(() => { load(); }, []);
 
-  async function handleUpload(videoId) {
-    setUploading((u) => ({ ...u, [videoId]: true }));
-    setUploadMsg((m) => ({ ...m, [videoId]: null }));
-    try {
-      const r = await axios.post('/api/videos/upload-youtube', { videoId });
-      setUploadMsg((m) => ({ ...m, [videoId]: { ok: true, text: '¡Subido! ' + (r.data.data?.url || '') } }));
-    } catch (err) {
-      setUploadMsg((m) => ({ ...m, [videoId]: { ok: false, text: err.response?.data?.error || err.message } }));
-    } finally {
-      setUploading((u) => ({ ...u, [videoId]: false }));
-    }
-  }
-
-  if (loading) {
-    return (
-      <div className="flex flex-col items-center justify-center h-64 gap-3">
-        <div className="w-7 h-7 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin" />
-        <p className="text-sm text-slate-400">Cargando vídeos...</p>
-      </div>
-    );
-  }
-
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between">
+      <div className="flex items-end justify-between">
         <div>
-          <p className="text-base font-bold">Vídeos generados</p>
-          <p className="text-xs text-slate-400 mt-0.5">{videos.length} vídeo{videos.length !== 1 ? 's' : ''} en local</p>
+          <h2 className="text-xl font-bold text-white">Vídeos generados</h2>
+          <p className="text-gray-500 text-sm mt-0.5">
+            {loading ? 'Cargando...' : `${videos.length} vídeo${videos.length !== 1 ? 's' : ''} en local`}
+          </p>
         </div>
         <button
           onClick={load}
-          className="p-2 rounded-xl hover:bg-slate-700 active:scale-90 text-slate-400 transition-all"
+          className="flex items-center gap-2 bg-gray-800 hover:bg-gray-700 border border-gray-700 text-gray-300 text-sm font-medium px-4 py-2 rounded-xl active:scale-95 transition-all"
         >
-          <RefreshCw size={16} />
+          <RefreshCw size={14} className={loading ? 'animate-spin' : ''} />
+          Actualizar
         </button>
       </div>
 
-      {videos.length === 0 ? (
-        <div className="rounded-2xl border border-dashed border-slate-700 p-12 text-center">
-          <Film size={40} className="mx-auto mb-3 text-slate-600" />
-          <p className="text-slate-300 font-semibold">Sin vídeos todavía</p>
-          <p className="text-slate-500 text-sm mt-1">Ve a "Generar" para crear el primero</p>
+      {loading ? (
+        <div className="flex items-center justify-center h-48 text-gray-500">
+          <Film size={32} className="animate-pulse" />
+        </div>
+      ) : videos.length === 0 ? (
+        <div className="bg-gray-900 rounded-2xl border border-dashed border-gray-700 p-12 text-center">
+          <Film size={48} className="mx-auto mb-4 text-gray-700" />
+          <p className="text-white font-bold text-lg mb-1">Sin vídeos todavía</p>
+          <p className="text-gray-500 text-sm">Ve a "Generar" para crear tu primer vídeo</p>
         </div>
       ) : (
         <div className="space-y-3">
-          {videos.map((v) => (
-            <div key={v.id}>
-              <VideoCard
-                v={v}
-                onUpload={handleUpload}
-                uploading={uploading[v.id]}
-              />
-              {uploadMsg[v.id] && (
-                <div className={`mt-1.5 text-xs px-3 py-2 rounded-xl ${
-                  uploadMsg[v.id].ok
-                    ? 'bg-emerald-900/40 text-emerald-300 border border-emerald-700/40'
-                    : 'bg-red-900/40 text-red-300 border border-red-700/40'
-                }`}>
-                  {uploadMsg[v.id].ok && <ExternalLink size={11} className="inline mr-1" />}
-                  {uploadMsg[v.id].text}
-                </div>
-              )}
-            </div>
-          ))}
+          {videos.map((v) => <VideoCard key={v.id} v={v} />)}
         </div>
       )}
     </div>

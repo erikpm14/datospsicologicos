@@ -1,158 +1,152 @@
 import { useState } from 'react';
 import { format, addDays, isSameDay, isBefore, startOfDay } from 'date-fns';
 import { es } from 'date-fns/locale';
-import { ChevronLeft, ChevronRight, Clock, TrendingUp, Calendar } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Clock, TrendingUp, Settings } from 'lucide-react';
 
-const PUBLISH_TIMES = ['15:00', '18:00', '21:00'];
-const PRIORITY_DAYS = [3, 4, 5]; // mié, jue, vie
+const TIMES    = ['15:00', '18:00', '21:00'];
+const PRIO     = new Set([3, 4, 5]); // mié, jue, vie
+const DAY_ABBR = ['L', 'M', 'X', 'J', 'V', 'S', 'D'];
 
-function isPast(date, time) {
-  const [h, m] = time.split(':');
+function isPastSlot(date, time) {
+  const [h, m] = time.split(':').map(Number);
   const d = new Date(date);
-  d.setHours(parseInt(h), parseInt(m), 0, 0);
+  d.setHours(h, m, 0, 0);
   return d < new Date();
 }
 
 export default function ContentCalendar() {
-  const [weekOffset, setWeekOffset] = useState(0);
-  const today = new Date();
-  const weekStart = addDays(
-    (() => { const d = new Date(today); d.setDate(d.getDate() - ((d.getDay() + 6) % 7)); return startOfDay(d); })(),
-    weekOffset * 7
-  );
-  const days = Array.from({ length: 7 }, (_, i) => addDays(weekStart, i));
-  const dayLabels = ['L', 'M', 'X', 'J', 'V', 'S', 'D'];
+  const [offset, setOffset] = useState(0);
+  const today  = new Date();
+  const monday = (() => {
+    const d = new Date(today);
+    d.setDate(d.getDate() - ((d.getDay() + 6) % 7) + offset * 7);
+    return startOfDay(d);
+  })();
+  const days = Array.from({ length: 7 }, (_, i) => addDays(monday, i));
 
-  // Próximos slots del calendario lineal (próximos 5 días)
   const upcoming = [];
-  for (let d = 0; d < 7 && upcoming.length < 6; d++) {
+  outer: for (let d = 0; d < 14; d++) {
     const day = addDays(today, d);
-    for (const time of PUBLISH_TIMES) {
-      if (!isPast(day, time)) {
-        upcoming.push({ day, time });
-        if (upcoming.length >= 6) break;
+    for (const t of TIMES) {
+      if (!isPastSlot(day, t)) {
+        upcoming.push({ day, time: t });
+        if (upcoming.length >= 5) break outer;
       }
     }
   }
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-4">
 
-      {/* ── Próximas publicaciones ──────────────────────────── */}
+      {/* Header */}
       <div>
-        <p className="text-base font-bold mb-3">Próximas publicaciones</p>
-        <div className="space-y-2">
-          {upcoming.map(({ day, time }, i) => {
-            const isToday2  = isSameDay(day, today);
-            const isPrio    = PRIORITY_DAYS.includes(day.getDay());
-            return (
-              <div
-                key={i}
-                className={`flex items-center gap-3 rounded-xl border px-4 py-3 ${
-                  isToday2 ? 'border-indigo-500/40 bg-indigo-900/20' :
-                  isPrio   ? 'border-yellow-600/30 bg-yellow-900/10' :
-                             'border-slate-700 bg-slate-800/40'
-                }`}
-              >
-                <div className={`shrink-0 text-center w-10 ${isToday2 ? 'text-indigo-300' : 'text-slate-300'}`}>
-                  <p className="text-[10px] font-medium uppercase leading-none text-slate-400">
-                    {isToday2 ? 'Hoy' : format(day, 'EEE', { locale: es })}
-                  </p>
-                  <p className="text-lg font-black leading-tight">{format(day, 'd')}</p>
-                </div>
-
-                <div className="flex-1">
-                  <div className="flex items-center gap-1.5">
-                    <Clock size={12} className="text-slate-400 shrink-0" />
-                    <p className="text-sm font-bold">{time} CET</p>
-                    {isPrio && (
-                      <span className="text-[10px] bg-yellow-900/50 text-yellow-400 border border-yellow-700/40 px-1.5 py-0.5 rounded-full ml-1 flex items-center gap-1">
-                        <TrendingUp size={8} />
-                        Prioritario
-                      </span>
-                    )}
-                  </div>
-                  <p className="text-xs text-slate-500 mt-0.5">
-                    {format(day, "EEEE d 'de' MMMM", { locale: es })}
-                  </p>
-                </div>
-
-                <div className="shrink-0 w-2 h-2 rounded-full bg-emerald-400/70 animate-pulse" />
-              </div>
-            );
-          })}
-        </div>
+        <h2 className="text-xl font-black text-white">Calendario</h2>
+        <p className="text-white/30 text-xs mt-0.5">Publicación automática · 3 vídeos/día</p>
       </div>
 
-      {/* ── Semana ─────────────────────────────────────────── */}
-      <div>
-        {/* Nav semana */}
-        <div className="flex items-center justify-between mb-3">
-          <p className="text-sm font-semibold text-slate-300">
-            {format(weekStart, "d MMM", { locale: es })} —{' '}
-            {format(addDays(weekStart, 6), "d MMM yyyy", { locale: es })}
-          </p>
-          <div className="flex gap-1">
-            <button
-              onClick={() => setWeekOffset((w) => w - 1)}
-              className="w-8 h-8 rounded-lg flex items-center justify-center hover:bg-slate-700 active:scale-90 text-slate-400 transition-all"
+      {/* Próximas publicaciones */}
+      <div className="space-y-2">
+        {upcoming.map(({ day, time }, i) => {
+          const isToday = isSameDay(day, today);
+          const isPrio  = PRIO.has(day.getDay());
+          return (
+            <div
+              key={i}
+              className={`flex items-center gap-4 rounded-2xl border px-4 py-3.5 ${
+                isToday
+                  ? 'bg-violet-500/10 border-violet-500/30'
+                  : isPrio
+                  ? 'bg-amber-500/5 border-amber-500/15'
+                  : 'bg-white/5 border-white/5'
+              }`}
             >
+              <div className="text-center w-10 shrink-0">
+                <p className="text-[10px] font-bold text-white/30 uppercase">
+                  {isToday ? 'HOY' : format(day, 'EEE', { locale: es }).toUpperCase()}
+                </p>
+                <p className={`text-2xl font-black leading-tight ${isToday ? 'text-violet-400' : 'text-white'}`}>
+                  {format(day, 'd')}
+                </p>
+              </div>
+
+              <div className={`w-px self-stretch ${isToday ? 'bg-violet-500/30' : 'bg-white/10'}`} />
+
+              <div className="flex-1">
+                <div className="flex items-center gap-2">
+                  <Clock size={13} className={isToday ? 'text-violet-400' : 'text-white/30'} />
+                  <p className={`text-base font-bold ${isToday ? 'text-white' : 'text-white/80'}`}>{time}</p>
+                  <span className="text-[10px] text-white/25">CET</span>
+                  {isPrio && (
+                    <span className="flex items-center gap-1 text-[10px] bg-amber-500/10 text-amber-400 border border-amber-500/20 px-2 py-0.5 rounded-full font-semibold">
+                      <TrendingUp size={8} />Prioritario
+                    </span>
+                  )}
+                </div>
+                <p className="text-[10px] text-white/25 mt-0.5 capitalize">
+                  {format(day, "EEEE d 'de' MMMM", { locale: es })}
+                </p>
+              </div>
+
+              <div className={`w-2 h-2 rounded-full shrink-0 ${
+                isToday ? 'bg-violet-400 animate-pulse' : 'bg-white/10'
+              }`} />
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Vista semanal */}
+      <div className="bg-white/5 rounded-2xl border border-white/5 p-4">
+        <div className="flex items-center justify-between mb-4">
+          <div>
+            <p className="text-sm font-bold text-white">Vista semanal</p>
+            <p className="text-white/30 text-xs mt-0.5">
+              {format(monday, "d MMM", { locale: es })} – {format(addDays(monday, 6), "d MMM yyyy", { locale: es })}
+            </p>
+          </div>
+          <div className="flex items-center gap-1">
+            <button onClick={() => setOffset(o => o - 1)}
+              className="w-8 h-8 flex items-center justify-center rounded-xl hover:bg-white/10 text-white/40 transition-colors">
               <ChevronLeft size={16} />
             </button>
-            <button
-              onClick={() => setWeekOffset(0)}
-              className="px-3 h-8 rounded-lg text-xs hover:bg-slate-700 active:scale-90 text-slate-400 transition-all"
-            >
+            <button onClick={() => setOffset(0)}
+              className="px-3 h-8 rounded-xl hover:bg-white/10 text-white/40 text-xs transition-colors">
               Hoy
             </button>
-            <button
-              onClick={() => setWeekOffset((w) => w + 1)}
-              className="w-8 h-8 rounded-lg flex items-center justify-center hover:bg-slate-700 active:scale-90 text-slate-400 transition-all"
-            >
+            <button onClick={() => setOffset(o => o + 1)}
+              className="w-8 h-8 flex items-center justify-center rounded-xl hover:bg-white/10 text-white/40 transition-colors">
               <ChevronRight size={16} />
             </button>
           </div>
         </div>
 
-        {/* Grid compacto */}
         <div className="grid grid-cols-7 gap-1.5">
           {days.map((day, i) => {
-            const isToday2  = isSameDay(day, today);
-            const isPast2   = isBefore(startOfDay(day), startOfDay(today));
-            const isPrio    = PRIORITY_DAYS.includes(day.getDay());
-            const slots     = PUBLISH_TIMES.length;
-
+            const isToday = isSameDay(day, today);
+            const isPast  = isBefore(startOfDay(day), startOfDay(today));
+            const isPrio  = PRIO.has(day.getDay());
             return (
               <div
                 key={i}
-                className={`rounded-xl border p-2 text-center transition-all ${
-                  isToday2  ? 'border-indigo-500 bg-indigo-900/25' :
-                  isPast2   ? 'border-slate-800 bg-slate-800/20 opacity-50' :
-                  isPrio    ? 'border-yellow-600/30 bg-yellow-900/10' :
-                              'border-slate-700 bg-slate-800/30'
-                }`}
+                className={`rounded-xl p-2 text-center border ${
+                  isToday ? 'bg-violet-500/15 border-violet-500/30' :
+                  isPrio  ? 'bg-amber-500/5 border-amber-500/15' :
+                            'bg-white/3 border-white/5'
+                } ${isPast && !isToday ? 'opacity-30' : ''}`}
               >
-                <p className="text-[10px] text-slate-500 mb-0.5">{dayLabels[i]}</p>
-                <p className={`text-sm font-black ${isToday2 ? 'text-indigo-300' : 'text-slate-200'}`}>
+                <p className="text-[9px] font-bold text-white/30">{DAY_ABBR[i]}</p>
+                <p className={`text-sm font-black mt-0.5 ${isToday ? 'text-violet-300' : 'text-white'}`}>
                   {format(day, 'd')}
                 </p>
-                {isPrio && !isPast2 && (
-                  <div className="mt-1">
-                    <TrendingUp size={8} className="text-yellow-500 mx-auto" />
-                  </div>
-                )}
-                <div className="mt-1.5 space-y-0.5">
-                  {PUBLISH_TIMES.map((t) => (
-                    <div
-                      key={t}
-                      className={`rounded text-[9px] font-mono py-0.5 ${
-                        isPast(day, t)
-                          ? 'bg-slate-700/30 text-slate-600'
-                          : isToday2
-                          ? 'bg-indigo-800/50 text-indigo-300'
-                          : 'bg-slate-700/50 text-slate-400'
-                      }`}
-                    >
+                <div className="mt-1.5 space-y-1">
+                  {TIMES.map(t => (
+                    <div key={t} className={`rounded text-[8px] font-mono py-0.5 leading-none ${
+                      isPastSlot(day, t)
+                        ? 'text-white/15 bg-white/3'
+                        : isToday
+                        ? 'text-violet-300 bg-violet-500/20'
+                        : 'text-white/40 bg-white/5'
+                    }`}>
                       {t}
                     </div>
                   ))}
@@ -163,28 +157,28 @@ export default function ContentCalendar() {
         </div>
       </div>
 
-      {/* ── Info ──────────────────────────────────────────── */}
-      <div className="rounded-2xl border border-slate-700 bg-slate-800/30 p-4 space-y-2">
-        <p className="text-xs font-semibold text-slate-300">Configuración actual</p>
-        <div className="space-y-1.5 text-xs text-slate-400">
-          <div className="flex justify-between">
-            <span>Publicaciones/día</span>
-            <span className="font-bold text-slate-200">3 vídeos</span>
-          </div>
-          <div className="flex justify-between">
-            <span>Horarios (hora Madrid)</span>
-            <span className="font-bold text-slate-200">15:00 · 18:00 · 21:00</span>
-          </div>
-          <div className="flex justify-between">
-            <span>Días prioritarios</span>
-            <span className="font-bold text-yellow-400">Mié · Jue · Vie</span>
-          </div>
-          <div className="flex justify-between">
-            <span>Research semanal</span>
-            <span className="font-bold text-slate-200">Dom 3:00</span>
-          </div>
+      {/* Config */}
+      <div className="bg-white/5 rounded-2xl border border-white/5 p-4">
+        <div className="flex items-center gap-2 mb-4">
+          <Settings size={14} className="text-white/40" />
+          <p className="text-sm font-bold text-white">Configuración del sistema</p>
+        </div>
+        <div className="space-y-3">
+          {[
+            { label: 'Publicaciones por día',   value: '3 vídeos',                    color: 'text-white'       },
+            { label: 'Horarios (hora Madrid)',   value: '15:00 · 18:00 · 21:00',       color: 'text-white'       },
+            { label: 'Días prioritarios',        value: 'Miércoles · Jueves · Viernes',color: 'text-amber-400'   },
+            { label: 'Investigación viral',      value: 'Domingos · 3:00 AM',          color: 'text-violet-400'  },
+            { label: 'Análisis de métricas',     value: 'Cada hora',                   color: 'text-emerald-400' },
+          ].map(({ label, value, color }) => (
+            <div key={label} className="flex items-center justify-between gap-4">
+              <p className="text-white/40 text-sm">{label}</p>
+              <p className={`text-sm font-semibold ${color}`}>{value}</p>
+            </div>
+          ))}
         </div>
       </div>
+
     </div>
   );
 }

@@ -25,5 +25,9 @@ assets/stock-footage/
 .DS_Store
 Thumbs.db
 
+# Build artifacts
+frontend/dist/
+releases/
+
 # Claude
 .claude/

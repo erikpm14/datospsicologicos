@@ -7,11 +7,25 @@
  * Output: backend/data/viral-research.json
  */
 
-require('dotenv').config({ path: require('path').join(__dirname, '../backend/.env') });
-const axios = require('axios');
-const fs = require('fs');
+/**
+ * FIX: usar dependencias del backend desde scripts/
+ */
 const path = require('path');
+const { createRequire } = require('module');
 
+// Crear require apuntando al backend
+const backendRequire = createRequire(path.join(__dirname, '../backend/package.json'));
+
+// Cargar .env desde backend
+backendRequire('dotenv').config({
+  path: path.join(__dirname, '../backend/.env'),
+});
+
+// Usar dependencias del backend
+const axios = backendRequire('axios');
+
+// Node core (estos sí normales)
+const fs = require('fs');
 const API_KEY = process.env.YOUTUBE_API_KEY;
 const OUTPUT_PATH = path.join(__dirname, '../backend/data/viral-research.json');
 

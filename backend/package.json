@@ -7,8 +7,18 @@
     "start": "node src/server.js",
     "dev": "nodemon src/server.js",
     "worker": "node src/queue/video-processor.js",
+    "release": "node ../scripts/make-release.js",
+    "trends": "node ../scripts/trend-scraper.js",
     "test:video": "node ../scripts/test-generate.js",
-    "test:tts": "node src/services/voice-synthesizer.js"
+    "test:tts": "node ../scripts/test-tts.js",
+    "test:audio": "node src/services/audio-postprocess.js",
+    "test:subtitles": "node src/services/subtitle-styler.js",
+    "test:quality": "node src/services/production-quality-checker.js",
+    "test:quality-gate": "node src/services/content-quality-gate.js",
+    "clean:generated": "node ../scripts/clean-generated.js",
+    "clean:dry": "node ../scripts/clean-generated.js --dry-run",
+    "reset:outputs": "node ../scripts/reset-outputs.js",
+    "reset:dry": "node ../scripts/reset-outputs.js --dry-run"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.24.0",

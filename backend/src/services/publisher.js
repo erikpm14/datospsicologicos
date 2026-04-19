@@ -245,13 +245,18 @@ async function publishToYouTube(videoPath, script) {
  * Obtiene access token de YouTube usando refresh token.
  */
 async function getYouTubeAccessToken() {
-  const response = await axios.post('https://oauth2.googleapis.com/token', {
-    client_id: process.env.YOUTUBE_CLIENT_ID,
-    client_secret: process.env.YOUTUBE_CLIENT_SECRET,
-    refresh_token: process.env.YOUTUBE_REFRESH_TOKEN,
-    grant_type: 'refresh_token',
-  });
-  return response.data.access_token;
+  try {
+    const response = await axios.post('https://oauth2.googleapis.com/token', {
+      client_id: process.env.YOUTUBE_CLIENT_ID,
+      client_secret: process.env.YOUTUBE_CLIENT_SECRET,
+      refresh_token: process.env.YOUTUBE_REFRESH_TOKEN,
+      grant_type: 'refresh_token',
+    });
+    return response.data.access_token;
+  } catch (err) {
+    const detail = err.response?.data?.error || err.response?.data || err.message;
+    throw new Error(`YouTube OAuth failed (${err.response?.status}): ${JSON.stringify(detail)}`);
+  }
 }
 
 // ─────────────────────────────────────────────

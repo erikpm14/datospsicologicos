@@ -1,447 +1,304 @@
 {
-  "hooks": [
-    {
-      "id": "hook_001",
-      "text": "La gente que hace esto en secreto tiene el doble de confianza",
-      "topic": "body_language",
-      "emotionalTrigger": "curiosity",
-      "estimatedScore": 82
-    },
-    {
-      "id": "hook_002",
-      "text": "Nunca confíes en alguien que hace estas 3 cosas",
-      "topic": "relationships",
-      "emotionalTrigger": "fear",
-      "estimatedScore": 88
-    },
-    {
-      "id": "hook_003",
-      "text": "Tu lenguaje corporal revela esto sin que lo sepas",
-      "topic": "body_language",
-      "emotionalTrigger": "awe",
-      "estimatedScore": 79
-    },
-    {
-      "id": "hook_004",
-      "text": "El 97% de las personas hace esto cuando miente",
-      "topic": "body_language",
-      "emotionalTrigger": "curiosity",
-      "estimatedScore": 91
-    },
-    {
-      "id": "hook_005",
-      "text": "Si alguien hace esto contigo, te está manipulando",
-      "topic": "relationships",
-      "emotionalTrigger": "fear",
-      "estimatedScore": 86
-    },
-    {
-      "id": "hook_006",
-      "text": "La forma en que caminas dice esto de tu personalidad",
-      "topic": "body_language",
-      "emotionalTrigger": "curiosity",
-      "estimatedScore": 77
-    },
-    {
-      "id": "hook_007",
-      "text": "Las personas inteligentes nunca hacen estas 4 cosas",
-      "topic": "cognitive_biases",
-      "emotionalTrigger": "validation",
-      "estimatedScore": 84
-    },
-    {
-      "id": "hook_008",
-      "text": "Este sesgo cognitivo te hace tomar malas decisiones",
-      "topic": "cognitive_biases",
-      "emotionalTrigger": "awe",
-      "estimatedScore": 75
-    },
-    {
-      "id": "hook_009",
-      "text": "La verdad sobre la primera impresión que nadie te dice",
-      "topic": "first_impressions",
-      "emotionalTrigger": "curiosity",
-      "estimatedScore": 80
-    },
-    {
-      "id": "hook_010",
-      "text": "Si notas esto en alguien, aléjate inmediatamente",
-      "topic": "relationships",
-      "emotionalTrigger": "fear",
-      "estimatedScore": 89
-    },
-    {
-      "id": "hook_011",
-      "text": "El silencio dice más que las palabras: aquí está la prueba",
-      "topic": "communication",
-      "emotionalTrigger": "curiosity",
-      "estimatedScore": 78
-    },
-    {
-      "id": "hook_012",
-      "text": "¿Por qué las personas exitosas duermen en este horario?",
-      "topic": "habits",
-      "emotionalTrigger": "curiosity",
-      "estimatedScore": 76
-    },
-    {
-      "id": "hook_013",
-      "text": "El efecto Dunning-Kruger destruye más vidas de lo que crees",
-      "topic": "cognitive_biases",
-      "emotionalTrigger": "fear",
-      "estimatedScore": 83
-    },
-    {
-      "id": "hook_014",
-      "text": "Tu jefe te evalúa con esto en los primeros 7 segundos",
-      "topic": "workplace",
-      "emotionalTrigger": "urgency",
-      "estimatedScore": 87
-    },
-    {
-      "id": "hook_015",
-      "text": "Las personas narcisistas siempre usan estas 5 frases",
-      "topic": "relationships",
-      "emotionalTrigger": "fear",
-      "estimatedScore": 92
-    },
-    {
-      "id": "hook_016",
-      "text": "Nadie te habla de este truco psicológico para caer bien",
-      "topic": "social_skills",
-      "emotionalTrigger": "curiosity",
-      "estimatedScore": 85
-    },
-    {
-      "id": "hook_017",
-      "text": "Tu cerebro te miente exactamente de esta forma cada día",
-      "topic": "cognitive_biases",
-      "emotionalTrigger": "awe",
-      "estimatedScore": 81
-    },
-    {
-      "id": "hook_018",
-      "text": "Si alguien te mira así, te está ocultando algo importante",
-      "topic": "body_language",
-      "emotionalTrigger": "fear",
-      "estimatedScore": 88
-    },
-    {
-      "id": "hook_019",
-      "text": "El ancla mental que te impide tomar mejores decisiones",
-      "topic": "cognitive_biases",
-      "emotionalTrigger": "validation",
-      "estimatedScore": 74
-    },
-    {
-      "id": "hook_020",
-      "text": "¿Por qué la gente poderosa habla tan despacio?",
-      "topic": "communication",
-      "emotionalTrigger": "curiosity",
-      "estimatedScore": 82
-    },
-    {
-      "id": "hook_021",
-      "text": "3 emociones que tu cerebro confunde constantemente",
-      "topic": "emotions",
-      "emotionalTrigger": "curiosity",
-      "estimatedScore": 84
-    },
-    {
-      "id": "hook_022",
-      "text": "Por qué sientes ansiedad sin razón aparente: la ciencia lo explica",
-      "topic": "emotions",
-      "emotionalTrigger": "awe",
-      "estimatedScore": 87
-    },
-    {
-      "id": "hook_023",
-      "text": "La emoción que más nos controla sin que lo notemos",
-      "topic": "emotions",
-      "emotionalTrigger": "curiosity",
-      "estimatedScore": 83
-    },
-    {
-      "id": "hook_024",
-      "text": "Cuando sientes esto, tu cerebro está en modo supervivencia",
-      "topic": "emotions",
-      "emotionalTrigger": "fear",
-      "estimatedScore": 85
-    },
-    {
-      "id": "hook_025",
-      "text": "¿Sabías que el 90% de tus decisiones las toman tus emociones?",
-      "topic": "emotions",
-      "emotionalTrigger": "awe",
-      "estimatedScore": 88
-    },
-    {
-      "id": "hook_026",
-      "text": "Tu memoria te engaña de esta forma cada vez que recuerdas algo",
-      "topic": "memory",
-      "emotionalTrigger": "awe",
-      "estimatedScore": 86
-    },
-    {
-      "id": "hook_027",
-      "text": "El truco científico para recordar todo lo que estudias",
-      "topic": "memory",
-      "emotionalTrigger": "curiosity",
-      "estimatedScore": 85
-    },
-    {
-      "id": "hook_028",
-      "text": "Por qué olvidamos los sueños al despertar: la verdad",
-      "topic": "memory",
-      "emotionalTrigger": "curiosity",
-      "estimatedScore": 82
-    },
-    {
-      "id": "hook_029",
-      "text": "3 hábitos que destruyen tu memoria sin que lo sepas",
-      "topic": "memory",
-      "emotionalTrigger": "fear",
-      "estimatedScore": 89
-    },
-    {
-      "id": "hook_030",
-      "text": "Así funciona el recuerdo más poderoso que tienes: el emocional",
-      "topic": "memory",
-      "emotionalTrigger": "awe",
-      "estimatedScore": 80
-    },
-    {
-      "id": "hook_031",
-      "text": "La razón por la que pierdes la motivación a los pocos días",
-      "topic": "motivation",
-      "emotionalTrigger": "validation",
-      "estimatedScore": 90
-    },
-    {
-      "id": "hook_032",
-      "text": "Las personas más exitosas nunca dependen de la motivación",
-      "topic": "motivation",
-      "emotionalTrigger": "awe",
-      "estimatedScore": 88
-    },
-    {
-      "id": "hook_033",
-      "text": "El secreto de la dopamina para mantenerte motivado siempre",
-      "topic": "motivation",
-      "emotionalTrigger": "curiosity",
-      "estimatedScore": 85
-    },
-    {
-      "id": "hook_034",
-      "text": "Por qué tu cerebro sabotea tus metas constantemente",
-      "topic": "motivation",
-      "emotionalTrigger": "fear",
-      "estimatedScore": 87
-    },
-    {
-      "id": "hook_035",
-      "text": "3 palabras que te roba la motivación sin que te des cuenta",
-      "topic": "motivation",
-      "emotionalTrigger": "fear",
-      "estimatedScore": 83
-    },
-    {
-      "id": "hook_036",
-      "text": "Así te manipulan sin que lo notes: psicología oscura explicada",
-      "topic": "dark_psychology",
-      "emotionalTrigger": "fear",
-      "estimatedScore": 93
-    },
-    {
-      "id": "hook_037",
-      "text": "5 técnicas de manipulación que los narcisistas usan a diario",
-      "topic": "dark_psychology",
-      "emotionalTrigger": "fear",
-      "estimatedScore": 92
-    },
-    {
-      "id": "hook_038",
-      "text": "Si alguien usa esto contigo, es un experto en manipulación",
-      "topic": "dark_psychology",
-      "emotionalTrigger": "fear",
-      "estimatedScore": 91
-    },
-    {
-      "id": "hook_039",
-      "text": "El truco psicológico que usan para que cedas sin darte cuenta",
-      "topic": "dark_psychology",
-      "emotionalTrigger": "curiosity",
-      "estimatedScore": 89
-    },
-    {
-      "id": "hook_040",
-      "text": "Gaslighting: cómo detectarlo en menos de 3 segundos",
-      "topic": "dark_psychology",
-      "emotionalTrigger": "urgency",
-      "estimatedScore": 90
-    },
-    {
-      "id": "hook_041",
-      "text": "Por qué la gente con baja autoestima hace esto sin saberlo",
-      "topic": "self_esteem",
-      "emotionalTrigger": "validation",
-      "estimatedScore": 87
-    },
-    {
-      "id": "hook_042",
-      "text": "3 señales de que tienes más autoestima de la que crees",
-      "topic": "self_esteem",
-      "emotionalTrigger": "validation",
-      "estimatedScore": 85
-    },
-    {
-      "id": "hook_043",
-      "text": "Lo que la gente segura de sí misma nunca hace en público",
-      "topic": "self_esteem",
-      "emotionalTrigger": "curiosity",
-      "estimatedScore": 84
-    },
-    {
-      "id": "hook_044",
-      "text": "Por qué pedir aprobación constantemente destruye tu vida",
-      "topic": "self_esteem",
-      "emotionalTrigger": "fear",
-      "estimatedScore": 86
-    },
-    {
-      "id": "hook_045",
-      "text": "El síndrome del impostor afecta al 70% de las personas exitosas",
-      "topic": "self_esteem",
-      "emotionalTrigger": "awe",
-      "estimatedScore": 88
-    },
-    {
-      "id": "hook_046",
-      "text": "La forma de estrechar la mano revela todo tu nivel de confianza",
-      "topic": "body_language",
-      "emotionalTrigger": "curiosity",
-      "estimatedScore": 80
-    },
-    {
-      "id": "hook_047",
-      "text": "Si tocas esta parte de tu cara, estás mintiendo sin querer",
-      "topic": "body_language",
-      "emotionalTrigger": "curiosity",
-      "estimatedScore": 86
-    },
-    {
-      "id": "hook_048",
-      "text": "El sesgo de confirmación te hace creer solo lo que ya crees",
-      "topic": "cognitive_biases",
-      "emotionalTrigger": "awe",
-      "estimatedScore": 79
-    },
-    {
-      "id": "hook_049",
-      "text": "Por qué las personas inteligentes dudan más que las demás",
-      "topic": "cognitive_biases",
-      "emotionalTrigger": "awe",
-      "estimatedScore": 83
-    },
-    {
-      "id": "hook_050",
-      "text": "La pareja ideal no existe: esto es lo que dice la ciencia",
-      "topic": "relationships",
-      "emotionalTrigger": "controversy",
-      "estimatedScore": 90
-    },
-    {
-      "id": "hook_051",
-      "text": "Por qué el primer mes de una relación es el más peligroso",
-      "topic": "relationships",
-      "emotionalTrigger": "fear",
-      "estimatedScore": 88
-    },
-    {
-      "id": "hook_052",
-      "text": "La razón psicológica por la que te quedas en relaciones tóxicas",
-      "topic": "relationships",
-      "emotionalTrigger": "validation",
-      "estimatedScore": 91
-    },
-    {
-      "id": "hook_053",
-      "text": "Tu jefe te trata diferente si haces esto en las reuniones",
-      "topic": "workplace",
-      "emotionalTrigger": "urgency",
-      "estimatedScore": 84
-    },
-    {
-      "id": "hook_054",
-      "text": "El error que cometes en entrevistas de trabajo sin saberlo",
-      "topic": "workplace",
-      "emotionalTrigger": "fear",
-      "estimatedScore": 86
-    },
-    {
-      "id": "hook_055",
-      "text": "Deja de decir 'básicamente': la palabra que destruye tu credibilidad",
-      "topic": "communication",
-      "emotionalTrigger": "urgency",
-      "estimatedScore": 87
-    },
-    {
-      "id": "hook_056",
-      "text": "La pregunta que hace que cualquier persona confíe en ti al instante",
-      "topic": "social_skills",
-      "emotionalTrigger": "curiosity",
-      "estimatedScore": 88
-    },
-    {
-      "id": "hook_057",
-      "text": "Por qué las personas carismáticas siempre recuerdan tu nombre",
-      "topic": "social_skills",
-      "emotionalTrigger": "curiosity",
-      "estimatedScore": 83
-    },
-    {
-      "id": "hook_058",
-      "text": "El hábito de 5 minutos que cambia tu cerebro en 30 días",
-      "topic": "habits",
-      "emotionalTrigger": "curiosity",
-      "estimatedScore": 86
-    },
-    {
-      "id": "hook_059",
-      "text": "Por qué el 95% de los hábitos fracasan en la primera semana",
-      "topic": "habits",
-      "emotionalTrigger": "awe",
-      "estimatedScore": 85
-    },
-    {
-      "id": "hook_060",
-      "text": "Recuerdas perfectamente lo que sientes: así funciona la memoria emocional",
-      "topic": "memory",
-      "emotionalTrigger": "awe",
-      "estimatedScore": 81
-    }
-  ],
   "topics": [
-    "body_language",
     "cognitive_biases",
+    "dark_psychology",
     "relationships",
-    "workplace",
-    "first_impressions",
-    "social_skills",
+    "body_language",
     "habits",
     "communication",
     "emotions",
     "memory",
     "motivation",
-    "dark_psychology",
+    "social_skills",
+    "first_impressions",
+    "workplace",
     "self_esteem"
   ],
-  "emotionalTriggers": [
-    "curiosity",
-    "fear",
-    "awe",
-    "validation",
-    "urgency",
-    "controversy"
+  "hooks": [
+    {
+      "id": "hook_cv_001",
+      "text": "¿Por qué SIEMPRE compras cosas que no necesitas?",
+      "topic": "cognitive_biases",
+      "effectName": "EFECTO ANCLAJE",
+      "emotionalTrigger": "curiosity",
+      "estimatedScore": 94
+    },
+    {
+      "id": "hook_cv_002",
+      "text": "¿Sabías que tu CEREBRO toma decisiones 7 segundos antes de que lo notes?",
+      "topic": "cognitive_biases",
+      "effectName": "INCONSCIENTE ADAPTATIVO",
+      "emotionalTrigger": "awe",
+      "estimatedScore": 96
+    },
+    {
+      "id": "hook_cv_003",
+      "text": "¿Por qué RECUERDAS mejor las cosas que no terminaste?",
+      "topic": "memory",
+      "effectName": "EFECTO ZEIGARNIK",
+      "emotionalTrigger": "curiosity",
+      "estimatedScore": 91
+    },
+    {
+      "id": "hook_cv_004",
+      "text": "LA VERDAD sobre por qué crees que eres mejor que los demás",
+      "topic": "cognitive_biases",
+      "effectName": "EFECTO DUNNING-KRUGER",
+      "emotionalTrigger": "validation",
+      "estimatedScore": 93
+    },
+    {
+      "id": "hook_cv_005",
+      "text": "¿Por qué NADIE ayudó cuando todos lo vieron?",
+      "topic": "social_skills",
+      "effectName": "EFECTO DEL ESPECTADOR",
+      "emotionalTrigger": "fear",
+      "estimatedScore": 95
+    },
+    {
+      "id": "hook_cv_006",
+      "text": "¿Sabías que tu CEREBRO inventa recuerdos que nunca ocurrieron?",
+      "topic": "memory",
+      "effectName": "EFECTO MANDELA",
+      "emotionalTrigger": "awe",
+      "estimatedScore": 97
+    },
+    {
+      "id": "hook_cv_007",
+      "text": "¿Por qué CONFÍAS en personas que no conoces por su aspecto?",
+      "topic": "first_impressions",
+      "effectName": "EFECTO HALO",
+      "emotionalTrigger": "curiosity",
+      "estimatedScore": 92
+    },
+    {
+      "id": "hook_cv_008",
+      "text": "LA VERDAD sobre por qué no puedes dejar de mirar tu teléfono",
+      "topic": "habits",
+      "effectName": "DOPAMINE LOOP",
+      "emotionalTrigger": "fear",
+      "estimatedScore": 96
+    },
+    {
+      "id": "hook_cv_009",
+      "text": "¿Por qué SIEMPRE crees que tienes razón aunque estés equivocado?",
+      "topic": "cognitive_biases",
+      "effectName": "SESGO DE CONFIRMACIÓN",
+      "emotionalTrigger": "validation",
+      "estimatedScore": 94
+    },
+    {
+      "id": "hook_cv_010",
+      "text": "¿Sabías que puedes ser MANIPULADO sin notarlo en 30 segundos?",
+      "topic": "dark_psychology",
+      "effectName": "TÉCNICA DE PRIMING",
+      "emotionalTrigger": "fear",
+      "estimatedScore": 98
+    },
+    {
+      "id": "hook_cv_011",
+      "text": "¿Por qué te sientes FRAUDE aunque seas bueno en lo que haces?",
+      "topic": "self_esteem",
+      "effectName": "SÍNDROME DEL IMPOSTOR",
+      "emotionalTrigger": "identification",
+      "estimatedScore": 97
+    },
+    {
+      "id": "hook_cv_012",
+      "text": "¿QUÉ PASARÍA SI todo lo que crees recordar fuera mentira?",
+      "topic": "memory",
+      "effectName": "MEMORIA RECONSTRUCTIVA",
+      "emotionalTrigger": "awe",
+      "estimatedScore": 95
+    },
+    {
+      "id": "hook_cv_013",
+      "text": "LA VERDAD sobre por qué las marcas te hacen sentir especial",
+      "topic": "cognitive_biases",
+      "effectName": "NEUROMARKETING",
+      "emotionalTrigger": "curiosity",
+      "estimatedScore": 90
+    },
+    {
+      "id": "hook_cv_014",
+      "text": "¿Por qué ODIAS a la gente que te gusta demasiado?",
+      "topic": "relationships",
+      "effectName": "EFECTO DE SOBREEXPOSICIÓN",
+      "emotionalTrigger": "curiosity",
+      "estimatedScore": 93
+    },
+    {
+      "id": "hook_cv_015",
+      "text": "¿Sabías que tu CARA revela lo que piensas en 1/25 de segundo?",
+      "topic": "body_language",
+      "effectName": "MICROEXPRESIONES",
+      "emotionalTrigger": "awe",
+      "estimatedScore": 96
+    },
+    {
+      "id": "hook_cv_016",
+      "text": "¿Por qué SIEMPRE eliges lo mismo aunque haya más opciones?",
+      "topic": "cognitive_biases",
+      "effectName": "PARADOJA DE LA ELECCIÓN",
+      "emotionalTrigger": "curiosity",
+      "estimatedScore": 91
+    },
+    {
+      "id": "hook_cv_017",
+      "text": "¿Por qué NUNCA detectas cuando alguien te está mintiendo?",
+      "topic": "dark_psychology",
+      "effectName": "DECEPTION BLIND SPOT",
+      "emotionalTrigger": "fear",
+      "estimatedScore": 95
+    },
+    {
+      "id": "hook_cv_018",
+      "text": "LA VERDAD sobre por qué tomas peores decisiones cuando tienes hambre",
+      "topic": "cognitive_biases",
+      "effectName": "EGO DEPLETION",
+      "emotionalTrigger": "curiosity",
+      "estimatedScore": 92
+    },
+    {
+      "id": "hook_cv_019",
+      "text": "¿Sabías que alguien puede hacerte creer que estás LOCO?",
+      "topic": "dark_psychology",
+      "effectName": "GASLIGHTING",
+      "emotionalTrigger": "fear",
+      "estimatedScore": 98
+    },
+    {
+      "id": "hook_cv_020",
+      "text": "¿Por qué tu CEREBRO confunde lo familiar con lo verdadero?",
+      "topic": "cognitive_biases",
+      "effectName": "EFECTO DE MERA EXPOSICIÓN",
+      "emotionalTrigger": "awe",
+      "estimatedScore": 93
+    },
+    {
+      "id": "hook_cv_021",
+      "text": "¿Por qué SIEMPRE recuerdas el primer precio que ves?",
+      "topic": "cognitive_biases",
+      "effectName": "EFECTO ANCLAJE",
+      "emotionalTrigger": "curiosity",
+      "estimatedScore": 91
+    },
+    {
+      "id": "hook_cv_022",
+      "text": "LA VERDAD sobre por qué el estrés te hace más listo",
+      "topic": "emotions",
+      "effectName": "RESPUESTA DE ESTRÉS ADAPTATIVA",
+      "emotionalTrigger": "curiosity",
+      "estimatedScore": 89
+    },
+    {
+      "id": "hook_cv_023",
+      "text": "¿Sabías que la DOPAMINA no te hace feliz sino que te da ansiedad?",
+      "topic": "habits",
+      "effectName": "SISTEMA DOPAMINÉRGICO",
+      "emotionalTrigger": "awe",
+      "estimatedScore": 96
+    },
+    {
+      "id": "hook_cv_024",
+      "text": "¿Por qué FINGES estar bien cuando en realidad no lo estás?",
+      "topic": "emotions",
+      "effectName": "SUPRESIÓN EMOCIONAL",
+      "emotionalTrigger": "identification",
+      "estimatedScore": 94
+    },
+    {
+      "id": "hook_cv_025",
+      "text": "¿QUÉ PASARÍA SI supieras que nadie actúa solo por bondad?",
+      "topic": "dark_psychology",
+      "effectName": "ALTRUISMO RECÍPROCO",
+      "emotionalTrigger": "controversy",
+      "estimatedScore": 97
+    },
+    {
+      "id": "hook_cv_026",
+      "text": "¿Por qué las PERSONAS EXITOSAS siempre llegan tarde?",
+      "topic": "workplace",
+      "effectName": "SEÑALIZACIÓN DE ESTATUS",
+      "emotionalTrigger": "curiosity",
+      "estimatedScore": 90
+    },
+    {
+      "id": "hook_cv_027",
+      "text": "¿Sabías que tu CEREBRO procesa imágenes en 13 milisegundos?",
+      "topic": "cognitive_biases",
+      "effectName": "PROCESAMIENTO VISUAL INCONSCIENTE",
+      "emotionalTrigger": "awe",
+      "estimatedScore": 93
+    },
+    {
+      "id": "hook_cv_028",
+      "text": "LA VERDAD sobre por qué las discusiones con narcisistas son imposibles",
+      "topic": "relationships",
+      "effectName": "DARVO",
+      "emotionalTrigger": "fear",
+      "estimatedScore": 96
+    },
+    {
+      "id": "hook_cv_029",
+      "text": "¿Por qué CAMBIAS de opinión sin darte cuenta de que lo haces?",
+      "topic": "cognitive_biases",
+      "effectName": "DISONANCIA COGNITIVA",
+      "emotionalTrigger": "awe",
+      "estimatedScore": 94
+    },
+    {
+      "id": "hook_cv_030",
+      "text": "¿Sabías que el DOLOR emocional activa las mismas zonas que el dolor físico?",
+      "topic": "emotions",
+      "effectName": "DOLOR SOCIAL",
+      "emotionalTrigger": "awe",
+      "estimatedScore": 95
+    },
+    {
+      "id": "hook_ai_031",
+      "text": "El SECRETO que los manipuladores NO quieren que sepas 😳",
+      "topic": "dark_psychology",
+      "emotionalTrigger": "fear",
+      "estimatedScore": 92,
+      "source": "viral_research",
+      "basedOn": "secret_truth hook con 878K vistas promedio y tema manipulación top"
+    },
+    {
+      "id": "hook_ai_032",
+      "text": "¿Por qué tu cuerpo DELATA lo que sientes antes de que hables?",
+      "topic": "body_language",
+      "emotionalTrigger": "curiosity",
+      "estimatedScore": 88,
+      "source": "viral_research",
+      "basedOn": "why_question + lenguaje corporal, vídeos 1 y 10 superan 1M"
+    },
+    {
+      "id": "hook_ai_033",
+      "text": "El EXPERIMENTO que cambió todo lo que creíamos sobre la mente humana 🧠",
+      "topic": "cognitive_biases",
+      "emotionalTrigger": "awe",
+      "estimatedScore": 85,
+      "source": "viral_research",
+      "basedOn": "Vídeo 3 con 1.9M en formato experimento shock"
+    },
+    {
+      "id": "hook_ai_034",
+      "text": "Contó su secreto y su lenguaje corporal lo reveló todo 😮",
+      "topic": "body_language",
+      "emotionalTrigger": "controversy",
+      "estimatedScore": 83,
+      "source": "viral_research",
+      "basedOn": "Fusión vídeos 1 y 10 del top; narrativa + lenguaje corporal"
+    },
+    {
+      "id": "hook_ai_035",
+      "text": "3 gestos que DELATAN a un manipulador antes de que abra la boca",
+      "topic": "dark_psychology",
+      "emotionalTrigger": "fear",
+      "estimatedScore": 79,
+      "source": "viral_research",
+      "basedOn": "Señales + manipulación; vídeos 5 y 9 superan 900K vistas"
+    }
   ]
 }

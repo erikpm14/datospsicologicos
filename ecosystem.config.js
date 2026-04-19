@@ -11,8 +11,9 @@ module.exports = {
   apps: [
     {
       name: 'datos-psicologicos',
-      script: './backend/src/server.js',
-      cwd: __dirname,
+      script: './src/server.js',
+      cwd: require('path').join(__dirname, 'backend'),
+      exec_mode: 'fork',
       instances: 1,
       autorestart: true,
       watch: false,

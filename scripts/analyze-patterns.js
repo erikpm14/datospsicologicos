@@ -9,17 +9,88 @@
  * Uso: node scripts/analyze-patterns.js
  */
 
-require('dotenv').config({ path: require('path').join(__dirname, '../backend/.env') });
-const Anthropic = require('@anthropic-ai/sdk');
-const fs = require('fs');
 const path = require('path');
+const { createRequire } = require('module');
 
+// Require apuntando al backend
+const backendRequire = createRequire(path.join(__dirname, '../backend/package.json'));
+
+// dotenv desde backend
+backendRequire('dotenv').config({
+  path: path.join(__dirname, '../backend/.env'),
+});
+
+// dependencias del backend
+const AnthropicModule = backendRequire('@anthropic-ai/sdk');
+
+// core
+const fs = require('fs');
+
+const Anthropic = AnthropicModule.default || AnthropicModule;
 const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
 const RESEARCH_PATH = path.join(__dirname, '../backend/data/viral-research.json');
 const INSIGHTS_PATH = path.join(__dirname, '../backend/data/insights.json');
 const HOOKS_PATH = path.join(__dirname, '../backend/src/templates/psychology-hooks.json');
 const GENERATOR_PATH = path.join(__dirname, '../backend/src/services/content-generator.js');
+
+// ─────────────────────────────────────────────
+//  HELPERS
+// ─────────────────────────────────────────────
+
+function extractClaudeText(msg) {
+  if (!msg || !Array.isArray(msg.content)) return '';
+  return msg.content
+    .filter((item) => item && item.type === 'text')
+    .map((item) => item.text)
+    .join('\n')
+    .trim();
+}
+
+function safeParseClaudeJson(raw) {
+  if (!raw || typeof raw !== 'string') {
+    throw new Error('Respuesta vacía o no textual de Claude');
+  }
+
+  let text = raw.trim();
+
+  // quitar fences markdown
+  text = text.replace(/^```json\s*/i, '').replace(/^```\s*/i, '');
+  text = text.replace(/\s*```$/i, '');
+
+  // intento directo
+  try {
+    return JSON.parse(text);
+  } catch (_) {
+    // seguimos
+  }
+
+  // extraer bloque principal JSON
+  const firstBrace = text.indexOf('{');
+  const lastBrace = text.lastIndexOf('}');
+  if (firstBrace !== -1 && lastBrace !== -1 && lastBrace > firstBrace) {
+    const candidate = text.slice(firstBrace, lastBrace + 1);
+    try {
+      return JSON.parse(candidate);
+    } catch (err) {
+      throw new Error(`JSON inválido tras extraer bloque principal: ${err.message}\nRAW:\n${text}`);
+    }
+  }
+
+  throw new Error(`No se encontró JSON válido en la respuesta:\n${text}`);
+}
+
+async function askClaudeForJson(prompt, maxTokens = 2000) {
+  const msg = await client.messages.create({
+    model: 'claude-sonnet-4-6',
+    max_tokens: maxTokens,
+    temperature: 0.2,
+    messages: [{ role: 'user', content: prompt }],
+  });
+
+  const raw = extractClaudeText(msg);
+  return safeParseClaudeJson(raw);
+}
 
 // ─────────────────────────────────────────────
 //  1. ANÁLISIS GENERAL DE PATRONES
@@ -30,77 +101,82 @@ async function analyzePatterns(research) {
 
   const { summary, hookPatternPerformance, durationPerformance, topWords, top20Videos } = research;
 
-  const prompt = `Eres un experto en contenido viral de psicología en español para TikTok/YouTube Shorts. Analiza estos datos reales de los vídeos más virales y extrae insights accionables.
+  const prompt = `Eres un experto en contenido viral de psicología en español para TikTok/YouTube Shorts. Analiza estos datos reales y extrae insights accionables.
 
-## DATOS DE LA INVESTIGACIÓN
+## DATOS
 - Vídeos analizados: ${summary.totalVideosAnalyzed}
 - Período: ${summary.dateRange.from} a ${summary.dateRange.to}
 - Vistas promedio: ${summary.avgViews.toLocaleString()}
 - Engagement promedio: ${summary.avgEngagement}%
 
-## RENDIMIENTO POR PATRÓN DE HOOK
+## HOOKS
 ${JSON.stringify(hookPatternPerformance, null, 2)}
 
-## ENGAGEMENT POR DURACIÓN
+## DURACIÓN
 ${JSON.stringify(durationPerformance.avgEngagementByBucket, null, 2)}
 Distribución: ${JSON.stringify(durationPerformance.distribution, null, 2)}
 
-## TOP 40 PALABRAS EN TÍTULOS VIRALES
-${topWords.map((w) => `"${w.word}" (×${w.count})`).join(', ')}
+## TOP WORDS
+${topWords.slice(0, 20).map((w) => `"${w.word}" x${w.count}`).join(', ')}
 
-## TOP 20 VÍDEOS MÁS VIRALES
-${top20Videos.map((v, i) =>
-  `${i + 1}. [${v.views.toLocaleString()} views | ${v.engagementRate}% eng | ${v.durationSec}s | ${v.hookPattern}]\n   "${v.title}"`
-).join('\n')}
+## TOP 10 VÍDEOS
+${top20Videos
+  .slice(0, 10)
+  .map(
+    (v, i) =>
+      `${i + 1}. [${v.views.toLocaleString()} views | ${v.engagementRate}% eng | ${v.durationSec}s | ${v.hookPattern}] "${v.title}"`
+  )
+  .join('\n')}
 
-## TAREA
-Responde en JSON puro, sin markdown. El JSON debe tener exactamente esta estructura:
+## REGLAS
+- Devuelve SOLO JSON válido
+- Sin markdown
+- Sin texto extra
+- Sé breve
+- Máximo 3 bestHookPatterns
+- Máximo 5 topicsRanking
+- Máximo 5 newHookSuggestions
+- basedOn: máximo 12 palabras
+- explanation y reason: máximo 20 palabras
+- promptImprovements: máximo 3 frases cortas
 
+## JSON
 {
   "keyFindings": [
-    "hallazgo concreto 1 con dato numérico",
-    "hallazgo concreto 2 con dato numérico",
-    "hallazgo concreto 3 con dato numérico",
-    "hallazgo concreto 4 con dato numérico",
-    "hallazgo concreto 5 con dato numérico"
+    "hallazgo 1",
+    "hallazgo 2",
+    "hallazgo 3"
   ],
   "bestHookPatterns": [
     {
-      "pattern": "nombre del patrón",
+      "pattern": "nombre",
       "explanation": "por qué funciona",
-      "template": "plantilla con [TEMA] o [NÚMERO]",
-      "example": "ejemplo concreto"
+      "template": "plantilla",
+      "example": "ejemplo"
     }
   ],
   "wordsToAvoid": ["palabra1", "palabra2"],
-  "powerWords": ["palabra de alto impacto 1", "palabra de alto impacto 2"],
+  "powerWords": ["palabra1", "palabra2"],
   "optimalDuration": {
-    "seconds": 58,
-    "reasoning": "por qué esta duración"
+    "seconds": 30,
+    "reasoning": "por qué"
   },
   "topicsRanking": [
-    { "topic": "nombre", "reason": "por qué está en esta posición" }
+    { "topic": "nombre", "reason": "motivo corto" }
   ],
-  "promptImprovements": "párrafo de 3-5 frases con mejoras específicas al sistema prompt de generación de contenido basadas en los datos. Debe ser directamente usable como instrucción adicional para Claude.",
+  "promptImprovements": "2-3 frases cortas",
   "newHookSuggestions": [
     {
-      "text": "texto del hook en español",
+      "text": "hook",
       "topic": "body_language|cognitive_biases|relationships|workplace|first_impressions|social_skills|habits|communication|emotions|memory|motivation|dark_psychology|self_esteem",
       "emotionalTrigger": "curiosity|fear|awe|validation|urgency|controversy",
       "estimatedScore": 85,
-      "basedOn": "qué vídeo viral inspiró este hook"
+      "basedOn": "referencia corta"
     }
   ]
 }`;
 
-  const msg = await client.messages.create({
-    model: 'claude-sonnet-4-6',
-    max_tokens: 3000,
-    messages: [{ role: 'user', content: prompt }],
-  });
-
-  const raw = msg.content[0].text.trim().replace(/^```json?\n?/, '').replace(/\n?```$/, '');
-  return JSON.parse(raw);
+  return askClaudeForJson(prompt, 4500);
 }
 
 // ─────────────────────────────────────────────
@@ -110,15 +186,17 @@ Responde en JSON puro, sin markdown. El JSON debe tener exactamente esta estruct
 async function analyzeTitleStructure(top20Videos) {
   console.log('🔤  Analizando estructura lingüística de títulos...');
 
-  const titles = top20Videos.map((v, i) =>
-    `${i + 1}. [${v.views.toLocaleString()} views] "${v.title}"`
-  ).join('\n');
+  const titles = top20Videos
+    .slice(0, 20)
+    .map((v, i) => `${i + 1}. [${v.views.toLocaleString()} views] "${v.title}"`)
+    .join('\n');
 
   const prompt = `Analiza los títulos de los 20 vídeos de psicología más virales en español. Identifica patrones lingüísticos precisos.
 
 ${titles}
 
-Responde en JSON puro:
+Responde SOLO JSON válido. Sin markdown. Sin bloques \`\`\`. Sin texto antes ni después.
+
 {
   "openingFormulas": [
     { "formula": "cómo empieza", "frequency": 5, "example": "ejemplo real" }
@@ -144,14 +222,7 @@ Responde en JSON puro:
   "mustHaveElements": ["elementos que casi siempre están presentes"]
 }`;
 
-  const msg = await client.messages.create({
-    model: 'claude-sonnet-4-6',
-    max_tokens: 1500,
-    messages: [{ role: 'user', content: prompt }],
-  });
-
-  const raw = msg.content[0].text.trim().replace(/^```json?\n?/, '').replace(/\n?```$/, '');
-  return JSON.parse(raw);
+  return askClaudeForJson(prompt, 1800);
 }
 
 // ─────────────────────────────────────────────
@@ -163,7 +234,7 @@ function updateHooksFile(insights) {
   const existing = new Set(hooksData.hooks.map((h) => h.text.toLowerCase()));
 
   const newHooks = (insights.newHookSuggestions || [])
-    .filter((h) => !existing.has(h.text.toLowerCase()))
+    .filter((h) => h && h.text && !existing.has(h.text.toLowerCase()))
     .map((h, i) => ({
       id: `hook_ai_${String(hooksData.hooks.length + i + 1).padStart(3, '0')}`,
       text: h.text,
@@ -192,17 +263,18 @@ function updateHooksFile(insights) {
 function updateContentGenerator(insights, titleAnalysis) {
   const content = fs.readFileSync(GENERATOR_PATH, 'utf8');
 
-  // Construye el bloque de insights dinámico
   const powerWords = (insights.powerWords || []).slice(0, 12).join(', ');
   const avoidWords = (insights.wordsToAvoid || []).join(', ');
   const topPatterns = (insights.bestHookPatterns || [])
     .slice(0, 3)
     .map((p) => `  • ${p.pattern}: "${p.template}" — ${p.explanation}`)
     .join('\n');
+
   const topTopics = (insights.topicsRanking || [])
     .slice(0, 5)
     .map((t, i) => `  ${i + 1}. ${t.topic}: ${t.reason}`)
     .join('\n');
+
   const titleInsights = titleAnalysis
     ? `\nESTRUCTURA DE TÍTULOS VIRALES (datos reales):
   • Preguntas vs afirmaciones: ${titleAnalysis.questionVsStatement?.bestPerforming} rinden más
@@ -233,18 +305,15 @@ ${titleInsights}
 MEJORAS BASADAS EN DATOS:
 ${insights.promptImprovements}`;
 
-  // Reemplaza el bloque existente o añade uno nuevo antes del formato de respuesta
   const marker = '════════════════════════════════════════\nINSIGHTS DE INVESTIGACIÓN VIRAL';
   const endMarker = '════════════════════════════════════════\nFORMATO DE RESPUESTA';
 
   let updated;
   if (content.includes(marker)) {
-    // Ya existe un bloque previo — reemplázalo
-    const start = content.indexOf(marker) - 1; // incluye el \n previo
+    const start = content.indexOf(marker) - 1;
     const end = content.indexOf(endMarker);
     updated = content.slice(0, start) + insightsBlock + '\n\n' + content.slice(end);
   } else {
-    // Primera vez — inserta antes del bloque FORMATO DE RESPUESTA
     updated = content.replace(
       '════════════════════════════════════════\nFORMATO DE RESPUESTA',
       insightsBlock + '\n\n════════════════════════════════════════\nFORMATO DE RESPUESTA'
@@ -268,37 +337,36 @@ async function main() {
   const research = JSON.parse(fs.readFileSync(RESEARCH_PATH, 'utf8'));
   console.log(`📂  Datos cargados: ${research.summary.totalVideosAnalyzed} vídeos | generados el ${research.generatedAt.slice(0, 10)}\n`);
 
-  // Análisis paralelo
   const [insights, titleAnalysis] = await Promise.all([
     analyzePatterns(research),
     analyzeTitleStructure(research.top20Videos),
   ]);
 
-  // Guarda el reporte completo
   const fullReport = {
     generatedAt: new Date().toISOString(),
     basedOnResearch: research.generatedAt,
     insights,
     titleAnalysis,
   };
+
   fs.writeFileSync(INSIGHTS_PATH, JSON.stringify(fullReport, null, 2));
   console.log(`\n💾  Insights guardados en: ${INSIGHTS_PATH}`);
 
-  // Actualiza los archivos del sistema
   console.log('\n🔧  Aplicando mejoras al sistema...');
   const newHooksCount = updateHooksFile(insights);
   updateContentGenerator(insights, titleAnalysis);
 
-  // Resumen final
   console.log('\n' + '═'.repeat(60));
   console.log('📊  RESUMEN DE HALLAZGOS');
   console.log('═'.repeat(60));
   console.log('\n🎯  Hallazgos clave:');
   (insights.keyFindings || []).forEach((f) => console.log(`   • ${f}`));
+
   console.log('\n🏆  Patrones de hook más efectivos:');
-  (insights.bestHookPatterns || []).slice(0, 3).forEach((p) =>
-    console.log(`   • ${p.pattern}: "${p.template}"`)
-  );
+  (insights.bestHookPatterns || [])
+    .slice(0, 3)
+    .forEach((p) => console.log(`   • ${p.pattern}: "${p.template}"`));
+
   console.log('\n⚡  Palabras de alto impacto:', (insights.powerWords || []).join(', '));
   console.log(`\n✅  ${newHooksCount} nuevos hooks añadidos al sistema`);
   console.log('\n🚀  Sistema actualizado. Genera un nuevo vídeo para probar los cambios:');
@@ -307,8 +375,6 @@ async function main() {
 
 main().catch((err) => {
   console.error('Fatal:', err.message);
-  if (err.message.includes('JSON')) {
-    console.error('Error parseando respuesta de Claude. Respuesta raw:', err.stack);
-  }
+  console.error(err.stack);
   process.exit(1);
 });

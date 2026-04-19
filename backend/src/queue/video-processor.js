@@ -19,11 +19,15 @@ const path = require('path');
 const { v4: uuidv4 } = require('uuid');
 
 const { generateScript } = require('../services/content-generator');
+const { generateFruitDrama } = require('../services/fruit-drama-generator');
+const { renderFruitDrama }   = require('../services/fruit-drama-renderer');
 const { synthesizeVoice } = require('../services/voice-synthesizer');
 const { renderVideo } = require('../services/video-renderer');
 const { publishAll } = require('../services/publisher');
 const { saveVideo, pollAllMetrics } = require('../services/analytics-tracker');
 const { notifyVideoPublished, notifyJobFailed } = require('../services/telegram-notifier');
+const { postprocessAudioSafe, getProcessedAudioPath } = require('../services/audio-postprocess');
+const { checkProductionQuality, saveQCResult } = require('../services/production-quality-checker');
 const themes = require('../templates/visual-themes.json');
 const logger = require('../utils/logger');
 
@@ -100,6 +104,11 @@ function trimDoneFolder(maxFiles = 50) {
 // ─────────────────────────────────────────────
 
 async function processPipeline(job) {
+  // ── Fruit Drama: pipeline completamente distinto ────────────────────
+  if (job.data.isFruitDrama) {
+    return processFruitDramaPipeline(job);
+  }
+
   const { topic, hookId, themeIndex } = job.data;
   const videoId = uuidv4();
   const outputDir = path.resolve(process.env.OUTPUT_DIR || './output', videoId);
@@ -109,55 +118,183 @@ async function processPipeline(job) {
   job.progress = 0;
   moveJob(DIRS.pending, DIRS.active, job);
 
-  // 1. Guión con Claude
+  // 1. Guión con Claude (o usar guión prefabricado de una serie)
   logger.info(`[Job ${job.id}] 1/4 Generating script...`);
-  const script = await generateScript({ topic, hookId, forceHighScore: true });
+  const script = job.data.prefabScript
+    ? job.data.prefabScript
+    : await generateScript({ topic, hookId, forceHighScore: true });
+
+  // Estampar versión de contenido para bloquear publicación de contenido antiguo
+  script.contentVersion = process.env.CONTENT_VERSION || 'v2';
+
+  // Guardar script.json en disco para que el frontend pueda mostrarlo
+  fs.writeFileSync(path.join(outputDir, 'script.json'), JSON.stringify(script, null, 2));
   job.progress = 25;
   writeJob(DIRS.active, job);
 
-  // 2. Voz con Edge TTS (gratis)
-  logger.info(`[Job ${job.id}] 2/4 Synthesizing voice (Edge TTS)...`);
-  const audioPath = path.join(outputDir, 'voice.mp3');
-  const { estimatedDuration: audioDuration } = await synthesizeVoice(script, audioPath);
+  // 2. Voz (Kokoro local o Edge TTS fallback)
+  logger.info(`[Job ${job.id}] 2/5 Synthesizing voice...`);
+  const audioPathHint = path.join(outputDir, 'voice.mp3');
+  const { audioPath: rawAudioPath, estimatedDuration: audioDuration, wordBoundaries, sectionDurations } = await synthesizeVoice(script, audioPathHint);
+  // rawAudioPath puede ser .wav (Kokoro) o .mp3 (Edge TTS)
+  job.progress = 40;
+  writeJob(DIRS.active, job);
+
+  // 2b. Postproceso de audio: loudnorm -16 LUFS + compresión + highpass
+  logger.info(`[Job ${job.id}] 2b/5 Postprocessing audio...`);
+  const processedAudioPath = getProcessedAudioPath(rawAudioPath);
+  const { audioPath } = await postprocessAudioSafe(rawAudioPath, processedAudioPath);
   job.progress = 50;
   writeJob(DIRS.active, job);
 
   // 3. Renderizado FFmpeg
-  logger.info(`[Job ${job.id}] 3/4 Rendering video...`);
+  logger.info(`[Job ${job.id}] 3/5 Rendering video...`);
   const themeId = themes.rotation[(themeIndex || 0) % themes.rotation.length];
   const videoPath = path.join(outputDir, 'output.mp4');
-  await renderVideo({ script, audioPath, audioDuration, outputPath: videoPath, themeId });
+  await renderVideo({ script, audioPath, audioDuration, outputPath: videoPath, themeId, wordBoundaries, sectionDurations, bgStyle: job.data.bgStyle });
+  job.progress = 70;
+  writeJob(DIRS.active, job);
+
+  // 3b. Quality Gate — productionQualityScore antes de publicar
+  logger.info(`[Job ${job.id}] 3b/5 Running production quality check...`);
+  const qcResult = await checkProductionQuality(outputDir, script);
+  saveQCResult(outputDir, qcResult);
+  if (!qcResult.passed) {
+    logger.warn(`[Job ${job.id}] QC FAILED (score=${qcResult.score}/${qcResult.threshold}) — skipping publish | issues: ${qcResult.reasons.join(' | ')}`);
+    job.progress  = 100;
+    job.result    = { videoId, skipped: true, qcScore: qcResult.score, qcReasons: qcResult.reasons };
+    job.completedAt = new Date().toISOString();
+    moveJob(DIRS.active, DIRS.done, job);
+    trimDoneFolder(50);
+    return job.result;
+  }
+  logger.info(`[Job ${job.id}] QC PASSED (score=${qcResult.score})`);
   job.progress = 75;
   writeJob(DIRS.active, job);
 
-  // 4. Publicación
-  logger.info(`[Job ${job.id}] 4/4 Publishing...`);
-  const { results, errors } = await publishAll(videoPath, script);
+  // 4. Publicación o diferimiento según AUTO_PUBLISH_ENABLED
+  if (process.env.AUTO_PUBLISH_ENABLED === 'true') {
+    // Modo diferido: el publish-scheduler.service.js publica a las horas configuradas
+    logger.info(`[Job ${job.id}] 4/5 Render done — deferred publication (AUTO_PUBLISH_ENABLED=true)`);
 
-  const publishedIds = {};
-  for (const r of results) {
-    if (r.platform === 'tiktok') publishedIds.tiktokId = r.publishId;
-    if (r.platform === 'instagram') publishedIds.instagramId = r.mediaId;
-    if (r.platform === 'youtube') publishedIds.youtubeId = r.videoId;
+    job.progress = 100;
+    job.result = { videoId, deferred: true, readyAt: new Date().toISOString() };
+    job.completedAt = new Date().toISOString();
+
+    moveJob(DIRS.active, DIRS.done, job);
+    trimDoneFolder(50);
+
+    logger.info(`[Job ${job.id}] Done! Video ${videoId} ready at output/${videoId}/output.mp4 — awaiting scheduled publish`);
+  } else {
+    // Modo inmediato: publicar ahora
+    logger.info(`[Job ${job.id}] 4/5 Publishing...`);
+    const { results, errors } = await publishAll(videoPath, script);
+
+    const publishedIds = {};
+    for (const r of results) {
+      if (r.platform === 'tiktok') publishedIds.tiktokId = r.publishId;
+      if (r.platform === 'instagram') publishedIds.instagramId = r.mediaId;
+      if (r.platform === 'youtube') publishedIds.youtubeId = r.videoId;
+    }
+
+    await saveVideo({
+      id: videoId, title: script.title, topic: script.topic, hook: script.hook,
+      viralityScore: script.viralityScore, themeId, script, ...publishedIds,
+    });
+
+    job.progress = 100;
+    job.result = { videoId, platforms: results.map((r) => r.platform), errors };
+    job.completedAt = new Date().toISOString();
+
+    moveJob(DIRS.active, DIRS.done, job);
+    trimDoneFolder(50);
+
+    logger.info(`[Job ${job.id}] Done! Published to: ${results.map((r) => r.platform).join(', ') || 'none'}`);
+    if (errors.length > 0) logger.warn(`[Job ${job.id}] Publish errors: ${JSON.stringify(errors)}`);
+
+    await notifyVideoPublished({ script, results, errors, videoId });
   }
 
-  await saveVideo({
-    id: videoId, title: script.title, topic: script.topic, hook: script.hook,
-    viralityScore: script.viralityScore, themeId, script, ...publishedIds,
+  return job.result;
+}
+
+// ─────────────────────────────────────────────
+//  PIPELINE FRUIT DRAMA
+// ─────────────────────────────────────────────
+
+async function processFruitDramaPipeline(job) {
+  const videoId   = uuidv4();
+  const outputDir = path.resolve(process.env.OUTPUT_DIR || './output', videoId);
+  const workDir   = path.join(outputDir, 'work');
+  fs.mkdirSync(outputDir, { recursive: true });
+
+  logger.info(`[Job ${job.id}] 🍓 FruitDrama pipeline: ${videoId}`);
+  job.progress = 0;
+  moveJob(DIRS.pending, DIRS.active, job);
+
+  // 1. Guión dramático con Claude
+  logger.info(`[Job ${job.id}] 1/3 Generating fruit drama script...`);
+  const script = job.data.prefabScript || await generateFruitDrama({
+    pairIndex:   job.data.pairIndex,
+    themeId:     job.data.themeId,
+    episode:     job.data.episode     || 1,
+    seriesTitle: job.data.seriesTitle || undefined,
   });
+  fs.writeFileSync(path.join(outputDir, 'script.json'), JSON.stringify(script, null, 2));
+  job.progress = 25;
+  writeJob(DIRS.active, job);
 
-  job.progress = 100;
-  job.result = { videoId, platforms: results.map((r) => r.platform), errors };
-  job.completedAt = new Date().toISOString();
+  // 2. Render escena a escena (imágenes Pexels + Ken Burns + Edge TTS)
+  logger.info(`[Job ${job.id}] 2/3 Rendering ${script.scenes.length} scenes...`);
+  const videoPath = path.join(outputDir, 'output.mp4');
+  await renderFruitDrama({ script, outputPath: videoPath, workDir });
+  job.progress = 75;
+  writeJob(DIRS.active, job);
 
-  moveJob(DIRS.active, DIRS.done, job);
-  trimDoneFolder(50);
+  // 3. Publicar o diferir
+  const publishScript = {
+    hook:      script.hook,
+    topic:     'relationships',
+    hashtags:  ['#drama', '#fruta', '#pareja', '#celos', '#psicologia'],
+    cta:       script.cliffhanger || '',
+  };
 
-  logger.info(`[Job ${job.id}] Done! Published to: ${results.map((r) => r.platform).join(', ') || 'none'}`);
-  if (errors.length > 0) logger.warn(`[Job ${job.id}] Publish errors: ${JSON.stringify(errors)}`);
+  // Guardar script.json para que publish-scheduler lo pueda leer
+  fs.writeFileSync(path.join(outputDir, 'script.json'), JSON.stringify(publishScript, null, 2));
 
-  // Notificación Telegram
-  await notifyVideoPublished({ script, results, errors, videoId });
+  if (process.env.AUTO_PUBLISH_ENABLED === 'true') {
+    logger.info(`[Job ${job.id}] 3/3 Render done — deferred publication (AUTO_PUBLISH_ENABLED=true)`);
+
+    job.progress  = 100;
+    job.result    = { videoId, deferred: true, readyAt: new Date().toISOString() };
+    job.completedAt = new Date().toISOString();
+    moveJob(DIRS.active, DIRS.done, job);
+    trimDoneFolder(50);
+
+    logger.info(`[Job ${job.id}] 🍓 FruitDrama done! Video ${videoId} ready — awaiting scheduled publish`);
+  } else {
+    logger.info(`[Job ${job.id}] 3/3 Publishing...`);
+    const { results, errors } = await publishAll(videoPath, publishScript);
+
+    const publishedIds = {};
+    for (const r of results) {
+      if (r.platform === 'youtube') publishedIds.youtubeId = r.videoId;
+    }
+
+    await saveVideo({
+      id: videoId, title: script.seriesTitle, topic: 'relationships',
+      hook: script.hook, viralityScore: 0, themeId: 'fruit_drama', script: publishScript, ...publishedIds,
+    });
+
+    job.progress  = 100;
+    job.result    = { videoId, platforms: results.map(r => r.platform), errors };
+    job.completedAt = new Date().toISOString();
+    moveJob(DIRS.active, DIRS.done, job);
+    trimDoneFolder(50);
+
+    logger.info(`[Job ${job.id}] 🍓 FruitDrama done! | ${script.scenes.length} scenes`);
+    await notifyVideoPublished({ script: publishScript, results, errors, videoId });
+  }
 
   return job.result;
 }
@@ -204,34 +341,21 @@ async function addVideoToQueue(data = {}) {
 // ─────────────────────────────────────────────
 
 function recoverPendingJobs() {
-  // Si quedaron jobs en active al reiniciar, vuelven a pending
+  // Al reiniciar, limpiar active y pending para no saltarse el horario establecido.
+  // El cron se encargará de publicar a las horas correctas.
   const activeFiles = fs.readdirSync(DIRS.active).filter((f) => f.endsWith('.json'));
   for (const file of activeFiles) {
-    try {
-      const job = JSON.parse(fs.readFileSync(path.join(DIRS.active, file), 'utf8'));
-      job.progress = 0;
-      job.recoveredAt = new Date().toISOString();
-      moveJob(DIRS.active, DIRS.pending, job);
-      logger.warn(`Recovered interrupted job: ${job.id}`);
-    } catch { /* ignorar archivos corruptos */ }
+    try { fs.unlinkSync(path.join(DIRS.active, file)); } catch {}
   }
 
-  // Re-encola todos los pending
-  const pending = getPendingJobs();
-  for (const job of pending) {
-    queue.add(async () => {
-      try {
-        await processPipeline(job);
-      } catch (err) {
-        logger.error(`[Job ${job.id}] FAILED on recovery: ${err.message}`);
-        job.error = err.message;
-        job.failedAt = new Date().toISOString();
-        moveJob(DIRS.active, DIRS.failed, job);
-      }
-    });
+  const pendingFiles = fs.readdirSync(DIRS.pending).filter((f) => f.endsWith('.json'));
+  for (const file of pendingFiles) {
+    try { fs.unlinkSync(path.join(DIRS.pending, file)); } catch {}
   }
 
-  if (pending.length > 0) logger.info(`Recovered ${pending.length} pending jobs`);
+  if (activeFiles.length + pendingFiles.length > 0) {
+    logger.info(`Startup: cleared ${activeFiles.length} active + ${pendingFiles.length} pending jobs (respecting publish schedule)`);
+  }
 }
 
 // ─────────────────────────────────────────────
@@ -250,26 +374,36 @@ function getQueueStatus() {
 }
 
 // ─────────────────────────────────────────────
-//  CRON JOBS DE PUBLICACIÓN
+//  CRON JOBS DE PUBLICACIÓN (legacy)
+//  Solo activo si AUTO_GENERATION_ENABLED != true.
+//  Cuando el growth engine está activo, él gestiona la generación.
 // ─────────────────────────────────────────────
 
-const publishTimes = (process.env.PUBLISH_TIMES_CET || '15:00,18:00,21:00').split(',');
+if (process.env.AUTO_GENERATION_ENABLED !== 'true') {
+  const publishTimes = (process.env.PUBLISH_TIMES_CET || '15:00,18:00,21:00').split(',');
 
-publishTimes.forEach((time) => {
-  const [hour, minute] = time.split(':');
-  const cronExpr = `${minute} ${hour} * * *`;
+  publishTimes.forEach((time) => {
+    const [hour, minute] = time.split(':');
+    const cronExpr = `${minute} ${hour} * * *`;
 
-  logger.info(`Scheduled: ${time} CET → ${cronExpr}`);
+    logger.info(`Legacy cron scheduled: ${time} CET → ${cronExpr}`);
 
-  cron.schedule(
-    cronExpr,
-    async () => {
-      logger.info(`Cron fired: ${time} CET — queuing video`);
-      await addVideoToQueue({ topic: null });
-    },
-    { timezone: 'Europe/Madrid' }
-  );
-});
+    cron.schedule(
+      cronExpr,
+      async () => {
+        logger.info(`Legacy cron fired: ${time} CET — queuing video`);
+        try {
+          await addVideoToQueue({ topic: null });
+        } catch (err) {
+          logger.error(`Legacy cron failed (${time}): ${err.message}`);
+        }
+      },
+      { timezone: 'Europe/Madrid' }
+    );
+  });
+} else {
+  logger.info('Legacy publish cron disabled — growth engine scheduler is active');
+}
 
 // Polling de analytics cada hora
 cron.schedule('0 * * * *', async () => {
@@ -278,6 +412,18 @@ cron.schedule('0 * * * *', async () => {
     await pollAllMetrics();
   } catch (err) {
     logger.error(`Analytics cron failed: ${err.message}`);
+  }
+});
+
+// Trend scraping cada 6 horas (Reddit tiene rate limit suave, no necesita más frecuencia)
+cron.schedule('0 */6 * * *', async () => {
+  logger.info('Cron: Trend scraping...');
+  try {
+    const { runTrendScraper } = require('../../../scripts/trend-scraper');
+    await runTrendScraper();
+    logger.info('Cron: Trend scraping done');
+  } catch (err) {
+    logger.error(`Trend scraping cron failed: ${err.message}`);
   }
 });
 
@@ -304,13 +450,14 @@ async function runViralResearch(reason) {
   logger.info(`🔍 Iniciando investigación viral automática (${reason})...`);
 
   const { execFile } = require('child_process');
-  const scriptsDir = path.resolve('../../scripts');
+  // __dirname = backend/src/queue → ../../../scripts = Generador_videos/scripts
+  const scriptsDir = path.resolve(__dirname, '../../../scripts');
 
   const runScript = (script) =>
     new Promise((resolve, reject) => {
-      execFile('node', [path.join(scriptsDir, script)], { cwd: path.resolve('.') }, (err, stdout, stderr) => {
-        if (stdout) stdout.split('\n').filter(Boolean).forEach((l) => logger.info(`[research] ${l}`));
-        if (err) return reject(new Error(stderr || err.message));
+      execFile('node', [path.join(scriptsDir, script)], { cwd: path.dirname(scriptsDir) }, (err, stdout, stderr) => {
+        if (stdout) String(stdout).split('\n').filter(Boolean).forEach((l) => logger.info(`[research] ${l}`));
+        if (err) return reject(new Error(String(stderr || err.message)));
         resolve();
       });
     });
