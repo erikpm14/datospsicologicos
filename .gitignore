@@ -20,6 +20,13 @@ backend/logs/
 
 # Stock footage cacheado (son archivos grandes)
 assets/stock-footage/
+backend/assets/stock-footage/
+
+# Modelos ML grandes (Kokoro ONNX ~300MB)
+backend/assets/kokoro/
+
+# Web estática con su propio repo
+web_datos.psicologicos/
 
 # Archivos de sistema
 .DS_Store
