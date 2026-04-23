@@ -21,15 +21,25 @@ const { v4: uuidv4 } = require('uuid');
 const { generateScript } = require('../services/content-generator');
 const { generateFruitDrama } = require('../services/fruit-drama-generator');
 const { renderFruitDrama }   = require('../services/fruit-drama-renderer');
+const { generateBestScript } = require('../../../content-engine/decision-engine');
 const { synthesizeVoice } = require('../services/voice-synthesizer');
-const { renderVideo } = require('../services/video-renderer');
+const { renderVideoWithRouter, shouldBlockPublish } = require('../services/render-engines');
 const { publishAll } = require('../services/publisher');
 const { saveVideo, pollAllMetrics } = require('../services/analytics-tracker');
-const { notifyVideoPublished, notifyJobFailed } = require('../services/telegram-notifier');
+const {
+  notifyVideoPublished,
+  notifyJobFailed,
+  notifyCandidateDiscarded,
+  notifyPipelineBlocked,
+} = require('../services/telegram-notifier');
 const { postprocessAudioSafe, getProcessedAudioPath } = require('../services/audio-postprocess');
 const { checkProductionQuality, saveQCResult } = require('../services/production-quality-checker');
+const { assignSlotToCandidate, markSlotAssignmentStatus } = require('../../../content-engine/tracking/slot-assignment-manager');
+const { recordPublication } = require('../../../content-engine/tracking/publication-attribution');
+const { touchPipelineState, getOperationalThresholds } = require('../services/operational-state.service');
 const themes = require('../templates/visual-themes.json');
 const logger = require('../utils/logger');
+const { createPerfTracker, formatDurationMs } = require('../utils/perf-tracker');
 
 // ─────────────────────────────────────────────
 //  PATHS DE LA COLA
@@ -51,7 +61,8 @@ for (const dir of Object.values(DIRS)) {
 //  COLA EN MEMORIA (concurrencia 1)
 // ─────────────────────────────────────────────
 
-const queue = new PQueue({ concurrency: 1 });
+const QUEUE_CONCURRENCY = Math.max(1, parseInt(process.env.QUEUE_CONCURRENCY || '2', 10) || 2);
+const queue = new PQueue({ concurrency: QUEUE_CONCURRENCY });
 let themeRotationIndex = 0;
 
 // ─────────────────────────────────────────────
@@ -99,6 +110,40 @@ function trimDoneFolder(maxFiles = 50) {
   }
 }
 
+async function withRetries(label, fn, options = {}) {
+  const attempts = Math.max(1, options.attempts || 1);
+  const baseDelayMs = Math.max(500, options.baseDelayMs || 1500);
+  let lastError = null;
+
+  for (let attempt = 1; attempt <= attempts; attempt++) {
+    try {
+      return await fn(attempt);
+    } catch (error) {
+      lastError = error;
+      logger.warn(`${label}: attempt ${attempt}/${attempts} failed | ${error.message}`);
+      if (attempt < attempts) {
+        await new Promise((resolve) => setTimeout(resolve, baseDelayMs * attempt));
+      }
+    }
+  }
+
+  throw lastError;
+}
+
+function updateJobProgress(job, progress, stage, extra = {}) {
+  job.progress = progress;
+  job.lastStage = stage;
+  job.lastProgressAt = new Date().toISOString();
+  Object.assign(job, extra);
+  touchPipelineState({
+    lastProgressAt: job.lastProgressAt,
+    lastProgressType: stage,
+    lastJobId: job.id,
+    lastVideoId: extra.videoId || job.result?.videoId || null,
+  });
+  writeJob(DIRS.active, job);
+}
+
 // ─────────────────────────────────────────────
 //  PIPELINE PRINCIPAL
 // ─────────────────────────────────────────────
@@ -113,66 +158,177 @@ async function processPipeline(job) {
   const videoId = uuidv4();
   const outputDir = path.resolve(process.env.OUTPUT_DIR || './output', videoId);
   fs.mkdirSync(outputDir, { recursive: true });
+  const perf = createPerfTracker('video-pipeline', { jobId: job.id, videoId, topic: topic || job.data.prefabScript?.topic || null });
 
   logger.info(`[Job ${job.id}] Pipeline start: video ${videoId}`);
   job.progress = 0;
+  job.startedAt = new Date().toISOString();
+  job.status = 'active';
+  job.performance = perf.snapshot();
+  job.videoId = videoId;
   moveJob(DIRS.pending, DIRS.active, job);
+  touchPipelineState({
+    pipelineActive: true,
+    lastProgressAt: job.startedAt,
+    lastProgressType: 'pipeline_started',
+    lastJobId: job.id,
+    lastVideoId: videoId,
+  });
 
   // 1. Guión con Claude (o usar guión prefabricado de una serie)
   logger.info(`[Job ${job.id}] 1/4 Generating script...`);
-  const script = job.data.prefabScript
+  perf.start('script_generation');
+  let script = job.data.prefabScript
     ? job.data.prefabScript
-    : await generateScript({ topic, hookId, forceHighScore: true });
+    : await withRetries(`[Job ${job.id}] script_generation`, async () => (
+      generateBestScript({ topic }) || await generateScript({ topic, hookId, forceHighScore: true })
+    ), { attempts: parseInt(process.env.GENERATION_STEP_RETRIES || '3', 10) || 3, baseDelayMs: 2000 });
+  script = script.slotTracking?.exactTraceAvailable
+    ? script
+    : assignSlotToCandidate(script, { jobId: job.id, growthContext: job.data.growthContext, assignmentStatus: 'queued' });
+  if (script.slotTracking?.slotId) {
+    markSlotAssignmentStatus(script.slotTracking.slotId, 'queued', {
+      queueJobId: job.id,
+      assignedCandidateId: script.id || null,
+      assignedCandidateTitle: script.title || null,
+      variantId: script.abVariantId || null,
+      abExperimentId: script.abExperimentId || null,
+      assignmentConfidence: script.slotTracking.assignmentConfidence || 0,
+      traceConfidence: script.slotTracking.traceConfidence || 0
+    });
+  }
 
   // Estampar versión de contenido para bloquear publicación de contenido antiguo
   script.contentVersion = process.env.CONTENT_VERSION || 'v2';
 
   // Guardar script.json en disco para que el frontend pueda mostrarlo
   fs.writeFileSync(path.join(outputDir, 'script.json'), JSON.stringify(script, null, 2));
-  job.progress = 25;
-  writeJob(DIRS.active, job);
+  const scriptPhase = perf.end({
+    source: job.data.prefabScript ? 'prefab' : script.generationFallback || 'llm',
+    estimatedWords: script.estimatedWords || null,
+    durationSeconds: script.durationSeconds || null,
+  });
+  logger.info(`[Job ${job.id}] script_generation done in ${formatDurationMs(scriptPhase.durationMs)}`);
+  job.performance = perf.snapshot();
+  updateJobProgress(job, 25, 'script_generated', { videoId });
 
   // 2. Voz (Kokoro local o Edge TTS fallback)
   logger.info(`[Job ${job.id}] 2/5 Synthesizing voice...`);
+  perf.start('tts');
   const audioPathHint = path.join(outputDir, 'voice.mp3');
-  const { audioPath: rawAudioPath, estimatedDuration: audioDuration, wordBoundaries, sectionDurations } = await synthesizeVoice(script, audioPathHint);
+  const { audioPath: rawAudioPath, estimatedDuration: audioDuration, wordBoundaries, sectionDurations, narrationPlan } = await withRetries(
+    `[Job ${job.id}] tts`,
+    async () => synthesizeVoice(script, audioPathHint),
+    { attempts: parseInt(process.env.TTS_STEP_RETRIES || '2', 10) || 2, baseDelayMs: 2500 },
+  );
+  script.narrationPlan = narrationPlan || script.narrationPlan || null;
+  fs.writeFileSync(path.join(outputDir, 'script.json'), JSON.stringify(script, null, 2));
   // rawAudioPath puede ser .wav (Kokoro) o .mp3 (Edge TTS)
-  job.progress = 40;
-  writeJob(DIRS.active, job);
+  const ttsPhase = perf.end({
+    provider: rawAudioPath.toLowerCase().endsWith('.wav') ? 'kokoro' : 'edge',
+    estimatedDuration: audioDuration,
+    wordBoundaries: wordBoundaries?.length || 0,
+  });
+  logger.info(`[Job ${job.id}] tts done in ${formatDurationMs(ttsPhase.durationMs)}`);
+  job.performance = perf.snapshot();
+  updateJobProgress(job, 40, 'tts_done', { videoId });
 
   // 2b. Postproceso de audio: loudnorm -16 LUFS + compresión + highpass
   logger.info(`[Job ${job.id}] 2b/5 Postprocessing audio...`);
+  perf.start('audio_postprocess');
   const processedAudioPath = getProcessedAudioPath(rawAudioPath);
-  const { audioPath } = await postprocessAudioSafe(rawAudioPath, processedAudioPath);
-  job.progress = 50;
-  writeJob(DIRS.active, job);
+  const { audioPath } = await withRetries(
+    `[Job ${job.id}] audio_postprocess`,
+    async () => postprocessAudioSafe(rawAudioPath, processedAudioPath),
+    { attempts: parseInt(process.env.AUDIO_POSTPROCESS_RETRIES || '2', 10) || 2, baseDelayMs: 1500 },
+  );
+  const postPhase = perf.end({ outputPath: audioPath });
+  logger.info(`[Job ${job.id}] audio_postprocess done in ${formatDurationMs(postPhase.durationMs)}`);
+  job.performance = perf.snapshot();
+  updateJobProgress(job, 50, 'audio_postprocessed', { videoId });
 
   // 3. Renderizado FFmpeg
   logger.info(`[Job ${job.id}] 3/5 Rendering video...`);
   const themeId = themes.rotation[(themeIndex || 0) % themes.rotation.length];
   const videoPath = path.join(outputDir, 'output.mp4');
-  await renderVideo({ script, audioPath, audioDuration, outputPath: videoPath, themeId, wordBoundaries, sectionDurations, bgStyle: job.data.bgStyle });
-  job.progress = 70;
-  writeJob(DIRS.active, job);
+  perf.start('render');
+  if (fs.existsSync(videoPath) && fs.statSync(videoPath).size > 1024) {
+    logger.info(`[Job ${job.id}] render skipped | existing output reused`);
+  } else {
+    await withRetries(
+      `[Job ${job.id}] render`,
+      async () => renderVideoWithRouter({ script, audioPath, audioDuration, outputPath: videoPath, themeId, wordBoundaries, sectionDurations, bgStyle: job.data.bgStyle }),
+      { attempts: parseInt(process.env.RENDER_STEP_RETRIES || '2', 10) || 2, baseDelayMs: 3000 },
+    );
+  }
+  const renderPhase = perf.end({ outputPath: videoPath });
+  logger.info(`[Job ${job.id}] render done in ${formatDurationMs(renderPhase.durationMs)}`);
+  if (script.slotTracking?.slotId) {
+    markSlotAssignmentStatus(script.slotTracking.slotId, 'rendered', {
+      assignedCandidateId: script.id || null,
+      assignedCandidateTitle: script.title || null,
+      variantId: script.abVariantId || null,
+      abExperimentId: script.abExperimentId || null
+    });
+  }
+  job.performance = perf.snapshot();
+  updateJobProgress(job, 70, 'render_done', { videoId });
 
   // 3b. Quality Gate — productionQualityScore antes de publicar
   logger.info(`[Job ${job.id}] 3b/5 Running production quality check...`);
-  const qcResult = await checkProductionQuality(outputDir, script);
+  perf.start('quality_check');
+  const qcResult = await withRetries(
+    `[Job ${job.id}] quality_check`,
+    async () => checkProductionQuality(outputDir, script),
+    { attempts: parseInt(process.env.QC_STEP_RETRIES || '2', 10) || 2, baseDelayMs: 1000 },
+  );
   saveQCResult(outputDir, qcResult);
+  const qcPhase = perf.end({ passed: qcResult.passed, score: qcResult.score, threshold: qcResult.threshold });
+  logger.info(`[Job ${job.id}] quality_check done in ${formatDurationMs(qcPhase.durationMs)} | passed=${qcResult.passed}`);
   if (!qcResult.passed) {
     logger.warn(`[Job ${job.id}] QC FAILED (score=${qcResult.score}/${qcResult.threshold}) — skipping publish | issues: ${qcResult.reasons.join(' | ')}`);
     job.progress  = 100;
     job.result    = { videoId, skipped: true, qcScore: qcResult.score, qcReasons: qcResult.reasons };
     job.completedAt = new Date().toISOString();
+    job.status = 'done';
+    job.performance = perf.snapshot({ result: 'qc_failed' });
+    fs.writeFileSync(path.join(outputDir, 'pipeline-metrics.json'), JSON.stringify(job.performance, null, 2));
     moveJob(DIRS.active, DIRS.done, job);
     trimDoneFolder(50);
+    touchPipelineState({
+      lastProgressAt: new Date().toISOString(),
+      lastProgressType: 'qc_failed',
+      lastFailedVideoId: videoId,
+      pipelineActive: false,
+    });
+    await notifyCandidateDiscarded({ videoId, reasons: qcResult.reasons, fallbackAttempted: true });
+    try {
+      const { runGenerationCycle } = require('../services/scheduler.service');
+      setTimeout(() => runGenerationCycle({ urgent: true }).catch(() => {}), 0);
+    } catch {}
     return job.result;
   }
   logger.info(`[Job ${job.id}] QC PASSED (score=${qcResult.score})`);
-  job.progress = 75;
-  writeJob(DIRS.active, job);
+  job.performance = perf.snapshot();
+  updateJobProgress(job, 75, 'qc_passed', { videoId });
 
   // 4. Publicación o diferimiento según AUTO_PUBLISH_ENABLED
+  // BLOQUEAR si VIDEO_USE + DRY_RUN
+  const dryRunBlocksPublish = shouldBlockPublish(outputDir);
+  if (dryRunBlocksPublish) {
+    logger.warn(`[Job ${job.id}] 4/5 PUBLICATION BLOCKED — video-use dry-run active (VIDEO_USE_DRY_RUN=true)`);
+    job.progress = 100;
+    job.result = { videoId, blocked: true, reason: 'video_use_dry_run', readyAt: new Date().toISOString() };
+    job.completedAt = new Date().toISOString();
+    job.status = 'done';
+    job.performance = perf.snapshot({ result: 'blocked_dry_run' });
+    fs.writeFileSync(path.join(outputDir, 'pipeline-metrics.json'), JSON.stringify(job.performance, null, 2));
+    moveJob(DIRS.active, DIRS.done, job);
+    trimDoneFolder(50);
+    logger.info(`[Job ${job.id}] Done! Video ${videoId} ready (dry-run, not published) | total=${formatDurationMs(job.performance.totalMs)}`);
+    return job.result;
+  }
+
   if (process.env.AUTO_PUBLISH_ENABLED === 'true') {
     // Modo diferido: el publish-scheduler.service.js publica a las horas configuradas
     logger.info(`[Job ${job.id}] 4/5 Render done — deferred publication (AUTO_PUBLISH_ENABLED=true)`);
@@ -180,15 +336,21 @@ async function processPipeline(job) {
     job.progress = 100;
     job.result = { videoId, deferred: true, readyAt: new Date().toISOString() };
     job.completedAt = new Date().toISOString();
+    job.status = 'done';
+    job.performance = perf.snapshot({ result: 'deferred' });
+    fs.writeFileSync(path.join(outputDir, 'pipeline-metrics.json'), JSON.stringify(job.performance, null, 2));
 
     moveJob(DIRS.active, DIRS.done, job);
     trimDoneFolder(50);
 
-    logger.info(`[Job ${job.id}] Done! Video ${videoId} ready at output/${videoId}/output.mp4 — awaiting scheduled publish`);
+    logger.info(`[Job ${job.id}] Done! Video ${videoId} ready at output/${videoId}/output.mp4 — awaiting scheduled publish | total=${formatDurationMs(job.performance.totalMs)}`);
   } else {
     // Modo inmediato: publicar ahora
     logger.info(`[Job ${job.id}] 4/5 Publishing...`);
+    perf.start('publish');
     const { results, errors } = await publishAll(videoPath, script);
+    const publishPhase = perf.end({ platforms: results.map((r) => r.platform), errors: errors.length });
+    logger.info(`[Job ${job.id}] publish done in ${formatDurationMs(publishPhase.durationMs)}`);
 
     const publishedIds = {};
     for (const r of results) {
@@ -199,20 +361,45 @@ async function processPipeline(job) {
 
     await saveVideo({
       id: videoId, title: script.title, topic: script.topic, hook: script.hook,
-      viralityScore: script.viralityScore, themeId, script, ...publishedIds,
+      viralityScore: script.viralityScore, themeId, script, tracking: script.slotTracking, ...publishedIds,
+    });
+    recordPublication({
+      script,
+      publishedVideoId: videoId,
+      platformVideoId: publishedIds.youtubeId || publishedIds.tiktokId || publishedIds.instagramId || null,
+      publishedAt: new Date().toISOString(),
+      executionStatus: 'published'
     });
 
     job.progress = 100;
     job.result = { videoId, platforms: results.map((r) => r.platform), errors };
     job.completedAt = new Date().toISOString();
+    job.status = 'done';
+    job.performance = perf.snapshot({ result: 'published' });
+    fs.writeFileSync(path.join(outputDir, 'pipeline-metrics.json'), JSON.stringify(job.performance, null, 2));
 
     moveJob(DIRS.active, DIRS.done, job);
     trimDoneFolder(50);
 
-    logger.info(`[Job ${job.id}] Done! Published to: ${results.map((r) => r.platform).join(', ') || 'none'}`);
+    logger.info(`[Job ${job.id}] Done! Published to: ${results.map((r) => r.platform).join(', ') || 'none'} | total=${formatDurationMs(job.performance.totalMs)}`);
     if (errors.length > 0) logger.warn(`[Job ${job.id}] Publish errors: ${JSON.stringify(errors)}`);
 
     await notifyVideoPublished({ script, results, errors, videoId });
+    touchPipelineState({
+      lastProgressAt: new Date().toISOString(),
+      lastProgressType: 'video_published_immediate',
+      lastPublishedVideoId: videoId,
+      pipelineActive: false,
+    });
+  }
+
+  if (job.result?.deferred) {
+    touchPipelineState({
+      lastProgressAt: new Date().toISOString(),
+      lastProgressType: 'video_ready',
+      lastReadyVideoId: videoId,
+      pipelineActive: false,
+    });
   }
 
   return job.result;
@@ -283,7 +470,14 @@ async function processFruitDramaPipeline(job) {
 
     await saveVideo({
       id: videoId, title: script.seriesTitle, topic: 'relationships',
-      hook: script.hook, viralityScore: 0, themeId: 'fruit_drama', script: publishScript, ...publishedIds,
+      hook: script.hook, viralityScore: 0, themeId: 'fruit_drama', script: publishScript, tracking: publishScript.slotTracking, ...publishedIds,
+    });
+    recordPublication({
+      script: publishScript,
+      publishedVideoId: videoId,
+      platformVideoId: publishedIds.youtubeId || null,
+      publishedAt: new Date().toISOString(),
+      executionStatus: 'published'
     });
 
     job.progress  = 100;
@@ -304,21 +498,47 @@ async function processFruitDramaPipeline(job) {
 // ─────────────────────────────────────────────
 
 async function addVideoToQueue(data = {}) {
+  const prefabScript = data.prefabScript
+    ? assignSlotToCandidate(data.prefabScript, { growthContext: data.growthContext, assignmentStatus: 'assigned' })
+    : null;
+  if (data.prefabScript && prefabScript) {
+    Object.assign(data.prefabScript, prefabScript);
+  }
   const job = {
     id: uuidv4(),
     createdAt: new Date().toISOString(),
     status: 'pending',
     progress: 0,
+    performance: null,
     data: {
+      ...data,
       topic: data.topic || null,
       hookId: data.hookId || null,
       themeIndex: themeRotationIndex++,
-      ...data,
+      slotTracking: prefabScript?.slotTracking || data.slotTracking || null,
+      prefabScript,
     },
   };
 
   writeJob(DIRS.pending, job);
+  touchPipelineState({
+    lastProgressAt: new Date().toISOString(),
+    lastProgressType: 'job_queued',
+    lastJobId: job.id,
+  });
+  if (prefabScript?.slotTracking?.slotId) {
+    markSlotAssignmentStatus(prefabScript.slotTracking.slotId, 'queued', {
+      queueJobId: job.id,
+      assignedCandidateId: prefabScript.id || null,
+      assignedCandidateTitle: prefabScript.title || null,
+      variantId: prefabScript.abVariantId || null,
+      abExperimentId: prefabScript.abExperimentId || null,
+      assignmentConfidence: prefabScript.slotTracking.assignmentConfidence || 0,
+      traceConfidence: prefabScript.slotTracking.traceConfidence || 0
+    });
+  }
   logger.info(`Job queued: ${job.id}`);
+  logger.info(`Queue state | concurrency=${QUEUE_CONCURRENCY} size=${queue.size} pending=${queue.pending}`);
 
   // Encola en p-queue
   queue.add(async () => {
@@ -328,8 +548,16 @@ async function addVideoToQueue(data = {}) {
       logger.error(`[Job ${job.id}] FAILED: ${err.message}`);
       job.error = err.message;
       job.failedAt = new Date().toISOString();
+       job.status = 'failed';
       moveJob(DIRS.active, DIRS.failed, job);
       await notifyJobFailed({ jobId: job.id, error: err.message });
+      touchPipelineState({
+        pipelineActive: false,
+        lastProgressAt: new Date().toISOString(),
+        lastProgressType: 'job_failed',
+        lastFailedJobId: job.id,
+      });
+      await notifyPipelineBlocked({ reason: 'pipeline_step_failed', detail: err.message });
     }
   });
 
@@ -345,16 +573,33 @@ function recoverPendingJobs() {
   // El cron se encargará de publicar a las horas correctas.
   const activeFiles = fs.readdirSync(DIRS.active).filter((f) => f.endsWith('.json'));
   for (const file of activeFiles) {
-    try { fs.unlinkSync(path.join(DIRS.active, file)); } catch {}
+    try {
+      const job = JSON.parse(fs.readFileSync(path.join(DIRS.active, file), 'utf8'));
+      job.status = 'pending';
+      job.recoveredAt = new Date().toISOString();
+      job.recoveredFrom = 'active';
+      moveJob(DIRS.active, DIRS.pending, job);
+    } catch {}
   }
 
-  const pendingFiles = fs.readdirSync(DIRS.pending).filter((f) => f.endsWith('.json'));
-  for (const file of pendingFiles) {
-    try { fs.unlinkSync(path.join(DIRS.pending, file)); } catch {}
+  const pendingJobs = getPendingJobs();
+  for (const job of pendingJobs) {
+    queue.add(async () => {
+      try {
+        await processPipeline(job);
+      } catch (err) {
+        logger.error(`[Job ${job.id}] FAILED after recovery: ${err.message}`);
+        job.error = err.message;
+        job.failedAt = new Date().toISOString();
+        job.status = 'failed';
+        moveJob(DIRS.active, DIRS.failed, job);
+        await notifyJobFailed({ jobId: job.id, error: err.message });
+      }
+    });
   }
 
-  if (activeFiles.length + pendingFiles.length > 0) {
-    logger.info(`Startup: cleared ${activeFiles.length} active + ${pendingFiles.length} pending jobs (respecting publish schedule)`);
+  if (activeFiles.length + pendingJobs.length > 0) {
+    logger.info(`Startup: recovered ${activeFiles.length} active + resumed ${pendingJobs.length} pending job(s)`);
   }
 }
 
@@ -370,6 +615,7 @@ function getQueueStatus() {
     failed: fs.readdirSync(DIRS.failed).filter((f) => f.endsWith('.json')).length,
     queueSize: queue.size,
     queuePending: queue.pending,
+    queueConcurrency: QUEUE_CONCURRENCY,
   };
 }
 
@@ -507,6 +753,6 @@ cron.schedule('0 3 * * 0', () => {
 
 recoverPendingJobs();
 checkAndRunResearchIfStale();
-logger.info(`Video processor ready | Queue dir: ${QUEUE_BASE}`);
+logger.info(`Video processor ready | Queue dir: ${QUEUE_BASE} | concurrency=${QUEUE_CONCURRENCY}`);
 
 module.exports = { addVideoToQueue, getQueueStatus, runViralResearch };

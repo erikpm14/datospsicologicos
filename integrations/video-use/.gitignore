@@ -1,0 +1,11 @@
+# Video-Use Repository
+# Clone del repo browser-use/video-use
+# No commitear binarios ni vídeos generados
+
+# Repo clonado
+*
+!.gitignore
+!README.md
+!INSTALLATION.md
+
+# Ignorar todo excepto docs de setup
