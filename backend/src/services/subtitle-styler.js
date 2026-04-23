@@ -17,6 +17,7 @@
  */
 
 const logger = require('../utils/logger');
+const { getScriptSections } = require('../utils/script-segments');
 
 // Power words de alto impacto visual — subconjunto más corto para marcado semántico
 const IMPACT_WORDS = [
@@ -31,35 +32,59 @@ const IMPACT_WORDS = [
 
 // Color por sección
 const SECTION_COLORS = {
-  hook:        'yellow',     // #FFE500 — alto impacto, para con scroll
-  claim:       'white',      // blanco — dato concreto
-  revelation:  '#FFD700',    // dorado — descubrimiento
-  cta:         '#00E5FF',    // cian — cierre emocional, suscriptores
+  hook:        '#F3F7FF',
+  open_loop:   '#4F7BFF',
+  micro_value: '#F3F7FF',
+  escalation:  '#4F7BFF',
+  reengage:    '#FF3B30',
+  peak:        '#FF3B30',
+  open_ending: '#4F7BFF',
+  soft_cta:    '#4F7BFF',
+  claim:       '#F3F7FF',
+  revelation:  '#FF3B30',
+  cta:         '#4F7BFF',
 };
 
 // Tamaño de fuente por sección
 const SECTION_FONT_SIZES = {
-  hook:       112,
-  claim:       90,
-  revelation:  94,
-  cta:         85,
+  hook:       140,
+  open_loop:  122,
+  micro_value:120,
+  escalation: 124,
+  reengage:   128,
+  peak:       126,
+  open_ending:118,
+  soft_cta:   115,
+  claim:      120,
+  revelation: 124,
+  cta:        115,
 };
 
 // Opacidad de caja por sección
 const SECTION_BOX_OPACITY = {
   hook:       '0.70',
+  open_loop:  '0.58',
+  micro_value:'0.50',
+  escalation: '0.55',
+  reengage:   '0.62',
+  peak:       '0.58',
+  open_ending:'0.48',
+  soft_cta:   '0.45',
   claim:      '0.50',
   revelation: '0.55',
   cta:        '0.45',
 };
 
 const WORDS_PER_BLOCK = parseInt(process.env.SUBTITLE_WORDS_PER_BLOCK || '3');
+const MAX_WORDS_PER_BLOCK = parseInt(process.env.SUBTITLE_MAX_WORDS_PER_BLOCK || '6');
+const MIN_WORDS_PER_BLOCK = parseInt(process.env.SUBTITLE_MIN_WORDS_PER_BLOCK || '2');
 
-// Extensión positiva del final de cada bloque: el texto permanece en pantalla
-// N segundos más después de que el habla termina. Esto garantiza que el texto
-// NUNCA desaparezca antes de que la frase haya sido pronunciada completamente.
-// Si queda por detrás del audio → subir este valor. Si adelanta → bajarlo.
-const BLOCK_END_EXTENSION = parseFloat(process.env.SUBTITLE_END_EXTENSION || '0.08');
+// Extensión positiva del final de cada bloque (solo se aplica al último bloque
+// de cada grupo de puntuación, donde no hay siguiente bloque que lo limite).
+const BLOCK_END_EXTENSION = parseFloat(process.env.SUBTITLE_END_EXTENSION || '0.10');
+
+// Duración mínima visible por bloque (segundos). Bloques más cortos se extienden.
+const MIN_BLOCK_DURATION = parseFloat(process.env.SUBTITLE_MIN_DURATION || '0.40');
 
 /**
  * Detecta si un bloque de texto contiene una power word de impacto.
@@ -74,6 +99,94 @@ function hasImpactWord(text) {
  */
 function hasImpactNumber(text) {
   return /\b\d{2,}[%\s]/.test(text) || /\b[789]\d%/.test(text);
+}
+
+function _normalizeSubtitleWord(word) {
+  return String(word || '').trim();
+}
+
+function _cleanSubtitleToken(word) {
+  return _normalizeSubtitleWord(word)
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[.,!?;:]/g, '');
+}
+
+function _endsSentence(word) {
+  return /[.!?]$/.test(_normalizeSubtitleWord(word));
+}
+
+function _endsSoftPause(word) {
+  return /[,;:]$/.test(_normalizeSubtitleWord(word));
+}
+
+function _pairMustStayTogether(left, right) {
+  const pair = `${_cleanSubtitleToken(left)} ${_cleanSubtitleToken(right)}`.trim();
+  return [
+    'delante de',
+    'de ti',
+    'sin que',
+    'que lo',
+    'lo notes',
+    'se hace',
+    'hace la',
+    'la victima',
+    'a decir',
+    'decir la',
+    'la verdad',
+    'a justificar',
+    'justificar cada',
+    'cada detalle',
+    'aunque empezaste',
+    'empezaste diciendo',
+    'diciendo la',
+    'aunque sea',
+    'y entonces',
+    'pero aqui',
+    'pero ahi',
+    'en ese',
+    'ese momento',
+    'de verdad',
+  ].includes(pair);
+}
+
+function _shouldBreakSenseChunk(currentWords, currentText, nextWord) {
+  const safeCurrent = currentWords.filter(Boolean);
+  if (!safeCurrent.length) return false;
+  const lastWord = safeCurrent[safeCurrent.length - 1];
+  if (nextWord && _pairMustStayTogether(lastWord, nextWord)) return false;
+  if (_endsSentence(lastWord)) return true;
+  if (_endsSoftPause(lastWord) && safeCurrent.length >= MIN_WORDS_PER_BLOCK) return true;
+  if (safeCurrent.length >= MAX_WORDS_PER_BLOCK) return true;
+  if (safeCurrent.length >= WORDS_PER_BLOCK) {
+    if (/\b(delante de ti|sin que lo notes|se hace la victima|a decir la verdad|a justificar cada detalle|aunque empezaste diciendo la verdad)\b/i.test(currentText)) {
+      return true;
+    }
+    if (/\b(y entonces|pero aqui|pero ahi|en ese momento|de verdad)\b/i.test(currentText)) {
+      return true;
+    }
+  }
+  return false;
+}
+
+function _groupTextIntoSenseChunks(text) {
+  const words = String(text || '').trim().split(/\s+/).filter(Boolean);
+  const chunks = [];
+  let current = [];
+
+  for (let i = 0; i < words.length; i++) {
+    current.push(words[i]);
+    const currentText = current.join(' ');
+    const nextWord = words[i + 1] || '';
+    if (_shouldBreakSenseChunk(current, currentText, nextWord)) {
+      chunks.push(currentText);
+      current = [];
+    }
+  }
+
+  if (current.length) chunks.push(current.join(' '));
+  return chunks;
 }
 
 // ─────────────────────────────────────────────
@@ -139,17 +252,18 @@ function buildStyledSubtitleBlocks(script, realDuration, wordBoundaries = [], se
 function _buildRawBlocks(script, realDuration, wordBoundaries, sectionDurations) {
   // ── MODO 1: word boundaries exactos (Edge TTS) ───────────────────────────────
   if (wordBoundaries && wordBoundaries.length >= 4) {
-    logger.info(`SubtitleStyler: EXACT mode | ${wordBoundaries.length} word boundaries | endExt=+${BLOCK_END_EXTENSION}s`);
+    logger.info(`SubtitleStyler: EXACT mode | ${wordBoundaries.length} word boundaries | endExt=+${BLOCK_END_EXTENSION}s | minDur=${MIN_BLOCK_DURATION}s`);
     const totalWords = wordBoundaries.length;
     const sections   = _getSectionWordRanges(script, totalWords);
+    const groups     = _groupByPunctuation(wordBoundaries, WORDS_PER_BLOCK);
     const blocks     = [];
-    let idx = 0;
+    let idx      = 0;
+    let wordBase = 0;
 
-    for (let i = 0; i < wordBoundaries.length; i += WORDS_PER_BLOCK) {
-      const slice   = wordBoundaries.slice(i, i + WORDS_PER_BLOCK);
+    for (const slice of groups) {
       const first   = slice[0];
       const last    = slice[slice.length - 1];
-      const section = _sectionForIndex(i, sections);
+      const section = _sectionForIndex(wordBase, sections);
       const rawEnd  = last.start + last.duration;
 
       blocks.push({
@@ -157,11 +271,15 @@ function _buildRawBlocks(script, realDuration, wordBoundaries, sectionDurations)
         start:   parseFloat(first.start.toFixed(3)),
         end:     parseFloat((rawEnd + BLOCK_END_EXTENSION).toFixed(3)),
         section,
-        isHook:  section === 'hook' && i === 0,
+        isHook:  section === 'hook' && idx === 0,
         idx,
       });
       idx++;
+      wordBase += slice.length;
     }
+
+    // Anti-overlap + duración mínima
+    _fixBlockTimings(blocks);
     return blocks;
   }
 
@@ -174,23 +292,22 @@ function _buildRawBlocks(script, realDuration, wordBoundaries, sectionDurations)
     );
 
     // Mapear 'explanation' → 'revelation' para color/estilo
-    const SECTION_MAP = { hook: 'hook', claim: 'claim', explanation: 'revelation', cta: 'cta' };
     const blocks = [];
     let idx = 0;
 
     for (const [rawKey, timing] of Object.entries(sectionDurations)) {
-      const section      = SECTION_MAP[rawKey] || rawKey;
-      const text         = (rawKey === 'revelation' ? script.explanation : script[rawKey] || '').trim();
+      const section      = rawKey === 'explanation' ? 'revelation' : rawKey;
+      const text         = (script[rawKey] || '').trim();
       if (!text) continue;
 
-      const sWords       = text.split(/\s+/);
-      const numBlocks    = Math.ceil(sWords.length / WORDS_PER_BLOCK);
+      const chunks       = _groupTextIntoSenseChunks(text);
+      const numBlocks    = chunks.length;
       const sectionStart = timing.start;
       const sectionDur   = timing.duration;
       const segments     = timing.segments; // [{start, end}] relativos a la sección
 
       for (let i = 0; i < numBlocks; i++) {
-        const chunk = sWords.slice(i * WORDS_PER_BLOCK, (i + 1) * WORDS_PER_BLOCK).join(' ');
+        const chunk = chunks[i];
         let rawStart, rawEnd;
 
         if (segments && segments.length > 0) {
@@ -220,18 +337,18 @@ function _buildRawBlocks(script, realDuration, wordBoundaries, sectionDurations)
     // Ordenar por start (sectionDurations podría no estar en orden)
     blocks.sort((a, b) => a.start - b.start);
     blocks.forEach((b, i) => { b.idx = i; });
+    _fixBlockTimings(blocks);
     return blocks;
   }
 
   // ── MODO 3: proporcional por wordcount (fallback) ────────────────────────────
   logger.info(`SubtitleStyler: PROPORTIONAL mode (fallback) | realDuration=${realDuration.toFixed(2)}s | endExt=+${BLOCK_END_EXTENSION}s`);
-  const PAUSES       = { hook: 0.55, claim: 0.30, revelation: 0.30, cta: 0.0 };
-  const SECTION_KEYS = ['hook', 'claim', 'revelation', 'cta'];
-
-  const sectionData = SECTION_KEYS.map(key => {
-    const text = (key === 'revelation' ? script.explanation : script[key] || '').trim();
-    return { key, text, pause: PAUSES[key] };
-  }).filter(s => s.text);
+  const scriptSections = getScriptSections(script);
+  const sectionData = scriptSections.map((section, index) => ({
+    key: section.key === 'explanation' ? 'revelation' : section.key,
+    text: section.text,
+    pause: index === 0 ? 0.55 : index === scriptSections.length - 1 ? 0.0 : 0.2,
+  })).filter((section) => section.text);
 
   const totalWords = sectionData.reduce((s, sec) => s + sec.text.split(/\s+/).length, 0);
   const speechDur  = realDuration * 0.88;
@@ -242,12 +359,13 @@ function _buildRawBlocks(script, realDuration, wordBoundaries, sectionDurations)
 
   for (const s of sectionData) {
     const sWords     = s.text.split(/\s+/);
+    const chunks     = _groupTextIntoSenseChunks(s.text);
     const sectionDur = speechDur * (sWords.length / totalWords);
-    const numBlocks  = Math.ceil(sWords.length / WORDS_PER_BLOCK);
+    const numBlocks  = Math.max(chunks.length, 1);
     const blockDur   = sectionDur / numBlocks;
 
     for (let i = 0; i < numBlocks; i++) {
-      const chunk = sWords.slice(i * WORDS_PER_BLOCK, (i + 1) * WORDS_PER_BLOCK).join(' ');
+      const chunk = chunks[i] || s.text;
       blocks.push({
         text:    chunk,
         start:   parseFloat((cur + i * blockDur).toFixed(3)),
@@ -309,12 +427,10 @@ function _blockTimingFromSegments(blockIdx, numBlocks, segments, sectionStart) {
  * Devuelve [{ section, from, to }] para mapeo index → section.
  */
 function _getSectionWordRanges(script, totalWords) {
-  const sections = [
-    { key: 'hook',       text: script.hook        || '' },
-    { key: 'claim',      text: script.claim       || '' },
-    { key: 'revelation', text: script.explanation || '' },
-    { key: 'cta',        text: script.cta         || '' },
-  ].filter(s => s.text.trim());
+  const sections = getScriptSections(script).map((section) => ({
+    key: section.key === 'explanation' ? 'revelation' : section.key,
+    text: section.text,
+  }));
 
   const wordCounts = sections.map(s => s.text.trim().split(/\s+/).length);
   const ranges = [];
@@ -332,6 +448,57 @@ function _sectionForIndex(wordIdx, ranges) {
     if (wordIdx >= r.from && wordIdx < r.to) return r.section;
   }
   return 'claim';
+}
+
+/**
+ * Agrupa word boundaries respetando puntuación natural.
+ * Rompe el bloque al encontrar puntuación fuerte (.!?) o al llegar a maxWords.
+ * Comas y dos puntos son "pausas suaves" — solo rompen si ya hay ≥2 palabras.
+ */
+function _groupByPunctuation(wordBoundaries, maxWords) {
+  const groups  = [];
+  let current   = [];
+
+  for (let i = 0; i < wordBoundaries.length; i++) {
+    const wb        = wordBoundaries[i];
+    current.push(wb);
+    const currentText = current.map(item => item.word).join(' ');
+    const nextWord = wordBoundaries[i + 1]?.word || '';
+    const hardBreak = _shouldBreakSenseChunk(current.map(item => item.word), currentText, nextWord);
+    const atMax     = current.length >= Math.max(maxWords, MAX_WORDS_PER_BLOCK);
+
+    if (hardBreak || atMax) {
+      groups.push(current);
+      current = [];
+    }
+  }
+  if (current.length > 0) groups.push(current);
+  return groups;
+}
+
+/**
+ * Elimina solapamientos entre bloques consecutivos y aplica duración mínima.
+ * Modifica el array in-place.
+ */
+function _fixBlockTimings(blocks) {
+  for (let i = 0; i < blocks.length - 1; i++) {
+    const next = blocks[i + 1];
+    // Clamp: el bloque actual no puede terminar después de que empiece el siguiente
+    if (blocks[i].end > next.start - 0.02) {
+      blocks[i].end = parseFloat((next.start - 0.02).toFixed(3));
+    }
+    // Mínimo visible: al menos MIN_BLOCK_DURATION, pero sin pasarse del siguiente
+    const minEnd = parseFloat((blocks[i].start + MIN_BLOCK_DURATION).toFixed(3));
+    if (blocks[i].end < minEnd) {
+      blocks[i].end = Math.min(minEnd, next.start - 0.02);
+    }
+  }
+  // Último bloque: solo mínimo
+  if (blocks.length > 0) {
+    const last = blocks[blocks.length - 1];
+    const minEnd = parseFloat((last.start + MIN_BLOCK_DURATION).toFixed(3));
+    if (last.end < minEnd) last.end = minEnd;
+  }
 }
 
 // ─────────────────────────────────────────────
@@ -375,11 +542,11 @@ function findSystemFont() {
  * Construye los filtros drawtext para los bloques estilizados.
  *
  * @param {Array}  blocks    - Salida de buildStyledSubtitleBlocks
- * @param {string} yPos      - Expresión Y para posicionamiento (default: h*0.43)
+ * @param {string} yPos      - Expresión Y para posicionamiento (default: h*0.78)
  * @param {Object} theme     - Tema visual (para color de acento)
  * @returns {string}         - filtergraph de drawtext para FFmpeg
  */
-function buildStyledDrawtextFilters(blocks, yPos = 'h*0.43', theme = null) {
+function buildStyledDrawtextFilters(blocks, yPos = 'h*0.78', theme = null) {
   const fontFile = findSystemFont();
   const FADE = 0.07; // snap rápido (0.07s) — más viral que 0.10s
 
@@ -465,10 +632,131 @@ function buildSRTContent(blocks) {
   )).join('\n') + '\n';
 }
 
+// ─────────────────────────────────────────────
+//  KARAOKE ASS — efecto palabra-a-palabra amarilla
+// ─────────────────────────────────────────────
+
+/**
+ * Convierte segundos al formato de tiempo ASS: H:MM:SS.cc
+ */
+function formatASSTime(seconds) {
+  const h  = Math.floor(seconds / 3600);
+  const m  = Math.floor((seconds % 3600) / 60);
+  const s  = Math.floor(seconds % 60);
+  const cs = Math.round((seconds % 1) * 100);
+  return `${h}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}.${String(cs).padStart(2,'0')}`;
+}
+
+/**
+ * Genera un archivo .ass con efecto karaoke:
+ * - Palabras no pronunciadas: blanco
+ * - Palabra activa: se rellena de amarillo de izquierda a derecha (\kf)
+ * - Palabras ya pronunciadas: amarillo
+ *
+ * @param {Array}  wordBoundaries - [{word, start, duration}] de Edge TTS
+ * @param {string} outputPath     - ruta donde guardar el .ass
+ * @param {number} yPos           - posición Y en píxeles (default: 1460)
+ */
+function buildKaraokeASSFile(wordBoundaries, outputPath, yPos = 1460) {
+  const LINE_WORDS = 4;  // palabras por línea visible simultáneamente
+  const xPos = 540;      // centro horizontal (PlayResX/2)
+
+  // ASS color format: &HAABBGGRR
+  // Amarillo (255,255,0) → A=00,B=00,G=FF,R=FF → &H0000FFFF
+  // Blanco   (255,255,255) → &H00FFFFFF
+  const header =
+`[Script Info]
+ScriptType: v4.00+
+PlayResX: 1080
+PlayResY: 1920
+WrapStyle: 0
+
+[V4+ Styles]
+Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+Style: Default,Impact,128,&H0000FFFF,&H00FFFFFF,&H00000000,&H90000000,-1,0,0,0,100,100,1,0,1,6,4,5,10,10,10,1
+
+[Events]
+Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
+`;
+
+  const lines = [];
+  for (let i = 0; i < wordBoundaries.length; i += LINE_WORDS) {
+    lines.push(wordBoundaries.slice(i, i + LINE_WORDS));
+  }
+
+  const dialogues = lines.map(lineWords => {
+    const lineStart = lineWords[0].start;
+    const lastWord  = lineWords[lineWords.length - 1];
+    const lineEnd   = lastWord.start + lastWord.duration + 0.18;
+
+    // \kf<cs> → rellena la palabra de amarillo en cs centésimas de segundo
+    const karaokeText = lineWords.map(w => {
+      const cs = Math.max(1, Math.round(w.duration * 100));
+      return `{\\kf${cs}}${w.word}`;
+    }).join(' ');
+
+    return `Dialogue: 0,${formatASSTime(lineStart)},${formatASSTime(lineEnd)},Default,,0,0,0,,{\\pos(${xPos},${yPos})}${karaokeText}`;
+  }).join('\n');
+
+  require('fs').writeFileSync(outputPath, header + dialogues + '\n', 'utf8');
+  return outputPath;
+}
+
+/**
+ * Genera un archivo ASS a partir de los styled blocks (todos los modos).
+ * Usa Impact, colores por sección, sin karaoke pero con posicionamiento exacto.
+ * Alternativa a drawtext — mejor tipografía, sin escaping manual.
+ *
+ * @param {Array}  blocks     - salida de buildStyledSubtitleBlocks
+ * @param {string} outputPath - ruta .ass de salida
+ * @param {number} yPos       - posición Y en píxeles (default: 1460)
+ */
+function buildStyledASSFile(blocks, outputPath, yPos = 1460) {
+  // ASS color: &HAABBGGRR
+  const CSS_TO_ASS = {
+    yellow:    '&H0000FFFF',
+    white:     '&H00FFFFFF',
+    '#FFD700': '&H0000D7FF',
+    '#00E5FF': '&H00FFE500',
+    '#F3F7FF': '&H00FFF7F3',  // cold white (hook, micro_value)
+    '#4F7BFF': '&H00FF7B4F',  // electric blue (open_loop, escalation, cta)
+    '#FF3B30': '&H00303BFF',  // danger red (reengage, peak, revelation)
+  };
+
+  const header =
+`[Script Info]
+ScriptType: v4.00+
+PlayResX: 1080
+PlayResY: 1920
+WrapStyle: 2
+
+[V4+ Styles]
+Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+Style: Default,Impact,100,&H00FFFFFF,&H00FFFFFF,&H00000000,&H90000000,-1,0,0,0,100,100,0,0,1,6,4,8,10,10,10,1
+
+[Events]
+Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
+`;
+
+  const dialogues = blocks.map(block => {
+    const color   = CSS_TO_ASS[block.color] || '&H00FFFFFF';
+    const fs2     = block.fontSize ? Math.round(block.fontSize * 0.78) : 78; // escala 1080→ASS
+    const bold    = block.isImpact || block.isHook ? -1 : 0;
+    const outline = block.isImpact || block.isHook ? 8 : 6;
+    const tags    = `{\\c${color}\\fs${fs2}\\b${bold}\\bord${outline}\\pos(540,${yPos})}`;
+    return `Dialogue: 0,${formatASSTime(block.start)},${formatASSTime(block.end)},Default,,0,0,0,,${tags}${block.text}`;
+  }).join('\n');
+
+  require('fs').writeFileSync(outputPath, header + dialogues + '\n', 'utf8');
+  return outputPath;
+}
+
 module.exports = {
   buildStyledSubtitleBlocks,
   buildStyledDrawtextFilters,
   buildSRTContent,
+  buildKaraokeASSFile,
+  buildStyledASSFile,
   hasImpactWord,
   SECTION_COLORS,
   SECTION_FONT_SIZES,

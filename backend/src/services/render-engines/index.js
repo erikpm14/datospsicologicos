@@ -16,6 +16,7 @@ const { renderWithVideoUse, checkVideoUseAvailability } = require('./video-use-r
 const RENDER_ENGINE = process.env.VIDEO_RENDER_ENGINE || 'current';
 const VIDEO_USE_ENABLED = process.env.VIDEO_USE_ENABLED === 'true';
 const VIDEO_USE_DRY_RUN = process.env.VIDEO_USE_DRY_RUN === 'true';
+const VIDEO_RENDER_VALIDATE = process.env.VIDEO_RENDER_VALIDATE_BEFORE_PUBLISH === 'true';
 
 let videoUseHealthy = null; // cached health status
 
@@ -73,9 +74,16 @@ async function renderVideoWithRouter(options = {}) {
 }
 
 /**
- * Verifica si se debe bloquear publicación (dry-run activo)
+ * Verifica si se debe bloquear publicación
+ * Bloquea si: (1) validación manual activa, o (2) video-use dry-run activo
  */
 function shouldBlockPublish(outputDir) {
+  // Bloqueo por validación manual explícita (nuevo)
+  if (VIDEO_RENDER_VALIDATE) {
+    return true;
+  }
+
+  // Bloqueo por dry-run de video-use (existente)
   if (RENDER_ENGINE !== 'video_use' || !VIDEO_USE_DRY_RUN) {
     return false;
   }

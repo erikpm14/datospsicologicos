@@ -27,8 +27,8 @@ const COMP_RATIO         = parseFloat(process.env.AUDIO_COMP_RATIO   || '2.5');
 const COMP_ATTACK        = parseInt(process.env.AUDIO_COMP_ATTACK    || '20');  // ms
 const COMP_RELEASE       = parseInt(process.env.AUDIO_COMP_RELEASE   || '80');  // ms
 const COMP_MAKEUP        = parseFloat(process.env.AUDIO_COMP_MAKEUP  || '1.5'); // dB
-const LOUD_TARGET        = parseFloat(process.env.AUDIO_LUFS_TARGET  || '-16'); // LUFS
-const LOUD_TP            = parseFloat(process.env.AUDIO_LUFS_TP      || '-1.5'); // dBTP
+const LOUD_TARGET        = parseFloat(process.env.AUDIO_LUFS_TARGET  || '-14'); // LUFS (TikTok/YouTube Shorts standard)
+const LOUD_TP            = parseFloat(process.env.AUDIO_LUFS_TP      || '-1.0'); // dBTP
 const LOUD_LRA           = parseFloat(process.env.AUDIO_LUFS_LRA     || '11');  // LU
 const OUTPUT_BITRATE     = process.env.AUDIO_BITRATE                 || '192k';
 const POSTPROCESS_ENABLED = process.env.AUDIO_POSTPROCESS_ENABLED !== 'false'; // activo por defecto

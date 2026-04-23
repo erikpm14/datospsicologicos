@@ -15,6 +15,7 @@
     "test:subtitles": "node src/services/subtitle-styler.js",
     "test:quality": "node src/services/production-quality-checker.js",
     "test:quality-gate": "node src/services/content-quality-gate.js",
+    "render:test": "node ../scripts/test-render.js",
     "render:video-use:test": "node ../scripts/test-video-use.js",
     "clean:generated": "node ../scripts/clean-generated.js",
     "clean:dry": "node ../scripts/clean-generated.js --dry-run",
