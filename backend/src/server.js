@@ -17,6 +17,9 @@ const fs = require('fs');
 const axios = require('axios');
 const logger = require('./utils/logger');
 const { initializeDatabase, getDashboardStats, getFullAnalytics } = require('./services/analytics-tracker');
+const { generateObservationSnapshot } = require('./services/observation-snapshot.service');
+const { refreshYouTubeIntegration } = require('./services/youtube-integration.service');
+const { generateYouTubeChannelAnalysis } = require('./services/youtube-channel-analysis.service');
 const { addVideoToQueue, getQueueStatus } = require('./queue/video-processor');
 const { generateScript, generateSeries } = require('./services/content-generator');
 const { scoreScript } = require('./utils/virality-scorer');
@@ -25,7 +28,7 @@ const { getSpanishVoices } = require('./services/voice-synthesizer');
 const { runGrowthCycle, getGrowthInsights, getNextVideoRecommendation, exploitWinner } = require('./services/growth-engine');
 const { getABStats } = require('./services/ab-test-engine');
 const { getDecisionHistory, detectWinningPatterns } = require('./services/decision-engine');
-const { getLearningReport, rebuildMatrix } = require('./services/context-learner');
+const { getLearningReport, rebuildMatrix, adjustTopicWeights, analyzeFailuresWithClaude } = require('./services/context-learner');
 const { detectEarlyWinners } = require('./services/early-winner-detector');
 const { getCacheStats, clearCache } = require('./services/script-cache');
 const { getPatternsReport, minePatterns } = require('./services/pattern-miner');
@@ -33,6 +36,8 @@ const { getClassificationReport, getWinners, getFlops, classifyAllVideos } = req
 const { startGenerationScheduler, runGenerationCycle, getSchedulerStatus } = require('./services/scheduler.service');
 const { analyzeHookPerformance, getHookPerformanceAnalysis, getTopHooks, getHookInsights } = require('./services/hook-performance-analyzer');
 const { startPublishScheduler, runPublishCycle, getPublishSchedulerStatus, getReadyToPublishVideos } = require('./services/publish-scheduler.service');
+const { startPipelineWatchdog } = require('./services/pipeline-watchdog.service');
+const { getQueueSnapshot } = require('./services/operational-state.service');
 const hooksData = require('./templates/psychology-hooks.json');
 const themesData = require('./templates/visual-themes.json');
 
@@ -75,7 +80,11 @@ app.get('/auth/youtube', (_req, res) => {
     client_id:     process.env.YOUTUBE_CLIENT_ID,
     redirect_uri:  YOUTUBE_REDIRECT_URI,
     response_type: 'code',
-    scope:         'https://www.googleapis.com/auth/youtube.upload',
+    scope:         [
+      'https://www.googleapis.com/auth/youtube.upload',
+      'https://www.googleapis.com/auth/youtube.readonly',
+      'https://www.googleapis.com/auth/yt-analytics.readonly',
+    ].join(' '),
     access_type:   'offline',
     prompt:        'consent',   // fuerza nuevo refresh_token aunque ya haya uno
   });
@@ -142,9 +151,29 @@ app.get('/auth/youtube/callback', async (req, res) => {
   }
 });
 
-app.get('/api/analytics', (_req, res) => {
+app.get('/api/analytics', async (_req, res) => {
   try {
+    await refreshYouTubeIntegration();
     res.json({ ok: true, data: getFullAnalytics() });
+  } catch (err) {
+    res.status(500).json({ ok: false, error: err.message });
+  }
+});
+
+app.get('/api/analytics/observation-snapshot', async (_req, res) => {
+  try {
+    await refreshYouTubeIntegration();
+    res.json({ ok: true, data: generateObservationSnapshot() });
+  } catch (err) {
+    res.status(500).json({ ok: false, error: err.message });
+  }
+});
+
+app.get('/api/analytics/youtube-channel-analysis', async (req, res) => {
+  try {
+    const forceRefresh = String(req.query.refresh || '') === '1';
+    const data = await generateYouTubeChannelAnalysis({ forceRefresh });
+    res.json({ ok: true, data });
   } catch (err) {
     res.status(500).json({ ok: false, error: err.message });
   }
@@ -359,6 +388,18 @@ app.post('/api/learning/rebuild', (_req, res) => {
   try {
     const matrix = rebuildMatrix();
     res.json({ ok: true, data: { topics: Object.keys(matrix.matrix || {}).length, topPerformers: matrix.topPerformers?.length || 0 } });
+  } catch (err) {
+    res.status(500).json({ ok: false, error: err.message });
+  }
+});
+
+// Forzar ciclo de aprendizaje completo (pesos + análisis Claude)
+app.post('/api/learning/cycle', async (_req, res) => {
+  try {
+    rebuildMatrix();
+    const weights  = adjustTopicWeights();
+    const failures = await analyzeFailuresWithClaude();
+    res.json({ ok: true, data: { topicWeights: weights, failuresAnalyzed: failures.analyzed, topics: failures.topics } });
   } catch (err) {
     res.status(500).json({ ok: false, error: err.message });
   }
@@ -1068,7 +1109,7 @@ app.get('/api/dashboard/operations', (_req, res) => {
     }
 
     // ── Queue status ──
-    getQueueStatus(); // warm up
+    const queueSnapshot = getQueueSnapshot();
 
     // ── Pipeline: pending jobs ──
     const pendingJobs = [];
@@ -1201,10 +1242,10 @@ app.get('/api/dashboard/operations', (_req, res) => {
           nextPublishMins,
           publishedToday:    todayState.count || 0,
           maxPerDay,
-          readyToPublish:    rendered.length,
-          queuePending:      pendingJobs.length,
-          queueRendering:    rendering ? 1 : 0,
-          queueFailed:       failedJobs.length,
+          readyToPublish:    queueSnapshot.readyCount,
+          queuePending:      queueSnapshot.pendingCount,
+          queueRendering:    queueSnapshot.activeCount,
+          queueFailed:       queueSnapshot.failedCount,
           generationEnabled: process.env.AUTO_GENERATION_ENABLED === 'true',
           publishEnabled:    process.env.AUTO_PUBLISH_ENABLED    === 'true',
           isPublishing:      publishStatus.isPublishing,
@@ -1259,6 +1300,57 @@ app.use((err, _req, res, _next) => {
   res.status(500).json({ ok: false, error: 'Internal server error' });
 });
 
+// ── Performance Analytics & ML Optimization ───────────────────────────────────
+const { getOptimizationStatus, getHookTypeDistribution, getTopicPriority, suggestTopicByPerformance } = require('./services/insights-optimizer.service');
+const { getInsights } = require('./services/performance-analyzer.service');
+
+app.get('/api/analytics/performance', (_req, res) => {
+  try {
+    const insights = getInsights();
+    res.json({
+      ok: true,
+      data: {
+        insights,
+        generatedAt: insights?.generatedAt || null,
+        totalVideos: insights?.totalVideosAnalyzed || 0,
+      },
+    });
+  } catch (err) {
+    res.status(500).json({ ok: false, error: err.message });
+  }
+});
+
+app.get('/api/analytics/optimization-status', (_req, res) => {
+  try {
+    const status = getOptimizationStatus();
+    res.json({
+      ok: true,
+      data: status,
+    });
+  } catch (err) {
+    res.status(500).json({ ok: false, error: err.message });
+  }
+});
+
+app.get('/api/analytics/optimization-weights', (_req, res) => {
+  try {
+    const distribution = getHookTypeDistribution();
+    const topicPriority = getTopicPriority();
+    const topicSuggestion = suggestTopicByPerformance();
+
+    res.json({
+      ok: true,
+      data: {
+        hookTypeDistribution: distribution,
+        topicPriority: topicPriority?.slice(0, 10),
+        suggestedTopic: topicSuggestion,
+      },
+    });
+  } catch (err) {
+    res.status(500).json({ ok: false, error: err.message });
+  }
+});
+
 // ─────────────────────────────────────────────
 //  ARRANQUE
 // ─────────────────────────────────────────────
@@ -1276,6 +1368,7 @@ async function start() {
   setTimeout(() => {
     startGenerationScheduler();
     startPublishScheduler();
+    startPipelineWatchdog();
   }, 2000);
 }
 
