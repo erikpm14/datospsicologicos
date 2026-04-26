@@ -665,7 +665,7 @@ cron.schedule('0 * * * *', async () => {
 cron.schedule('0 */6 * * *', async () => {
   logger.info('Cron: Trend scraping...');
   try {
-    const { runTrendScraper } = require('../../../scripts/trend-scraper');
+    const { runTrendScraper } = require('../services/trend-scraper');
     await runTrendScraper();
     logger.info('Cron: Trend scraping done');
   } catch (err) {
