@@ -9,86 +9,87 @@ const logger = require('../utils/logger');
 const { validateHookConfessional } = require('./hook-validator.service');
 
 // TEMPLATES de hooks confesionales por emoción/tema
+// PRIORITARIOS: Simples, cotidianos, íntimos. NO teatrales.
 const CONFESSIONAL_TEMPLATES = {
-  // Negación/Fingimiento
+  // Negación/Fingimiento — SIMPLE Y COTIDIANO
   denial: [
-    'No sé por qué hago como que no pasa nada.',
-    'Hago como que no me duele, pero me duele.',
-    'Pretendo que no importa, pero importa.',
-    'Fingo que estoy bien cuando no lo estoy.',
-    'Digo que no me importa cuando en realidad sí.',
+    'Digo que no me importa, pero sí.',
+    'Hago como que no pasa nada.',
+    'Fingo estar bien cuando no lo estoy.',
+    'Me callo y espero que lo noten.',
+    'Pretendo que no duele, pero duele.',
   ],
 
-  // Comportamiento oculto
+  // Comportamiento oculto — LO QUE HAGO A SOLAS
   hidden_behavior: [
     'Hay algo que hago cuando nadie me ve.',
-    'Hay un lado de mí que nadie conoce.',
-    'Tengo un hábito que no puedo admitir.',
-    'Hay cosas que hago a espaldas de todos.',
-    'Hay un yo que solo existe cuando estoy solo.',
+    'Hay una cosa que no le digo a nadie.',
+    'Tengo un ritual que no puedo admitir.',
+    'Hago cosas que nadie sabe.',
+    'Hay un yo cuando estoy solo.',
   ],
 
-  // Contradicción interna
+  // Contradicción interna — SIMPLE
   contradiction: [
-    'Digo que no me importa lo que piensan, pero me importa.',
     'Sé que está mal y lo hago igual.',
-    'Sé la verdad pero sigo creyendo la mentira.',
-    'Me digo que tengo control, pero no lo tengo.',
-    'Sé exactamente qué está pasando y sigo permitiéndolo.',
+    'No sé por qué vuelvo ahí.',
+    'Digo que no voy a repetirlo y lo repito.',
+    'Sé cómo termina y sigo comenzando.',
+    'Me prometo no hacerlo y lo hago de nuevo.',
   ],
 
-  // Incomodidad/Verdad incómoda
+  // Incomodidad/Verdad incómoda — DIRECTA
   uncomfortable_truth: [
-    'No lo digo en voz alta, pero lo pienso todos los días.',
-    'Nunca lo admitiría, pero es verdad.',
-    'Sé que nadie quiere escuchar esto, pero es lo que pasa.',
-    'La verdad que no puedo decir en voz alta.',
-    'Lo que nadie ve cuando me voy a dormir.',
+    'Lo pienso todos los días pero no lo digo.',
+    'Es verdad aunque nadie me crea.',
+    'Lo que guardo sin decirle a nadie.',
+    'La verdad que no puedo confesar.',
+    'Lo que pienso cuando me quedo solo.',
   ],
 
-  // Miedo/Vulnerabilidad
+  // Miedo/Vulnerabilidad — ESPECÍFICO
   vulnerability: [
-    'Tengo miedo de que alguien descubra quién soy realmente.',
-    'Me asusta que se den cuenta de que estoy perdido.',
-    'Lo que más me aterroriza es que vean mi verdadero yo.',
-    'Tengo miedo de terminar solo por ser como soy.',
-    'Me aterroriza que descubran lo que realmente pienso.',
+    'Tengo miedo de que se vayan.',
+    'Me asusta lo que voy a hacer.',
+    'Tengo miedo de perder el control.',
+    'Me da pánico no ser suficiente.',
+    'Tengo miedo de estar solo.',
   ],
 
-  // Traición interna
+  // Traición interna — RECONOCIMIENTO
   self_betrayal: [
-    'Me traiciono todos los días sin admitirlo.',
-    'Sé exactamente en qué momentos me vendo a mí mismo.',
-    'Cada día elijo cosas que me traicionan.',
-    'Tengo mil formas de traicionarme sin que nadie lo note.',
-    'Sé exactamente cuándo y cómo me dejo caer.',
+    'Me saboteo sin saber por qué.',
+    'Sé que me estoy saboteando y no paro.',
+    'Me hago daño a mí mismo.',
+    'Sé exactamente cómo me dejo caer.',
+    'Elijo cosas que me perjudican.',
   ],
 
-  // Patrón automático
+  // Patrón automático — REPETICIÓN
   automatic_pattern: [
-    'Hago esto sin ni siquiera pensar por qué lo hago.',
-    'Repito un patrón que odio y no sé cómo pararlo.',
-    'Hago lo mismo una y otra vez esperando otro resultado.',
-    'Es como si alguien más controlara mis acciones.',
-    'Actúo en automático y después me pregunto por qué lo hice.',
+    'Repito lo que dije que no repetiría.',
+    'Hago lo mismo aunque sé que no funciona.',
+    'No puedo dejar de hacerlo.',
+    'Vuelvo al mismo lugar aunque sé que no debería.',
+    'Hago esto sin pensar, siempre.',
   ],
 
-  // Verdad silenciada
+  // Verdad silenciada — SIMPLE
   silenced_truth: [
     'Lo que nunca digo es que...',
-    'La verdad que cargo silenciosamente es que...',
-    'Nadie sabe que en realidad yo...',
-    'Lo que guardo sin decir a nadie es que...',
-    'La parte de mí que nadie ve piensa que...',
+    'Nadie sabe que en realidad...',
+    'La verdad que guardo es que...',
+    'Lo que no admito es que...',
+    'Lo que realmente pienso es que...',
   ],
 
-  // Confrontación interna
+  // Confrontación interna — COTIDIANA (NO DRAMÁTICA)
   internal_confrontation: [
-    'Lucho contra una parte de mí que no quiero admitir.',
-    'Hay una guerra dentro de mí que nadie ve.',
-    'Una parte de mí quiere ser diferente, pero no puedo.',
-    'Me debate conmigo mismo todos los días.',
-    'Hay un conflicto dentro de mí que me paraliza.',
+    'Una parte de mí quiere irse.',
+    'Tengo dos formas de ver esto.',
+    'Una parte de mí sabe que está mal.',
+    'Tengo dos voces y se contradicen.',
+    'No sé qué parte de mí elegir.',
   ],
 };
 

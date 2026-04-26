@@ -54,12 +54,46 @@ const VULNERABILITY_INDICATORS = [
   'pierdo', 'fallo', 'decepciono', 'traición', 'solo', 'vacío',
   'mentira', 'negación', 'pretendo', 'aparento', 'nunca digo',
   'nunca admito', 'todos creen', 'nadie sabe', 'en realidad',
-  'la verdad es', 'lo que nadie ve', 'por dentro',
+  'la verdad es', 'por dentro',
+];
+
+// Palabras que indican DRAMATISMO EXCESIVO (a penalizar)
+const DRAMATIC_PATTERNS = [
+  /nadie quiere escuchar/i,
+  /descubran quién soy/i,
+  /lucho contra una parte/i,
+  /guerra dentro de mí/i,
+  /me paraliza/i,
+  /aterroriza/i,
+  /me deshago/i,
+  /colapso/i,
+  /oscuridad/i,
+  /abismo/i,
+  /parte de mí que no quiero/i,
 ];
 
 /**
+ * TEST DE REALIDAD: ¿Alguien real lo diría pensando solo?
+ */
+function passRealityTest(hookText) {
+  // Frases que nadie diría realmente:
+  const unrealistic = [
+    /nadie quiere escuchar/i,
+    /descubran quién soy realmente/i,
+    /me aterroriza/i,
+    /me paraliza/i,
+    /me debate conmigo mismo/i,
+    /me deshago/i,
+    /oscuridad/i,
+    /abismo/i,
+  ];
+
+  return !unrealistic.some(pattern => pattern.test(hookText));
+}
+
+/**
  * Validar si un hook es confesional/íntimo
- * Retorna: { valid, score, reason, penalties }
+ * Threshold: >= 70 obligatorio, >= 80 prioridad alta, < 70 rechazado
  */
 function validateHookConfessional(hookText) {
   if (!hookText || typeof hookText !== 'string') {
@@ -68,22 +102,39 @@ function validateHookConfessional(hookText) {
       score: 0,
       reason: 'Hook inválido (no es string)',
       penalties: ['invalid_format'],
+      priority: 'low',
     };
   }
 
   let score = 100;
   const penalties = [];
 
-  // 1. DETECTAR PATRONES GENÉRICOS
+  // 1. TEST DE REALIDAD (crítico)
+  const passesReality = passRealityTest(hookText);
+  if (!passesReality) {
+    score -= 35; // Penalización muy fuerte
+    penalties.push('fails_reality_test');
+  }
+
+  // 2. DETECTAR PATRONES GENÉRICOS
   for (const pattern of GENERIC_PATTERNS) {
     if (pattern.test(hookText)) {
       score -= 30; // Penalización fuerte
-      penalties.push(`generic_pattern: ${pattern}`);
-      break; // Solo una penalización por patrón genérico
+      penalties.push(`generic_pattern`);
+      break;
     }
   }
 
-  // 2. DETECTAR PRIMERA PERSONA O IMPLÍCITO (bonus)
+  // 3. DETECTAR DRAMATISMO EXCESIVO
+  for (const pattern of DRAMATIC_PATTERNS) {
+    if (pattern.test(hookText)) {
+      score -= 20; // Penalización por exceso de drama
+      penalties.push('too_dramatic');
+      break;
+    }
+  }
+
+  // 4. DETECTAR PRIMERA PERSONA O IMPLÍCITO (bonus)
   let hasFirstPerson = false;
   for (const pattern of FIRST_PERSON_PATTERNS) {
     if (pattern.test(hookText)) {
@@ -93,16 +144,16 @@ function validateHookConfessional(hookText) {
     }
   }
 
-  // 3. DETECTAR VULNERABILIDAD/INCOMODIDAD (bonus)
+  // 5. DETECTAR VULNERABILIDAD/INCOMODIDAD (bonus moderado)
   const vulnerabilityCount = VULNERABILITY_INDICATORS.filter(word =>
     new RegExp(`\\b${word}\\b`, 'i').test(hookText)
   ).length;
 
   if (vulnerabilityCount >= 1) {
-    score += Math.min(vulnerabilityCount * 5, 20); // Bonus acumulativo (máx 20)
+    score += Math.min(vulnerabilityCount * 3, 12); // Bonus más moderado (máx 12)
   }
 
-  // 4. TEST DE INSTAGRAM (¿suena a publicación motivacional?)
+  // 6. TEST DE INSTAGRAM (¿suena a publicación motivacional?)
   const isInstagrammable = /^(la verdad|secreto|nunca|deberías|aprendes|descubre)/i.test(hookText) &&
                           !hasFirstPerson;
 
@@ -111,7 +162,7 @@ function validateHookConfessional(hookText) {
     penalties.push('instagram_motivational');
   }
 
-  // 5. LONGITUD CORRECTA (40-120 caracteres es ideal para hooks)
+  // 7. LONGITUD CORRECTA (35-120 caracteres es ideal)
   if (hookText.length < 30) {
     score -= 10;
     penalties.push('too_short');
@@ -120,7 +171,7 @@ function validateHookConfessional(hookText) {
     penalties.push('too_long');
   }
 
-  // 6. NO DEBE TENER DEMASIADAS MAYÚSCULAS (vulgares)
+  // 8. NO DEBE TENER DEMASIADAS MAYÚSCULAS
   const capsCount = (hookText.match(/[A-Z]/g) || []).length;
   const capsRatio = capsCount / hookText.length;
   if (capsRatio > 0.15) {
@@ -128,29 +179,62 @@ function validateHookConfessional(hookText) {
     penalties.push('excessive_caps');
   }
 
-  // Validez final
-  const valid = score >= 65 && vulnerabilityCount >= 1;
+  // 9. SIMPLICIDAD: Preferir hooks simples y cotidianos
+  const wordCount = hookText.split(/\s+/).length;
+  if (wordCount >= 20) {
+    score -= 8; // Penalizar demasiadas palabras
+    penalties.push('too_complex');
+  }
+
+  // Normalizar score
+  const finalScore = Math.max(0, Math.min(100, score));
+
+  // Validez final (threshold >= 70)
+  // Requiere: score >= 70, pasa reality test, Y ADEMÁS (primera persona O vulnerabilidad)
+  const valid = finalScore >= 70 && passesReality && (hasFirstPerson || vulnerabilityCount > 0);
+
+  // Determinar prioridad
+  let priority = 'low';
+  if (finalScore >= 80) priority = 'high';
+  else if (finalScore >= 70) priority = 'medium';
 
   return {
     valid,
-    score: Math.max(0, Math.min(100, score)),
+    score: finalScore,
     reason: valid
-      ? 'Hook confesional válido'
-      : 'Hook no cumple criterios confesionales',
+      ? 'Hook confesional válido (cotidiano e íntimo)'
+      : finalScore < 70
+        ? `Score bajo (${finalScore} < 70, requiere >= 70)`
+        : !passesReality
+          ? 'No pasa reality test - suena demasiado dramático'
+          : 'No tiene suficiente primera persona',
     penalties: penalties.length > 0 ? penalties : [],
     hasFirstPerson,
     vulnerabilityScore: vulnerabilityCount,
+    priority,
+    passesReality,
   };
 }
 
 /**
- * Penalizar viralityScore de un hook que no sea confesional
+ * Aplicar penalización a viralityScore basado en validación de hook
+ * Score < 70: rechazado
+ * Score 70-79: penalización -20
+ * Score >= 80: sin penalización
  */
 function applyHookPenalty(viralityScore, hookValidation) {
-  if (!hookValidation.valid) {
-    return Math.max(0, viralityScore - 25); // Penalización de -25 en virality
+  const hookScore = hookValidation.score || 0;
+
+  if (hookScore < 70) {
+    // RECHAZADO: penalización severa
+    return Math.max(0, viralityScore - 30);
+  } else if (hookScore < 80) {
+    // ACEPTABLE pero no óptimo: penalización leve
+    return Math.max(0, viralityScore - 10);
+  } else {
+    // PRIORIDAD ALTA: sin penalización
+    return viralityScore;
   }
-  return viralityScore;
 }
 
 /**
@@ -188,7 +272,9 @@ module.exports = {
   applyHookPenalty,
   getHookReport,
   validateHooks,
+  passRealityTest,
   GENERIC_PATTERNS,
   FIRST_PERSON_PATTERNS,
   VULNERABILITY_INDICATORS,
+  DRAMATIC_PATTERNS,
 };
