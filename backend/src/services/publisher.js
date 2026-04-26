@@ -9,21 +9,48 @@ const axios = require('axios');
 const fs = require('fs');
 const path = require('path');
 const logger = require('../utils/logger');
+const { validateForPublish, discardInvalidVideo } = require('./publish-validator.service');
+const PUBLISH_RETRY_DELAY_MS = Math.max(1000, parseInt(process.env.PUBLISH_RETRY_DELAY_MS || '4000', 10) || 4000);
+const PUBLISH_MAX_RETRIES = Math.max(1, parseInt(process.env.PUBLISH_MAX_RETRIES || '3', 10) || 3);
 
-// Hashtags base siempre incluidos
-const BASE_HASHTAGS = ['#psychology', '#psicologia', '#mentalidad', '#cerebro', '#hechosdepsicologia'];
+// Hashtags base siempre incluidos — #Shorts es obligatorio para clasificación de YouTube
+const BASE_HASHTAGS = ['#Shorts', '#psicologia', '#cerebro', '#hechosdepsicologia', '#mentalidad', '#psychology'];
 
-// Hashtags adicionales por topic
+// Hashtags adicionales por topic — cubre todos los topics del decision engine
 const TOPIC_HASHTAGS = {
-  body_language: ['#lenguajecorporal', '#comunicacion', '#bodyLanguage'],
-  cognitive_biases: ['#sesgosCognitivos', '#pensamiento', '#cognitiveScience'],
-  relationships: ['#relaciones', '#pareja', '#toxicPeople'],
-  workplace: ['#trabajo', '#liderazgo', '#inteligenciaEmocional'],
+  habits:            ['#habitos', '#productividad', '#mindset'],
+  dopamine:          ['#dopamina', '#motivacion', '#neurociencia'],
+  procrastination:   ['#procrastinacion', '#productividad', '#habitos'],
+  cognitive_biases:  ['#sesgosCognitivos', '#pensamiento', '#cognitiveScience'],
+  body_language:     ['#lenguajecorporal', '#comunicacion', '#bodyLanguage'],
+  emotional_patterns:['#emocionalmente', '#inteligenciaEmocional', '#emociones'],
+  relationships:     ['#relaciones', '#pareja', '#toxicPeople'],
+  decision_making:   ['#decisiones', '#pensamiento', '#racional'],
+  attention:         ['#concentracion', '#foco', '#atencion'],
+  memory:            ['#memoria', '#aprendizaje', '#neurociencia'],
+  social_patterns:   ['#comportamiento', '#social', '#psicologiaSocial'],
+  perception:        ['#percepcion', '#realidad', '#mente'],
+  motivation:        ['#motivacion', '#exito', '#mindset'],
+  self_talk:         ['#autoestima', '#mentePositiva', '#desarrolloPersonal'],
+  emotions:          ['#emociones', '#inteligenciaEmocional', '#bienestar'],
+  // legacy
+  workplace:         ['#trabajo', '#liderazgo', '#inteligenciaEmocional'],
   first_impressions: ['#primeraImpresion', '#social', '#personalidad'],
-  social_skills: ['#habilidadesSociales', '#carisma', '#networking'],
-  habits: ['#habitos', '#productividad', '#mindset'],
-  communication: ['#comunicacion', '#conversacion', '#influencia'],
+  social_skills:     ['#habilidadesSociales', '#carisma', '#networking'],
+  communication:     ['#comunicacion', '#conversacion', '#influencia'],
 };
+
+/**
+ * Construye el título de YouTube: hook + #Shorts + 1-2 hashtags de topic.
+ * Máximo 100 caracteres. #Shorts es obligatorio para clasificación como Short.
+ */
+function buildYouTubeTitle(script) {
+  const topicTags = (TOPIC_HASHTAGS[script.topic] || []).slice(0, 2).join(' ');
+  const suffix = `#Shorts ${topicTags}`.trim();
+  const maxHookLen = 100 - suffix.length - 1;
+  const hook = script.hook.slice(0, maxHookLen);
+  return `${hook} ${suffix}`.trim();
+}
 
 /**
  * Construye el caption completo para el video.
@@ -192,9 +219,9 @@ async function publishToYouTube(videoPath, script) {
       'https://www.googleapis.com/upload/youtube/v3/videos?uploadType=resumable&part=snippet,status',
       {
         snippet: {
-          title: script.hook.slice(0, 100),
+          title: buildYouTubeTitle(script),
           description: caption,
-          tags: BASE_HASHTAGS.map((h) => h.replace('#', '')),
+          tags: [...BASE_HASHTAGS, ...(TOPIC_HASHTAGS[script.topic] || [])].map((h) => h.replace('#', '')),
           categoryId: '26', // How-to & Style
           defaultLanguage: 'es',
         },
@@ -268,14 +295,60 @@ async function getYouTubeAccessToken() {
  * Solo intenta plataformas con credenciales reales (no "RELLENAR").
  */
 async function publishAll(videoPath, script, videoUrl = null) {
+  // VALIDACIÓN DURA PRE-PUBLISH
+  const validation = validateForPublish(script);
+  if (!validation.valid) {
+    logger.error('PublishAll: video failed validation — REJECTED', {
+      videoId: script.id,
+      failures: validation.failures,
+    });
+
+    // Mover a discarded
+    const doneFilePath = path.resolve(`./queue/done/${script.id}.json`);
+    if (fs.existsSync(doneFilePath)) {
+      discardInvalidVideo(script, doneFilePath);
+      logger.warn('PublishAll: moved to discarded-invalid-current/', { videoId: script.id });
+    }
+
+    return {
+      success: false,
+      error: 'REJECTED_VALIDATION',
+      reason: validation.reason,
+      failures: validation.failures,
+      discarded: true,
+    };
+  }
+
+  logger.info('PublishAll: video passed validation ✓', {
+    videoId: script.id,
+    duration: validation.duration,
+    virality: validation.viralityScore,
+    humanity: validation.humanityScore,
+  });
+
   const results = [];
   const errors = [];
+  const runWithRetry = async (platform, fn) => {
+    let lastError = null;
+    for (let attempt = 1; attempt <= PUBLISH_MAX_RETRIES; attempt++) {
+      try {
+        return await fn();
+      } catch (err) {
+        lastError = err;
+        logger.warn(`${platform}: publish attempt ${attempt}/${PUBLISH_MAX_RETRIES} failed | ${err.message}`);
+        if (attempt < PUBLISH_MAX_RETRIES) {
+          await sleep(PUBLISH_RETRY_DELAY_MS * attempt);
+        }
+      }
+    }
+    throw lastError;
+  };
 
   // TikTok — solo si el token está configurado
   const tiktokToken = process.env.TIKTOK_ACCESS_TOKEN;
   if (tiktokToken && tiktokToken !== 'RELLENAR') {
     try {
-      const tiktokResult = await publishToTikTok(videoPath, script);
+      const tiktokResult = await runWithRetry('TikTok', () => publishToTikTok(videoPath, script));
       results.push(tiktokResult);
     } catch (err) {
       errors.push({ platform: 'tiktok', error: err.message });
@@ -288,7 +361,7 @@ async function publishAll(videoPath, script, videoUrl = null) {
   const igToken = process.env.INSTAGRAM_ACCESS_TOKEN;
   if (videoUrl && igToken && igToken !== 'RELLENAR') {
     try {
-      const igResult = await publishToInstagram(videoUrl, script);
+      const igResult = await runWithRetry('Instagram', () => publishToInstagram(videoUrl, script));
       results.push(igResult);
     } catch (err) {
       errors.push({ platform: 'instagram', error: err.message });
@@ -301,13 +374,20 @@ async function publishAll(videoPath, script, videoUrl = null) {
   const ytRefresh = process.env.YOUTUBE_REFRESH_TOKEN;
   if (ytRefresh && ytRefresh !== 'RELLENAR') {
     try {
-      const ytResult = await publishToYouTube(videoPath, script);
+      const ytResult = await runWithRetry('YouTube', () => publishToYouTube(videoPath, script));
       results.push(ytResult);
     } catch (err) {
       errors.push({ platform: 'youtube', error: err.message });
     }
   } else {
     logger.warn('YouTube: YOUTUBE_REFRESH_TOKEN no configurado — saltando');
+  }
+
+  if (results.length === 0) {
+    const message = errors.length > 0
+      ? errors.map((entry) => `${entry.platform}: ${entry.error}`).join(' | ')
+      : 'no publish platforms configured';
+    throw new Error(`Publish produced no successful platforms: ${message}`);
   }
 
   return { results, errors };
