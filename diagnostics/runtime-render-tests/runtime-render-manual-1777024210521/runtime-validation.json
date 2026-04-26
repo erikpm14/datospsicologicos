@@ -1,0 +1,107 @@
+{
+  "testId": "runtime-render-manual-1777024210521",
+  "startedAt": "2026-04-24T09:50:10.521Z",
+  "finishedAt": "2026-04-24T09:51:04.113Z",
+  "outputDir": "C:\\Users\\Erik\\Desktop\\Generador_videos\\diagnostics\\runtime-render-tests\\runtime-render-manual-1777024210521",
+  "videoPath": "C:\\Users\\Erik\\Desktop\\Generador_videos\\diagnostics\\runtime-render-tests\\runtime-render-manual-1777024210521\\output.mp4",
+  "outputExists": true,
+  "outputSizeBytes": 5008704,
+  "duration": 45.01,
+  "segmentsUsed": 15,
+  "timings": {
+    "tts_ms": 29399,
+    "audio_postprocess_ms": 1786,
+    "render_ms": 22307,
+    "qc_ms": 96
+  },
+  "qc": {
+    "score": 100,
+    "passed": true,
+    "threshold": 70,
+    "checks": {
+      "audioExists": {
+        "ok": true,
+        "path": "C:\\Users\\Erik\\Desktop\\Generador_videos\\diagnostics\\runtime-render-tests\\runtime-render-manual-1777024210521\\voice_proc.mp3",
+        "sizeKB": 1056,
+        "reason": null
+      },
+      "audioDuration": {
+        "ok": false,
+        "duration": 45,
+        "reason": "duration 45.0s outside [8-45s]"
+      },
+      "videoExists": {
+        "ok": true,
+        "sizeKB": 4891,
+        "reason": null
+      },
+      "renderMode": {
+        "ok": true,
+        "mode": "enhanced",
+        "reason": null
+      },
+      "renderVisuals": {
+        "ok": true,
+        "reason": null,
+        "renderMode": "enhanced"
+      },
+      "scriptComplete": {
+        "ok": true,
+        "missing": [],
+        "reason": null
+      },
+      "viralityScore": {
+        "ok": true,
+        "score": 90,
+        "min": 72,
+        "reason": null
+      },
+      "formatScore": {
+        "ok": true,
+        "score": 84,
+        "min": 75,
+        "reason": null
+      },
+      "hasTheme": {
+        "ok": true,
+        "reason": null
+      },
+      "contentVersion": {
+        "ok": true,
+        "actual": "v2",
+        "required": "v2",
+        "reason": null
+      },
+      "publishableFile": {
+        "ok": true,
+        "duration": 45,
+        "hasVideoStream": true,
+        "reason": null
+      }
+    },
+    "reasons": [
+      "duration 45.0s outside [8-45s]"
+    ],
+    "checkedAt": "2026-04-24T09:51:04.111Z"
+  },
+  "metadata": {
+    "updatedAt": "2026-04-24T09:51:04.014Z",
+    "requestedVisualMode": "single_focus_pexels",
+    "fetchedClipCount": 3,
+    "clipPaths": [
+      "C:\\Users\\Erik\\Desktop\\Generador_videos\\backend\\assets\\stock-footage\\pexels_5899600.mp4",
+      "C:\\Users\\Erik\\Desktop\\Generador_videos\\backend\\assets\\stock-footage\\pexels_7279036.mp4",
+      "C:\\Users\\Erik\\Desktop\\Generador_videos\\backend\\assets\\stock-footage\\pexels_36956158.mp4"
+    ],
+    "renderMode": "enhanced",
+    "usedGradientFallback": false,
+    "visibleVisuals": true,
+    "hasSubtitles": true,
+    "duration": 45.01,
+    "segmentsUsed": 15,
+    "overlayEvents": 4,
+    "subtitleSafeY": "h*0.69",
+    "assSubtitleY": 1320,
+    "renderWarnings": []
+  }
+}

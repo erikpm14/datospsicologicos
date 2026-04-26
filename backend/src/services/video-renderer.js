@@ -15,7 +15,14 @@ const axios = require('axios');
 const fs = require('fs');
 const path = require('path');
 const logger = require('../utils/logger');
-const { buildStyledSubtitleBlocks, buildStyledDrawtextFilters, buildSRTContent } = require('./subtitle-styler');
+const { createPerfTracker, formatDurationMs } = require('../utils/perf-tracker');
+const { buildStyledSubtitleBlocks, buildStyledDrawtextFilters, buildSRTContent, buildKaraokeASSFile, buildStyledASSFile } = require('./subtitle-styler');
+const { getVisualStyleReference, STYLE_CLIP_KEYWORDS } = require('../utils/visual-style-system');
+const { detectVoiceSegments } = require('./audio-postprocess');
+const { mapSubtitlesToVoiceSegments } = require('./audio-subtitle-mapper');
+const { alignWordTimestamps } = require('./word-timestamp-aligner');
+const { exportVideo } = require('./export-manager');
+const VIDEO_USE_SKILL = require('../../../integrations/video-use/skill-config');
 
 ffmpeg.setFfmpegPath(ffmpegInstaller.path);
 ffmpeg.setFfprobePath(ffprobeInstaller.path);
@@ -26,6 +33,8 @@ const H = 1920;
 
 // Carpeta de caché para vídeos de Pexels descargados
 const CACHE_DIR = path.resolve('./assets/stock-footage');
+const PEXELS_SEARCH_CACHE_PATH = path.resolve('./data/pexels-search-cache.json');
+const PEXELS_SEARCH_CACHE_TTL_MS = Math.max(60_000, (parseInt(process.env.PEXELS_SEARCH_CACHE_MINUTES || '720', 10) || 720) * 60 * 1000);
 
 // Queries por topic: array de opciones → se elige aleatoriamente para variedad
 const TOPIC_QUERIES = {
@@ -98,26 +107,55 @@ const EFFECT_QUERIES = {
   'señalizacion':   ['status symbol luxury car watch', 'high status person confidence power'],
 };
 
-// Split screen layout (formato viral 2025-2026)
-const H_TOP = 1100; // parte superior: contenido psicología (57%)
-const H_BOT = 820;  // parte inferior: satisfying content (43%)
-// H_TOP + H_BOT = 1920 = H
+const CLIP_SWITCH_SECONDS = 2.5;
+const REENGAGE_TARGET_SECOND = 20;
+const SUBTITLE_Y = 'h*0.69';
+const ASS_SUBTITLE_Y = 1320;
+const RENDER_PRESET = process.env.FFMPEG_PRESET || 'veryfast';
+const RENDER_CRF = parseInt(process.env.FFMPEG_CRF || '23', 10) || 23;
+const PEXELS_QUERY_LIMIT = Math.max(1, parseInt(process.env.PEXELS_QUERY_LIMIT || '3', 10) || 3);
+const REFERENCE_VISUAL_STYLE = getVisualStyleReference();
+const TARGET_CUT_SECONDS = parseFloat(process.env.RENDER_TARGET_CUT_SECONDS || '2.35');
+const MIN_CUT_SECONDS = parseFloat(process.env.RENDER_MIN_CUT_SECONDS || '1.2');
+const MAX_CUT_SECONDS = parseFloat(process.env.RENDER_MAX_CUT_SECONDS || '3.0');
+const OVERLAY_DURATION_SECONDS = parseFloat(process.env.RENDER_OVERLAY_DURATION_SECONDS || '1.0');
 
-// Queries para la parte inferior satisfying — máxima retención
-const SATISFYING_QUERIES = [
-  'carpet cleaning satisfying asmr',
-  'pressure washing cleaning satisfying',
-  'kinetic sand cutting asmr close up',
-  'soap cutting satisfying asmr',
-  'power washing floor satisfying',
-  'sand art drawing satisfying',
-  'clay sculpting satisfying close up',
-  'woodworking crafting satisfying',
-  'cleaning dirty surface satisfying',
-  'ice scraping satisfying asmr',
-  'slime pressing satisfying close up',
-  'tile grouting cleaning satisfying',
-];
+// ─────────────────────────────────────────────
+//  Enriquecimiento de sectionDurations con voice segments
+// ─────────────────────────────────────────────
+
+/**
+ * Enriquece sectionDurations existente con información de voiceSegments detectados.
+ * Mapea segmentos de voz globales a las secciones correspondientes.
+ *
+ * @param {Object} sectionDurations - {section: {start, duration, segments?}}
+ * @param {Array} voiceSegments - [{start, end, duration}] globales
+ * @returns {Object} sectionDurations enriquecido con voice segments
+ */
+function _enrichSectionDurationsWithVoiceSegments(sectionDurations, voiceSegments) {
+  const enriched = { ...sectionDurations };
+
+  for (const [section, timing] of Object.entries(enriched)) {
+    if (!timing) continue;
+
+    // Encontrar voiceSegments que caen dentro del rango de esta sección
+    const sectionEnd = timing.start + timing.duration;
+    const sectionSegments = voiceSegments.filter(
+      (seg) => seg.start < sectionEnd && seg.end > timing.start,
+    ).map((seg) => ({
+      // Convertir coordenadas globales a relativas a la sección
+      start: Math.max(0, seg.start - timing.start),
+      end: Math.min(timing.duration, seg.end - timing.start),
+    }));
+
+    if (sectionSegments.length > 0) {
+      enriched[section] = { ...timing, segments: sectionSegments };
+      logger.debug(`Section '${section}': enriched with ${sectionSegments.length} voice segments`);
+    }
+  }
+
+  return enriched;
+}
 
 // ─────────────────────────────────────────────
 //  FFPROBE — duración real del audio
@@ -178,11 +216,21 @@ function buildPexelsQueries(script) {
   const vTrig  = script.viralTrigger || '';
   const effect = (script.effectName || script.psychologicalFact || '').toLowerCase();
 
+  const humanize = (query) => {
+    const q = String(query || '').trim();
+    if (!q) return 'person face close up real life';
+    const styled = /(dark|shadow|silhouette|blue|red|eye|brain|moody|cinematic|dramatic)/i.test(q)
+      ? q
+      : `dark cinematic ${q}`;
+    if (/(person|people|couple|conversation|face|portrait|office|phone|woman|man|friends|social|eye|brain|silhouette)/i.test(styled)) return styled;
+    return `person real life ${styled}`;
+  };
+
   // 1. Efecto psicológico conocido → queries específicas
   for (const [key, queries] of Object.entries(EFFECT_QUERIES)) {
     if (effect.includes(key)) {
       logger.info(`Pexels V2: effect match → "${key}"`);
-      return queries;
+      return queries.map(humanize);
     }
   }
 
@@ -191,8 +239,8 @@ function buildPexelsQueries(script) {
   if (hookMatch) {
     const emotionalQuery = EMOTIONAL_VISUAL_QUERIES[eTrig]?.[0] || null;
     const q2 = emotionalQuery || (TOPIC_QUERIES[topic] ? TOPIC_QUERIES[topic][Math.floor(Math.random() * TOPIC_QUERIES[topic].length)] : 'human behavior psychology');
-    logger.info(`Pexels V2: hook-match → "${hookMatch.query}" | "${q2}"`);
-    return [hookMatch.query, q2];
+      logger.info(`Pexels V2: hook-match → "${hookMatch.query}" | "${q2}"`);
+      return [humanize(hookMatch.query), humanize(q2)];
   }
 
   // 3. Emotional trigger → escena visual específica
@@ -200,30 +248,78 @@ function buildPexelsQueries(script) {
   if (emotionalScenes) {
     const topicOpts = TOPIC_QUERIES[topic];
     const q2 = Array.isArray(topicOpts) ? topicOpts[Math.floor(Math.random() * topicOpts.length)] : 'psychology human behavior';
-    logger.info(`Pexels V2: emotional → "${emotionalScenes[0]}" | "${q2}"`);
-    return [emotionalScenes[0], q2];
+      logger.info(`Pexels V2: emotional → "${emotionalScenes[0]}" | "${q2}"`);
+      return [humanize(emotionalScenes[0]), humanize(q2)];
   }
 
   // 4. Keywords del guión (como antes, pero más selectivo)
   const keywords = (script.keywords || [])
     .map(k => k.trim().split(/\s+/).slice(0, 2).join(' '))
     .filter(Boolean);
-  if (keywords.length >= 2) return [keywords[0], keywords[1]];
+  if (keywords.length >= 2) return [humanize(keywords[0]), humanize(keywords[1])];
   if (keywords.length === 1) {
     const topicFallback = Array.isArray(TOPIC_QUERIES[topic])
       ? TOPIC_QUERIES[topic][Math.floor(Math.random() * TOPIC_QUERIES[topic].length)]
       : 'psychology mind brain';
-    return [keywords[0], topicFallback];
+    return [humanize(keywords[0]), humanize(topicFallback)];
   }
 
   // 5. Topic fallback
   const topicOptions = TOPIC_QUERIES[topic];
   if (Array.isArray(topicOptions) && topicOptions.length >= 2) {
     const shuffled = [...topicOptions].sort(() => Math.random() - 0.5);
-    return [shuffled[0], shuffled[1]];
+    return [humanize(shuffled[0]), humanize(shuffled[1])];
   }
 
-  return ['psychology brain mind', 'human behavior emotion person'];
+  return ['dark cinematic blue eye close up', 'person silhouette red light dark'];
+}
+
+const STOCK_CACHE_MAX_BYTES = 1 * 1024 * 1024 * 1024; // 1 GB
+
+function readSearchCache() {
+  try {
+    if (!fs.existsSync(PEXELS_SEARCH_CACHE_PATH)) return {};
+    return JSON.parse(fs.readFileSync(PEXELS_SEARCH_CACHE_PATH, 'utf8'));
+  } catch {
+    return {};
+  }
+}
+
+function writeSearchCache(cache) {
+  try {
+    const dir = path.dirname(PEXELS_SEARCH_CACHE_PATH);
+    if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+    fs.writeFileSync(PEXELS_SEARCH_CACHE_PATH, JSON.stringify(cache, null, 2));
+  } catch {}
+}
+
+function pruneStockFootageCache() {
+  try {
+    if (!fs.existsSync(CACHE_DIR)) return;
+    const files = fs.readdirSync(CACHE_DIR)
+      .filter((f) => f.endsWith('.mp4'))
+      .map((f) => {
+        const full = path.join(CACHE_DIR, f);
+        const stat = fs.statSync(full);
+        return { full, size: stat.size, mtime: stat.mtimeMs };
+      });
+
+    const totalBytes = files.reduce((s, f) => s + f.size, 0);
+    if (totalBytes <= STOCK_CACHE_MAX_BYTES) return;
+
+    // Borra los más antiguos hasta bajar del límite
+    files.sort((a, b) => a.mtime - b.mtime);
+    let freed = 0;
+    for (const f of files) {
+      if (totalBytes - freed <= STOCK_CACHE_MAX_BYTES) break;
+      try { fs.unlinkSync(f.full); } catch {}
+      freed += f.size;
+      logger.info(`Stock cache pruned: ${path.basename(f.full)} (${Math.round(f.size / 1024 / 1024)}MB freed)`);
+    }
+    logger.info(`Stock cache: ${Math.round((totalBytes - freed) / 1024 / 1024)}MB after pruning`);
+  } catch (err) {
+    logger.warn(`Stock cache prune error: ${err.message}`);
+  }
 }
 
 async function getPexelsVideo(script, bgStyle, forcePage = null, forceQuery = null) {
@@ -239,14 +335,29 @@ async function getPexelsVideo(script, bgStyle, forcePage = null, forceQuery = nu
     ? SATISFYING_QUERIES[Math.floor(Math.random() * SATISFYING_QUERIES.length)]
     : (forceQuery || buildPexelsQueries(script)[0]);
   const page = forcePage !== null ? forcePage : Math.floor(Math.random() * 4) + 1;
+  const perf = createPerfTracker('pexels-fetch', { query, page });
+  const cacheKey = `${query}__${page}`;
+  const searchCache = readSearchCache();
+  const cachedEntry = searchCache[cacheKey];
+
+  if (cachedEntry && (Date.now() - new Date(cachedEntry.cachedAt).getTime()) < PEXELS_SEARCH_CACHE_TTL_MS) {
+    const cachedPath = path.join(CACHE_DIR, `pexels_${cachedEntry.id}.mp4`);
+    if (fs.existsSync(cachedPath)) {
+      logger.info(`Pexels cache hit | query="${query}" | file=pexels_${cachedEntry.id}.mp4 | total=${formatDurationMs(perf.snapshot().totalMs)}`);
+      return cachedPath;
+    }
+  }
 
   try {
+    perf.start('search');
     logger.info(`Fetching Pexels video | query: "${query}" | page: ${page}`);
     const res = await axios.get('https://api.pexels.com/videos/search', {
       headers: { Authorization: process.env.PEXELS_API_KEY },
       params: { query, per_page: 10, page, orientation: 'portrait', size: 'medium' },
       timeout: 15000,
     });
+    const searchPhase = perf.end({ source: 'api' });
+    logger.info(`Pexels search done | query="${query}" | ${formatDurationMs(searchPhase.durationMs)}`);
 
     const videos = (res.data.videos || []).filter((v) => v.duration >= 10);
 
@@ -277,19 +388,21 @@ async function getPexelsVideo(script, bgStyle, forcePage = null, forceQuery = nu
 
     // Cachea por ID de Pexels — nunca descarga el mismo vídeo dos veces
     const cachedPath = path.join(CACHE_DIR, `pexels_${chosen.id}.mp4`);
+    searchCache[cacheKey] = { id: chosen.id, link: file.link, cachedAt: new Date().toISOString() };
+    writeSearchCache(searchCache);
     if (fs.existsSync(cachedPath)) {
-      logger.info(`Using cached Pexels video: pexels_${chosen.id}.mp4`);
+      logger.info(`Using cached Pexels video: pexels_${chosen.id}.mp4 | total=${formatDurationMs(perf.snapshot().totalMs)}`);
       return cachedPath;
     }
 
     logger.info(`Downloading Pexels video ${chosen.id}: "${query}" p${page}`);
+    perf.start('download');
     const writer = fs.createWriteStream(cachedPath);
-    let downloadOk = false;
     try {
       const download = await axios.get(file.link, { responseType: 'stream', timeout: 90000 });
       download.data.pipe(writer);
       await new Promise((resolve, reject) => {
-        writer.on('finish', () => { downloadOk = true; resolve(); });
+        writer.on('finish', resolve);
         writer.on('error', reject);
         download.data.on('error', reject);
       });
@@ -299,7 +412,9 @@ async function getPexelsVideo(script, bgStyle, forcePage = null, forceQuery = nu
       throw dlErr;
     }
 
-    logger.info(`Saved: pexels_${chosen.id}.mp4`);
+    const downloadPhase = perf.end({ id: chosen.id, cachedPath });
+    logger.info(`Saved: pexels_${chosen.id}.mp4 | download=${formatDurationMs(downloadPhase.durationMs)} | total=${formatDurationMs(perf.snapshot().totalMs)}`);
+    pruneStockFootageCache();
     return cachedPath;
   } catch (err) {
     logger.error(`Pexels fetch failed: ${err.message}`);
@@ -322,20 +437,18 @@ async function getPexelsVideo(script, bgStyle, forcePage = null, forceQuery = nu
  */
 async function getPexelsVideos(script, bgStyle) {
   const [query1, query2] = buildPexelsQueries(script);
-  const page1 = Math.floor(Math.random() * 3) + 1;  // páginas 1-3
-  const page2 = Math.floor(Math.random() * 3) + 1;  // páginas 1-3 (query diferente garantiza variedad)
+  const extraKeywords = Array.isArray(script.videoInstructions?.clipKeywords)
+    ? script.videoInstructions.clipKeywords.slice(0, 2)
+    : [];
+  const queries = [...new Set([query1, query2, ...extraKeywords, ...STYLE_CLIP_KEYWORDS].filter(Boolean))].slice(0, PEXELS_QUERY_LIMIT);
 
-  logger.info(`Pexels queries | clip1: "${query1}" | clip2: "${query2}"`);
+  logger.info(`Pexels single-focus queries | ${queries.map((q) => `"${q}"`).join(' | ')}`);
 
-  const [clip1, clip2] = await Promise.all([
-    getPexelsVideo(script, bgStyle, page1, bgStyle === 'satisfying' ? null : query1),
-    getPexelsVideo(script, bgStyle, page2, bgStyle === 'satisfying' ? null : query2),
-  ]);
+  const clips = (await Promise.all(
+    queries.map((query, index) => getPexelsVideo(script, bgStyle, (index % 3) + 1, query)),
+  )).filter(Boolean);
 
-  const clips = [clip1, clip2].filter(Boolean);
-  // Dedup: si los dos apuntan al mismo archivo cacheado, usar solo uno
-  if (clips.length === 2 && clips[0] === clips[1]) return [clips[0]];
-  return clips;
+  return [...new Set(clips)];
 }
 
 // ─────────────────────────────────────────────
@@ -488,20 +601,206 @@ function buildDrawtextFilters(blocks, yPos = 'h*0.72') {
 //  RENDER PRINCIPAL
 // ─────────────────────────────────────────────
 
+/**
+ * Devuelve el filtro de subtítulos a usar en FFmpeg:
+ * - Si hay ASS karaoke: subtitles filter (palabras amarillas progresivas)
+ * - Fallback: drawtext blocks (comportamiento anterior)
+ */
+function buildSubtitleFilter(assPath, drawtextFilter) {
+  if (assPath && fs.existsSync(assPath)) {
+    // Escapar ruta para FFmpeg filtergraph en Windows: C:\... → C\:/...
+    const esc = assPath.replace(/\\/g, '/').replace(/^([A-Z]):/, '$1\\:');
+    return `subtitles='${esc}'`;
+  }
+  return drawtextFilter;
+}
+
+function _buildScriptText(script = {}) {
+  const sections = ['hook', 'open_loop', 'micro_value', 'escalation', 'reengage', 'peak', 'open_ending', 'soft_cta'];
+  return sections
+    .map(key => (script[key] || '').trim())
+    .filter(Boolean)
+    .join(' ');
+}
+
+function writeRenderMetadata(outputDir, data = {}) {
+  try {
+    fs.writeFileSync(path.join(outputDir, 'render-metadata.json'), JSON.stringify({
+      updatedAt: new Date().toISOString(),
+      ...data,
+    }, null, 2));
+  } catch {}
+}
+
+function formatOverlayToken(value = '') {
+  return String(value || '')
+    .replace(/[_-]+/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim()
+    .split(/\s+/)
+    .slice(0, 3)
+    .join(' ')
+    .toUpperCase();
+}
+
+function buildOverlayEvents(script, renderSegments = []) {
+  const phrases = [
+    script.effectName,
+    script.psychologicalFact,
+    script.viralTrigger,
+    script.emotionalTrigger,
+    ...(script.keywords || []),
+  ]
+    .map(formatOverlayToken)
+    .filter(Boolean)
+    .filter((value, index, list) => list.indexOf(value) === index)
+    .slice(0, 4);
+
+  if (phrases.length === 0 || renderSegments.length === 0) return [];
+
+  const preferredSegments = renderSegments.filter((segment) => segment.isPunchZoom || segment.isHookSegment);
+  const sourceSegments = preferredSegments.length > 0 ? preferredSegments : renderSegments;
+
+  return sourceSegments.slice(0, phrases.length).map((segment, index) => ({
+    text: phrases[index],
+    start: parseFloat((segment.start + 0.08).toFixed(3)),
+    end: parseFloat((Math.min(segment.start + OVERLAY_DURATION_SECONDS, segment.start + segment.duration - 0.08)).toFixed(3)),
+  })).filter((event) => event.end > event.start + 0.12);
+}
+
+function buildOverlayFilter(events = []) {
+  const fontFile = findSystemFont();
+  const fontPath = fontFile
+    ? fontFile.replace(/\\/g, '/').replace(/^([A-Z]):/, '$1\\:')
+    : null;
+
+  return events.map((event) => {
+    const fontPart = fontPath
+      ? `fontfile='${fontPath}':fontsize=58`
+      : 'fontsize=58';
+    return (
+      `drawtext=${fontPart}:` +
+      `text=${escapeDrawtext(event.text)}:` +
+      `fontcolor=0xF3F7FFFF:` +
+      `bordercolor=0x000000FF:borderw=5:` +
+      `shadowcolor=black@0.95:shadowx=3:shadowy=3:` +
+      `x=(w-text_w)/2:y=h*0.14:` +
+      `box=1:boxcolor=black@0.42:boxborderw=20:` +
+      `enable='between(t,${event.start},${event.end})'`
+    );
+  }).join(',');
+}
+
+function buildRenderSegments(realDuration, blocks = [], sectionDurations = null) {
+  const anchors = [0];
+
+  if (sectionDurations) {
+    for (const timing of Object.values(sectionDurations)) {
+      if (typeof timing?.start === 'number') anchors.push(timing.start);
+    }
+  }
+
+  for (const block of blocks) {
+    if (block.isHook || block.isImpact || ['reengage', 'peak'].includes(block.section)) {
+      anchors.push(block.start);
+    }
+  }
+
+  for (let t = TARGET_CUT_SECONDS; t < realDuration; t += TARGET_CUT_SECONDS) {
+    anchors.push(t);
+  }
+
+  const sorted = [...new Set(
+    anchors
+      .map((value) => parseFloat(Math.max(0, Math.min(realDuration, value)).toFixed(2)))
+      .filter((value) => value >= 0 && value < realDuration)
+  )].sort((a, b) => a - b);
+
+  if (sorted[sorted.length - 1] !== parseFloat(realDuration.toFixed(2))) {
+    sorted.push(parseFloat(realDuration.toFixed(2)));
+  }
+
+  const segments = [];
+  for (let i = 0; i < sorted.length - 1; i++) {
+    const start = sorted[i];
+    const end = sorted[i + 1];
+    const duration = parseFloat((end - start).toFixed(2));
+    if (duration < MIN_CUT_SECONDS && segments.length > 0) {
+      segments[segments.length - 1].end = end;
+      segments[segments.length - 1].duration = parseFloat((end - segments[segments.length - 1].start).toFixed(2));
+      continue;
+    }
+    if (duration > MAX_CUT_SECONDS) {
+      const cuts = Math.ceil(duration / TARGET_CUT_SECONDS);
+      const subDuration = duration / cuts;
+      for (let j = 0; j < cuts; j++) {
+        const subStart = parseFloat((start + subDuration * j).toFixed(2));
+        const subEnd = parseFloat((Math.min(end, start + subDuration * (j + 1))).toFixed(2));
+        segments.push({ start: subStart, end: subEnd, duration: parseFloat((subEnd - subStart).toFixed(2)) });
+      }
+      continue;
+    }
+    segments.push({ start, end, duration });
+  }
+
+  return segments.map((segment, index) => {
+    const matchingBlock = blocks.find((block) => block.start <= segment.start + 0.2 && block.end >= segment.start);
+    const section = matchingBlock?.section || 'claim';
+    return {
+      ...segment,
+      section,
+      clipOffset: parseFloat(((index * 1.35) % 6).toFixed(2)),
+      isHookSegment: matchingBlock?.isHook === true || section === 'hook',
+      isPunchZoom: matchingBlock?.isImpact === true || ['hook', 'reengage', 'peak'].includes(section),
+    };
+  });
+}
+
 async function renderVideo({ script, audioPath, audioDuration, outputPath, themeId, wordBoundaries, sectionDurations, bgStyle }) {
   const theme = themes.themes.find((t) => t.id === themeId) || themes.themes[0];
   const outputDir = path.dirname(outputPath);
   if (!fs.existsSync(outputDir)) fs.mkdirSync(outputDir, { recursive: true });
+  const perf = createPerfTracker('video-render', { outputPath, topic: script.topic || null });
 
   // 1. Duración REAL del audio (no estimada)
+  perf.start('audio_probe');
   const realDuration = await getRealAudioDuration(audioPath);
+  const probePhase = perf.end({ realDuration });
   logger.info(`Real audio duration: ${realDuration.toFixed(2)}s (estimated was ${audioDuration}s)`);
+  logger.info(`Render phase audio_probe done in ${formatDurationMs(probePhase.durationMs)}`);
 
-  // 2. Descarga clips en paralelo: psychology (top) + satisfying (bottom)
-  const [bgVideos, satisfyingClip] = await Promise.all([
-    getPexelsVideos(script, bgStyle),
-    getPexelsVideo(script, 'satisfying'),
-  ]);
+  // 1.5. Detectar segmentos de voz reales usando silencedetect
+  let voiceSegments = [];
+  let subtitleTimingMode = 'estimated_fallback';
+  try {
+    perf.start('voice_segment_detection');
+    voiceSegments = await detectVoiceSegments(audioPath, outputDir, { noiseThreshold: -35, minDuration: 0.15 });
+    const detectionPhase = perf.end({ segmentCount: voiceSegments.length });
+    if (voiceSegments.length > 0) {
+      subtitleTimingMode = 'audio_detected';
+      logger.info(`Voice segments detected: ${voiceSegments.length} regions | phase done in ${formatDurationMs(detectionPhase.durationMs)}`);
+    } else {
+      logger.warn(`Voice segment detection returned empty, using estimated fallback`);
+    }
+  } catch (detErr) {
+    logger.warn(`Voice segment detection failed: ${detErr.message} — using estimated fallback`);
+  }
+
+  // 2. Descarga clips en paralelo: single-focus, sin split-screen
+  perf.start('background_fetch');
+  const bgVideos = await getPexelsVideos(script, bgStyle);
+  const bgPhase = perf.end({ clipCount: bgVideos.length });
+  logger.info(`Render phase background_fetch done in ${formatDurationMs(bgPhase.durationMs)} | clips=${bgVideos.length}`);
+  writeRenderMetadata(outputDir, {
+    requestedVisualMode: 'single_focus_pexels',
+    fetchedClipCount: bgVideos.length,
+    clipPaths: bgVideos,
+    subtitleSafeY: SUBTITLE_Y,
+    assSubtitleY: ASS_SUBTITLE_Y,
+    subtitleTimingMode,
+    voiceSegmentsDetected: voiceSegments.length,
+    renderWarnings: [],
+  });
 
   // 3. Música de fondo
   const musicDir = path.resolve('./assets/music');
@@ -515,57 +814,203 @@ async function renderVideo({ script, audioPath, audioDuration, outputPath, theme
   const logoPath = path.resolve('./assets/logo_dato_psicologico.png');
   const hasLogo = fs.existsSync(logoPath);
 
-  // Construir bloques de subtítulo una sola vez (mismos bloques para todos los paths)
-  // Modo automático: EXACT si hay wordBoundaries, SEGMENTED si hay sectionDurations, PROPORTIONAL si no
-  const blocks = buildStyledSubtitleBlocks(script, realDuration, wordBoundaries || [], sectionDurations || null);
-  logger.info(
-    `Subtitles: ${blocks.length} blocks | mode=${
-      (wordBoundaries || []).length >= 4 ? 'EXACT' :
-      sectionDurations ? 'SEGMENTED' : 'PROPORTIONAL'
-    }`
-  );
-
-  // Guardar SRT en el directorio del vídeo (útil para debug y posibles usos futuros)
-  try {
-    const { buildSRTContent: _bsrt } = require('./subtitle-styler');
-    fs.writeFileSync(path.join(outputDir, 'subtitles.srt'), _bsrt(blocks), 'utf8');
-  } catch {}
-
-  // 5a. SPLIT SCREEN (formato viral por defecto): top=psicología, bottom=satisfying
-  if (bgVideos.length > 0 && satisfyingClip) {
-    // Subtítulos V2 en la mitad superior: y = h*0.43 ≈ 825px (dentro de los 1100px superiores)
-    const drawtextFilter = buildStyledDrawtextFilters(blocks, 'h*0.43', theme);
-    logger.info(`Rendering | Theme: ${theme.name} | Background: split-screen | Subtitles: ${blocks.length} blocks`);
-    try {
-      return await renderWithSplitScreen({
-        topClip: bgVideos[0],
-        botClip: satisfyingClip,
-        audioPath, musicPath, realDuration,
-        drawtextFilter, outputPath, theme,
-        logoPath: hasLogo ? logoPath : null,
-      });
-    } catch (splitErr) {
-      logger.warn(`Split screen failed (${splitErr.message.slice(0, 80)}) — falling back to pexels bg`);
-      try { if (fs.existsSync(outputPath)) fs.unlinkSync(outputPath); } catch {}
-    }
+  // Enriquecer sectionDurations con voiceSegments detectados si está disponible
+  let enrichedSectionDurations = sectionDurations;
+  if (voiceSegments.length > 0 && sectionDurations) {
+    enrichedSectionDurations = _enrichSectionDurationsWithVoiceSegments(sectionDurations, voiceSegments);
   }
 
-  // 5b. Fallback: fondo Pexels estándar (2 clips o 1)
-  const drawtextFilter = buildStyledDrawtextFilters(blocks, 'h*0.72', theme);
-  const clipInfo = bgVideos.length === 2 ? '2 clips (cinematic cut)' : bgVideos.length === 1 ? '1 clip' : 'gradient';
-  logger.info(`Rendering | Theme: ${theme.name} | Background: ${clipInfo} | Subtitles: ${blocks.length} blocks`);
+  // PRO: Alinear word-level timestamps desde Whisper (máxima precisión)
+  perf.start('word_timestamp_align');
+  let wordTimestamps = [];
+  let wordAlignmentEngine = 'none';
+  let wordTimestampWarnings = [];
+  try {
+    const alignment = await alignWordTimestamps(audioPath, _buildScriptText(script), voiceSegments);
+    wordTimestamps = alignment.words || [];
+    wordAlignmentEngine = alignment.engine;
+    wordTimestampWarnings = alignment.warnings || [];
+    if (wordTimestamps.length > 0) {
+      logger.info(`Word timestamps: ${wordTimestamps.length} words | engine=${wordAlignmentEngine}`);
+    } else {
+      logger.info(`Word timestamps: no timestamps available | engine=${wordAlignmentEngine}`);
+    }
+  } catch (err) {
+    logger.warn(`Word timestamp alignment failed: ${err.message}`);
+    wordTimestampWarnings.push('alignment_failed');
+  }
+  const wordAlignPhase = perf.end();
+
+  // Construir bloques de subtítulo (fallback drawtext si no hay karaoke)
+  perf.start('subtitle_build');
+  const blocks = buildStyledSubtitleBlocks(script, realDuration, wordBoundaries || [], enrichedSectionDurations || null, wordTimestamps);
+
+  let subtitleMode = 'PROPORTIONAL';
+  if (wordTimestamps.length >= 10) {
+    subtitleMode = 'WORD_TIMESTAMPS';
+    subtitleTimingMode = 'word_timestamps';
+  } else if ((wordBoundaries || []).length >= 4) {
+    subtitleMode = 'KARAOKE';
+    subtitleTimingMode = 'word_boundaries';
+  } else if (enrichedSectionDurations) {
+    subtitleMode = 'SEGMENTED';
+    // subtitleTimingMode ya fue establecido a 'audio_detected' en la sección anterior si voiceSegments fue detectado
+  }
+  // Si no entramos en ninguna de las condiciones anteriores, subtitleTimingMode mantiene su valor inicial ('estimated_fallback' o 'audio_detected')
+
+  const renderSegments = buildRenderSegments(realDuration, blocks, sectionDurations || null);
+  const overlayEvents = buildOverlayEvents(script, renderSegments);
+  logger.info(`Subtitles: ${blocks.length} blocks | mode=${subtitleMode}`);
+
+  // Guardar SRT
+  try {
+    fs.writeFileSync(path.join(outputDir, 'subtitles.srt'), buildSRTContent(blocks), 'utf8');
+  } catch {}
+
+  // Generar ASS: karaoke si hay word boundaries (Edge TTS), styled si no (Kokoro)
+  let assPath = null;
+  const assFilePath = path.join(outputDir, 'subtitles.ass');
+  if ((wordBoundaries || []).length >= 4) {
+    try {
+      buildKaraokeASSFile(wordBoundaries, assFilePath, ASS_SUBTITLE_Y);
+      assPath = assFilePath;
+      logger.info(`Karaoke ASS: generated | ${wordBoundaries.length} words | y=${ASS_SUBTITLE_Y}`);
+    } catch (assErr) {
+      logger.warn(`Karaoke ASS failed: ${assErr.message} — trying styled ASS`);
+    }
+  }
+  if (!assPath && blocks.length > 0) {
+    try {
+      buildStyledASSFile(blocks, assFilePath, ASS_SUBTITLE_Y);
+      assPath = assFilePath;
+      logger.info(`Styled ASS: generated | ${blocks.length} blocks | mode=${subtitleMode}`);
+    } catch (assErr) {
+      logger.warn(`Styled ASS failed: ${assErr.message} — using drawtext fallback`);
+    }
+  }
+  const subtitlePhase = perf.end({ subtitleMode, blocks: blocks.length, hasAss: Boolean(assPath) });
+  logger.info(`Render phase subtitle_build done in ${formatDurationMs(subtitlePhase.durationMs)} | mode=${subtitleMode}`);
+
+  const overlayFilter = buildOverlayFilter(overlayEvents);
+  const drawtextFilterFull = buildStyledDrawtextFilters(blocks, SUBTITLE_Y, theme);
+  const subtitleFilterFull = [buildSubtitleFilter(assPath, drawtextFilterFull), overlayFilter].filter(Boolean).join(',');
+  const clipInfo = bgVideos.length > 0 ? `${bgVideos.length} clips single-focus` : 'gradient';
+  logger.info(`Rendering | Theme: ${theme.name} | Background: ${clipInfo} | Subtitles: ${subtitleMode} | VisualStyle=${REFERENCE_VISUAL_STYLE.emotion}`);
 
   if (bgVideos.length > 0) {
     try {
-      return await renderWithPexelsBg({ bgVideos, audioPath, musicPath, realDuration, drawtextFilter, outputPath, theme, logoPath: hasLogo ? logoPath : null });
+      perf.start('ffmpeg_render');
+      const result = await renderWithPexelsBg({ bgVideos, audioPath, musicPath, realDuration, renderSegments, subtitleFilter: subtitleFilterFull, outputPath, theme, logoPath: hasLogo ? logoPath : null });
+      const renderPhase = perf.end({ mode: 'video_use' });
+      writeRenderMetadata(outputDir, {
+        videoUseStyle: VIDEO_USE_SKILL.id,
+        requestedVisualMode: 'single_focus_pexels',
+        fetchedClipCount: bgVideos.length,
+        clipPaths: bgVideos,
+        renderMode: 'video_use',
+        usedGradientFallback: false,
+        visibleVisuals: bgVideos.length > 0,
+        hasSubtitles: blocks.length > 0,
+        duration: parseFloat(realDuration.toFixed(2)),
+        segmentsUsed: renderSegments.length,
+        overlayEvents: overlayEvents.length,
+        subtitleSafeY: SUBTITLE_Y,
+        assSubtitleY: ASS_SUBTITLE_Y,
+        subtitleTimingMode,
+        voiceSegmentsDetected: voiceSegments.length,
+        wordTimestampsCount: wordTimestamps.length,
+        wordAlignmentEngine: wordAlignmentEngine,
+        subtitleBlocksCount: blocks.length,
+        alignmentWarnings: wordTimestampWarnings,
+        renderWarnings: [],
+      });
+      logger.info(`Render phase ffmpeg_render done in ${formatDurationMs(renderPhase.durationMs)} | total=${formatDurationMs(perf.snapshot().totalMs)}`);
+      return result;
     } catch (pexelsErr) {
+      perf.fail(pexelsErr, { mode: 'pexels' });
       logger.warn(`Pexels render failed (${pexelsErr.message.slice(0, 80)}) — falling back to gradient`);
+      writeRenderMetadata(outputDir, {
+        videoUseStyle: VIDEO_USE_SKILL.id,
+        requestedVisualMode: 'single_focus_pexels',
+        fetchedClipCount: bgVideos.length,
+        clipPaths: bgVideos,
+        renderMode: 'video_use',
+        usedGradientFallback: true,
+        visibleVisuals: false,
+        subtitleSafeY: SUBTITLE_Y,
+        assSubtitleY: ASS_SUBTITLE_Y,
+        subtitleTimingMode,
+        voiceSegmentsDetected: voiceSegments.length,
+        wordTimestampsCount: wordTimestamps.length,
+        wordAlignmentEngine: wordAlignmentEngine,
+        subtitleBlocksCount: blocks.length,
+        alignmentWarnings: wordTimestampWarnings,
+        renderWarnings: [`pexels_render_failed:${pexelsErr.message.slice(0, 160)}`],
+      });
       try { if (fs.existsSync(outputPath)) fs.unlinkSync(outputPath); } catch {}
     }
   }
 
-  // 5c. Último fallback: fondo animado con gradiente
-  return renderWithGradientBg({ audioPath, musicPath, realDuration, drawtextFilter, outputPath, theme, logoPath: hasLogo ? logoPath : null });
+  // 5b. Último fallback: gradiente animado
+  perf.start('ffmpeg_render');
+  const result = await renderWithGradientBg({ audioPath, musicPath, realDuration, subtitleFilter: subtitleFilterFull, outputPath, theme, logoPath: hasLogo ? logoPath : null });
+  const renderPhase = perf.end({ mode: 'gradient' });
+  writeRenderMetadata(outputDir, {
+    videoUseStyle: VIDEO_USE_SKILL.id,
+    requestedVisualMode: 'single_focus_pexels',
+    fetchedClipCount: bgVideos.length,
+    clipPaths: bgVideos,
+    renderMode: 'video_use',
+    usedGradientFallback: true,
+    visibleVisuals: false,
+    hasSubtitles: blocks.length > 0,
+    duration: parseFloat(realDuration.toFixed(2)),
+    segmentsUsed: renderSegments.length,
+    overlayEvents: overlayEvents.length,
+    subtitleSafeY: SUBTITLE_Y,
+    assSubtitleY: ASS_SUBTITLE_Y,
+    subtitleTimingMode,
+    voiceSegmentsDetected: voiceSegments.length,
+    wordTimestampsCount: wordTimestamps.length,
+    wordAlignmentEngine: wordAlignmentEngine,
+    subtitleBlocksCount: blocks.length,
+    alignmentWarnings: wordTimestampWarnings,
+    renderWarnings: bgVideos.length > 0 ? ['gradient_fallback_after_pexels_failure'] : ['no_pexels_assets_available'],
+  });
+  logger.info(`Render phase ffmpeg_render done in ${formatDurationMs(renderPhase.durationMs)} | total=${formatDurationMs(perf.snapshot().totalMs)}`);
+
+  // 6. EXPORT: Exportar vídeo para revisión manual
+  try {
+    const metadata = {
+      videoId: script.videoId || 'unknown',
+      hook: script.hook || '',
+      topic: script.topic || '',
+      emotionalTrigger: script.emotionalTrigger || 'validation',
+      viralTrigger: script.viralTrigger || 'identificacion',
+      fullScript: [script.hook, script.open_loop, script.micro_value, script.escalation, script.reengage, script.peak, script.open_ending, script.soft_cta].filter(Boolean).join(' '),
+      duration: parseFloat(realDuration.toFixed(2)),
+      viralityScore: script.viralityScore || 0,
+      formatScore: script.formatScore || 0,
+      emotionalImpactScore: script.emotionalImpactScore || 0,
+      createdAt: new Date().toISOString(),
+      renderMode: 'video_use',
+      subtitleTimingMode: subtitleTimingMode,
+      wordAlignmentEngine: wordAlignmentEngine,
+      segmentsUsed: renderSegments.length,
+      qcPass: true, // Si llegó aquí, pasó QC
+    };
+
+    const exportResult = await exportVideo(result, metadata);
+    if (exportResult) {
+      logger.info(`Export: video saved to ${exportResult.filename} in exports/${new Date().toISOString().split('T')[0]}`);
+    } else {
+      logger.warn('Export: video does not meet export criteria (whisper/word_timestamps required)');
+    }
+  } catch (exportErr) {
+    logger.error(`Export: failed to export video - ${exportErr.message}`);
+  }
+
+  return result;
 }
 
 // ─── Con vídeo(s) de Pexels — pipeline cinematográfico ───────────────────────
@@ -574,24 +1019,32 @@ async function renderVideo({ script, audioPath, audioDuration, outputPath, theme
 // Color grade: eq (contraste + saturación) + vignette para look cinematográfico.
 // Sustitución de colorchannelmixer plano por grade real.
 
-function renderWithPexelsBg({ bgVideos, audioPath, musicPath, realDuration, drawtextFilter, outputPath, theme, logoPath }) {
+function renderWithPexelsBg({ bgVideos, audioPath, musicPath, realDuration, renderSegments, subtitleFilter, outputPath, theme, logoPath }) {
   return new Promise((resolve, reject) => {
-    const twoClips = bgVideos.length >= 2;
+    const segments = Array.isArray(renderSegments) && renderSegments.length > 0
+      ? renderSegments
+      : buildRenderSegments(realDuration, [], null);
     let cmd = ffmpeg();
 
-    if (twoClips) {
+    for (let i = 0; i < segments.length; i++) {
+      const clipPath = bgVideos[i % bgVideos.length];
+      const clipOffset = Math.max(0, segments[i].clipOffset || 0);
+      cmd = cmd.input(clipPath).inputOptions(['-stream_loop -1', `-t ${Math.max(segments[i].duration + clipOffset + 0.4, 1.4)}`, '-vsync cfr']);
+    }
+
+    if (false) {
       // Clip 1: primeros ~30% del video (hook) — corte rítmico en transición hook→claim
       const d1 = parseFloat((realDuration * 0.30).toFixed(2));
       // Clip 2: resto + pequeño buffer (la salida está limitada por -t realDuration)
       const d2 = parseFloat((realDuration * 0.60).toFixed(2));
       cmd = cmd.input(bgVideos[0]).inputOptions(['-stream_loop -1', `-t ${d1}`, '-vsync cfr']);
       cmd = cmd.input(bgVideos[1]).inputOptions(['-stream_loop -1', `-t ${d2}`, '-vsync cfr']);
-    } else {
+    } else if (false) {
       cmd = cmd.input(bgVideos[0]).inputOptions(['-stream_loop -1', `-t ${realDuration}`, '-vsync cfr']);
     }
 
     // Inputs de audio
-    const audioIdx = twoClips ? 2 : 1;
+    const audioIdx = segments.length;
     cmd = cmd.input(audioPath);
     const hasMusic = musicPath && fs.existsSync(musicPath);
     if (hasMusic) cmd = cmd.input(musicPath);
@@ -608,15 +1061,42 @@ function renderWithPexelsBg({ bgVideos, audioPath, musicPath, realDuration, draw
     // 6. Subtítulos
 
     let videoFilter = '';
+    const concatInputs = [];
 
-    if (twoClips) {
+    for (let i = 0; i < segments.length; i++) {
+      const segment = segments[i];
+      const segDur = segment.duration;
+      const segStart = segment.start;
+      const hitsReengage = segStart <= REENGAGE_TARGET_SECOND && (segStart + segDur) >= REENGAGE_TARGET_SECOND;
+      const baseBoost = segment.isPunchZoom ? 140 : segment.isHookSegment ? 90 : 0;
+      const scaledW = hitsReengage ? W + 320 : W + 220 + baseBoost;
+      const scaledH = hitsReengage ? H + 420 : H + 320 + baseBoost;
+      const panX = hitsReengage ? 26 : segment.isPunchZoom ? 22 : 14;
+      const panY = hitsReengage ? 18 : segment.isPunchZoom ? 14 : 8;
+      const clipOffset = Math.max(0, segment.clipOffset || 0);
+      videoFilter +=
+        `[${i}:v]trim=start=${clipOffset}:duration=${segDur},setpts=PTS-STARTPTS,` +
+        `scale=${scaledW}:${scaledH}:force_original_aspect_ratio=increase,` +
+        `crop=${W}:${H}:` +
+        `x='max(0,min(iw-${W},(iw-${W})/2+${panX}*sin(2*PI*t/${Math.max(segDur, 1.2)})))':` +
+        `y='max(0,min(ih-${H},(ih-${H})/2+${panY}*cos(2*PI*t/${Math.max(segDur, 1.2)})))',` +
+        `fps=30,format=yuv420p,setsar=1[v${i}];`;
+      concatInputs.push(`[v${i}]`);
+    }
+
+    videoFilter +=
+      `${concatInputs.join('')}concat=n=${segments.length}:v=1:a=0[cat];` +
+      `[cat]setsar=1,format=yuv420p,eq=contrast=1.24:brightness=-0.01:saturation=1.10:gamma=0.96[graded];` +
+      `[graded]vignette='PI/4'[vig];`;
+
+    if (false) {
       videoFilter =
         `[0:v]scale=${W}:${H}:force_original_aspect_ratio=increase,crop=${W}:${H},fps=30[v0];` +
         `[1:v]scale=${W}:${H}:force_original_aspect_ratio=increase,crop=${W}:${H},fps=30[v1];` +
         `[v0][v1]concat=n=2:v=1:a=0[cat];` +
         `[cat]eq=contrast=1.25:brightness=0.02:saturation=1.5:gamma=1.08[graded];` +
         `[graded]vignette='PI/4'[vig];`;
-    } else {
+    } else if (false) {
       videoFilter =
         `[0:v]scale=${W}:${H}:force_original_aspect_ratio=increase,crop=${W}:${H},fps=30[v0];` +
         `[v0]eq=contrast=1.25:brightness=0.02:saturation=1.5:gamma=1.08[graded];` +
@@ -627,9 +1107,9 @@ function renderWithPexelsBg({ bgVideos, audioPath, musicPath, realDuration, draw
       videoFilter +=
         `[${logoIdx}:v]scale=180:-1,format=rgba,colorchannelmixer=aa=0.7[wm];` +
         `[vig][wm]overlay=W-w-24:24[branded];` +
-        `[branded]${drawtextFilter}[vout]`;
+        `[branded]${subtitleFilter}[vout]`;
     } else {
-      videoFilter += `[vig]${drawtextFilter}[vout]`;
+      videoFilter += `[vig]${subtitleFilter}[vout]`;
     }
 
     let audioFilter = '';
@@ -646,7 +1126,7 @@ function renderWithPexelsBg({ bgVideos, audioPath, musicPath, realDuration, draw
       .outputOptions([
         '-map [vout]',
         hasMusic ? '-map [aout]' : `-map ${audioIdx}:a`,
-        '-c:v libx264', '-preset fast', '-crf 22',
+        '-c:v libx264', `-preset ${RENDER_PRESET}`, `-crf ${RENDER_CRF}`,
         '-pix_fmt yuv420p', '-r 30',
         '-c:a aac', '-b:a 192k', '-ar 44100',
         `-t ${realDuration}`, '-movflags +faststart',
@@ -654,7 +1134,7 @@ function renderWithPexelsBg({ bgVideos, audioPath, musicPath, realDuration, draw
       .output(outputPath)
       .on('start', (c) => logger.debug(`FFmpeg: ${c.slice(0, 100)}...`))
       .on('progress', (p) => p.percent && logger.debug(`FFmpeg: ${p.percent.toFixed(0)}%`))
-      .on('end', () => { logger.info(`Video rendered: ${outputPath}`); resolve(outputPath); })
+      .on('end', () => { logger.info(`Video rendered (single-focus): ${outputPath}`); resolve(outputPath); })
       .on('error', (err, _s, stderr) => {
         logger.error(`FFmpeg error: ${err.message}`);
         if (stderr) logger.error(stderr.slice(-800));
@@ -671,7 +1151,7 @@ function renderWithPexelsBg({ bgVideos, audioPath, musicPath, realDuration, draw
 // Bottom clip: satisfying content sin audio, en bucle
 // Subtítulos: dentro de la mitad superior (y ≈ 825px)
 
-function renderWithSplitScreen({ topClip, botClip, audioPath, musicPath, realDuration, drawtextFilter, outputPath, theme, logoPath }) {
+function renderWithSplitScreen({ topClip, botClip, audioPath, musicPath, realDuration, subtitleFilter, outputPath, theme, logoPath }) {
   return new Promise((resolve, reject) => {
     let cmd = ffmpeg();
 
@@ -709,9 +1189,9 @@ function renderWithSplitScreen({ topClip, botClip, audioPath, musicPath, realDur
       videoFilter +=
         `[${logoIdx}:v]scale=180:-1,format=rgba,colorchannelmixer=aa=0.7[wm];` +
         `[vig][wm]overlay=W-w-24:24[branded];` +
-        `[branded]${drawtextFilter}[vout]`;
+        `[branded]${subtitleFilter}[vout]`;
     } else {
-      videoFilter += `[vig]${drawtextFilter}[vout]`;
+      videoFilter += `[vig]${subtitleFilter}[vout]`;
     }
 
     let audioFilter = '';
@@ -748,7 +1228,7 @@ function renderWithSplitScreen({ topClip, botClip, audioPath, musicPath, realDur
 
 // ─── Con fondo animado (sin Pexels) ──────────────────────────────────────────
 
-function renderWithGradientBg({ audioPath, musicPath, realDuration, drawtextFilter, outputPath, theme, logoPath }) {
+function renderWithGradientBg({ audioPath, musicPath, realDuration, subtitleFilter, outputPath, theme, logoPath }) {
   return new Promise((resolve, reject) => {
     const c1 = hexToRgb(theme.background.colors[0]);
     const c2 = hexToRgb(theme.background.colors[theme.background.colors.length - 1]);
@@ -779,9 +1259,9 @@ function renderWithGradientBg({ audioPath, musicPath, realDuration, drawtextFilt
       videoFilter +=
         `[${logoIdx}:v]scale=180:-1,format=rgba,colorchannelmixer=aa=0.7[wm];` +
         `[vig][wm]overlay=W-w-24:24[branded];` +
-        `[branded]${drawtextFilter}[vout]`;
+        `[branded]${subtitleFilter}[vout]`;
     } else {
-      videoFilter += `[vig]${drawtextFilter}[vout]`;
+      videoFilter += `[vig]${subtitleFilter}[vout]`;
     }
 
     let audioFilter = '';
@@ -798,7 +1278,7 @@ function renderWithGradientBg({ audioPath, musicPath, realDuration, drawtextFilt
       .outputOptions([
         '-map [vout]',
         hasMusic ? '-map [aout]' : '-map 1:a',
-        '-c:v libx264', '-preset fast', '-crf 22',
+        '-c:v libx264', `-preset ${RENDER_PRESET}`, `-crf ${RENDER_CRF}`,
         '-pix_fmt yuv420p', '-r 30',
         '-c:a aac', '-b:a 192k', '-ar 44100',
         `-t ${realDuration}`, '-movflags +faststart',

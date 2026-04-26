@@ -1,0 +1,29 @@
+{
+  "startedAt": "2026-04-24T09:44:04.164Z",
+  "finishedAt": "2026-04-24T09:44:45.205Z",
+  "testId": "runtime-render-test-1777023844164-loop",
+  "outputDir": "C:\\Users\\Erik\\Desktop\\Generador_videos\\diagnostics\\runtime-render-tests\\runtime-render-test-1777023844164-loop",
+  "attempts": [
+    {
+      "topic": "emotions",
+      "error": "content-generator.generateScript.recovery: invalid JSON from model (Expected ',' or '}' after property value in JSON at position 1333 (line 17 column 54))"
+    },
+    {
+      "topic": "social_patterns",
+      "error": "Peak demasiado explicativo: regenerar"
+    },
+    {
+      "topic": "attention",
+      "error": "Hook genérico: regenerar"
+    },
+    {
+      "topic": "cognitive_biases",
+      "error": "Hook genérico: regenerar"
+    },
+    {
+      "topic": "body_language",
+      "error": "content-generator.generateScript.recovery: invalid JSON from model (Unterminated string in JSON at position 1374 (line 16 column 43))"
+    }
+  ],
+  "error": "Error: No successful runtime render validation. Attempts: [{\"topic\":\"emotions\",\"error\":\"content-generator.generateScript.recovery: invalid JSON from model (Expected ',' or '}' after property value in JSON at position 1333 (line 17 column 54))\"},{\"topic\":\"social_patterns\",\"error\":\"Peak demasiado explicativo: regenerar\"},{\"topic\":\"attention\",\"error\":\"Hook genérico: regenerar\"},{\"topic\":\"cognitive_biases\",\"error\":\"Hook genérico: regenerar\"},{\"topic\":\"body_language\",\"error\":\"content-generator.generateScript.recovery: invalid JSON from model (Unterminated string in JSON at position 1374 (line 16 column 43))\"}]\n    at [stdin]:123:11\n    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)"
+}

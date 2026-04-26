@@ -1,0 +1,29 @@
+{
+  "timestamp": "2026-04-26T16:09:25.195Z",
+  "total": 2,
+  "valid": 2,
+  "partial": 0,
+  "errors": 0,
+  "videos": [
+    {
+      "videoId": "c3425390-224f-417c-82e8-804f6fcbf554",
+      "hook": "No controlo mis emociones. Mi cuerpo las controla a mí.",
+      "topic": "relationships",
+      "duration": 30.30055157870707,
+      "virality": 85.59735169011208,
+      "humanity": 88.96474804898313,
+      "isFullyV41": true,
+      "exportPath": null
+    },
+    {
+      "videoId": "c8b208ad-1147-48a2-a2fa-e1f4551096f9",
+      "hook": "La gente tóxica te enseña más sobre ti que cualquier terapeuta.",
+      "topic": "relationships",
+      "duration": 26.403653389238904,
+      "virality": 81.25269769331676,
+      "humanity": 92.30311329548144,
+      "isFullyV41": true,
+      "exportPath": null
+    }
+  ]
+}

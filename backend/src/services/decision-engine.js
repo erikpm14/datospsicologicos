@@ -32,12 +32,15 @@ const AVAILABLE_TOPICS = [
   'social_patterns', 'perception', 'motivation', 'self_talk', 'emotions',
 ];
 
-// Pesos por defecto: revelation y pattern son los de mayor retención documentada
+// Pesos calibrados con datos reales del canal:
+// pattern → 104% loop ("Si relees la misma línea...") = mayor retención real
+// revelation → top views ("Tu cerebro cambia de opinión sin que lo notes")
+// Los demás reducidos — menos evidencia de rendimiento
 const HOOK_TYPE_WEIGHTS = {
-  revelation: 4,  // "Tu cerebro hace X sin que lo sepas..."
-  pattern:    3,  // "Cada vez que te pasa esto, tu mente está..."
-  challenge:  2,  // "El 90% de la gente hace esto mal..."
+  pattern:    6,  // "Cada vez que X, tu cerebro Y" / "Si X, esto está pasando" — 104% loop real
+  revelation: 4,  // "Tu cerebro hace X sin que lo notes" — top views real
   warning:    2,  // "Si haces esto, para ya."
+  challenge:  1,  // "El 90% de la gente hace esto mal..."
   question:   1,  // "¿Por qué siempre haces X?"
   secret:     1,  // "Hay una razón psicológica por la que..."
 };
@@ -249,6 +252,10 @@ function consumeStreakVariation(streak, angleUsed) {
  */
 function registerWinningStreak({ topic, hookType, jobId, viralityScore, formatMatchScore, hook }) {
   const combinedScore = (viralityScore + formatMatchScore) / 2;
+  // Requiere virality ≥ umbral de publicación Y combined alto — evita streaks donde
+  // format alto infla combined aunque virality sea insuficiente para publicar
+  const minPublish = parseInt(process.env.MIN_VIRALITY_SCORE_TO_PUBLISH || '80');
+  if (viralityScore < minPublish) return;
   if (combinedScore < STREAK_SCORE_THRESHOLD) return;
 
   const streaks = readJSON(WINNING_STREAK_PATH, []) || [];
@@ -377,6 +384,8 @@ function makeDecision(options = {}) {
     (trendBias || []).filter((t) => AVAILABLE_TOPICS.includes(t)),
   );
 
+  const { getTopicWeight } = require('./context-learner');
+
   const candidates = AVAILABLE_TOPICS
     .filter((t) => !saturatedTopics.includes(t))
     .map((t) => {
@@ -384,12 +393,15 @@ function makeDecision(options = {}) {
       const recencyPenalty = recentTopics.includes(t) ? -3 : 0;
       const p80Boost       = p80Topics.has(t) ? 5 : 0; // boost a topics con patrones ganadores reales
       const trendBoost     = trendBoostSet.has(t) ? 3 : 0; // boost a topics trending ahora
+      // Boost/penalty basado en tasa de aceptación real del learning engine
+      // ×1.3 → +6, ×1.0 → 0, ×0.7 → -6
+      const learningBoost  = Math.round((getTopicWeight(t) - 1.0) * 20);
       const perfScore      = perf
         ? (perf.avgViews / 500 + perf.avgEngagement * 4 + (perf.avgScore || 0) * 0.1)
         : 2; // neutral sin datos
       return {
         topic:        t,
-        score:        perfScore + recencyPenalty + p80Boost + trendBoost,
+        score:        perfScore + recencyPenalty + p80Boost + trendBoost + learningBoost,
         perf,
         tested:       !!(perf && perf.count >= 2),
         isP80Winner:  p80Topics.has(t),
@@ -460,7 +472,7 @@ function makeDecision(options = {}) {
       if (topicHistory.length >= 2) {
         hookType = topicHistory.sort((a, b) => (b.result.avgViews || 0) - (a.result.avgViews || 0))[0].hookType;
       } else {
-        hookType = pickWeighted(HOOK_TYPE_WEIGHTS);
+        hookType = pickWeighted(_abAdjustedHookWeights());
       }
     }
   } // end if (!hookType)
@@ -644,6 +656,38 @@ function detectWinningPatterns() {
     activeStreaks: getActiveStreaks(),
     insights: `${published.length} vídeos analizados. ${topTopics.length > 0 ? `Mejor categoría: ${topTopics[0]}` : 'Sin datos por tema todavía'}. ${p80TopicsArr.length > 0 ? `Patrones P80 activos: ${p80TopicsArr.join(', ')}.` : ''}`,
   };
+}
+
+/**
+ * Ajusta HOOK_TYPE_WEIGHTS con aprendizaje de A/B winners.
+ * Por cada hookType con businessWins/total > 0.5 sube el peso +2.
+ * Por cada hookType con businessWins/total < 0.2 baja el peso -1 (mín 1).
+ */
+function _abAdjustedHookWeights() {
+  const weights = { ...HOOK_TYPE_WEIGHTS };
+  try {
+    const AB_WINNERS_PATH = path.resolve('./data/tracking/ab-winners.json');
+    if (!fs.existsSync(AB_WINNERS_PATH)) return weights;
+    const { abWinners } = JSON.parse(fs.readFileSync(AB_WINNERS_PATH, 'utf8'));
+    const insights = {};
+    for (const w of (abWinners || [])) {
+      if (!w.shouldTransferLearning || !w.winnerHookType) continue;
+      if (!insights[w.winnerHookType]) insights[w.winnerHookType] = { biz: 0, total: 0 };
+      insights[w.winnerHookType].total++;
+      if (w.winnerType === 'business_priority' || w.winnerType === 'views_and_business') {
+        insights[w.winnerHookType].biz++;
+      }
+    }
+    for (const [ht, data] of Object.entries(insights)) {
+      if (!data.total) continue;
+      const ratio = data.biz / data.total;
+      if (ratio >= 0.5) weights[ht] = (weights[ht] || 1) + 2;
+      else if (ratio < 0.2) weights[ht] = Math.max(1, (weights[ht] || 1) - 1);
+    }
+    const adjusted = Object.entries(insights).map(([ht, d]) => `${ht}:${d.biz}/${d.total}`).join(' ');
+    if (adjusted) logger.info(`Decision Engine: A/B hookType adjustment | ${adjusted}`);
+  } catch { /* sin datos A/B aún */ }
+  return weights;
 }
 
 module.exports = {

@@ -1,0 +1,9 @@
+{
+  "startedAt": "2026-04-24T09:43:21.603Z",
+  "finishedAt": "2026-04-24T09:43:27.115Z",
+  "topic": "social_patterns",
+  "testId": "runtime-render-test-1777023801603-retry",
+  "outputDir": "C:\\Users\\Erik\\Desktop\\Generador_videos\\diagnostics\\runtime-render-tests\\runtime-render-test-1777023801603-retry",
+  "timings": {},
+  "error": "Error: Peak demasiado explicativo: regenerar\n    at validateScriptFields (C:\\Users\\Erik\\Desktop\\Generador_videos\\backend\\src\\services\\content-generator.js:498:83)\n    at generateScript (C:\\Users\\Erik\\Desktop\\Generador_videos\\backend\\src\\services\\content-generator.js:336:5)\n    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)\n    at async timed ([stdin]:24:18)\n    at async [stdin]:30:16"
+}

@@ -1,0 +1,303 @@
+{
+  "id": "retention_spike_test_v1",
+  "hook": "Guardo lo que siento y espero que lo entiendas",
+  "topic": "emotional_patterns",
+  "emotionalTrigger": "validation",
+  "viralTrigger": "identificacion",
+  "duration": 26,
+  "viralityScore": 85,
+  "formatScore": 92,
+  "emotionalImpactScore": 88,
+  "createdAt": "2026-04-25T23:47:00Z",
+  "renderMode": "video_use",
+  "subtitleTimingMode": "word_timestamps",
+  "wordAlignmentEngine": "whisper",
+  "segmentsUsed": 24,
+  "qcPass": true,
+  "exportedAt": "2026-04-25T21:55:53.354Z",
+  "subtitleBlocks": [
+    {
+      "text": "Guardo",
+      "start": 0,
+      "end": 0.7,
+      "visual": "human_face_closeup",
+      "spikeType": "micro",
+      "zoom": "in",
+      "zoomAmount": 1.02,
+      "pauseBefore": 0,
+      "pauseAfter": 80
+    },
+    {
+      "text": "lo que siento",
+      "start": 0.7,
+      "end": 1.5,
+      "visual": "human_face_closeup",
+      "spikeType": "none",
+      "zoom": "none",
+      "pauseBefore": 80,
+      "pauseAfter": 0
+    },
+    {
+      "text": "y espero",
+      "start": 1.5,
+      "end": 2.3,
+      "visual": "human_face_closeup",
+      "spikeType": "none",
+      "zoom": "none",
+      "pauseBefore": 0,
+      "pauseAfter": 0
+    },
+    {
+      "text": "que lo entiendas",
+      "start": 2.3,
+      "end": 3.4,
+      "visual": "human_face_closeup",
+      "spikeType": "none",
+      "zoom": "none",
+      "pauseBefore": 80,
+      "pauseAfter": 120
+    },
+    {
+      "text": "No sé",
+      "start": 3.4,
+      "end": 4.1,
+      "visual": "human_face_subtle_expression",
+      "spikeType": "none",
+      "zoom": "none",
+      "pauseBefore": 100,
+      "pauseAfter": 0
+    },
+    {
+      "text": "deberías",
+      "start": 4.1,
+      "end": 4.9,
+      "visual": "human_face_subtle_expression",
+      "spikeType": "none",
+      "zoom": "none",
+      "pauseBefore": 0,
+      "pauseAfter": 0
+    },
+    {
+      "text": "darte cuenta",
+      "start": 4.9,
+      "end": 5.8,
+      "visual": "human_face_subtle_expression",
+      "spikeType": "none",
+      "zoom": "none",
+      "pauseBefore": 0,
+      "pauseAfter": 0
+    },
+    {
+      "text": "sin decir nada",
+      "start": 5.8,
+      "end": 7,
+      "visual": "human_face_subtle_expression",
+      "spikeType": "soft",
+      "zoom": "out",
+      "zoomAmount": 0.98,
+      "pauseBefore": 80,
+      "pauseAfter": 100
+    },
+    {
+      "text": "pero claro",
+      "start": 7,
+      "end": 7.9,
+      "visual": "abstract_psychology_visual",
+      "spikeType": "soft",
+      "zoom": "none",
+      "pauseBefore": 100,
+      "pauseAfter": 0
+    },
+    {
+      "text": "no ves nada",
+      "start": 7.9,
+      "end": 8.9,
+      "visual": "abstract_psychology_visual",
+      "spikeType": "none",
+      "zoom": "none",
+      "pauseBefore": 0,
+      "pauseAfter": 100
+    },
+    {
+      "text": "y sigo",
+      "start": 10.4,
+      "end": 11.1,
+      "visual": "abstract_symbolic_intense",
+      "spikeType": "none",
+      "zoom": "none",
+      "pauseBefore": 100,
+      "pauseAfter": 0
+    },
+    {
+      "text": "me lo guardo",
+      "start": 11.1,
+      "end": 12.1,
+      "visual": "abstract_symbolic_intense",
+      "spikeType": "none",
+      "zoom": "none",
+      "pauseBefore": 0,
+      "pauseAfter": 0
+    },
+    {
+      "text": "le doy vueltas",
+      "start": 12.1,
+      "end": 13.3,
+      "visual": "abstract_symbolic_intense",
+      "spikeType": "none",
+      "zoom": "none",
+      "pauseBefore": 80,
+      "pauseAfter": 0
+    },
+    {
+      "text": "otra vez",
+      "start": 13.3,
+      "end": 14.2,
+      "visual": "abstract_symbolic_intense",
+      "spikeType": "none",
+      "zoom": "none",
+      "pauseBefore": 0,
+      "pauseAfter": 150
+    },
+    {
+      "text": "no es",
+      "start": 14.3,
+      "end": 14.5,
+      "visual": "human_face_intense",
+      "spikeType": "soft",
+      "zoom": "in",
+      "zoomAmount": 1.03,
+      "pauseBefore": 80,
+      "pauseAfter": 100,
+      "emphasis": "soft_anticipation"
+    },
+    {
+      "text": "justo pero",
+      "start": 14.5,
+      "end": 15.7,
+      "visual": "human_face_intense",
+      "spikeType": "micro",
+      "zoom": "in",
+      "zoomAmount": 1.05,
+      "pauseBefore": 100,
+      "pauseAfter": 120,
+      "emphasis": "micro_tension_peak"
+    },
+    {
+      "text": "si lo digo",
+      "start": 15.7,
+      "end": 16.2,
+      "visual": "human_face_intense",
+      "spikeType": "pause",
+      "zoom": "none",
+      "zoomAmount": 1,
+      "pauseBefore": 0,
+      "pauseAfter": 70,
+      "emphasis": "unexpected_breath"
+    },
+    {
+      "text": "ya no PUEDO",
+      "start": 16.2,
+      "end": 17.1,
+      "visual": "human_face_intense",
+      "spikeType": "strong",
+      "zoom": "in",
+      "zoomAmount": 1.09,
+      "pauseBefore": 150,
+      "pauseAfter": 180,
+      "emphasis": "CAPS_IMPACT"
+    },
+    {
+      "text": "evitarlo",
+      "start": 17.1,
+      "end": 18.1,
+      "visual": "human_face_intense",
+      "spikeType": "none",
+      "zoom": "none",
+      "pauseBefore": 0,
+      "pauseAfter": 150
+    },
+    {
+      "text": "así que",
+      "start": 18.1,
+      "end": 18.9,
+      "visual": "human_face_soft",
+      "spikeType": "none",
+      "zoom": "none",
+      "pauseBefore": 150,
+      "pauseAfter": 0
+    },
+    {
+      "text": "no digo nada",
+      "start": 18.9,
+      "end": 20.1,
+      "visual": "human_face_soft",
+      "spikeType": "none",
+      "zoom": "none",
+      "pauseBefore": 0,
+      "pauseAfter": 0
+    },
+    {
+      "text": "y me quedo esperando",
+      "start": 20.1,
+      "end": 21.8,
+      "visual": "human_face_soft",
+      "spikeType": "none",
+      "zoom": "none",
+      "pauseBefore": 100,
+      "pauseAfter": 100
+    },
+    {
+      "text": "aunque igual",
+      "start": 21.8,
+      "end": 22.8,
+      "visual": "abstract_psychology_visual",
+      "spikeType": "none",
+      "zoom": "none",
+      "pauseBefore": 80,
+      "pauseAfter": 0
+    },
+    {
+      "text": "no lo vas a ver",
+      "start": 22.8,
+      "end": 26,
+      "visual": "human_face_soft",
+      "spikeType": "none",
+      "zoom": "none",
+      "pauseBefore": 150,
+      "pauseAfter": 400
+    }
+  ],
+  "retentionSpikesStructure": {
+    "version": "v4_unpredictable",
+    "unpredictabilityEnabled": true,
+    "timingVariation": {
+      "soft": {
+        "original": 14.3,
+        "adjusted": 14.3,
+        "delta": 0
+      },
+      "micro": {
+        "original": 15.8,
+        "adjusted": 0,
+        "delta": -15.8
+      },
+      "strong": {
+        "original": 16.8,
+        "adjusted": 16.2,
+        "delta": -0.6000000000000014
+      }
+    },
+    "unexpectedPause": {
+      "time": 15.7,
+      "percent": "60.4",
+      "purpose": "breaks_pattern_creates_surprise"
+    },
+    "separation": {
+      "softToMicro": "-14.3",
+      "microToUnexpected": "15.7",
+      "unexpectedToStrong": "0.5",
+      "equidistant": false
+    },
+    "validated": true
+  }
+}

@@ -32,6 +32,10 @@ const LOUD_TP            = parseFloat(process.env.AUDIO_LUFS_TP      || '-1.0');
 const LOUD_LRA           = parseFloat(process.env.AUDIO_LUFS_LRA     || '11');  // LU
 const OUTPUT_BITRATE     = process.env.AUDIO_BITRATE                 || '192k';
 const POSTPROCESS_ENABLED = process.env.AUDIO_POSTPROCESS_ENABLED !== 'false'; // activo por defecto
+const SILENCE_TRIM_ENABLED = process.env.AUDIO_TRIM_SILENCE !== 'false';
+const SILENCE_THRESHOLD = process.env.AUDIO_SILENCE_THRESHOLD || '-40dB';
+const SILENCE_MIN_DURATION = parseFloat(process.env.AUDIO_SILENCE_MIN_DURATION || '0.18');
+const SILENCE_KEEP_DURATION = parseFloat(process.env.AUDIO_SILENCE_KEEP_DURATION || '0.05');
 
 /**
  * Postprocesa un archivo de audio (WAV o MP3) y devuelve un MP3 limpio y normalizado.
@@ -62,12 +66,19 @@ async function postprocessAudio(inputPath, outputPath, { timeoutMs = 60_000 } = 
   if (!fs.existsSync(outDir)) fs.mkdirSync(outDir, { recursive: true });
 
   // Cadena de filtros
-  const audioFilters = [
+  const audioFilters = [];
+  if (SILENCE_TRIM_ENABLED) {
+    audioFilters.push(
+      `silenceremove=start_periods=1:start_duration=0:start_threshold=${SILENCE_THRESHOLD}:` +
+      `stop_periods=-1:stop_duration=${SILENCE_MIN_DURATION}:stop_threshold=${SILENCE_THRESHOLD}:stop_silence=${SILENCE_KEEP_DURATION}`
+    );
+  }
+  audioFilters.push(
     `highpass=f=${HIGHPASS_FREQ}`,
     `acompressor=threshold=${COMP_THRESHOLD}:ratio=${COMP_RATIO}:attack=${COMP_ATTACK}:release=${COMP_RELEASE}:makeup=${COMP_MAKEUP}`,
     `loudnorm=I=${LOUD_TARGET}:TP=${LOUD_TP}:LRA=${LOUD_LRA}:linear=true`,
     'aformat=sample_rates=44100:channel_layouts=mono',
-  ];
+  );
 
   logger.info(`AudioPostprocess: ${path.basename(inputPath)} → ${path.basename(outputPath)} | filters: ${audioFilters.length}`);
 
@@ -125,6 +136,121 @@ function getProcessedAudioPath(rawAudioPath) {
   return path.join(dir, `${base}_proc.mp3`);
 }
 
+/**
+ * Detecta segmentos de voz en un archivo de audio usando FFmpeg silencedetect.
+ * Devuelve array de [{start (s), end (s), duration (s)}] y guarda en JSON.
+ *
+ * @param {string} audioPath      - Ruta al archivo de audio procesado (MP3 o WAV)
+ * @param {string} outputDir      - Directorio para guardar voice-segments.json
+ * @param {{ noiseThreshold?: number, minDuration?: number }} options
+ * @returns {Promise<Array<{start: number, end: number, duration: number}>>}
+ */
+async function detectVoiceSegments(audioPath, outputDir, { noiseThreshold = -40, minDuration = 0.3 } = {}) {
+  if (!fs.existsSync(audioPath)) {
+    throw new Error(`DetectVoiceSegments: archivo no encontrado: ${audioPath}`);
+  }
+
+  const voiceSegments = [];
+  let silenceRanges = [];
+  let globalAudioDuration = 0;
+
+  // Use a temporary file instead of NUL/dev/null for better compatibility
+  const tempOutput = path.join(path.dirname(audioPath), `.silence_detect_${Date.now()}.wav`);
+  const segments = await new Promise((resolve, reject) => {
+    ffmpeg(audioPath)
+      .audioFilters(`silencedetect=n=${noiseThreshold}dB:d=${minDuration}`)
+      .output(tempOutput)
+      .on('stderr', (line) => {
+        // silencedetect output: [silencedetect @ ...] silence_start: 1.5
+        // [silencedetect @ ...] silence_end: 2.0 | silence_duration: 0.5
+        const silenceStart = line.match(/silence_start:\s*([\d.]+)/);
+        const silenceEnd = line.match(/silence_end:\s*([\d.]+)/);
+
+        if (silenceStart) {
+          silenceRanges.push({ start: parseFloat(silenceStart[1]) });
+        }
+        if (silenceEnd) {
+          const endVal = parseFloat(silenceEnd[1]);
+          if (silenceRanges.length > 0 && silenceRanges[silenceRanges.length - 1].end === undefined) {
+            silenceRanges[silenceRanges.length - 1].end = endVal;
+          }
+        }
+      })
+      .on('end', async () => {
+        // Clean up temp file
+        try { if (fs.existsSync(tempOutput)) fs.unlinkSync(tempOutput); } catch {}
+
+        // Obtener duración total del audio (dentro del callback end)
+        try {
+          globalAudioDuration = await new Promise((resolve) => {
+            ffmpeg.ffprobe(audioPath, (err, metadata) => {
+              resolve(err ? 0 : parseFloat(metadata.format.duration || 0));
+            });
+          });
+        } catch (err) {
+          logger.warn(`DetectVoiceSegments: could not probe audio duration`);
+        }
+
+        // Convertir rangos de silencio a segmentos de voz
+        if (silenceRanges.length > 0) {
+          let voiceStart = 0;
+          for (const silence of silenceRanges) {
+            if (silence.start > voiceStart) {
+              const duration = silence.start - voiceStart;
+              if (duration > 0.05) {
+                voiceSegments.push({
+                  start: parseFloat(voiceStart.toFixed(3)),
+                  end: parseFloat(silence.start.toFixed(3)),
+                  duration: parseFloat(duration.toFixed(3)),
+                });
+              }
+            }
+            voiceStart = silence.end || silence.start;
+          }
+          // Último segmento hasta el final del audio
+          if (voiceStart < globalAudioDuration) {
+            const duration = globalAudioDuration - voiceStart;
+            if (duration > 0.05) {
+              voiceSegments.push({
+                start: parseFloat(voiceStart.toFixed(3)),
+                end: parseFloat(globalAudioDuration.toFixed(3)),
+                duration: parseFloat(duration.toFixed(3)),
+              });
+            }
+          }
+        } else if (globalAudioDuration > 0) {
+          // Si no hay silencios detectados, asumir un único segmento de voz
+          voiceSegments.push({
+            start: 0,
+            end: globalAudioDuration,
+            duration: globalAudioDuration,
+          });
+        }
+
+        resolve(voiceSegments);
+      })
+      .on('error', (err) => {
+        logger.warn(`DetectVoiceSegments: FFmpeg error: ${err.message}`);
+        try { if (fs.existsSync(tempOutput)) fs.unlinkSync(tempOutput); } catch {}
+        resolve([]);
+      })
+      .run();
+  });
+
+  // Guardar segments.json
+  if (outputDir && voiceSegments.length > 0) {
+    try {
+      const segmentsPath = path.join(outputDir, 'voice-segments.json');
+      fs.writeFileSync(segmentsPath, JSON.stringify(voiceSegments, null, 2), 'utf8');
+      logger.info(`DetectVoiceSegments: ${voiceSegments.length} voice segments detected → ${segmentsPath}`);
+    } catch (err) {
+      logger.warn(`DetectVoiceSegments: could not save voice-segments.json: ${err.message}`);
+    }
+  }
+
+  return voiceSegments;
+}
+
 // ── Test directo ──────────────────────────────────────────────────────────────
 if (require.main === module) {
   const input  = process.argv[2] || './output/test_tts.mp3';
@@ -146,4 +272,4 @@ if (require.main === module) {
     });
 }
 
-module.exports = { postprocessAudio, postprocessAudioSafe, getProcessedAudioPath };
+module.exports = { postprocessAudio, postprocessAudioSafe, getProcessedAudioPath, detectVoiceSegments };

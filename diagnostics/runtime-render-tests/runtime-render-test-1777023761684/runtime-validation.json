@@ -1,0 +1,114 @@
+{
+  "startedAt": "2026-04-24T09:42:41.684Z",
+  "finishedAt": "2026-04-24T09:42:50.728Z",
+  "topic": "attention",
+  "testId": "runtime-render-test-1777023761684",
+  "outputDir": "C:\\Users\\Erik\\Desktop\\Generador_videos\\diagnostics\\runtime-render-tests\\runtime-render-test-1777023761684",
+  "videoPath": "C:\\Users\\Erik\\Desktop\\Generador_videos\\diagnostics\\runtime-render-tests\\runtime-render-test-1777023761684\\output.mp4",
+  "outputExists": true,
+  "outputSizeBytes": 364423,
+  "script": {
+    "title": "Cuando te responden tarde pero miras la hora exacta",
+    "hook": "Mira esto cuando algo pequeño te cambie el cuerpo.",
+    "topic": "relationships",
+    "viralityScore": 97.21,
+    "formatMatchScore": null
+  },
+  "timings": {
+    "script_ms": 151,
+    "tts_ms": 4799,
+    "audio_postprocess_ms": 184,
+    "render_ms": 3821,
+    "qc_ms": 87
+  },
+  "qc": {
+    "score": 90,
+    "passed": false,
+    "threshold": 70,
+    "checks": {
+      "audioExists": {
+        "ok": true,
+        "path": "C:\\Users\\Erik\\Desktop\\Generador_videos\\diagnostics\\runtime-render-tests\\runtime-render-test-1777023761684\\voice_proc.mp3",
+        "sizeKB": 55,
+        "reason": null
+      },
+      "audioDuration": {
+        "ok": false,
+        "duration": 2.3,
+        "reason": "duration 2.3s outside [8-45s]"
+      },
+      "videoExists": {
+        "ok": true,
+        "sizeKB": 356,
+        "reason": null
+      },
+      "renderMode": {
+        "ok": true,
+        "mode": "enhanced",
+        "reason": null
+      },
+      "renderVisuals": {
+        "ok": true,
+        "reason": null,
+        "renderMode": "enhanced"
+      },
+      "scriptComplete": {
+        "ok": true,
+        "missing": [],
+        "reason": null
+      },
+      "viralityScore": {
+        "ok": true,
+        "score": 97.21,
+        "min": 72,
+        "reason": null
+      },
+      "formatScore": {
+        "ok": true,
+        "score": 0,
+        "reason": null
+      },
+      "hasTheme": {
+        "ok": true,
+        "reason": null
+      },
+      "contentVersion": {
+        "ok": true,
+        "actual": "v2",
+        "required": "v2",
+        "reason": null
+      },
+      "publishableFile": {
+        "ok": false,
+        "duration": 2.3,
+        "hasVideoStream": true,
+        "reason": "video duration 2.3s < 8s"
+      }
+    },
+    "reasons": [
+      "duration 2.3s outside [8-45s]",
+      "video duration 2.3s < 8s"
+    ],
+    "checkedAt": "2026-04-24T09:42:50.727Z"
+  },
+  "metadata": {
+    "updatedAt": "2026-04-24T09:42:50.640Z",
+    "requestedVisualMode": "single_focus_pexels",
+    "fetchedClipCount": 3,
+    "clipPaths": [
+      "C:\\Users\\Erik\\Desktop\\Generador_videos\\backend\\assets\\stock-footage\\pexels_8328610.mp4",
+      "C:\\Users\\Erik\\Desktop\\Generador_videos\\backend\\assets\\stock-footage\\pexels_8458597.mp4",
+      "C:\\Users\\Erik\\Desktop\\Generador_videos\\backend\\assets\\stock-footage\\pexels_36956158.mp4"
+    ],
+    "renderMode": "enhanced",
+    "usedGradientFallback": false,
+    "visibleVisuals": true,
+    "hasSubtitles": true,
+    "duration": 2.32,
+    "segmentsUsed": 1,
+    "overlayEvents": 1,
+    "subtitleSafeY": "h*0.69",
+    "assSubtitleY": 1320,
+    "renderWarnings": []
+  }
+}

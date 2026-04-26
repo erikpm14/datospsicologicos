@@ -1,67 +1,69 @@
-/**
- * OperationsDashboard.jsx
- * Panel operativo en tiempo real — muestra el estado exacto de la máquina.
- * Auto-refresh cada 15s. Sin gráficas. Solo datos.
- */
-
-import { useState, useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import axios from 'axios';
-import { RefreshCw, Radio, Loader, Zap, Upload } from 'lucide-react';
+import { Loader2, Radio, RefreshCw, Sparkles, Upload, Wand2 } from 'lucide-react';
 
 const API = import.meta.env.VITE_API_URL || 'http://localhost:3001';
 const REFRESH_INTERVAL = 15;
 
-// ─── helpers ───────────────────────────────────────────────────────────────
-
-function truncate(str, n = 45) {
-  if (!str || str === '—') return '—';
-  return str.length > n ? str.slice(0, n) + '…' : str;
+function scoreTone(score, threshold) {
+  if (score == null) return 'text-white/30';
+  if (score >= threshold + 8) return 'text-emerald-300';
+  if (score >= threshold) return 'text-amber-300';
+  return 'text-red-300';
 }
 
-function fmtTime(iso) {
-  if (!iso) return '—';
-  return new Date(iso).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
-}
+function Bar({ value = 0, threshold = 0, max = 100 }) {
+  const pct = Math.min(100, ((value || 0) / max) * 100);
+  const color = !value
+    ? 'bg-white/12'
+    : value >= threshold + 8
+      ? 'bg-emerald-400'
+      : value >= threshold
+        ? 'bg-amber-400'
+        : 'bg-red-400';
 
-function scoreColor(score, threshold) {
-  if (!score && score !== 0) return 'text-gray-700';
-  if (score >= threshold + 8) return 'text-emerald-400';
-  if (score >= threshold)     return 'text-yellow-400';
-  return 'text-red-400';
-}
-
-function ScoreBar({ value, threshold, max = 100 }) {
-  const pct   = Math.min(100, ((value || 0) / max) * 100);
-  const color = !value ? 'bg-gray-800'
-    : value >= threshold + 8 ? 'bg-emerald-500'
-    : value >= threshold     ? 'bg-yellow-500'
-    : 'bg-red-500';
   return (
-    <div className="h-0.5 bg-white/5 rounded-full overflow-hidden mt-1">
-      <div className={`h-full rounded-full transition-all duration-700 ${color}`} style={{ width: `${pct}%` }} />
+    <div className="mt-3 h-2 rounded-full bg-white/6">
+      <div className={`h-2 rounded-full ${color}`} style={{ width: `${Math.max(4, pct)}%` }} />
     </div>
   );
 }
 
-// ─── main component ─────────────────────────────────────────────────────────
+function StatCard({ label, value, detail, tone = 'text-white' }) {
+  return (
+    <div className="app-kpi">
+      <p className="app-kpi-label">{label}</p>
+      <p className={`app-kpi-value ${tone}`}>{value}</p>
+      <p className="app-kpi-meta">{detail}</p>
+    </div>
+  );
+}
+
+function EmptyState({ text }) {
+  return (
+    <div className="app-panel-soft p-5 text-sm text-white/38">
+      {text}
+    </div>
+  );
+}
 
 export default function OperationsDashboard() {
-  const [data,       setData]       = useState(null);
-  const [error,      setError]      = useState(null);
-  const [countdown,  setCountdown]  = useState(REFRESH_INTERVAL);
-  const [spinning,   setSpinning]   = useState(false);
-  const [actionMsg,  setActionMsg]  = useState('');
+  const [data, setData] = useState(null);
+  const [error, setError] = useState(null);
+  const [countdown, setCountdown] = useState(REFRESH_INTERVAL);
+  const [spinning, setSpinning] = useState(false);
+  const [actionMsg, setActionMsg] = useState('');
   const timerRef = useRef(null);
 
   const load = async (manual = false) => {
     if (manual) setSpinning(true);
     try {
-      const r = await axios.get(`${API}/api/dashboard/operations`);
-      setData(r.data.data);
+      const response = await axios.get(`${API}/api/dashboard/operations`);
+      setData(response.data.data);
       setError(null);
       setCountdown(REFRESH_INTERVAL);
-    } catch (e) {
-      setError(e.response?.data?.error || e.message);
+    } catch (err) {
+      setError(err.response?.data?.error || err.message);
     } finally {
       setSpinning(false);
     }
@@ -70,448 +72,281 @@ export default function OperationsDashboard() {
   useEffect(() => {
     load();
     timerRef.current = setInterval(() => {
-      setCountdown(c => {
-        if (c <= 1) { load(); return REFRESH_INTERVAL; }
-        return c - 1;
+      setCountdown((current) => {
+        if (current <= 1) {
+          load();
+          return REFRESH_INTERVAL;
+        }
+        return current - 1;
       });
     }, 1000);
     return () => clearInterval(timerRef.current);
   }, []);
 
-  const action = async (url, label) => {
-    setActionMsg(`${label}…`);
+  const runAction = async (url, label) => {
+    setActionMsg(`${label}...`);
     try {
       await axios.post(`${API}${url}`);
-      setActionMsg(`${label} ✓`);
-      setTimeout(() => { setActionMsg(''); load(); }, 2500);
+      setActionMsg(`${label} ok`);
+      setTimeout(() => {
+        setActionMsg('');
+        load();
+      }, 2000);
     } catch {
       setActionMsg('Error');
       setTimeout(() => setActionMsg(''), 2000);
     }
   };
 
-  // ── loading / error ──────────────────────────────────────────────────────
+  if (!data && !error) {
+    return (
+      <div className="flex h-72 items-center justify-center">
+        <Loader2 size={24} className="animate-spin text-white/30" />
+      </div>
+    );
+  }
 
-  if (!data && !error) return (
-    <div className="flex flex-col items-center justify-center py-24 gap-3">
-      <Loader size={18} className="text-gray-600 animate-spin" />
-      <p className="text-xs font-mono text-gray-600">Conectando con la máquina…</p>
-    </div>
-  );
+  if (error) {
+    return (
+      <div className="app-page">
+        <div className="app-panel p-6 text-sm text-red-300">{error}</div>
+      </div>
+    );
+  }
 
-  if (error) return (
-    <div className="py-16 text-center space-y-3">
-      <p className="text-xs font-mono text-red-500">{error}</p>
-      <button onClick={() => load(true)} className="text-[11px] font-mono text-gray-600 underline">
-        reintentar
-      </button>
-    </div>
-  );
-
-  const { overview, pipeline, upcoming, quality, recentRejections, nextDecision } = data;
-  const thr = quality.thresholds;
-
-  // ── render ───────────────────────────────────────────────────────────────
+  const { overview, pipeline, upcoming, quality, recentRejections, nextDecision, timestamp } = data;
+  const thresholds = quality.thresholds;
 
   return (
-    <div className="space-y-3">
-
-      {/* ─ HEADER ─ */}
-      <div className="flex items-center justify-between py-0.5">
-        <div className="flex items-center gap-2">
-          <Radio size={11} className="text-emerald-400" />
-          <span className="text-[10px] font-mono font-semibold text-gray-400 tracking-widest uppercase">
-            Operaciones
-          </span>
-          {actionMsg && (
-            <span className="text-[10px] font-mono text-violet-400 animate-pulse">{actionMsg}</span>
-          )}
+    <div className="app-page">
+      <div className="flex items-center justify-between">
+        <div>
+          <div className="flex items-center gap-2">
+            <Radio size={12} className="text-emerald-300" />
+            <span className="app-eyebrow">Operaciones</span>
+          </div>
+          <h1 className="mt-2 text-2xl font-black text-white">Control operativo de la máquina</h1>
+          <p className="mt-1 text-sm text-white/42">Estado real de publicación, generación, calidad y próximos movimientos.</p>
         </div>
-        <div className="flex items-center gap-2.5">
-          <span className="text-[10px] font-mono text-gray-700">{countdown}s</span>
-          <button onClick={() => load(true)} className="text-gray-700 hover:text-gray-400 transition-colors" disabled={spinning}>
-            <RefreshCw size={11} className={spinning ? 'animate-spin text-gray-500' : ''} />
+        <div className="flex items-center gap-2">
+          {actionMsg ? <span className="app-badge app-badge-warn">{actionMsg}</span> : null}
+          <span className="app-badge">{countdown}s</span>
+          <button onClick={() => load(true)} className="app-button" disabled={spinning}>
+            <RefreshCw size={14} className={spinning ? 'animate-spin' : ''} />
+            Actualizar
           </button>
         </div>
       </div>
 
-      {/* ─ OVERVIEW: 2+2+2 grid ─ */}
-      <div className="grid grid-cols-2 gap-2">
-
-        {/* PRÓXIMA PUBLICACIÓN — célula grande */}
-        <div className={`col-span-2 rounded-xl p-3.5 border flex items-center justify-between
-          ${overview.readyToPublish > 0
-            ? 'bg-blue-500/5 border-blue-500/15'
-            : 'bg-white/[0.02] border-white/5'}`}>
-          <div>
-            <p className="text-[9px] font-mono text-gray-600 uppercase tracking-widest">Próxima publicación</p>
-            <p className="text-3xl font-bold font-mono text-white leading-none mt-1">
-              {overview.nextPublishTime?.split(' ')[0] || '—'}
-            </p>
-            {overview.nextPublishIn && (
-              <p className="text-xs font-mono text-yellow-400 mt-1">en {overview.nextPublishIn}</p>
-            )}
-          </div>
-          <div className="text-right">
-            <p className="text-[9px] font-mono text-gray-600 uppercase tracking-widest">Hoy</p>
-            <p className="text-2xl font-bold font-mono leading-none mt-1">
-              <span className={overview.publishedToday >= overview.maxPerDay ? 'text-emerald-400' : 'text-white'}>
-                {overview.publishedToday}
-              </span>
-              <span className="text-gray-700 text-base"> /{overview.maxPerDay}</span>
-            </p>
-            <p className="text-[10px] font-mono text-gray-600 mt-1">publicados</p>
-          </div>
-        </div>
-
-        {/* LISTOS */}
-        <div className="bg-white/[0.02] border border-white/5 rounded-xl p-3">
-          <p className="text-[9px] font-mono text-gray-600 uppercase tracking-widest">Listos</p>
-          <p className={`text-2xl font-bold font-mono leading-none mt-1 ${overview.readyToPublish > 0 ? 'text-blue-400' : 'text-gray-700'}`}>
-            {overview.readyToPublish}
-          </p>
-          <p className="text-[9px] font-mono text-gray-700 mt-0.5">para publicar</p>
-        </div>
-
-        {/* COLA */}
-        <div className={`bg-white/[0.02] border rounded-xl p-3
-          ${pipeline.rendering ? 'border-yellow-500/20' : 'border-white/5'}`}>
-          <p className="text-[9px] font-mono text-gray-600 uppercase tracking-widest">Cola / Render</p>
-          <div className="flex items-end gap-2 mt-1">
-            <p className="text-2xl font-bold font-mono leading-none text-white">{overview.queuePending}</p>
-            {pipeline.rendering && (
-              <div className="flex items-center gap-1 mb-0.5">
-                <Loader size={9} className="text-yellow-400 animate-spin" />
-                <span className="text-[10px] font-mono text-yellow-400">{pipeline.rendering.progress}%</span>
-              </div>
-            )}
-          </div>
-          <p className="text-[9px] font-mono text-gray-700 mt-0.5">
-            {pipeline.rendering ? `renderizando · ${pipeline.rendering.topic}` : 'en cola'}
-          </p>
-        </div>
-
-        {/* CALIDAD V/F */}
-        <div className="bg-white/[0.02] border border-white/5 rounded-xl p-3">
-          <p className="text-[9px] font-mono text-gray-600 uppercase tracking-widest">Calidad media</p>
-          <div className="mt-1.5 space-y-1">
-            <div className="flex items-center justify-between">
-              <span className="text-[9px] font-mono text-gray-600">Viral</span>
-              <span className={`text-sm font-bold font-mono ${scoreColor(quality.avgVirality, thr.viralityToQueue)}`}>
-                {quality.avgVirality || '—'}
-              </span>
+      <div className="grid gap-4 xl:grid-cols-[1.15fr_0.85fr]">
+        <div className="app-panel p-6">
+          <p className="app-eyebrow">Próxima publicación</p>
+          <div className="mt-4 flex items-end justify-between gap-6">
+            <div>
+              <p className="text-5xl font-black tracking-tight text-white">{overview.nextPublishTime?.split(' ')[0] || '—'}</p>
+              <p className="mt-2 text-sm text-amber-300">{overview.nextPublishIn ? `en ${overview.nextPublishIn}` : 'Sin ventana calculada'}</p>
             </div>
-            <div className="flex items-center justify-between">
-              <span className="text-[9px] font-mono text-gray-600">Format</span>
-              <span className={`text-sm font-bold font-mono ${scoreColor(quality.avgFormatMatch, thr.formatMatchToQueue)}`}>
-                {quality.avgFormatMatch || '—'}
-              </span>
+            <div className="text-right">
+              <p className="text-sm text-white/34">Hoy</p>
+              <p className="mt-1 text-4xl font-black text-white">{overview.publishedToday}<span className="text-xl text-white/28"> / {overview.maxPerDay}</span></p>
+              <p className="mt-1 text-sm text-white/34">publicados</p>
             </div>
           </div>
         </div>
 
-        {/* RECHAZO */}
-        <div className="bg-white/[0.02] border border-white/5 rounded-xl p-3">
-          <p className="text-[9px] font-mono text-gray-600 uppercase tracking-widest">Rechazo</p>
-          <p className={`text-2xl font-bold font-mono leading-none mt-1
-            ${quality.rejectionRate > 60 ? 'text-orange-400'
-            : quality.rejectionRate > 40 ? 'text-yellow-400'
-            : 'text-gray-400'}`}>
-            {quality.rejectionRate}<span className="text-base text-gray-600">%</span>
-          </p>
-          <p className="text-[9px] font-mono text-gray-700 mt-0.5">{quality.totalCycles} ciclos</p>
+        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-2">
+          <StatCard label="Listos" value={overview.readyToPublish} detail="vídeos preparados para publicar" tone={overview.readyToPublish > 0 ? 'text-sky-300' : 'text-white'} />
+          <StatCard label="Cola" value={overview.queuePending} detail={pipeline.rendering ? `render ${pipeline.rendering.progress}%` : 'sin render activo'} tone={pipeline.rendering ? 'text-amber-300' : 'text-white'} />
+          <StatCard label="Calidad media" value={quality.avgVirality || '—'} detail={`format ${quality.avgFormatMatch || '—'} · emoción ${quality.avgEmotional || '—'}`} tone="text-emerald-300" />
+          <StatCard label="Rechazo" value={`${quality.rejectionRate}%`} detail={`${quality.totalCycles} ciclos`} tone={quality.rejectionRate > 60 ? 'text-red-300' : quality.rejectionRate > 40 ? 'text-amber-300' : 'text-white'} />
         </div>
-
       </div>
 
-      {/* ─ PIPELINE ─ */}
-      <div className="bg-white/[0.02] border border-white/5 rounded-xl p-3">
-        <p className="text-[9px] font-mono text-gray-600 uppercase tracking-widest mb-3">Pipeline</p>
-
-        {/* estados en fila */}
-        <div className="flex items-center gap-1 overflow-x-auto pb-1">
-          {[
-            { key: 'PENDING',   count: pipeline.pending.length,     color: 'text-gray-400',    ring: 'border-gray-700' },
-            { key: 'RENDER',    count: pipeline.rendering ? 1 : 0,  color: 'text-yellow-400',  ring: 'border-yellow-700', pulse: !!pipeline.rendering },
-            { key: 'LISTO',     count: pipeline.rendered.length,     color: 'text-blue-400',    ring: 'border-blue-800' },
-            { key: 'PUB HOY',   count: pipeline.publishedToday.length, color: 'text-emerald-400', ring: 'border-emerald-800' },
-            { key: 'FALLIDO',   count: pipeline.failed.length,      color: pipeline.failed.length > 0 ? 'text-red-400' : 'text-gray-700', ring: pipeline.failed.length > 0 ? 'border-red-800' : 'border-gray-800' },
-          ].map((s, i, arr) => (
-            <div key={s.key} className="flex items-center gap-1 flex-shrink-0">
-              <div className={`text-center border rounded-lg px-2.5 py-1.5 ${s.ring} bg-white/[0.02]`}>
-                <div className={`text-lg font-bold font-mono leading-none ${s.color} ${s.pulse ? 'animate-pulse' : ''}`}>
-                  {s.count}
+      <div className="grid gap-4 xl:grid-cols-[1fr_1fr]">
+        <div className="app-panel">
+          <div className="app-section-header">
+            <p className="app-eyebrow">Pipeline</p>
+            <h2 className="app-title">Qué está pasando ahora</h2>
+          </div>
+          <div className="grid gap-4 px-6 py-6 md:grid-cols-5">
+            {[
+              { label: 'Pending', value: pipeline.pending.length, detail: 'esperando' },
+              { label: 'Render', value: pipeline.rendering ? 1 : 0, detail: pipeline.rendering ? `${pipeline.rendering.progress}%` : 'sin tarea' },
+              { label: 'Listo', value: pipeline.rendered.length, detail: 'para publicar' },
+              { label: 'Publicado hoy', value: pipeline.publishedToday.length, detail: 'completados' },
+              { label: 'Fallido', value: pipeline.failed.length, detail: 'requiere revisión' },
+            ].map((item) => (
+              <div key={item.label} className="app-panel-soft p-4 text-center">
+                <p className="app-kpi-label">{item.label}</p>
+                <p className="mt-3 text-3xl font-black text-white">{item.value}</p>
+                <p className="mt-1 text-xs text-white/36">{item.detail}</p>
+              </div>
+            ))}
+          </div>
+          {pipeline.rendering ? (
+            <div className="px-6 pb-6">
+              <div className="app-panel-soft p-4">
+                <div className="flex items-center justify-between gap-3">
+                  <div>
+                    <p className="text-sm font-semibold text-white">{pipeline.rendering.topic}</p>
+                    <p className="mt-1 text-xs text-white/40">{pipeline.rendering.hook || 'Render en curso'}</p>
+                  </div>
+                  <span className="app-badge app-badge-warn">{pipeline.rendering.progress}%</span>
                 </div>
-                <div className="text-[8px] font-mono text-gray-600 mt-0.5 whitespace-nowrap">{s.key}</div>
+                <Bar value={pipeline.rendering.progress} threshold={80} />
               </div>
-              {i < arr.length - 1 && <span className="text-gray-800 text-xs font-mono">→</span>}
             </div>
-          ))}
+          ) : null}
         </div>
 
-        {/* detalle render activo */}
-        {pipeline.rendering && (
-          <div className="mt-2.5 pt-2.5 border-t border-white/5">
-            <div className="flex items-center justify-between mb-1.5">
-              <p className="text-[10px] font-mono text-gray-500">
-                <span className="text-yellow-400 mr-1">⬤</span>
-                {pipeline.rendering.topic}
-                {pipeline.rendering.hook && (
-                  <span className="text-gray-700 ml-1">· {truncate(pipeline.rendering.hook, 35)}</span>
-                )}
-              </p>
-              <p className="text-[10px] font-mono text-yellow-400 font-bold">{pipeline.rendering.progress}%</p>
-            </div>
-            <div className="h-0.5 bg-white/5 rounded-full overflow-hidden">
-              <div
-                className="h-full bg-yellow-500/50 rounded-full transition-all duration-700"
-                style={{ width: `${pipeline.rendering.progress}%` }}
-              />
-            </div>
+        <div className="app-panel">
+          <div className="app-section-header">
+            <p className="app-eyebrow">Calidad</p>
+            <h2 className="app-title">Señal de entrada</h2>
           </div>
-        )}
+          <div className="grid gap-4 px-6 py-6 md:grid-cols-3">
+            {[
+              { label: 'Viralidad', value: quality.avgVirality, threshold: thresholds.viralityToQueue },
+              { label: 'Format match', value: quality.avgFormatMatch, threshold: thresholds.formatMatchToQueue },
+              { label: 'Emoción', value: quality.avgEmotional, threshold: 60 },
+            ].map((item) => (
+              <div key={item.label} className="app-panel-soft p-4">
+                <p className="app-kpi-label">{item.label}</p>
+                <p className={`mt-3 text-3xl font-black ${scoreTone(item.value, item.threshold)}`}>{item.value || '—'}</p>
+                <Bar value={item.value} threshold={item.threshold} />
+              </div>
+            ))}
+          </div>
+          <div className="grid gap-4 px-6 pb-6 md:grid-cols-3">
+            <BigStat title="Aprobación" value={`${quality.approvalRate}%`} />
+            <BigStat title="Publish >= viral" value={thresholds.viralityToPublish} />
+            <BigStat title="Queue >= format" value={thresholds.formatMatchToQueue} />
+          </div>
+        </div>
       </div>
 
-      {/* ─ PRÓXIMOS A PUBLICAR ─ */}
-      {upcoming.length > 0 ? (
-        <div className="bg-white/[0.02] border border-white/5 rounded-xl overflow-hidden">
-          <div className="px-3 py-2.5 border-b border-white/5">
-            <p className="text-[9px] font-mono text-gray-600 uppercase tracking-widest">
-              Próximos a publicar <span className="text-gray-700 normal-case">· ordenados por prioridad</span>
-            </p>
+      <div className="grid gap-4 xl:grid-cols-[1.08fr_0.92fr]">
+        <div className="app-panel">
+          <div className="app-section-header">
+            <p className="app-eyebrow">Próximos</p>
+            <h2 className="app-title">Vídeos listos para salir</h2>
           </div>
-          <div className="overflow-x-auto">
-            <table className="w-full text-[11px] font-mono min-w-[420px]">
+          <div className="px-2 py-2">
+            {upcoming.length === 0 ? (
+              <div className="px-4 py-4">
+                <EmptyState text="No hay vídeos renderizados en cola de publicación." />
+              </div>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="app-table">
+                  <thead>
+                    <tr>
+                      <th>Slot</th>
+                      <th>Topic</th>
+                      <th>Hook</th>
+                      <th>P</th>
+                      <th>V</th>
+                      <th>F</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {upcoming.map((video) => (
+                      <tr key={video.videoId}>
+                        <td className="font-semibold text-white">{video.scheduledSlot}</td>
+                        <td className="text-white/60">{video.topic || '—'}</td>
+                        <td className="max-w-[320px] truncate text-white/46">{video.hook || '—'}</td>
+                        <td className="text-right text-emerald-300">{video.priorityScore ?? '—'}</td>
+                        <td className={`text-right ${scoreTone(video.viralityScore, thresholds.viralityToPublish)}`}>{video.viralityScore ?? '—'}</td>
+                        <td className={`text-right ${scoreTone(video.formatMatchScore, thresholds.formatMatchToQueue)}`}>{video.formatMatchScore ?? '—'}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
+        </div>
+
+        <div className="space-y-4">
+          {nextDecision ? (
+            <div className="app-panel p-6">
+              <p className="app-eyebrow">Próxima generación</p>
+              <h2 className="app-title">{nextDecision.nextTopic}</h2>
+              <p className="mt-2 text-sm text-white/46">{nextDecision.angle || 'Sin ángulo detallado'}</p>
+              <div className="mt-4 flex flex-wrap gap-2">
+                <span className="app-badge">{nextDecision.hookType}</span>
+                <span className="app-badge">{nextDecision.strategy}</span>
+                <span className={`app-badge ${(nextDecision.confidence || 0) >= 0.8 ? 'app-badge-good' : 'app-badge-warn'}`}>
+                  {Math.round((nextDecision.confidence || 0) * 100)}% conf.
+                </span>
+              </div>
+              {nextDecision.reasoning ? <p className="mt-4 text-sm leading-6 text-white/42">{nextDecision.reasoning}</p> : null}
+            </div>
+          ) : null}
+
+          <div className="app-panel p-6">
+            <p className="app-eyebrow">Acciones manuales</p>
+            <div className="mt-4 grid gap-3">
+              <button onClick={() => runAction('/api/scheduler/run-generation', 'Generando')} className="app-button app-button-strong">
+                <Wand2 size={14} />
+                Generar ahora
+              </button>
+              <button onClick={() => runAction('/api/publish/run', 'Publicando')} disabled={overview.readyToPublish === 0} className="app-button disabled:cursor-not-allowed disabled:opacity-30">
+                <Upload size={14} />
+                Publicar ahora
+              </button>
+            </div>
+            <div className="mt-4 flex items-center justify-between text-xs text-white/34">
+              <span>gen {overview.generationEnabled ? 'ON' : 'OFF'} · pub {overview.publishEnabled ? 'ON' : 'OFF'}</span>
+              <span>{new Date(timestamp).toLocaleTimeString('es-ES')}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {recentRejections.length > 0 ? (
+        <div className="app-panel">
+          <div className="app-section-header">
+            <p className="app-eyebrow">Rechazados recientes</p>
+            <h2 className="app-title">Lo que el sistema está descartando</h2>
+          </div>
+          <div className="overflow-x-auto px-2 py-2">
+            <table className="app-table">
               <thead>
-                <tr className="border-b border-white/5">
-                  <th className="text-left px-3 py-2 text-[9px] text-gray-700 font-normal w-16">SLOT</th>
-                  <th className="text-left px-2 py-2 text-[9px] text-gray-700 font-normal w-24">TOPIC</th>
-                  <th className="text-left px-2 py-2 text-[9px] text-gray-700 font-normal">HOOK</th>
-                  <th className="text-right px-2 py-2 text-[9px] text-gray-700 font-normal w-8">P</th>
-                  <th className="text-right px-2 py-2 text-[9px] text-gray-700 font-normal w-8">V</th>
-                  <th className="text-right px-3 py-2 text-[9px] text-gray-700 font-normal w-8">F</th>
+                <tr>
+                  <th>Hora</th>
+                  <th>Topic</th>
+                  <th>Hook</th>
+                  <th>V</th>
+                  <th>F</th>
+                  <th>Motivo</th>
                 </tr>
               </thead>
               <tbody>
-                {upcoming.map((v, i) => (
-                  <tr key={v.videoId} className={`border-b border-white/[0.03] ${i === 0 ? 'bg-blue-500/[0.04]' : 'hover:bg-white/[0.01]'}`}>
-                    <td className="px-3 py-2 whitespace-nowrap">
-                      <span className={`font-bold ${i === 0 ? 'text-blue-400' : 'text-gray-600'}`}>
-                        {v.scheduledSlot}
-                      </span>
-                      {v.scheduledTomorrow && <span className="text-gray-700 text-[8px] ml-1">mañana</span>}
-                    </td>
-                    <td className="px-2 py-2 text-gray-500">{v.topic || '—'}</td>
-                    <td className="px-2 py-2 text-gray-600">{truncate(v.hook, 38)}</td>
-                    <td className={`px-2 py-2 text-right font-bold ${v.priorityScore >= 75 ? 'text-emerald-400' : 'text-yellow-400'}`}>
-                      {v.priorityScore ?? '—'}
-                    </td>
-                    <td className={`px-2 py-2 text-right ${scoreColor(v.viralityScore, thr.viralityToPublish)}`}>
-                      {v.viralityScore ?? '—'}
-                    </td>
-                    <td className={`px-3 py-2 text-right ${scoreColor(v.formatMatchScore, thr.formatMatchToQueue)}`}>
-                      {v.formatMatchScore ?? '—'}
-                    </td>
+                {recentRejections.map((item, index) => (
+                  <tr key={`${item.rejectedAt}-${index}`}>
+                    <td>{item.rejectedAt ? new Date(item.rejectedAt).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' }) : '—'}</td>
+                    <td className="text-white/58">{item.topic || '—'}</td>
+                    <td className="max-w-[320px] truncate text-white/44">{item.hook || '—'}</td>
+                    <td className={scoreTone(item.viralityScore, 75)}>{item.viralityScore ?? '—'}</td>
+                    <td className={scoreTone(item.formatMatchScore, 70)}>{item.formatMatchScore ?? '—'}</td>
+                    <td className="text-red-300/72">{item.reason || '—'}</td>
                   </tr>
                 ))}
               </tbody>
             </table>
           </div>
         </div>
-      ) : (
-        <div className="bg-white/[0.02] border border-white/5 rounded-xl px-3 py-4 text-center">
-          <p className="text-[11px] font-mono text-gray-700">Sin vídeos renderizados en cola de publicación</p>
-          <p className="text-[10px] font-mono text-gray-800 mt-0.5">
-            La máquina generará el siguiente en el próximo ciclo
-          </p>
-        </div>
-      )}
+      ) : null}
+    </div>
+  );
+}
 
-      {/* ─ CALIDAD detallada ─ */}
-      <div className="bg-white/[0.02] border border-white/5 rounded-xl p-3">
-        <div className="flex items-center justify-between mb-3">
-          <p className="text-[9px] font-mono text-gray-600 uppercase tracking-widest">Calidad</p>
-          <p className="text-[9px] font-mono text-gray-700">últimos {quality.totalCycles} ciclos</p>
-        </div>
-        <div className="grid grid-cols-3 gap-3">
-          {[
-            { label: 'VIRALIDAD',  val: quality.avgVirality,     threshold: thr.viralityToQueue },
-            { label: 'FORMAT',     val: quality.avgFormatMatch,   threshold: thr.formatMatchToQueue },
-            { label: 'EMOCIÓN',    val: quality.avgEmotional,     threshold: 60 },
-          ].map(({ label, val, threshold }) => (
-            <div key={label}>
-              <p className="text-[8px] font-mono text-gray-700">{label}</p>
-              <p className={`text-2xl font-bold font-mono leading-none mt-0.5 ${scoreColor(val, threshold)}`}>
-                {val || '—'}
-              </p>
-              <ScoreBar value={val} threshold={threshold} />
-            </div>
-          ))}
-        </div>
-
-        <div className="grid grid-cols-3 gap-3 mt-3 pt-3 border-t border-white/5 text-center">
-          <div>
-            <p className="text-[8px] font-mono text-gray-700">APROBACIÓN</p>
-            <p className={`text-sm font-bold font-mono ${quality.approvalRate >= 40 ? 'text-emerald-400' : 'text-red-400'}`}>
-              {quality.approvalRate}%
-            </p>
-          </div>
-          <div>
-            <p className="text-[8px] font-mono text-gray-700">PUB ≥ VIRAL</p>
-            <p className="text-sm font-bold font-mono text-gray-500">{thr.viralityToPublish}</p>
-          </div>
-          <div>
-            <p className="text-[8px] font-mono text-gray-700">QUEUE ≥ FORMAT</p>
-            <p className="text-sm font-bold font-mono text-gray-500">{thr.formatMatchToQueue}</p>
-          </div>
-        </div>
-      </div>
-
-      {/* ─ PRÓXIMA DECISIÓN ─ */}
-      {nextDecision && (
-        <div className="bg-white/[0.02] border border-violet-500/10 rounded-xl p-3">
-          <p className="text-[9px] font-mono text-gray-600 uppercase tracking-widest mb-2">Próxima generación</p>
-          <div className="flex items-start justify-between gap-3">
-            <div className="flex-1 min-w-0 space-y-1.5">
-              <div className="flex items-center gap-1.5 flex-wrap">
-                <span className="text-xs font-mono text-violet-300 font-bold">{nextDecision.nextTopic}</span>
-                <span className="text-[9px] font-mono text-gray-600 bg-white/5 px-1.5 py-0.5 rounded">
-                  {nextDecision.hookType}
-                </span>
-                <span className={`text-[9px] font-mono px-1.5 py-0.5 rounded
-                  ${nextDecision.strategy === 'exploit_p80'
-                    ? 'text-emerald-400 bg-emerald-500/10'
-                    : nextDecision.strategy === 'streak'
-                    ? 'text-violet-400 bg-violet-500/10'
-                    : 'text-gray-600 bg-white/5'}`}>
-                  {nextDecision.strategy}
-                </span>
-              </div>
-              {nextDecision.angle && (
-                <p className="text-[10px] font-mono text-gray-600">{nextDecision.angle}</p>
-              )}
-              {nextDecision.reasoning && (
-                <p className="text-[10px] font-mono text-gray-700 leading-relaxed">
-                  {truncate(nextDecision.reasoning, 90)}
-                </p>
-              )}
-            </div>
-            <div className="text-right flex-shrink-0">
-              <p className="text-[8px] font-mono text-gray-700">CONF</p>
-              <p className={`text-base font-bold font-mono
-                ${(nextDecision.confidence || 0) >= 0.8 ? 'text-emerald-400'
-                : (nextDecision.confidence || 0) >= 0.5 ? 'text-yellow-400'
-                : 'text-gray-600'}`}>
-                {Math.round((nextDecision.confidence || 0) * 100)}%
-              </p>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* ─ RECHAZADOS ─ */}
-      {recentRejections.length > 0 && (
-        <div className="bg-white/[0.02] border border-white/5 rounded-xl overflow-hidden">
-          <div className="px-3 py-2.5 border-b border-white/5">
-            <p className="text-[9px] font-mono text-gray-600 uppercase tracking-widest">Rechazados recientes</p>
-          </div>
-          <div className="overflow-x-auto">
-            <table className="w-full text-[10px] font-mono min-w-[360px]">
-              <thead>
-                <tr className="border-b border-white/[0.04]">
-                  <th className="text-left px-3 py-1.5 text-[8px] text-gray-700 font-normal w-10">HORA</th>
-                  <th className="text-left px-2 py-1.5 text-[8px] text-gray-700 font-normal w-20">TOPIC</th>
-                  <th className="text-left px-2 py-1.5 text-[8px] text-gray-700 font-normal">HOOK</th>
-                  <th className="text-right px-2 py-1.5 text-[8px] text-gray-700 font-normal w-8">V</th>
-                  <th className="text-right px-2 py-1.5 text-[8px] text-gray-700 font-normal w-8">F</th>
-                  <th className="text-left px-3 py-1.5 text-[8px] text-gray-700 font-normal">MOTIVO</th>
-                </tr>
-              </thead>
-              <tbody>
-                {recentRejections.map((r, i) => (
-                  <tr key={i} className="border-b border-white/[0.03] hover:bg-white/[0.01]">
-                    <td className="px-3 py-2 text-gray-700 whitespace-nowrap">{fmtTime(r.rejectedAt)}</td>
-                    <td className="px-2 py-2 text-gray-700">{r.topic || '—'}</td>
-                    <td className="px-2 py-2 text-gray-600">{truncate(r.hook, 28)}</td>
-                    <td className={`px-2 py-2 text-right ${scoreColor(r.viralityScore, 75)}`}>
-                      {r.viralityScore ?? '—'}
-                    </td>
-                    <td className={`px-2 py-2 text-right ${scoreColor(r.formatMatchScore, 70)}`}>
-                      {r.formatMatchScore ?? '—'}
-                    </td>
-                    <td className="px-3 py-2 text-red-500/60">{truncate(r.reason, 32)}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      )}
-
-      {/* ─ ACCIONES MANUALES ─ */}
-      <div className="flex gap-2">
-        <button
-          onClick={() => action('/api/scheduler/run-generation', 'Generando')}
-          className="flex-1 flex items-center justify-center gap-1.5 py-2.5 text-[11px] font-mono font-bold
-            text-gray-500 bg-white/[0.02] border border-white/5 rounded-xl
-            hover:bg-white/[0.04] hover:text-gray-300 hover:border-white/10 transition-all"
-        >
-          <Zap size={11} />
-          GENERAR AHORA
-        </button>
-        <button
-          onClick={() => action('/api/publish/run', 'Publicando')}
-          disabled={overview.readyToPublish === 0}
-          className="flex-1 flex items-center justify-center gap-1.5 py-2.5 text-[11px] font-mono font-bold
-            text-gray-500 bg-white/[0.02] border border-white/5 rounded-xl
-            hover:bg-white/[0.04] hover:text-gray-300 hover:border-white/10 transition-all
-            disabled:opacity-30 disabled:cursor-not-allowed"
-        >
-          <Upload size={11} />
-          PUBLICAR AHORA
-        </button>
-        <button
-          onClick={() => {
-            if (window.confirm('¿Limpiar jobs fallidos y renders incompletos?')) {
-              action('/api/admin/cleanup', 'Limpiando');
-            }
-          }}
-          title="Eliminar jobs fallidos y renders sin output.mp4"
-          className="px-3 py-2.5 text-[11px] font-mono font-bold
-            text-gray-700 bg-white/[0.02] border border-white/5 rounded-xl
-            hover:bg-red-500/10 hover:text-red-400 hover:border-red-500/20 transition-all"
-        >
-          🗑
-        </button>
-      </div>
-
-      {/* ─ STATUS BAR ─ */}
-      <div className="flex items-center justify-between pt-0.5">
-        <div className="flex items-center gap-3 text-[9px] font-mono">
-          <span>
-            gen{' '}
-            {overview.generationEnabled
-              ? <span className="text-emerald-600">ON</span>
-              : <span className="text-gray-700">OFF</span>}
-          </span>
-          <span>
-            pub{' '}
-            {overview.publishEnabled
-              ? <span className="text-emerald-600">ON</span>
-              : <span className="text-gray-700">OFF</span>}
-          </span>
-          {overview.isPublishing && (
-            <span className="text-yellow-600 animate-pulse">publicando…</span>
-          )}
-          {pipeline.failed.length > 0 && (
-            <span className="text-red-600">{pipeline.failed.length} fallidos</span>
-          )}
-        </div>
-        <p className="text-[9px] font-mono text-gray-800">
-          {new Date(data.timestamp).toLocaleTimeString('es-ES')}
-        </p>
-      </div>
-
+function BigStat({ title, value }) {
+  return (
+    <div className="app-panel-soft p-4">
+      <p className="app-kpi-label">{title}</p>
+      <p className="mt-3 text-2xl font-black text-white">{value}</p>
     </div>
   );
 }

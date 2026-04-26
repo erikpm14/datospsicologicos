@@ -1,0 +1,22 @@
+{
+  "timestamp": "2026-04-26T15:45:35.754Z",
+  "totalVideos": 1,
+  "validCount": 0,
+  "invalidCount": 1,
+  "valid": [],
+  "invalid": [
+    {
+      "videoId": "8540c860-e715-4af6-9eb6-a358db84f5a7",
+      "filename": "8540c860-e715-4af6-9eb6-a358db84f5a7.json",
+      "reason": [
+        "duration",
+        "structureVersion",
+        "renderMode",
+        "subtitleTiming",
+        "wordEngine",
+        "retentionSpikes",
+        "viralityScore"
+      ]
+    }
+  ]
+}

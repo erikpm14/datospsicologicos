@@ -55,6 +55,8 @@ const CONTROVERSY_PATTERNS = [
   /sin que (lo notes|te des cuenta|lo sepas)/i,
   /cada vez que /i,
   /^si .+(cerebro|mente|cuerpo|móvil|duermes|comes|hablas)/i,
+  /^si .+, esto está (pasando|ocurriendo|sucediendo)/i,    // patrón viral real — 104% loop
+  /cada vez que .+, (tu cerebro|tu cuerpo|tu mente)/i,     // patrón viral real — top views
   /hay (un|una) (razón|mecanismo|patrón|explicación)/i,
   /experimento (de|del|que)/i,
   /universidad de/i,
@@ -138,16 +140,23 @@ function scoreLoopPotential(ctaText) {
   // Loop que conecta con el inicio (cierra el arco del vídeo = rewatch)
   if (/vuelve al inicio|empieza de nuevo|primera vez que|al principio/i.test(ctaText)) score += 4;
 
-  if (/sigue|s[íi]gueme|m[áa]s videos|notificaciones/i.test(ctaText)) score += 2;
+  // CTA implícito — promesa de valor sin pedir nada (más efectivo que "sígueme")
+  if (/solo es el principio|iremos descubriendo|todos los d[íi]as uno nuevo|ma[ñn]ana.+otro/i.test(ctaText)) score += 8;
+  if (/(m[áa]s mecanismos|m[áa]s patrones|m[áa]s secretos).+(cerebro|mente|sin avisarte|sin permiso)/i.test(ctaText)) score += 7;
+  if (/sin (avisarte|pedirte permiso|que lo sepas|que lo notes)/i.test(ctaText)) score += 5;
+  // CTA explícito clásico (penalizado vs implícito pero sigue siendo válido)
+  if (/s[íi]gueme|sigue el canal|más datos (así|psicológicos)/i.test(ctaText)) score += 3;
   return Math.min(score, 15);
 }
 
 function scoreDuration(durationSeconds) {
-  // 20-30s = formato short-form óptimo (máxima retención en YouTube Shorts/TikTok)
-  // 30-60s = también válido
-  if (durationSeconds >= 20 && durationSeconds <= 30) return 10; // óptimo short-form
-  if (durationSeconds >= 15 && durationSeconds <= 60) return 8;  // aceptable
-  if (durationSeconds >= 10 && durationSeconds <= 90) return 5;  // subóptimo
+  // Calibrado con datos reales del canal:
+  // 10-11s → top views (1.300-1.900), 21s → 104% loop
+  // Objetivo nuevo: 12-18s sweet spot
+  if (durationSeconds >= 10 && durationSeconds <= 18) return 10; // óptimo — datos reales
+  if (durationSeconds >= 19 && durationSeconds <= 25) return 8;  // aceptable
+  if (durationSeconds >= 26 && durationSeconds <= 35) return 5;  // largo — retención cae
+  if (durationSeconds > 35)                           return 2;  // demasiado largo
   return 1;
 }
 

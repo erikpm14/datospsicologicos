@@ -29,7 +29,7 @@ const fs   = require('fs');
 const path = require('path');
 const logger = require('../utils/logger');
 
-const PUBLISH_THRESHOLD  = parseInt(process.env.MIN_VIRALITY_SCORE_TO_PUBLISH || '80');
+const PUBLISH_THRESHOLD  = parseInt(process.env.MIN_VIRALITY_SCORE_TO_PUBLISH || '65');
 const MIN_QUALITY_SCORE  = parseInt(process.env.MIN_CONTENT_QUALITY_SCORE    || '60');
 const PUBLISH_LOG_PATH   = path.resolve('./data/publish-log.json');
 
@@ -108,15 +108,13 @@ function scoreHook(hook) {
 
   score = Math.max(0, Math.min(100, score));
 
-  if (score < 35) {
-    return {
-      score,
-      discardReason: 'discarded_weak_hook',
-      detail: `hook score ${score}/100 (genérico, sin tensión)`,
-    };
-  }
-
-  return { score, discardReason: null, detail: `hook score ${score}/100` };
+  return {
+    score,
+    discardReason: null,
+    detail: score < 35
+      ? `hook score ${score}/100 (débil, se penaliza pero no bloquea)`
+      : `hook score ${score}/100`,
+  };
 }
 
 // ─────────────────────────────────────────────
@@ -184,19 +182,17 @@ function scoreFreshness(script, publishLog) {
     if (union > 0) maxSimilarity = Math.max(maxSimilarity, intersection / union);
   }
 
-  if (maxSimilarity > 0.55) {
-    return {
-      score: 0,
-      discardReason: 'discarded_repetitive_content',
-      detail: `similitud con publicado reciente: ${(maxSimilarity * 100).toFixed(0)}%`,
-    };
-  }
-
-  // Penalización por topic repetido en los últimos 3
   const topicRepeats = recentTopics.filter(t => t === script.topic).length;
-  const score = Math.max(0, Math.round((1 - maxSimilarity) * 100) - topicRepeats * 10);
+  const repetitionPenalty = maxSimilarity > 0.55 ? 25 : 0;
+  const score = Math.max(0, Math.round((1 - maxSimilarity) * 100) - topicRepeats * 10 - repetitionPenalty);
 
-  return { score, discardReason: null, detail: `freshness ${score}/100 | similarity ${(maxSimilarity * 100).toFixed(0)}%` };
+  return {
+    score,
+    discardReason: null,
+    detail: maxSimilarity > 0.55
+      ? `freshness ${score}/100 | similarity ${(maxSimilarity * 100).toFixed(0)}% (penalizado, no bloquea)`
+      : `freshness ${score}/100 | similarity ${(maxSimilarity * 100).toFixed(0)}%`,
+  };
 }
 
 // ─────────────────────────────────────────────
@@ -226,27 +222,17 @@ function evaluateCandidate(script, publishLog = []) {
   // ── STAGE A: generation score ──────────────────────────────────────────────
   const scoreA = script.viralityScore || 0;
 
-  if (scoreA < PUBLISH_THRESHOLD) {
-    return _discard(
-      'discarded_low_virality',
-      `viralityScore ${scoreA} < ${PUBLISH_THRESHOLD}`,
-      scoreA, 0,
-    );
-  }
 
   // ── STAGE B: quality score ─────────────────────────────────────────────────
   const hookResult       = scoreHook(script.hook);
   const structureResult  = scoreStructure(script);
   const freshnessResult  = scoreFreshness(script, publishLog);
 
-  // Hard fails from quality checks
-  for (const result of [hookResult, structureResult, freshnessResult]) {
-    if (result.discardReason) {
-      const scoreB = Math.round(hookResult.score * 0.40 + structureResult.score * 0.35 + freshnessResult.score * 0.25);
-      return _discard(result.discardReason, result.detail, scoreA, scoreB, {
-        hook: hookResult, structure: structureResult, freshness: freshnessResult,
-      });
-    }
+  if (structureResult.discardReason) {
+    const scoreB = Math.round(hookResult.score * 0.40 + structureResult.score * 0.35 + freshnessResult.score * 0.25);
+    return _discard(structureResult.discardReason, structureResult.detail, scoreA, scoreB, {
+      hook: hookResult, structure: structureResult, freshness: freshnessResult,
+    });
   }
 
   const scoreB = Math.round(

@@ -181,7 +181,7 @@ async function processPipeline(job) {
   let script = job.data.prefabScript
     ? job.data.prefabScript
     : await withRetries(`[Job ${job.id}] script_generation`, async () => (
-      generateBestScript({ topic }) || await generateScript({ topic, hookId, forceHighScore: true })
+      await generateScript({ topic, hookId, forceHighScore: true }) || generateBestScript({ topic })
     ), { attempts: parseInt(process.env.GENERATION_STEP_RETRIES || '3', 10) || 3, baseDelayMs: 2000 });
   script = script.slotTracking?.exactTraceAvailable
     ? script
@@ -318,7 +318,7 @@ async function processPipeline(job) {
   if (dryRunBlocksPublish) {
     logger.warn(`[Job ${job.id}] 4/5 PUBLICATION BLOCKED — video-use dry-run active (VIDEO_USE_DRY_RUN=true)`);
     job.progress = 100;
-    job.result = { videoId, blocked: true, reason: 'video_use_dry_run', readyAt: new Date().toISOString() };
+    job.result = { videoId, blocked: true, reason: 'render_validation_mode', readyAt: new Date().toISOString() };
     job.completedAt = new Date().toISOString();
     job.status = 'done';
     job.performance = perf.snapshot({ result: 'blocked_dry_run' });

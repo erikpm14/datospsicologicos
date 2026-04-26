@@ -1,0 +1,15 @@
+{
+  "id": "7b368504-87e1-4506-a095-72f5cfb07172",
+  "createdAt": "2026-04-26T13:00:00.277Z",
+  "status": "pending",
+  "progress": 50,
+  "data": {
+    "topic": null,
+    "hookId": null,
+    "themeIndex": 14,
+    "slotTracking": null,
+    "prefabScript": null
+  },
+  "error": "ffmpeg exited with code 1: Error initializing complex filters.\nInvalid argument\n",
+  "failedAt": "2026-04-26T13:00:29.856Z"
+}

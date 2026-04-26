@@ -19,16 +19,44 @@
 const logger = require('../utils/logger');
 const { getScriptSections } = require('../utils/script-segments');
 
-// Power words de alto impacto visual — subconjunto más corto para marcado semántico
-const IMPACT_WORDS = [
-  'cerebro', 'neurona', 'dopamina', 'cortisol', 'inconsciente', 'automáticamente',
-  'involuntariamente', 'estudio', 'demostró', 'comprobado', 'prefrontal', 'amígdala',
-  'efecto', 'sesgo', 'síndrome', 'paradoja', 'disonancia', 'manipulando', 'secreto',
-  'oculto', 'nunca', 'jamás', 'siempre', 'saboteado', 'falla', 'fallando',
-  'sin saberlo', 'sin darte', 'sin que',
+/**
+ * Palabras clave para jerarquía visual V3
+ * Categorías: científicas, emocionales, verbos fuertes, conceptos clave
+ */
+const IMPACT_WORDS = {
+  // Científico/cognitivo (máxima autoridad)
+  scientific: [
+    'cerebro', 'neurona', 'dopamina', 'cortisol', 'inconsciente', 'automáticamente',
+    'involuntariamente', 'estudio', 'demostró', 'comprobado', 'prefrontal', 'amígdala',
+    'efecto', 'sesgo', 'síndrome', 'paradoja', 'disonancia',
+  ],
+  // Emocional/interpersonal (dolor, validación, conexión)
+  emotional: [
+    'duele', 'duelen', 'dolor', 'sufres', 'sufre', 'sufrimiento',
+    'validación', 'validado', 'importas', 'importa',
+    'rechazo', 'abandono', 'solos', 'solo', 'miedo', 'ansiedad',
+    'conexión', 'desconexión', 'ruptura', 'pérdida',
+  ],
+  // Verbos de acción/manipulación (agencia + oscuridad)
+  action: [
+    'manipulando', 'manipular', 'manipula', 'manipulan',
+    'saboteado', 'sabotea', 'sabotean', 'saboteador',
+    'falla', 'fallando', 'fallan', 'fracasa', 'fracasan',
+    'atrapado', 'atrapada', 'atrapados', 'atrapadas',
+    'te controla', 'controla', 'controlan', 'control',
+  ],
+  // Secreto/revelación (tensión narrativa)
+  revelation: [
+    'secreto', 'oculto', 'oculta', 'escondido', 'escondida',
+    'nadie', 'nadie te dice', 'nunca', 'jamás', 'siempre',
+    'verdad', 'realidad', 'lo que', 'la verdad',
+  ],
   // Números de alto impacto
-  '73%', '90%', '80%', '97%',
-];
+  numbers: ['73%', '90%', '80%', '97%', '100%', '0%'],
+};
+
+// Crear índice plano para búsquedas rápidas
+const IMPACT_WORDS_FLAT = Object.values(IMPACT_WORDS).flat();
 
 // Color por sección
 const SECTION_COLORS = {
@@ -75,23 +103,55 @@ const SECTION_BOX_OPACITY = {
   cta:        '0.45',
 };
 
+// WORD TIMESTAMP MODE: Agrupación más pequeña para legibilidad en Shorts
+// Target: 2-4 palabras por bloque, nunca frases completas
 const WORDS_PER_BLOCK = parseInt(process.env.SUBTITLE_WORDS_PER_BLOCK || '3');
-const MAX_WORDS_PER_BLOCK = parseInt(process.env.SUBTITLE_MAX_WORDS_PER_BLOCK || '6');
+const MAX_WORDS_PER_BLOCK = parseInt(process.env.SUBTITLE_MAX_WORDS_PER_BLOCK || '3'); // REDUCIDO a 3
 const MIN_WORDS_PER_BLOCK = parseInt(process.env.SUBTITLE_MIN_WORDS_PER_BLOCK || '2');
 
-// Extensión positiva del final de cada bloque (solo se aplica al último bloque
-// de cada grupo de puntuación, donde no hay siguiente bloque que lo limite).
+// Duración máxima de un bloque (segundos). Si excede, dividir.
+const MAX_BLOCK_DURATION = parseFloat(process.env.SUBTITLE_MAX_BLOCK_DURATION || '1.2');
+
+// Extensión positiva del final de cada bloque
 const BLOCK_END_EXTENSION = parseFloat(process.env.SUBTITLE_END_EXTENSION || '0.10');
 
 // Duración mínima visible por bloque (segundos). Bloques más cortos se extienden.
 const MIN_BLOCK_DURATION = parseFloat(process.env.SUBTITLE_MIN_DURATION || '0.40');
+
+// ─────────────────────────────────────────────
+//  MODO CINEMATOGRÁFICO: Timing Emocional
+// ─────────────────────────────────────────────
+
+// Probabilidades de efectos emocionales (0-1)
+const EMOTIONAL_TIMING = {
+  emotionalDelay: 0.35,      // 35% de probabilidad de delay emocional
+  anticipation: 0.20,         // 20% de probabilidad de anticipación
+  emotionalSilence: 0.15,     // 15% de probabilidad de silencio
+  emotionalDelayRange: [0.05, 0.15], // delay: 50-150ms
+  anticipationRange: [-0.05, 0],     // anticipation: -50 a 0ms
+  silenceRange: [0.2, 0.4],   // silencio: 200-400ms
+};
+
+// Secciones donde aplicar efectos emocionales con mayor agresividad
+const EMOTIONAL_SECTIONS = ['reengage', 'peak', 'revelation', 'escalation'];
+const SECTION_EMOTIONAL_INTENSITY = {
+  reengage: 0.8,
+  peak: 0.9,
+  revelation: 0.7,
+  escalation: 0.6,
+  hook: 0.5,
+  open_loop: 0.4,
+  micro_value: 0.3,
+  open_ending: 0.2,
+  soft_cta: 0.3,
+};
 
 /**
  * Detecta si un bloque de texto contiene una power word de impacto.
  */
 function hasImpactWord(text) {
   const lower = text.toLowerCase();
-  return IMPACT_WORDS.some(w => lower.includes(w));
+  return IMPACT_WORDS_FLAT.some(w => lower.includes(w));
 }
 
 /**
@@ -99,6 +159,216 @@ function hasImpactWord(text) {
  */
 function hasImpactNumber(text) {
   return /\b\d{2,}[%\s]/.test(text) || /\b[789]\d%/.test(text);
+}
+
+/**
+ * Encuentra la palabra MÁS impactante en un bloque.
+ * Prioridad: emotional > action > revelation > scientific > numbers
+ * Devuelve el índice del token más impactante, o -1 si no hay.
+ */
+function findMostImpactfulWordIndex(text) {
+  const tokens = String(text || '').split(/\s+/).filter(Boolean);
+  if (tokens.length === 0) return -1;
+
+  // Prioridad de categorías
+  const categories = ['emotional', 'action', 'revelation', 'scientific', 'numbers'];
+
+  for (const category of categories) {
+    const categoryWords = IMPACT_WORDS[category] || [];
+    for (let i = 0; i < tokens.length; i++) {
+      const clean = _cleanSubtitleToken(tokens[i]).toLowerCase();
+      if (categoryWords.some(w => clean.includes(_cleanSubtitleToken(w).toLowerCase()))) {
+        return i;
+      }
+    }
+  }
+
+  return -1;
+}
+
+/**
+ * Detecta si una palabra es el primer elemento (alto impacto en hook).
+ */
+function isFirstWordOfHook(index, isHook) {
+  return isHook && index === 0;
+}
+
+/**
+ * Aplica timing cinematográfico emocional a un bloque.
+ * Ajusta start/end para amplificar impacto emocional, no precisión.
+ *
+ * Estrategia:
+ * - Palabras clave en secciones emocionales: delay emocional o anticipación
+ * - Bloques breakpoint: máximo impacto temporal
+ * - Silencios estratégicos: entre bloques en momentos clave
+ * - Variación aleatoria: NO determinístico, introduce naturalidad
+ */
+function _applyEmotionalTiming(block, index, allBlocks) {
+  const emotionalIntensity = SECTION_EMOTIONAL_INTENSITY[block.section] || 0.3;
+  const isEmotionalSection = EMOTIONAL_SECTIONS.includes(block.section);
+  const isKeyword = block.isImpact || block.isSingleWordBlock;
+
+  let adjustedBlock = { ...block };
+  let timingReason = [];
+
+  // REGLA 1: Bloques breakpoint (máximo impacto)
+  if (block.isSingleWordBlock && isEmotionalSection) {
+    // Timing más restrictivo: más visible, menos duración
+    const delayAmount = 0.08; // 80ms delay para máximo impacto
+    adjustedBlock.start = block.start + delayAmount;
+    adjustedBlock.start = Math.max(adjustedBlock.start, index > 0 ? allBlocks[index - 1].end : 0);
+    timingReason.push('breakpoint_emotional');
+  }
+  // REGLA 2: Palabras clave en secciones emocionales
+  else if (isKeyword && isEmotionalSection && Math.random() < emotionalIntensity) {
+    // Aplicar efecto emocional
+    const effectChoice = Math.random();
+
+    if (effectChoice < EMOTIONAL_TIMING.emotionalDelay * emotionalIntensity) {
+      // Delay emocional: palabra aparece después de la voz
+      const delayAmount = Math.random() *
+        (EMOTIONAL_TIMING.emotionalDelayRange[1] - EMOTIONAL_TIMING.emotionalDelayRange[0]) +
+        EMOTIONAL_TIMING.emotionalDelayRange[0];
+      adjustedBlock.start = block.start + delayAmount;
+      adjustedBlock.start = Math.max(adjustedBlock.start, index > 0 ? allBlocks[index - 1].end : 0);
+      timingReason.push(`delay_${(delayAmount * 1000).toFixed(0)}ms`);
+    } else if (effectChoice < (EMOTIONAL_TIMING.emotionalDelay + EMOTIONAL_TIMING.anticipation) * emotionalIntensity) {
+      // Anticipación: palabra aparece un poco antes
+      const anticipationAmount = Math.random() *
+        (EMOTIONAL_TIMING.anticipationRange[1] - EMOTIONAL_TIMING.anticipationRange[0]) +
+        EMOTIONAL_TIMING.anticipationRange[0];
+      adjustedBlock.start = Math.max(0, block.start + anticipationAmount);
+      timingReason.push(`anticipate_${Math.abs((anticipationAmount * 1000).toFixed(0))}ms`);
+    }
+  }
+
+  return {
+    ...adjustedBlock,
+    timingReason: timingReason.length > 0 ? timingReason.join(',') : null,
+  };
+}
+
+/**
+ * Aplica silencios emocionales entre bloques en secciones clave.
+ * Máximo 1-2 silencios por video para no afectar fluidez.
+ */
+function _applyEmotionalSilences(blocks) {
+  const result = [...blocks];
+  const silencePositions = [];
+
+  // Encontrar candidatos para silencios (secciones emocionales, palabras clave)
+  for (let i = 0; i < result.length - 1; i++) {
+    const block = result[i];
+    const nextBlock = result[i + 1];
+
+    // Solo en secciones emocionales
+    if (!EMOTIONAL_SECTIONS.includes(block.section)) continue;
+
+    // Probabilidad según intensidad
+    const intensity = SECTION_EMOTIONAL_INTENSITY[block.section] || 0.3;
+    if (Math.random() < EMOTIONAL_TIMING.emotionalSilence * intensity && silencePositions.length < 2) {
+      // Crear silencio entre este bloque y el siguiente
+      const silenceAmount = Math.random() *
+        (EMOTIONAL_TIMING.silenceRange[1] - EMOTIONAL_TIMING.silenceRange[0]) +
+        EMOTIONAL_TIMING.silenceRange[0];
+
+      // Ajustar el next block para que empiece después del silencio
+      result[i + 1] = {
+        ...nextBlock,
+        start: nextBlock.start + silenceAmount,
+        end: nextBlock.end + silenceAmount,
+        silenceCreated: (silenceAmount * 1000).toFixed(0),
+      };
+
+      silencePositions.push(i);
+    }
+  }
+
+  return result;
+}
+
+/**
+ * Limita bloques breakpoint a máximo 1-2 por video.
+ * Prioriza peak > reengage > otros.
+ */
+function _limitBreakpoints(blocks) {
+  const breakpointsBySection = {
+    peak: [],
+    reengage: [],
+    other: [],
+  };
+
+  // Clasificar bloques breakpoint
+  blocks.forEach((block, idx) => {
+    if (!block.isSingleWordBlock) return;
+
+    if (block.section === 'peak') {
+      breakpointsBySection.peak.push(idx);
+    } else if (block.section === 'reengage') {
+      breakpointsBySection.reengage.push(idx);
+    } else {
+      breakpointsBySection.other.push(idx);
+    }
+  });
+
+  // Mantener máximo 1-2 breakpoints totales
+  const maxBreakpoints = 2;
+  const selectedIndices = new Set();
+
+  // Prioridad: peak > reengage > otros
+  [breakpointsBySection.peak, breakpointsBySection.reengage, breakpointsBySection.other].forEach(indices => {
+    if (selectedIndices.size < maxBreakpoints && indices.length > 0) {
+      selectedIndices.add(indices[0]);
+    }
+  });
+
+  // Desactivar breakpoints que no fueron seleccionados
+  const result = blocks.map((block, idx) => ({
+    ...block,
+    isSingleWordBlock: selectedIndices.has(idx) ? block.isSingleWordBlock : false,
+  }));
+
+  if (selectedIndices.size > 0) {
+    logger.debug(
+      `Breakpoint limiting: selected ${selectedIndices.size}/${Array.from(selectedIndices).length} ` +
+      `at indices [${Array.from(selectedIndices).join(',')}]`
+    );
+  }
+
+  return result;
+}
+
+/**
+ * Estiliza un bloque de subtítulo con jerarquía visual V3.
+ *
+ * Regla: máximo 1 palabra destacada (MAYÚSCULAS) por bloque.
+ * Prioridad:
+ *   1. Palabra más impactante por categoría
+ *   2. Primera palabra si es hook
+ *   3. Palabra única (1 word blocks son siempre impacto)
+ */
+function _stylizeSubtitleText(text = '', { isHook = false, isSingleWordBlock = false } = {}) {
+  const tokens = String(text || '').split(/\s+/).filter(Boolean);
+  if (tokens.length === 0) return text;
+
+  // Single-word blocks siempre en MAYÚSCULAS
+  if (isSingleWordBlock) {
+    return tokens[0].toUpperCase();
+  }
+
+  // Encontrar la palabra más impactante
+  const mostImpactfulIdx = findMostImpactfulWordIndex(text);
+
+  // Si es hook, la primera palabra tiene prioridad
+  let highlightIdx = isHook && mostImpactfulIdx === -1 ? 0 : mostImpactfulIdx;
+
+  // Aplicar MAYÚSCULAS solo a la palabra destacada
+  return tokens.map((token, index) => {
+    if (index === highlightIdx) {
+      return token.toUpperCase();
+    }
+    return token;
+  }).join(' ');
 }
 
 function _normalizeSubtitleWord(word) {
@@ -190,6 +460,216 @@ function _groupTextIntoSenseChunks(text) {
 }
 
 // ─────────────────────────────────────────────
+//  CONSTRUCCIÓN DESDE WORD TIMESTAMPS (PRO)
+// ─────────────────────────────────────────────
+
+const MAX_BLOCKS_PER_SECOND = 1.5;
+const BREAK_PAUSE_THRESHOLD = 0.25; // silencio > 0.25s = nuevo bloque
+
+/**
+ * Agrupa palabras en bloques respetando pausas y coherencia de frase
+ * Genera subtítulos naturales y legibles desde word-level timestamps
+ */
+/**
+ * Detecta si una palabra debe ir sola (bloque de 1 palabra para máximo impacto).
+ * Ejemplos: "DUELE", "MUERE", "PIERDE"
+ */
+function isBreakpointWord(word) {
+  const clean = _cleanSubtitleToken(word).toLowerCase();
+  const breakpointWords = [
+    'duele', 'duelen', 'muere', 'mueren', 'pierde', 'pierden',
+    'falla', 'fallan', 'rompe', 'rompen', 'quiebra', 'quiebran',
+    'sufres', 'sufre', 'herida', 'heridas', 'cicatriz', 'cicatrices',
+    'sola', 'solo', 'solos', 'solas', 'abandonada', 'abandonado',
+  ];
+  return breakpointWords.some(w => clean.includes(_cleanSubtitleToken(w)));
+}
+
+/**
+ * Agrupa palabras con Whisper timestamps en bloques para legibilidad en Shorts.
+ * V3: Permite bloques de 1 palabra para máximo impacto emocional.
+ * Target: 1-4 palabras por bloque (flexible, respeta puntos de quiebre).
+ */
+function _groupWordsIntoSubtitleBlocks(wordTimestamps) {
+  if (!wordTimestamps || wordTimestamps.length === 0) return [];
+
+  const blocks = [];
+  let currentBlock = [];
+
+  for (let i = 0; i < wordTimestamps.length; i++) {
+    const word = wordTimestamps[i];
+
+    // REGLA 1: Si palabra actual es breakpoint Y hay bloque actual → finalizar bloque primero
+    if (isBreakpointWord(word.word) && currentBlock.length > 0) {
+      const blockStart = currentBlock[0].start;
+      const blockEnd = currentBlock[currentBlock.length - 1].end;
+      blocks.push({
+        words: [...currentBlock],
+        start: blockStart,
+        end: blockEnd,
+        text: currentBlock.map(w => w.word).join(' '),
+        duration: blockEnd - blockStart,
+      });
+      currentBlock = [];
+    }
+
+    // Calcular pausa y duración
+    const pause = currentBlock.length > 0
+      ? word.start - currentBlock[currentBlock.length - 1].end
+      : 0;
+    const wouldBeStart = currentBlock.length > 0 ? currentBlock[0].start : word.start;
+    const wouldBeDuration = word.end - wouldBeStart;
+
+    let shouldBreakBefore = false;
+
+    if (currentBlock.length > 0) {
+      if (currentBlock.length >= MAX_WORDS_PER_BLOCK) {
+        shouldBreakBefore = true;
+      }
+      else if ((currentBlock[currentBlock.length - 1].end - currentBlock[0].start) >= MAX_BLOCK_DURATION) {
+        shouldBreakBefore = true;
+      }
+      else if (wouldBeDuration > MAX_BLOCK_DURATION) {
+        shouldBreakBefore = true;
+      }
+      else if (pause > BREAK_PAUSE_THRESHOLD && currentBlock.length >= MIN_WORDS_PER_BLOCK) {
+        shouldBreakBefore = true;
+      }
+      else if (_endsSentence(currentBlock[currentBlock.length - 1].word)) {
+        shouldBreakBefore = true;
+      }
+    }
+
+    if (shouldBreakBefore && currentBlock.length > 0) {
+      const blockStart = currentBlock[0].start;
+      const blockEnd = currentBlock[currentBlock.length - 1].end;
+      blocks.push({
+        words: [...currentBlock],
+        start: blockStart,
+        end: blockEnd,
+        text: currentBlock.map(w => w.word).join(' '),
+        duration: blockEnd - blockStart,
+      });
+      currentBlock = [];
+    }
+
+    currentBlock.push(word);
+
+    // Si palabra actual es breakpoint → finalizar bloque con esta palabra sola
+    if (isBreakpointWord(word.word)) {
+      blocks.push({
+        words: [word],
+        start: word.start,
+        end: word.end,
+        text: word.word,
+        duration: word.end - word.start,
+        isBreakpoint: true,
+      });
+      currentBlock = [];
+    }
+  }
+
+  // Finalizar último bloque
+  if (currentBlock.length > 0) {
+    const blockStart = currentBlock[0].start;
+    const blockEnd = currentBlock[currentBlock.length - 1].end;
+    blocks.push({
+      words: currentBlock,
+      start: blockStart,
+      end: blockEnd,
+      text: currentBlock.map(w => w.word).join(' '),
+      duration: blockEnd - blockStart,
+    });
+  }
+
+  // Log de validación
+  if (blocks.length > 0) {
+    const avgDuration = blocks.reduce((sum, b) => sum + (b.duration || 0), 0) / blocks.length;
+    const breakpointCount = blocks.filter(b => b.isBreakpoint).length;
+    logger.debug(
+      `Grouped ${wordTimestamps.length} words → ${blocks.length} blocks | ` +
+      `avg_duration=${avgDuration.toFixed(2)}s | words_per_block=${(wordTimestamps.length / blocks.length).toFixed(1)} | breakpoint=${breakpointCount}`
+    );
+  }
+
+  return blocks;
+}
+
+/**
+ * Construye bloques de subtítulo desde word-level timestamps (Whisper)
+ * Máxima precisión: cada palabra tiene timing exacto start/end
+ *
+ * IMPORTANTE: Mantiene TODOS los bloques generados (2-4 palabras cada uno).
+ * No combina bloques - eso reduciría la legibilidad en Shorts.
+ */
+function _buildRawBlocksFromWordTimestamps(script, wordTimestamps) {
+  const wordBlocks = _groupWordsIntoSubtitleBlocks(wordTimestamps);
+  if (wordBlocks.length === 0) return [];
+
+  // Obtener secciones del script para asignar a bloques
+  const scriptSections = getScriptSections(script);
+  const sectionData = scriptSections
+    .map((section) => ({
+      key: section.key === 'explanation' ? 'revelation' : section.key,
+      text: section.text,
+      words: section.text.split(/\s+/).filter(Boolean),
+    }))
+    .filter(s => s.text);
+
+  // Mapear qué sección corresponde a cada palabra
+  const wordToSection = new Map();
+  let wordCount = 0;
+  for (const section of sectionData) {
+    for (let i = 0; i < section.words.length; i++) {
+      wordToSection.set(wordCount, section.key);
+      wordCount++;
+    }
+  }
+
+  // Construir bloques manteniendo todos (no combinar)
+  const blocks = [];
+  let idx = 0;
+
+  for (const block of wordBlocks) {
+    if (!block || !block.words || block.words.length === 0) continue;
+
+    // Determinar sección: usar la primera palabra del bloque
+    const blockWordIndex = wordTimestamps.findIndex(w =>
+      w.word === block.words[0].word &&
+      Math.abs(w.start - block.words[0].start) < 0.01
+    );
+
+    const section = blockWordIndex >= 0
+      ? wordToSection.get(blockWordIndex) || 'revelation'
+      : 'revelation';
+
+    blocks.push({
+      text: block.text,
+      start: parseFloat(block.start.toFixed(3)),
+      end: parseFloat((block.end + BLOCK_END_EXTENSION).toFixed(3)),
+      section,
+      isHook: section === 'hook' && idx === 0,
+      isBreakpoint: block.isBreakpoint || false,
+      idx,
+    });
+
+    idx++;
+  }
+
+  // Validar cantidad de bloques
+  if (blocks.length < 10) {
+    logger.warn(
+      `SubtitleStyler: Solo ${blocks.length} bloques generados (target >= 10). ` +
+      `Esto puede afectar legibilidad en Shorts.`
+    );
+  }
+
+  // Anti-overlap y duraciones mínimas
+  _fixBlockTimings(blocks);
+  return blocks;
+}
+
+// ─────────────────────────────────────────────
 //  GENERACIÓN DE BLOQUES ESTILIZADOS
 // ─────────────────────────────────────────────
 
@@ -197,10 +677,11 @@ function _groupTextIntoSenseChunks(text) {
  * Genera bloques de subtítulo con metadatos de estilo V2.
  *
  * Prioridad de timing:
- *   1. wordBoundaries exactos de Edge TTS (sync perfecto, palabra a palabra)
- *   2. sectionDurations de Kokoro segmentado con segmentos de silencedetect
+ *   1. wordTimestamps de Whisper (word-level precision PRO)
+ *   2. wordBoundaries exactos de Edge TTS (sync perfecto, palabra a palabra)
+ *   3. sectionDurations de Kokoro segmentado con segmentos de silencedetect
  *      → los bloques se alinean a los segmentos de habla reales, no por palabras
- *   3. Proporcional por palabras usando realDuration (fallback legacy)
+ *   4. Proporcional por palabras usando realDuration (fallback legacy)
  *
  * En todos los modos el END de cada bloque se extiende +BLOCK_END_EXTENSION (default
  * +80 ms) para que el texto nunca desaparezca antes de que la frase termine.
@@ -209,26 +690,50 @@ function _groupTextIntoSenseChunks(text) {
  * @param {number} realDuration       - duración total del audio (ffprobe)
  * @param {Array}  wordBoundaries     - [{word, start, duration}] de Edge TTS
  * @param {Object} sectionDurations   - {hook:{start,duration}, claim:…} de Kokoro segmentado
+ * @param {Array}  wordTimestamps     - [{word, start, end}] de Whisper (word-level)
  */
-function buildStyledSubtitleBlocks(script, realDuration, wordBoundaries = [], sectionDurations = null) {
-  const rawBlocks = _buildRawBlocks(script, realDuration, wordBoundaries, sectionDurations);
+function buildStyledSubtitleBlocks(script, realDuration, wordBoundaries = [], sectionDurations = null, wordTimestamps = []) {
+  let rawBlocks = _buildRawBlocks(script, realDuration, wordBoundaries, sectionDurations, wordTimestamps);
 
-  // Anotar cada bloque con metadatos de estilo
-  return rawBlocks.map(block => {
+  // FASE 1: Limitar breakpoints a máximo 1-2 por video
+  rawBlocks = _limitBreakpoints(rawBlocks);
+
+  // FASE 2: Anotar cada bloque con metadatos de estilo V3 (jerarquía visual)
+  let styledBlocks = rawBlocks.map(block => {
+    const isSingleWordBlock = block.isSingleWordBlock || block.text.split(/\s+/).length === 1;
+    const text = _stylizeSubtitleText(block.text, {
+      isHook: block.isHook,
+      isSingleWordBlock,
+    });
+
     const color    = SECTION_COLORS[block.section]     || 'white';
     const fontSize = SECTION_FONT_SIZES[block.section] || 90;
-    const isImpact = hasImpactWord(block.text) || hasImpactNumber(block.text);
+    const isImpact = hasImpactWord(text) || hasImpactNumber(text) || isSingleWordBlock;
+
+    const fontSizeAdjustment = isSingleWordBlock ? 12 : (isImpact ? 8 : 0);
 
     return {
       ...block,
+      text,
       color,
-      fontSize: isImpact ? fontSize + 8 : fontSize,
+      fontSize: fontSize + fontSizeAdjustment,
       isImpact,
-      boxOpacity: isImpact
-        ? (parseFloat(SECTION_BOX_OPACITY[block.section] || '0.50') + 0.10).toFixed(2)
+      isSingleWordBlock,
+      boxOpacity: isImpact || isSingleWordBlock
+        ? (parseFloat(SECTION_BOX_OPACITY[block.section] || '0.50') + 0.15).toFixed(2)
         : SECTION_BOX_OPACITY[block.section] || '0.50',
     };
   });
+
+  // FASE 3: Aplicar timing cinematográfico emocional
+  styledBlocks = styledBlocks.map((block, idx) =>
+    _applyEmotionalTiming(block, idx, styledBlocks)
+  );
+
+  // FASE 4: Aplicar silencios emocionales
+  styledBlocks = _applyEmotionalSilences(styledBlocks);
+
+  return styledBlocks;
 }
 
 /**
@@ -249,7 +754,13 @@ function buildStyledSubtitleBlocks(script, realDuration, wordBoundaries = [], se
  * En todos los modos el final de cada bloque se extiende +BLOCK_END_EXTENSION
  * para que el texto nunca desaparezca antes de que termine la frase hablada.
  */
-function _buildRawBlocks(script, realDuration, wordBoundaries, sectionDurations) {
+function _buildRawBlocks(script, realDuration, wordBoundaries, sectionDurations, wordTimestamps) {
+  // ── MODO 0: word timestamps (Whisper — máxima precisión PRO) ─────────────────
+  if (wordTimestamps && wordTimestamps.length >= 10) {
+    logger.info(`SubtitleStyler: WORD_TIMESTAMPS mode | ${wordTimestamps.length} words | endExt=+${BLOCK_END_EXTENSION}s`);
+    return _buildRawBlocksFromWordTimestamps(script, wordTimestamps);
+  }
+
   // ── MODO 1: word boundaries exactos (Edge TTS) ───────────────────────────────
   if (wordBoundaries && wordBoundaries.length >= 4) {
     logger.info(`SubtitleStyler: EXACT mode | ${wordBoundaries.length} word boundaries | endExt=+${BLOCK_END_EXTENSION}s | minDur=${MIN_BLOCK_DURATION}s`);

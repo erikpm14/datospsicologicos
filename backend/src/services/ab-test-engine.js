@@ -31,8 +31,26 @@ const path      = require('path');
 const { v4: uuidv4 } = require('uuid');
 const Anthropic = require('@anthropic-ai/sdk');
 const logger    = require('../utils/logger');
+const { ensureLegacyFields } = require('../utils/script-segments');
+const { parseModelJsonWithRecovery } = require('../utils/llm-json');
+const { callAnthropicWithTimeout, createLlmMetrics, mergeLlmMetrics, markLlmHardFail } = require('../utils/llm-call');
+const { linkAbVariantToSlot } = require('../../../content-engine/tracking/ab-slot-linker');
 
 const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+
+async function requestJsonRecovery(prompt, rawText, label, llmMetrics, maxTokens = 220) {
+  logger.warn(`${label}: requesting clean JSON recovery from model`);
+  llmMetrics.llm_total_calls += 1;
+  const recovery = await callAnthropicWithTimeout(client, {
+    model: 'claude-haiku-4-5-20251001',
+    max_tokens: maxTokens,
+    messages: [{
+      role: 'user',
+      content: `${prompt}\n\nTu respuesta anterior no era JSON valido. Devuelve SOLO JSON VALIDO. Sin markdown. Sin fences. Sin javascript. Sin texto explicativo. Sin texto antes ni despues. Una unica respuesta JSON parseable.\n\nRESPUESTA ANTERIOR:\n${String(rawText || '').slice(0, 12000)}`,
+    }],
+  }, { label: `${label}.recovery` });
+  return recovery.content?.[0]?.text?.trim() || '';
+}
 
 const EXPERIMENTS_V2_PATH   = path.resolve('./data/ab-experiments-v2.json');
 const EXPERIMENTS_LEGACY_PATH = path.resolve('./data/ab-experiments.json');
@@ -47,6 +65,39 @@ const WINDOW_CONFIGS = [
 
 const DEFAULT_TYPE_WEIGHTS = {
   revelation: 4, pattern: 3, challenge: 2, original: 2,
+};
+
+const SEGMENT_TEST_PLANS = {
+  hook: {
+    segmentType: 'hook',
+    testedVariable: 'hook_style',
+    variantIntent: 'hook_b_more_aggressive',
+    fields: ['hook', 'open_loop', 'micro_value'],
+  },
+  reengage: {
+    segmentType: 'reengage',
+    testedVariable: 'mid_retention_recovery',
+    variantIntent: 'reengage_b_more_aggressive',
+    fields: ['hook', 'escalation', 'reengage', 'peak'],
+  },
+  open_ending: {
+    segmentType: 'open_ending',
+    testedVariable: 'loop_openness',
+    variantIntent: 'open_ending_b_more_open_loop',
+    fields: ['peak', 'open_ending', 'soft_cta'],
+  },
+  peak: {
+    segmentType: 'peak',
+    testedVariable: 'peak_frame',
+    variantIntent: 'peak_b_more_emotional',
+    fields: ['micro_value', 'escalation', 'reengage', 'peak', 'open_ending'],
+  },
+  soft_cta: {
+    segmentType: 'soft_cta',
+    testedVariable: 'comment_conversion',
+    variantIntent: 'soft_cta_b_more_identification',
+    fields: ['peak', 'open_ending', 'soft_cta'],
+  },
 };
 
 // ─────────────────────────────────────────────
@@ -69,6 +120,72 @@ function writeJSON(file, data) {
 // Lazy-require para evitar dependencia circular con video-processor
 function getQueue() {
   return require('../queue/video-processor');
+}
+
+function rebuildLegacySegments(scriptInput = {}) {
+  return ensureLegacyFields({
+    ...scriptInput,
+    claim: scriptInput.claim || scriptInput.micro_value,
+    explanation: scriptInput.explanation || [scriptInput.escalation, scriptInput.reengage, scriptInput.peak].filter(Boolean).join(' ').trim(),
+    cta: scriptInput.cta || [scriptInput.open_ending, scriptInput.soft_cta].filter(Boolean).join(' ').trim(),
+    structureVersion: scriptInput.structureVersion || 'open_loop_escalation_v1',
+    hasReengage: typeof scriptInput.hasReengage === 'boolean' ? scriptInput.hasReengage : Boolean(scriptInput.reengage),
+  });
+}
+
+function chooseExperimentPlan(scriptInput = {}, growthContext = {}) {
+  const script = rebuildLegacySegments(scriptInput);
+  const requested = growthContext.abTestSegmentType || script.abTestSegmentType;
+  if (requested && SEGMENT_TEST_PLANS[requested]) return SEGMENT_TEST_PLANS[requested];
+
+  if (!script.reengage) return SEGMENT_TEST_PLANS.hook;
+  if (script.durationSeconds >= 55) return SEGMENT_TEST_PLANS.reengage;
+  if (script.viralTrigger === 'controversia') return { ...SEGMENT_TEST_PLANS.soft_cta, variantIntent: 'soft_cta_b_more_polemic' };
+  if (script.emotionalTrigger === 'validation') return { ...SEGMENT_TEST_PLANS.peak, variantIntent: 'peak_b_more_emotional' };
+  if (script.emotionalTrigger === 'awe') return { ...SEGMENT_TEST_PLANS.peak, variantIntent: 'peak_b_more_scientific' };
+  return SEGMENT_TEST_PLANS.open_ending;
+}
+
+function buildSegmentVariantPrompt(script, plan, originalHookType = 'original') {
+  const contextText = plan.fields
+    .map((field) => `${field.toUpperCase()}: ${script[field] || ''}`)
+    .join('\n');
+
+  return `Eres un copywriter de retención para YouTube Shorts de psicología.
+
+Quiero generar SOLO una variante B del segmento "${plan.segmentType}".
+No reescribas el vídeo entero. Solo cambia ese segmento.
+
+ESTRUCTURA VERSION: ${script.structureVersion || 'open_loop_escalation_v1'}
+HOOK TYPE ORIGINAL: ${originalHookType}
+TESTED VARIABLE: ${plan.testedVariable}
+SEGMENT TYPE: ${plan.segmentType}
+VARIANT INTENT: ${plan.variantIntent}
+
+CONTEXTO RELEVANTE:
+${contextText}
+
+REGLAS:
+- Si segmentType=hook: cambia hook y hookType
+- Si segmentType=reengage: hazlo más agresivo y mejor colocado contra la caída de retención
+- Si segmentType=open_ending: deja el loop más abierto
+- Si segmentType=peak y variantIntent=peak_b_more_emotional: sube identificación y escena cotidiana
+- Si segmentType=peak y variantIntent=peak_b_more_scientific: sube autoridad científica sin volverlo frío
+- Si segmentType=soft_cta y variantIntent=soft_cta_b_more_identification: invita a comentar desde auto-reconocimiento
+- Si segmentType=soft_cta y variantIntent=soft_cta_b_more_polemic: invita a comentar desde fricción o debate suave
+- Mantén compatibilidad legacy rellenando claim/explanation/cta
+
+Devuelve SOLO JSON:
+{
+  "hookType": "revelation|pattern|challenge|warning|question|${originalHookType}",
+  "segmentType": "${plan.segmentType}",
+  "testedVariable": "${plan.testedVariable}",
+  "variantIntent": "${plan.variantIntent}",
+  "updatedSegment": "nuevo texto del segmento",
+  "claim": "fallback legacy",
+  "explanation": "fallback legacy",
+  "cta": "fallback legacy"
+}`;
 }
 
 // ─────────────────────────────────────────────
@@ -102,26 +219,79 @@ IMPORTANTE:
 - question   → "Por qué [no puedes/siempre] [comportamiento universal]"`;
 
 async function generateAltHook(script, originalHookType = 'original') {
-  const prompt = ALT_HOOK_PROMPT
-    .replace('{ORIGINAL_TYPE}', originalHookType)
-    .replace('{HOOK}',  script.hook)
-    .replace('{TOPIC}', script.topic)
-    .replace('{CLAIM}', script.claim || '');
+  const normalized = rebuildLegacySegments(script);
+  const prompt = buildSegmentVariantPrompt(normalized, SEGMENT_TEST_PLANS.hook, originalHookType);
+  const llmMetrics = createLlmMetrics();
 
   try {
-    const msg = await client.messages.create({
-      model:      'claude-haiku-4-5-20251001',
-      max_tokens: 120,
-      messages:   [{ role: 'user', content: prompt }],
+    llmMetrics.llm_total_calls += 1;
+    const msg = await callAnthropicWithTimeout(client, {
+      model: 'claude-haiku-4-5-20251001',
+      max_tokens: 180,
+      messages: [{ role: 'user', content: prompt }],
+    }, { label: 'ab-test-engine.generateAltHook' });
+
+    const raw = msg.content[0].text.trim();
+    const { data, meta } = await parseModelJsonWithRecovery(raw, {
+      label: 'ab-test-engine.generateAltHook',
+      recover: (failedRaw) => requestJsonRecovery(prompt, failedRaw, 'ab-test-engine.generateAltHook', llmMetrics, 220),
     });
-
-    const raw  = msg.content[0].text.trim().replace(/^```json?\n?/, '').replace(/\n?```$/, '');
-    const data = JSON.parse(raw);
-
-    if (!data.hook || !data.hookType) throw new Error('Invalid response');
-    return { hookType: data.hookType, hook: data.hook };
+    mergeLlmMetrics(llmMetrics, meta);
+    if (!data.updatedSegment) throw new Error('Invalid response');
+    return {
+      hookType: data.hookType || originalHookType,
+      hook: data.updatedSegment,
+      segmentType: 'hook',
+      testedVariable: data.testedVariable || 'hook_style',
+      variantIntent: data.variantIntent || 'hook_b_more_aggressive',
+      claim: data.claim || normalized.claim,
+      explanation: data.explanation || normalized.explanation,
+      cta: data.cta || normalized.cta,
+    };
   } catch (err) {
+    markLlmHardFail(llmMetrics, err);
     logger.warn(`AB v2: alt hook generation failed: ${err.message}`);
+    return null;
+  }
+}
+
+async function generateSegmentVariant(script, plan, originalHookType = 'original') {
+  if (plan.segmentType === 'hook') {
+    return generateAltHook(script, originalHookType);
+  }
+
+  const normalized = rebuildLegacySegments(script);
+  const prompt = buildSegmentVariantPrompt(normalized, plan, originalHookType);
+  const llmMetrics = createLlmMetrics();
+
+  try {
+    llmMetrics.llm_total_calls += 1;
+    const msg = await callAnthropicWithTimeout(client, {
+      model: 'claude-haiku-4-5-20251001',
+      max_tokens: 220,
+      messages: [{ role: 'user', content: prompt }],
+    }, { label: 'ab-test-engine.generateSegmentVariant' });
+
+    const raw = msg.content[0].text.trim();
+    const { data, meta } = await parseModelJsonWithRecovery(raw, {
+      label: 'ab-test-engine.generateSegmentVariant',
+      recover: (failedRaw) => requestJsonRecovery(prompt, failedRaw, 'ab-test-engine.generateSegmentVariant', llmMetrics, 260),
+    });
+    mergeLlmMetrics(llmMetrics, meta);
+    if (!data.updatedSegment) throw new Error('Invalid response');
+    return {
+      segmentType: plan.segmentType,
+      testedVariable: data.testedVariable || plan.testedVariable,
+      variantIntent: data.variantIntent || plan.variantIntent,
+      hookType: data.hookType || originalHookType,
+      updatedSegment: data.updatedSegment,
+      claim: data.claim || normalized.claim,
+      explanation: data.explanation || normalized.explanation,
+      cta: data.cta || normalized.cta,
+    };
+  } catch (err) {
+    markLlmHardFail(llmMetrics, err);
+    logger.warn(`AB v2: segment variant generation failed (${plan.segmentType}): ${err.message}`);
     return null;
   }
 }
@@ -181,7 +351,16 @@ function detectWindow(publishedAt) {
  */
 async function createMultiVariantExperiment(baseScript, baseJobId, growthContext = {}) {
   const experimentId = `exp_${Date.now()}_${baseJobId.slice(0, 8)}`;
-  const originalType = growthContext.hookType || 'original';
+  const normalizedBase = rebuildLegacySegments(baseScript);
+  const originalType = growthContext.hookType || normalizedBase.selectedHookType || 'original';
+  const plan = chooseExperimentPlan(normalizedBase, growthContext);
+  normalizedBase.abExperimentId = experimentId;
+  linkAbVariantToSlot({
+    script: normalizedBase,
+    abExperimentId: experimentId,
+    variantId: normalizedBase.abVariantId || 'v_a',
+    variantRole: 'control'
+  });
 
   logger.info(`AB v2: creating experiment ${experimentId} | topic=${baseScript.topic}`);
 
@@ -191,7 +370,11 @@ async function createMultiVariantExperiment(baseScript, baseJobId, growthContext
       variantId:   'v_a',
       jobId:       baseJobId,
       hookType:    originalType,
-      hook:        baseScript.hook,
+      hook:        normalizedBase.hook,
+      segmentType: plan.segmentType,
+      testedVariable: plan.testedVariable,
+      variantIntent: 'control',
+      structureVersion: normalizedBase.structureVersion || 'legacy_v1',
       publishedAt: null,
       tiktokId:    null,
       youtubeId:   null,
@@ -204,19 +387,24 @@ async function createMultiVariantExperiment(baseScript, baseJobId, growthContext
 
   // v_b: hook alternativo — generamos y encolamos si AB_PUBLISH_VARIANTS no es 'false'
   if (process.env.AB_PUBLISH_VARIANTS !== 'false') {
-    const altHook = await generateAltHook(baseScript, originalType);
-    if (altHook) {
-      // Script idéntico excepto el hook y metadata del experimento
+    const variantPayload = await generateSegmentVariant(normalizedBase, plan, originalType);
+    if (variantPayload) {
       // v_b se publica 2h después de v_a para no saturar al algoritmo
       const publishAfter = new Date(Date.now() + 2 * 60 * 60 * 1000).toISOString();
 
-      const altScript = {
-        ...baseScript,
-        hook:           altHook.hook,
+      const altScript = rebuildLegacySegments({
+        ...normalizedBase,
         abExperimentId: experimentId,
         abVariantId:    'v_b',
+        structureVersion: normalizedBase.structureVersion || 'legacy_v1',
+        hookType: variantPayload.hookType || originalType,
         publishAfter,           // publish-scheduler respeta este campo
-      };
+        [plan.segmentType]: variantPayload.updatedSegment || variantPayload.hook,
+        hook: plan.segmentType === 'hook' ? variantPayload.hook : normalizedBase.hook,
+        claim: variantPayload.claim,
+        explanation: variantPayload.explanation,
+        cta: variantPayload.cta,
+      });
 
       try {
         const { addVideoToQueue } = getQueue();
@@ -229,8 +417,13 @@ async function createMultiVariantExperiment(baseScript, baseJobId, growthContext
         variants.push({
           variantId:   'v_b',
           jobId:       altJobId,
-          hookType:    altHook.hookType,
-          hook:        altHook.hook,
+          hookType:    variantPayload.hookType || originalType,
+          hook:        altScript.hook,
+          segmentType: plan.segmentType,
+          testedVariable: variantPayload.testedVariable || plan.testedVariable,
+          variantIntent: variantPayload.variantIntent || plan.variantIntent,
+          structureVersion: altScript.structureVersion || 'legacy_v1',
+          changedSegmentValue: altScript[plan.segmentType],
           publishedAt: null,
           tiktokId:    null,
           youtubeId:   null,
@@ -239,8 +432,14 @@ async function createMultiVariantExperiment(baseScript, baseJobId, growthContext
           checkedAt:   null,
           isWinner:    false,
         });
+        linkAbVariantToSlot({
+          script: altScript,
+          abExperimentId: experimentId,
+          variantId: 'v_b',
+          variantRole: 'test'
+        });
 
-        logger.info(`AB v2: enqueued v_b job=${altJobId} hookType=${altHook.hookType} publishAfter=${publishAfter}`);
+        logger.info(`AB v2: enqueued v_b job=${altJobId} hookType=${variantPayload.hookType || originalType} segment=${plan.segmentType} publishAfter=${publishAfter}`);
       } catch (err) {
         logger.warn(`AB v2: failed to enqueue v_b: ${err.message}`);
       }
@@ -249,9 +448,13 @@ async function createMultiVariantExperiment(baseScript, baseJobId, growthContext
 
   const experiment = {
     experimentId,
-    topic:       baseScript.topic,
+    topic:       normalizedBase.topic,
     angle:       growthContext.angle || null,
-    baseHook:    baseScript.abOriginalHook || baseScript.hook,
+    baseHook:    normalizedBase.abOriginalHook || normalizedBase.hook,
+    testedVariable: plan.testedVariable,
+    segmentType: plan.segmentType,
+    variantIntent: plan.variantIntent,
+    structureVersion: normalizedBase.structureVersion || 'legacy_v1',
     createdAt:   new Date().toISOString(),
     status:      'running',            // running | decided
     winnerVariantId: null,
@@ -335,22 +538,54 @@ function evaluateMultiVariantExperiments(recentVideos = []) {
       continue;
     }
 
-    // Comparar variantes
+    // Comparar variantes — dimensión earlyScore (reach) + dimensión comercial
     const sorted = [...scored].sort((a, b) => b.earlyScore - a.earlyScore);
     const best   = sorted[0];
     const second = sorted[1];
     const window = detectWindow(best.publishedAt);
     const threshold = window?.threshold ?? 1.3;
 
-    if (best.earlyScore >= second.earlyScore * threshold) {
-      best.isWinner         = true;
-      exp.winnerVariantId   = best.variantId;
-      exp.status            = 'decided';
-      exp.decidedAt         = new Date().toISOString();
-      exp.decisionReason    = `${best.variantId} leads by ${(best.earlyScore / second.earlyScore).toFixed(2)}x (window: ${window?.label || 'unknown'})`;
+    // Calcular businessScore para cada variante usando proxies comerciales
+    // businessScore = earlyScore × topic_commercial_mult × engagement_quality
+    const { TOPIC_COMMERCIAL_MULT } = (() => {
+      try { return require('../../../content-engine/tracking/slot-commercial-proxy-scorer'); }
+      catch { return { TOPIC_COMMERCIAL_MULT: {} }; }
+    })();
+    const topicMult = TOPIC_COMMERCIAL_MULT[exp.topic] || 1.0;
+
+    for (const v of scored) {
+      const engRate = (v.metrics.views > 0)
+        ? ((v.metrics.likes || 0) + (v.metrics.comments || 0) * 2.5 + (v.metrics.shares || 0) * 4) / v.metrics.views
+        : 0;
+      v.businessScore = parseFloat(((v.earlyScore || 0) * topicMult * (1 + Math.min(engRate, 0.1) * 5)).toFixed(4));
+    }
+
+    // Ganador final: preferir businessScore sobre earlyScore puro
+    // salvo que el gap de views sea explosivo (>2x) — en ese caso earlyScore domina
+    const bestBiz   = scored.sort((a, b) => b.businessScore - a.businessScore)[0];
+    const secondBiz = scored.sort((a, b) => b.businessScore - a.businessScore)[1];
+
+    // Restaurar sorted original para earlyScore
+    scored.sort((a, b) => b.earlyScore - a.earlyScore);
+
+    const viewsGap = second?.metrics.views > 0
+      ? best.metrics.views / second.metrics.views : 1;
+    const decisionWinner = (viewsGap > 2.0) ? best : bestBiz;
+
+    if (decisionWinner.earlyScore >= (second?.earlyScore || 0) * (viewsGap > 2.0 ? threshold : threshold * 0.85)) {
+      decisionWinner.isWinner = true;
+      exp.winnerVariantId     = decisionWinner.variantId;
+      exp.status              = 'decided';
+      exp.decidedAt           = new Date().toISOString();
+      exp.decisionReason      = viewsGap > 2.0
+        ? `${decisionWinner.variantId} domina por views (${viewsGap.toFixed(1)}x). earlyScore=${decisionWinner.earlyScore.toFixed(3)}`
+        : `${decisionWinner.variantId} gana por businessScore=${decisionWinner.businessScore.toFixed(3)} (earlyScore=${decisionWinner.earlyScore.toFixed(3)}) en window ${window?.label || 'unknown'}`;
+      exp.winnerByViews       = best.variantId;
+      exp.winnerByBusiness    = bestBiz.variantId;
+      exp.viewsAndBizAgree    = best.variantId === bestBiz.variantId;
       updatedCount++;
-      _recordWinner(best, exp, perf);
-      logger.info(`AB v2: winner=${best.variantId} hookType=${best.hookType} earlyScore=${best.earlyScore.toFixed(3)} (${exp.decisionReason})`);
+      _recordWinner(decisionWinner, exp, perf);
+      logger.info(`AB v2: winner=${decisionWinner.variantId} hookType=${decisionWinner.hookType} business=${decisionWinner.businessScore?.toFixed(3)} (${exp.decisionReason})`);
     }
   }
 
@@ -369,15 +604,23 @@ function evaluateMultiVariantExperiments(recentVideos = []) {
 function _recordWinner(variant, exp, perf) {
   perf.history = perf.history || [];
   perf.history.unshift({
-    date:       new Date().toISOString(),
-    hookType:   variant.hookType,
-    topic:      exp.topic,
-    hook:       variant.hook,
-    views:      variant.metrics.views,
-    likes:      variant.metrics.likes,
-    earlyScore: variant.earlyScore,
-    isWinner:   variant.isWinner,
-    window:     variant.windowLabel || null,
+    date:           new Date().toISOString(),
+    hookType:       variant.hookType,
+    topic:          exp.topic,
+    hook:           variant.hook,
+    segmentType:    variant.segmentType || exp.segmentType || 'hook',
+    testedVariable: variant.testedVariable || exp.testedVariable || 'hook_style',
+    variantIntent:  variant.variantIntent || exp.variantIntent || 'unknown',
+    structureVersion: variant.structureVersion || exp.structureVersion || 'legacy_v1',
+    views:          variant.metrics.views,
+    likes:          variant.metrics.likes,
+    earlyScore:     variant.earlyScore,
+    businessScore:  variant.businessScore || null,
+    isWinner:       variant.isWinner,
+    window:         variant.windowLabel || null,
+    viewsAndBizAgree: exp.viewsAndBizAgree ?? true,
+    // Para _recalcTypeWeights: usar businessScore si disponible
+    scoringDimension: variant.businessScore ? 'business' : 'earlyScore',
   });
 }
 
@@ -393,9 +636,22 @@ function _recalcTypeWeights(history) {
     if (h.isWinner) byType[h.hookType].wins++;
   }
 
+  // Preferir businessScore sobre earlyScore para el ranking si está disponible
+  for (const h of history) {
+    if (h.businessScore && !byType[h.hookType]._bizSum) byType[h.hookType]._bizSum = 0;
+    if (h.businessScore) {
+      byType[h.hookType]._bizSum = (byType[h.hookType]._bizSum || 0) + h.businessScore;
+      byType[h.hookType]._bizN   = (byType[h.hookType]._bizN   || 0) + 1;
+    }
+  }
+
   const averages = Object.entries(byType)
     .filter(([, v]) => v.n >= 2)
-    .map(([type, v]) => ({ type, avg: v.sum / v.n, winRate: v.wins / v.n }));
+    .map(([type, v]) => ({
+      type,
+      avg: v._bizN >= 2 ? (v._bizSum / v._bizN) : (v.sum / v.n),  // preferir businessScore
+      winRate: v.wins / v.n,
+    }));
 
   if (!averages.length) return { ...DEFAULT_TYPE_WEIGHTS };
 
@@ -482,9 +738,13 @@ function getABStats() {
 
   // Distribución de tipos ganadores
   const winnerTypes = {};
+  const winnerSegments = {};
   for (const e of v2.filter(e => e.winnerVariantId)) {
     const w = e.variants.find(v => v.variantId === e.winnerVariantId);
-    if (w) winnerTypes[w.hookType] = (winnerTypes[w.hookType] || 0) + 1;
+    if (w) {
+      winnerTypes[w.hookType] = (winnerTypes[w.hookType] || 0) + 1;
+      winnerSegments[w.segmentType || e.segmentType || 'hook'] = (winnerSegments[w.segmentType || e.segmentType || 'hook'] || 0) + 1;
+    }
   }
   for (const e of v1.filter(e => e.winner)) {
     winnerTypes[e.winner] = (winnerTypes[e.winner] || 0) + 1;
@@ -502,14 +762,27 @@ function getABStats() {
     v1Total:     v1.length,
     typeWeights: perf.typeWeights,
     winnerTypes,
+    winnerSegments,
     topHooks,
     lastUpdated: perf.lastUpdated || null,
     recentExperiments: v2.slice(0, 5).map(e => ({
       experimentId: e.experimentId,
       topic:        e.topic,
       status:       e.status,
+      segmentType:  e.segmentType || 'hook',
+      testedVariable: e.testedVariable || 'hook_style',
+      variantIntent: e.variantIntent || 'unknown',
+      structureVersion: e.structureVersion || 'legacy_v1',
       winner:       e.winnerVariantId,
-      variants:     e.variants.map(v => ({ id: v.variantId, type: v.hookType, views: v.metrics?.views || 0, earlyScore: v.earlyScore })),
+      variants:     e.variants.map(v => ({
+        id: v.variantId,
+        type: v.hookType,
+        segmentType: v.segmentType || e.segmentType || 'hook',
+        testedVariable: v.testedVariable || e.testedVariable || 'hook_style',
+        variantIntent: v.variantIntent || 'unknown',
+        views: v.metrics?.views || 0,
+        earlyScore: v.earlyScore
+      })),
     })),
   };
 }

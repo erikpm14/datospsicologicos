@@ -9,6 +9,13 @@ const fs = require('fs');
 const path = require('path');
 const axios = require('axios');
 const logger = require('../utils/logger');
+const { ensureLegacyFields } = require('../utils/script-segments');
+const { buildMonetizationDashboard, normalizeVideo } = require('./monetization-dashboard.service');
+const { getCachedYouTubeIntegration } = require('./youtube-integration.service');
+const { linkSlotResults } = require('../../../content-engine/tracking/slot-result-linker');
+const { validateExecutionTrace } = require('../../../content-engine/tracking/execution-trace-validator');
+const { buildSlotVsResultReport } = require('../../../content-engine/tracking/slot-vs-result-report');
+const { transitionSlotState } = require('../../../content-engine/tracking/slot-consumption-guard');
 
 const DATA_DIR = path.resolve(path.dirname(process.env.SQLITE_DB_PATH || './data/db'), '.');
 const VIDEOS_FILE = path.join(DATA_DIR, 'videos.json');
@@ -65,6 +72,14 @@ function saveVideo(videoData) {
     youtube_id: videoData.youtubeId || null,
     theme_id: videoData.themeId,
     script_json: videoData.script,
+    tracking: videoData.tracking || videoData.script?.slotTracking || null,
+    batch_id: videoData.tracking?.batchId || null,
+    slot_id: videoData.tracking?.slotId || null,
+    planned_role: videoData.tracking?.plannedRole || null,
+    planned_cluster: videoData.tracking?.plannedCluster || null,
+    recommended_candidate_id: videoData.tracking?.recommendedCandidateId || null,
+    ab_experiment_id: videoData.abExperimentId || videoData.script?.abExperimentId || null,
+    ab_variant_id: videoData.abVariantId || videoData.script?.abVariantId || null,
     status: 'published',
     published_at: new Date().toISOString(),
     created_at: new Date().toISOString(),
@@ -77,6 +92,9 @@ function saveVideo(videoData) {
   }
 
   writeJSON(VIDEOS_FILE, videos);
+  linkSlotResults({ publishedVideoId: videoData.id });
+  validateExecutionTrace();
+  buildSlotVsResultReport();
   logger.info(`Video saved: ${videoData.id}`);
 }
 
@@ -101,6 +119,9 @@ function insertMetric({ videoId, platform, views, likes, comments, shares, engag
   // Mantiene solo últimos 10.000 registros
   if (metrics.length > 10000) metrics.splice(0, metrics.length - 10000);
   writeJSON(METRICS_FILE, metrics);
+  linkSlotResults({ publishedVideoId: videoId });
+  validateExecutionTrace();
+  buildSlotVsResultReport();
 }
 
 // ─────────────────────────────────────────────
@@ -177,6 +198,59 @@ async function pollAllMetrics() {
     exploitWinningHooks().catch(err => logger.warn(`exploitWinningHooks async error: ${err.message}`));
   } catch (ewErr) {
     logger.warn(`exploitWinningHooks failed: ${ewErr.message}`);
+  }
+
+  try {
+    linkSlotResults();
+    validateExecutionTrace();
+    buildSlotVsResultReport();
+    const latestVideos = readJSON(VIDEOS_FILE);
+    latestVideos.forEach((video) => {
+      if (video.slot_id) {
+        transitionSlotState(video.slot_id, 'completed', {
+          publishedVideoId: video.id,
+          publishedAt: video.published_at
+        });
+      }
+    });
+  } catch (traceErr) {
+    logger.warn(`Execution trace update failed: ${traceErr.message}`);
+  }
+
+  // ── Capa de análisis comercial A/B ───────────────────────────────────────
+  // Se ejecuta después de todos los pasos anteriores para tener datos frescos.
+  // Orden: enriquecer → analizar subslots → seleccionar winners → proxies comerciales
+
+  try {
+    const { enrichSlotMetrics } = require('../../../content-engine/tracking/slot-metrics-enricher');
+    enrichSlotMetrics();
+    logger.info('Metrics polling: slot enrichment done');
+  } catch (enrErr) {
+    logger.warn(`Slot enrichment failed: ${enrErr.message}`);
+  }
+
+  try {
+    const { analyzeSubslotOutcomes } = require('../../../content-engine/tracking/subslot-ab-outcome-analyzer');
+    analyzeSubslotOutcomes();
+    logger.info('Metrics polling: subslot A/B analysis done');
+  } catch (subErr) {
+    logger.warn(`Subslot analysis failed: ${subErr.message}`);
+  }
+
+  try {
+    const { selectAbWinners } = require('../../../content-engine/tracking/ab-winner-selector');
+    selectAbWinners();
+    logger.info('Metrics polling: A/B winner selection done');
+  } catch (winErr) {
+    logger.warn(`AB winner selection failed: ${winErr.message}`);
+  }
+
+  try {
+    const { buildCommercialProxyReport } = require('../../../content-engine/tracking/slot-commercial-proxy-scorer');
+    buildCommercialProxyReport();
+    logger.info('Metrics polling: commercial proxy report done');
+  } catch (proxyErr) {
+    logger.warn(`Commercial proxy report failed: ${proxyErr.message}`);
   }
 }
 
@@ -297,6 +371,8 @@ function getDashboardStats() {
 function getFullAnalytics() {
   const videos  = readJSON(VIDEOS_FILE);
   const metrics = readJSON(METRICS_FILE);
+  const youtube = getCachedYouTubeIntegration();
+  const youtubeVideosMap = new Map((youtube?.videos || []).map((video) => [String(video.internalId || ''), video]));
   const now     = Date.now();
   const cutoff30 = new Date(now - 30 * 24 * 60 * 60 * 1000).toISOString();
 
@@ -311,13 +387,26 @@ function getFullAnalytics() {
   // --- Videos enriquecidos ---
   const enriched = videos.map((v) => {
     const mx = videoMax[v.id] || {};
+    const script = ensureLegacyFields(v.script_json || {});
+    const youtubeVideo = youtubeVideosMap.get(String(v.id)) || null;
+    const youtubeViews = Number(youtubeVideo?.views ?? 0);
+    const youtubeLikes = Number(youtubeVideo?.likes ?? 0);
+    const youtubeComments = Number(youtubeVideo?.comments ?? 0);
+    const youtubeEngagement = youtubeViews > 0 ? ((youtubeLikes + youtubeComments) / youtubeViews) * 100 : 0;
     return {
       ...v,
-      max_views:      mx.views           || 0,
-      max_engagement: mx.engagement_rate || 0,
-      max_likes:      mx.likes           || 0,
-      max_comments:   mx.comments        || 0,
-      script:         v.script_json      || {},
+      max_views:      Math.max(mx.views || 0, youtubeViews),
+      max_engagement: Math.max(mx.engagement_rate || 0, youtubeEngagement),
+      max_likes:      Math.max(mx.likes || 0, youtubeLikes),
+      max_comments:   Math.max(mx.comments || 0, youtubeComments),
+      max_shares:     mx.shares          || 0,
+      youtube_views: youtubeViews || null,
+      youtube_likes: youtubeLikes || null,
+      youtube_comments: youtubeComments || null,
+      youtube_duration_seconds: youtubeVideo?.durationSeconds || null,
+      youtube_published_at: youtubeVideo?.publishedAt || null,
+      youtube_match_source: youtubeVideo?.matchedBy || null,
+      script,
     };
   });
 
@@ -406,8 +495,11 @@ function getFullAnalytics() {
   const platformTotals = Object.values(platMap);
 
   // --- All videos (para lista detallada) ---
-  const allVideos = [...enriched].sort((a, b) => b.max_views - a.max_views).map((v) => ({
+  const allVideos = [...enriched].sort((a, b) => b.max_views - a.max_views).map((v) => {
+    const normalized = normalizeVideo(v);
+    return {
     id:               v.id,
+    title:            v.title || normalized.title,
     hook:             v.hook,
     topic:            v.topic,
     virality_score:   v.virality_score,
@@ -415,19 +507,48 @@ function getFullAnalytics() {
     tiktok_id:        v.tiktok_id,
     instagram_id:     v.instagram_id,
     published_at:     v.published_at,
+    views:            normalized.views,
     max_views:        v.max_views,
+    likes:            normalized.likes,
     max_engagement:   v.max_engagement,
     max_likes:        v.max_likes,
+    comments:         normalized.comments,
     max_comments:     v.max_comments,
+    shares:           normalized.shares,
+    max_shares:       v.max_shares,
+    abExperimentId:   v.ab_experiment_id || v.script?.abExperimentId || null,
+    abVariantId:      v.ab_variant_id || v.script?.abVariantId || null,
+    retention:        normalized.retention,
+    avgRetention:     normalized.retention,
+    monetizationScore:normalized.monetizationScore,
+    hookType:         normalized.hookType,
+    structureVersion: normalized.structureVersion,
+    hasReengage:      normalized.hasReengage,
+    reengageDrop:     normalized.reengageDrop,
+    retentionDropBeforeReengage: normalized.retentionDropBeforeReengage,
+    retentionRecoveryAfterReengage: normalized.retentionRecoveryAfterReengage,
+    reengageEffectivenessScore: normalized.reengageEffectivenessScore,
     durationSeconds:  v.script?.durationSeconds,
     emotionalTrigger: v.script?.emotionalTrigger,
     viralTrigger:     v.script?.viralTrigger,
+    effectName:       v.script?.effectName,
     viralityBreakdown:v.script?.viralityBreakdown,
     psychologicalFact:v.script?.psychologicalFact,
     hook_text:        v.script?.hook,
+    open_loop:        v.script?.open_loop,
+    micro_value:      v.script?.micro_value,
+    escalation:       v.script?.escalation,
+    reengage:         v.script?.reengage,
+    peak:             v.script?.peak,
+    open_ending:      v.script?.open_ending,
+    soft_cta:         v.script?.soft_cta,
     claim:            v.script?.claim,
+    explanation:      v.script?.explanation,
     cta:              v.script?.cta,
-  }));
+    scoreBreakdown:   normalized.scoreBreakdown,
+    script:           v.script,
+  };
+  });
 
   // --- 7-day quick trend (para el overview) ---
   const cutoff7 = new Date(now - 7 * 24 * 60 * 60 * 1000).toISOString();
@@ -438,6 +559,7 @@ function getFullAnalytics() {
     trend7Map[date].views += m.views || 0;
   }
   const trend7 = Object.values(trend7Map).sort((a, b) => a.date > b.date ? 1 : -1);
+  const monetization = buildMonetizationDashboard(enriched);
 
   return {
     kpis: {
@@ -458,6 +580,13 @@ function getFullAnalytics() {
     trend30,
     trend7,
     platformTotals,
+    youtubeIntegration: {
+      available: Boolean(youtube?.channel),
+      source: youtube?.source || 'fallback',
+      generatedAt: youtube?.generatedAt || null,
+      channel: youtube?.channel || null,
+    },
+    monetization,
     allVideos,
     topVideos: allVideos.slice(0, 5),
     bottomVideos: [...allVideos].sort((a, b) => a.max_views - b.max_views).filter((v) => v.max_views > 0).slice(0, 3),

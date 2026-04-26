@@ -19,7 +19,13 @@ const { scoreScript, getHookStrength }       = require('../utils/virality-scorer
 const { scoreFormatMatch, scoreEmotionalImpact } = require('./format-match-engine');
 const { getFromCache, saveToCache }          = require('./script-cache');
 const { getPatternContextForPrompt }         = require('./pattern-miner');
+const { ensureLegacyFields, getScriptSections, hasExpandedStructure } = require('../utils/script-segments');
+const { parseModelJsonWithRecovery }         = require('../utils/llm-json');
+const { callAnthropicWithTimeout, createLlmMetrics, mergeLlmMetrics, markLlmHardFail, attachLlmMetrics } = require('../utils/llm-call');
+const { validateGeneratedScriptSchema, saveLastValidScript } = require('../utils/script-fallback');
+const { buildSceneVisualPrompt, buildUnifiedVideoStyle, normalizeVideoInstructions } = require('../utils/visual-style-system');
 const logger                                 = require('../utils/logger');
+const { createPerfTracker, formatDurationMs } = require('../utils/perf-tracker');
 
 const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
@@ -40,13 +46,267 @@ function _readJSON(file, def = null) {
 }
 
 // Duración objetivo (20-30s por defecto para formato viral corto)
-const TARGET_MIN = parseInt(process.env.FORMAT_TARGET_MIN_SECONDS || '20');
-const TARGET_MAX = parseInt(process.env.FORMAT_TARGET_MAX_SECONDS || '30');
+const TARGET_MIN = parseInt(process.env.FORMAT_TARGET_MIN_SECONDS || '40');
+const TARGET_MAX = parseInt(process.env.FORMAT_TARGET_MAX_SECONDS || '65');
 const WPS        = 2.3; // palabras/segundo narración calmada
 
 const TARGET_MIN_WORDS = Math.round(TARGET_MIN * WPS);
 const TARGET_MAX_WORDS = Math.round(TARGET_MAX * WPS);
 const TARGET_MID_SECS  = Math.round((TARGET_MIN + TARGET_MAX) / 2);
+const SEGMENT_KEYS = ['hook', 'open_loop', 'micro_value', 'escalation', 'reengage', 'peak', 'open_ending', 'soft_cta'];
+const COMPACT_SCRIPT_SCHEMA = `{
+  "title": "slug_corto",
+  "topic": "topic",
+  "hook": "max 12 palabras",
+  "open_loop": "10-15 palabras",
+  "micro_value": "12-18 palabras",
+  "escalation": "20-30 palabras",
+  "reengage": "8-14 palabras",
+  "peak": "20-32 palabras",
+  "open_ending": "8-14 palabras",
+  "soft_cta": "7-12 palabras",
+  "psychologicalFact": "1 frase breve",
+  "viralTrigger": "sorpresa|identificacion|controversia|utilidad|miedo",
+  "emotionalTrigger": "curiosity|fear|awe|validation|urgency|relatability",
+  "effectName": "mecanismo breve",
+  "keywords": ["keyword1", "keyword2"]
+}`;
+const COMPACT_VIRAL_SCHEMA = `{
+  "topic": "topic",
+  "selectedHookType": "revelation|pattern|challenge",
+  "hookSelectionReason": "frase corta",
+  "patternUsed": "patron breve",
+  "script": ${COMPACT_SCRIPT_SCHEMA}
+}`;
+
+function buildFullScriptText(script = {}) {
+  return SEGMENT_KEYS.map((key) => script[key]).filter(Boolean).join(' ').trim();
+}
+
+function buildVideoInstructions(script = {}) {
+  const style = buildUnifiedVideoStyle(script);
+  return {
+    singleFocus: true,
+    visualStyle: [
+      'estetica cinematografica oscura',
+      'fondo negro o casi negro',
+      'alto contraste con azul electrico dominante',
+      'acento rojo oscuro solo para tension',
+      'single focus constante sin overlays complejos',
+      'cambio de plano cada 2-3 segundos',
+      'zoom progresivo y movimiento suave',
+    ],
+    subtitleStyle: 'tipografia condensada bold, blanco frio con acentos azul electrico y rojo oscuro, subtitulos grandes y sincronizados',
+    audioStyle: {
+      voice: 'voz clara y con ritmo',
+      pauses: ['hook', 'reengage', 'peak'],
+    },
+    scenes: [
+      { segment: 'hook', timing: '0-2s', visual: buildSceneVisualPrompt('hook', script), cut: 'corte rapido con push-in' },
+      { segment: 'open_loop', timing: '2-5s', visual: buildSceneVisualPrompt('open_loop', script), cut: 'zoom corto continuo' },
+      { segment: 'micro_value', timing: '5-10s', visual: buildSceneVisualPrompt('micro_value', script), cut: 'cambio de plano limpio' },
+      { segment: 'escalation', timing: '10-20s', visual: buildSceneVisualPrompt('escalation', script), cut: 'cortes cada 2-3s' },
+      { segment: 'reengage', timing: '20-25s', visual: buildSceneVisualPrompt('reengage', script), cut: 'cambio brusco + zoom agresivo' },
+      { segment: 'peak', timing: '25-40s', visual: buildSceneVisualPrompt('peak', script), cut: 'alternancia de planos cerrados' },
+      { segment: 'open_ending', timing: '40-50s', visual: buildSceneVisualPrompt('open_ending', script), cut: 'desaceleracion ligera' },
+      { segment: 'soft_cta', timing: '50-60s', visual: buildSceneVisualPrompt('soft_cta', script), cut: 'ultimo corte limpio' },
+    ],
+    style,
+    clipKeywords: style.clipKeywords,
+  };
+}
+
+function enrichScriptOutput(script = {}) {
+  script.fullScript = script.fullScript || buildFullScriptText(script);
+  script.videoInstructions = normalizeVideoInstructions(script, script.videoInstructions || buildVideoInstructions(script));
+  return script;
+}
+
+async function requestJsonRecovery(prompt, rawText, label, llmMetrics, maxTokens = 450, schema = COMPACT_SCRIPT_SCHEMA) {
+  logger.warn(`${label}: requesting clean JSON recovery from model`);
+  llmMetrics.llm_total_calls += 1;
+  const recovery = await callAnthropicWithTimeout(client, {
+    model: 'claude-haiku-4-5-20251001',
+    max_tokens: maxTokens,
+    messages: [{
+      role: 'user',
+      content: `${prompt}\n\nLa respuesta anterior no era JSON valido y puede estar truncada. Reconstruye una version MAS CORTA.\nDevuelve SOLO JSON VALIDO. Sin markdown. Sin fences. Sin comentarios. Sin texto antes ni despues.\nUsa SOLO este esquema minimo:\n${schema}\nLimites duros: hook<=9, open_loop<=15, micro_value<=18, escalation<=30, reengage<=14, peak<=32, open_ending<=14, soft_cta<=12, psychologicalFact<=16, keywords=2, hashtags=3.\n\nRESPUESTA ANTERIOR:\n${String(rawText || '').slice(0, 3000)}`,
+    }],
+  }, { label: `${label}.recovery` });
+  return recovery.content?.[0]?.text?.trim() || '';
+}
+
+function countScriptWords(script) {
+  return getScriptSections(script)
+    .map((section) => section.text)
+    .join(' ')
+    .split(/\s+/)
+    .filter(Boolean)
+    .length;
+}
+
+function buildSegmentFeedback(scriptInput = {}) {
+  const script = ensureLegacyFields(scriptInput);
+  const feedback = [];
+  const add = (segment, issue) => feedback.push({ segment, issue });
+  const wordCount = (text) => String(text || '').trim().split(/\s+/).filter(Boolean).length;
+  const soundsSpoken = (text) => !/[;()[\]{}]/.test(String(text || '')) && !/\bprimero\b|\bsegundo\b|\btercero\b|\ben primer lugar\b/i.test(String(text || ''));
+
+  if (!script.hook || wordCount(script.hook) < 6) add('hook', 'hook débil');
+  else if (wordCount(script.hook) > 13) add('hook', 'hook demasiado largo');
+  else if (/^\s*¿?\s*sab[ií]as que/i.test(script.hook) || /^\s*tu cerebro\b/i.test(script.hook)) add('hook', 'hook genérico');
+
+  if (script.hook && !/^\s*Â¿?\s*sab[iÃ­]as que/i.test(script.hook) && !/^\s*tu cerebro\b/i.test(script.hook) && !soundsSpoken(script.hook)) {
+    add('hook', 'hook poco natural');
+  }
+
+  if (hasExpandedStructure(script)) {
+    if (!script.open_loop) add('open_loop', 'open_loop ausente');
+    else if (/\bporque\b|\bla razón\b|\besto significa\b|\ben resumen\b/i.test(script.open_loop)) add('open_loop', 'open_loop demasiado resolutivo');
+
+    if (!script.micro_value) add('micro_value', 'micro_value ausente');
+    else if (!/\bse llama\b|\befecto\b|\bsesgo\b|\bestudio\b|\bdopamina\b|\bcortisol\b|\bamígdala\b/i.test(script.micro_value)) add('micro_value', 'micro_value poco concreto');
+
+    if (!script.escalation) add('escalation', 'escalation ausente');
+    else if (wordCount(script.escalation) < 18) add('escalation', 'escalation con poca densidad');
+    else if (!soundsSpoken(script.escalation)) add('escalation', 'escalation suena escrito, no hablado');
+
+    if (!script.reengage) add('reengage', 'reengage ausente');
+    else if (!/\bpero\b|\baquí\b|\bahora\b|\bespera\b|\bcuántas veces\b|\bte ha pasado\b|\besto es lo importante\b/i.test(script.reengage)) add('reengage', 'reengage poco agresivo');
+
+    if (!script.peak) add('peak', 'peak ausente');
+    else if (!/\btu\b|\bte\b|\bcontigo\b|\bcuando\b|\ben el trabajo\b|\ben una conversación\b|\ben pareja\b|\ba diario\b/i.test(script.peak)) add('peak', 'peak abstracto');
+
+    if (!script.open_ending) add('open_ending', 'open_ending ausente');
+    else if (/\bpor eso\b|\besa es la razón\b|\basí funciona\b|\bfin\b/i.test(script.open_ending)) add('open_ending', 'open_ending demasiado cerrado');
+
+    if (!script.soft_cta) add('soft_cta', 'soft_cta ausente');
+    else if (/sígueme|suscríbete|dale like|comenta si/i.test(script.soft_cta)) add('soft_cta', 'soft_cta forzado');
+    else if (wordCount(script.soft_cta) < 5) add('soft_cta', 'soft_cta genérico');
+    else if (!/[?¿]/.test(script.soft_cta)) add('soft_cta', 'soft_cta poco conversacional');
+  } else {
+    if (!script.claim || wordCount(script.claim) < 8) add('claim', 'claim poco concreto');
+    if (!script.explanation || wordCount(script.explanation) < 18) add('explanation', 'explanation demasiado débil');
+    if (!script.cta || wordCount(script.cta) < 5) add('cta', 'cta genérico');
+  }
+
+  return feedback;
+}
+
+function buildRetryFeedback(previousGaps = []) {
+  if (!previousGaps.length) return '';
+  return previousGaps.map((gap) => {
+    if (typeof gap === 'string') return `  • ${gap}`;
+    if (gap?.segment && gap?.issue) return `  • [${gap.segment}] ${gap.issue}`;
+    return `  • ${String(gap)}`;
+  }).join('\n');
+}
+
+function finalizeOptimizedScript(scriptInput = {}, growthContext = {}) {
+  const script = ensureLegacyFields(scriptInput);
+  script.structureVersion = script.structureVersion || (hasExpandedStructure(script) ? 'open_loop_escalation_v1' : 'legacy_v1');
+  script.hasReengage = script.hasReengage ?? Boolean(script.reengage);
+  script.segmentFeedback = buildSegmentFeedback(script);
+  script.segmentFeedbackSummary = script.segmentFeedback.map((item) => `[${item.segment}] ${item.issue}`);
+  script.estimatedWords = countScriptWords(script);
+  script.durationSeconds = Math.round(script.estimatedWords / WPS);
+  enrichScriptOutput(script);
+  script.growthContext = {
+    topic: growthContext.nextTopic,
+    hookType: growthContext.hookType,
+    emotionalTrigger: growthContext.emotionalTrigger,
+    angle: growthContext.angle,
+    strategy: growthContext.strategy,
+    decisionAt: growthContext.decisionAt,
+  };
+  return script;
+}
+
+function buildSelectionPenalties(script = {}) {
+  const penalties = [];
+  if ((script.viralityScore || 0) < 70) penalties.push(`virality_low:${script.viralityScore || 0}`);
+  if ((script.formatMatchScore || 0) > 0 && (script.formatMatchScore || 0) < 70) penalties.push(`format_low:${script.formatMatchScore}`);
+  penalties.push(...(script.segmentFeedbackSummary || []).slice(0, 4));
+  return penalties.filter(Boolean);
+}
+
+function isClearlyInvalidCandidate(script = {}) {
+  if (!script || !hasExpandedStructure(script)) return true;
+  if ((script.estimatedWords || 0) < 55) return true;
+  if ((script.durationSeconds || 0) < 25) return true;
+  if ((script.durationSeconds || 0) > 60) return true;
+  if (!String(script.hook || '').trim()) return true;
+  if (!String(script.peak || '').trim()) return true;
+  return false;
+}
+
+async function improveWeakSegments(scriptInput = {}, options = {}) {
+  const script = ensureLegacyFields(JSON.parse(JSON.stringify(scriptInput || {})));
+  const issues = Array.isArray(options.issues) ? options.issues : script.segmentFeedbackSummary || [];
+  const softIssue = issues.find((issue) => /\[hook\]|\[reengage\]|\[escalation\]|\[micro_value\]/i.test(issue));
+  if (!softIssue) return { script, improved: false, target: null, reason: 'no_soft_issue' };
+
+  const target = /\[hook\]/i.test(softIssue)
+    ? 'hook'
+    : /\[reengage\]/i.test(softIssue)
+      ? 'reengage'
+      : /\[escalation\]/i.test(softIssue)
+        ? 'escalation'
+        : 'micro_value';
+
+  const patchSchema = `{
+  "${target}": "texto corto mejorado"
+}`;
+  const targetRule = target === 'hook'
+    ? 'Reescribe SOLO el hook. Hazlo mas corto, mas incomodo, mas concreto. Maximo 12 palabras.'
+    : target === 'reengage'
+      ? 'Reescribe SOLO el reengage. Debe sonar a golpe breve. Ejemplos: "Y aqui viene lo peor.", "Pero esto casi nadie lo nota.", "La trampa esta en esto."'
+      : target === 'escalation'
+        ? 'Reescribe SOLO la escalation. Debe sonar hablada, cotidiana y natural. Sin tono escrito.'
+        : 'Reescribe SOLO el micro_value. Debe ser mas concreto y practico con ejemplo humano breve.';
+
+  const userPrompt = `Tienes un guion casi valido para Shorts virales de psicologia.
+${targetRule}
+No rehagas nada mas.
+Devuelve SOLO JSON puro.
+
+Hook actual: ${script.hook}
+Open loop actual: ${script.open_loop}
+Micro value actual: ${script.micro_value}
+Escalation actual: ${script.escalation}
+Reengage actual: ${script.reengage}
+Peak actual: ${script.peak}
+
+Salida:
+${patchSchema}`;
+
+  const llmMetrics = createLlmMetrics();
+  try {
+    llmMetrics.llm_total_calls += 1;
+    const message = await callAnthropicWithTimeout(client, {
+      model: 'claude-haiku-4-5-20251001',
+      max_tokens: 160,
+      system: 'Corrige solo el segmento pedido. Devuelve solo JSON valido.',
+      messages: [{ role: 'user', content: userPrompt }],
+    }, { label: `content-optimizer.improveWeakSegments.${target}` });
+    const rawText = message.content?.[0]?.text?.trim() || '';
+    const { data } = await parseModelJsonWithRecovery(rawText, {
+      label: `content-optimizer.improveWeakSegments.${target}`,
+      recover: (failedRaw) => requestJsonRecovery(userPrompt, failedRaw, `content-optimizer.improveWeakSegments.${target}`, llmMetrics, 140, patchSchema),
+    });
+    if (typeof data?.[target] === 'string' && data[target].trim().length >= 4) {
+      script[target] = data[target].trim();
+      const normalized = finalizeOptimizedScript(script, script.growthContext || options.growthContext || {});
+      normalized.quickOptimizedSegment = target;
+      normalized.quickOptimizedReason = softIssue;
+      return { script: normalized, improved: true, target, reason: softIssue };
+    }
+  } catch (error) {
+    logger.warn(`Segment optimizer skipped | target=${target} | reason=${error.message}`);
+  }
+
+  return { script, improved: false, target, reason: softIssue };
+}
 
 // ─────────────────────────────────────────────
 //  SYSTEM PROMPT
@@ -57,150 +317,46 @@ function buildSystemPrompt(growthContext = {}, trendContext = null) {
     nextTopic, hookType, emotionalTrigger, angle,
     avoidTopics = [], avoidRecentHooks = [],
   } = growthContext;
-
   const recentHooksNote = avoidRecentHooks.length > 0
-    ? `\nHOOKS USADOS RECIENTEMENTE (NO repetir ni parecerse):\n${avoidRecentHooks.slice(0, 5).map((h) => `  - "${h}"`).join('\n')}`
+    ? `\nNo repitas hooks recientes: ${avoidRecentHooks.slice(0, 4).join(' | ')}`
     : '';
-
-  const trendNote = (trendContext?.hookHints?.length > 0)
-    ? `\n\nTENDENCIAS ACTIVAS AHORA:\n${trendContext.hookHints.slice(0, 6).map((h) => `  • "${h}"`).join('\n')}\nAdapta el lenguaje del hook a estas tendencias. No copies literalmente — úsalas para hacer el hook más reconocible hoy.`
+  const trendNote = trendContext?.hookHints?.length
+    ? `\nTendencias activas: ${trendContext.hookHints.slice(0, 4).join(' | ')}`
     : '';
-
   const patternNote = getPatternContextForPrompt(nextTopic) || '';
 
-  return `No eres un educador. No eres un divulgador.
-Eres una máquina de retención para YouTube Shorts de psicología.
-Tu único objetivo: detener el scroll en menos de 2 segundos, mantener la atención hasta el final, provocar identificación emocional, generar comentarios y hacer que el vídeo se repita.
+  return `Escribes Shorts virales de psicologia en espanol de Espana.
+No suenes academico. No suenes a blog. No suenes a IA.
 
-════════════════════════════════════════
-ESTRUCTURA OBLIGATORIA DEL GUIÓN
-════════════════════════════════════════
+Objetivo:
+- hooks agresivos
+- micro_value concreto
+- escalation hablada
+- reengage fuerte
+- peak emocional
+- produccion constante
 
-[SEGUNDO 0-2 — HOOK]
-La única frase que decide si la persona sigue o no.
-Sin introducción. Sin contexto previo. Impacto directo.
+Reglas:
+- frases cortas
+- segunda persona
+- tono intimo, incomodo y curioso
+- nada de "En este video", "La psicologia dice", "Segun estudios", "Hoy vamos a hablar", "Es importante recordar", "No estas solo", "Sabias que"
+- usa contraste: "no es X, es Y"
+- usa revelacion: "lo grave no es..., es..."
+- situaciones humanas concretas
+- una frase memorable
+- objetivo ${TARGET_MIN}-${TARGET_MAX}s
+- si el hook no frena scroll, reescribe
+- si el reengage no golpea, reescribe
 
-[SEGUNDOS 2-10 — DESARROLLO (claim)]
-Explicación parcial. Mantén la tensión. Cada frase añade algo nuevo.
-Dato concreto: número, nombre de efecto psicológico, mecanismo neurológico.
+Tema: ${nextTopic || 'emotional_patterns'}
+Angulo: ${angle || 'mecanismo cotidiano'}
+HookType: ${hookType || 'revelation'}
+Trigger emocional: ${emotionalTrigger || 'curiosity'}
+Evitar temas: ${avoidTopics.join(', ') || 'ninguno'}${recentHooksNote}${trendNote}
+${patternNote}
 
-[SEGUNDOS 10-18 — REVELACIÓN (explanation)]
-Explicación clara pero impactante. Sensación de "esto me pasa a mí".
-2-3 frases. Ejemplo cotidiano vivido esta semana.
-
-[SEGUNDOS 18-22 — LOOP FINAL (cta)]
-Conecta con el inicio. Deja una idea abierta.
-Provoca que el usuario lo vuelva a ver.
-Añade una micro-conexión: "y probablemente te pasa más de lo que crees" / "y no eres el único al que le pasa esto".
-
-════════════════════════════════════════
-REGLA MÁS IMPORTANTE — EL HOOK
-════════════════════════════════════════
-
-El hook debe cumplir AL MENOS UNA de estas condiciones:
-  1. Hacer que el espectador se sienta identificado de forma incómoda
-  2. Insinuar que hay algo mal en su comportamiento
-  3. Revelar algo que "no debería saber"
-  4. Crear una duda urgente en su cabeza
-  5. Atacar directamente al espectador ("si haces esto…")
-
-NIVEL DE CALIDAD OBLIGATORIO (estudia la diferencia):
-
-  ✗ MALO: "Si haces esto, tu cerebro hace X"
-  ✓ BUENO: "Si haces esto sin darte cuenta, tu cerebro está fallando"
-
-  ✗ MALO: "Esto pasa cuando lees mal"
-  ✓ BUENO: "Si relees lo mismo, algo en tu cerebro no está funcionando"
-
-  ✗ MALO: "Tu cerebro usa atajos cognitivos"
-  ✓ BUENO: "Tu cerebro te convence de que tus decisiones son tuyas. No lo son."
-
-  ✗ MALO: "La dopamina afecta tu motivación"
-  ✓ BUENO: "Cada vez que completas algo fácil, tu cerebro mata tu ambición"
-
-HOOKS DE REFERENCIA (este nivel o superior):
-  ✓ "Si revisas el móvil al despertar, tu día ya está saboteado."
-  ✓ "El 73% de las decisiones que tomas hoy no son tuyas."
-  ✓ "Cada vez que dices 'estoy bien', tu cuerpo registra lo contrario."
-  ✓ "Tu mente tiene un modo automático que opera sin que lo sepas."
-
-HOOKS PROHIBIDOS (nunca):
-  ✗ Cualquier hook que empiece con: "Hoy", "En este vídeo", "Hola", "Existen", "Es importante"
-  ✗ Hooks vagos o académicos que no creen tensión inmediata
-  ✗ Hooks que informen sin provocar
-
-REGLAS TÉCNICAS DEL HOOK:
-  • 8-13 palabras exactas
-  • Sin puntos suspensivos al final
-
-════════════════════════════════════════
-REGLAS DE CADA SECCIÓN
-════════════════════════════════════════
-
-DESARROLLO (claim):
-  • 1-2 frases, máximo 20 palabras total
-  • Obligatorio: cifra (68%) O nombre de efecto (Efecto Zeigarnik) O neurociencia (amígdala, cortisol, dopamina)
-  • Afirma. No expliques todavía. Crea tensión.
-
-REVELACIÓN (explanation):
-  • 2-3 frases. Máximo 40 palabras total. Cada frase: ≤12 palabras.
-  • Al menos 3 de: cerebro, cortisol, dopamina, amígdala, inconsciente, automáticamente, estudio, neurona, hipocampo, prefrontal
-  • Usa "tú", "te", "tu" — nunca "las personas" o "la gente"
-  • Ejemplo vivido HOY o esta semana
-  • Introduce una micro-frase que provoque reacción natural (sin pedir): "seguro que te ha pasado" / "lo has notado alguna vez" / "esto explica mucho"
-
-LOOP FINAL (cta):
-  • 1 frase. Máximo 12 palabras.
-  • Conecta con el hook del inicio — cierra el arco
-  • Deja una idea abierta que siga rebotando
-  • Incluye micro-conexión emocional para generar suscriptores: "y probablemente te pasa más de lo que crees" / "y no eres el único"
-  • PROHIBIDO: "suscríbete", "dale like", "sígueme", pregunta directa tipo "¿comenta si..."
-
-TOTAL: ${TARGET_MIN_WORDS}-${TARGET_MAX_WORDS} palabras (${TARGET_MIN}-${TARGET_MAX}s)
-${recentHooksNote}${trendNote}${patternNote}
-
-════════════════════════════════════════
-PARÁMETROS DE ESTE GUIÓN
-════════════════════════════════════════${nextTopic ? `\nTema: ${nextTopic}` : ''}${angle ? `\nÁngulo: ${angle}` : ''}${hookType ? `\nTipo de hook: ${hookType}` : ''}${emotionalTrigger ? `\nTrigger emocional objetivo: ${emotionalTrigger}` : ''}${avoidTopics.length > 0 ? `\nEvitar (ya cubiertos): ${avoidTopics.join(', ')}` : ''}
-
-FÓRMULAS DE HOOK SEGÚN TIPO:
-  • revelation → "Tu [cerebro/mente] [hace algo inesperado] sin que lo sepas"
-  • pattern    → "Cada vez que [situación cotidiana], tu cerebro [consecuencia sorprendente]"
-  • challenge  → "El [X]% de personas [comportamiento universal sorprendente]"
-  • warning    → "Si [hábito común], [consecuencia que no esperabas]"
-  • question   → "Por qué [no puedes/siempre haces/nunca logras] [comportamiento universal]"
-  • secret     → "Hay [un mecanismo/una razón] por la que [comportamiento propio]"
-
-════════════════════════════════════════
-AUTOEVALUACIÓN OBLIGATORIA (antes de devolver)
-════════════════════════════════════════
-Responde internamente SÍ/NO:
-  1. ¿Esto detiene el scroll en menos de 2 segundos?
-  2. ¿El hook hace que el espectador se sienta identificado o incómodo?
-  3. ¿Cada frase añade algo nuevo — no repite ni rellena?
-  4. ¿Hay progresión clara: hook → tensión → revelación → loop?
-  5. ¿El loop final conecta con el hook y deja algo rebotando?
-  6. ¿Tiene potencial de rewatch (alguien lo volvería a ver)?
-
-Si cualquier respuesta es NO → reescribe antes de responder.
-
-════════════════════════════════════════
-DEVUELVE SOLO JSON — sin markdown, sin texto extra
-════════════════════════════════════════
-{
-  "title": "slug_breve_identificador",
-  "topic": "habits|dopamine|procrastination|cognitive_biases|body_language|emotional_patterns|relationships|decision_making|attention|memory|social_patterns|perception|motivation|self_talk|emotions",
-  "hook": "frase que para el scroll — identificación incómoda (8-13 palabras)",
-  "claim": "dato concreto con cifra o nombre de efecto (10-20 palabras)",
-  "explanation": "2-3 frases cortas, max 40 palabras, ejemplo cotidiano + micro-frase de identificación natural",
-  "cta": "loop final — conecta con hook, micro-conexión emocional, sin pedir nada (≤12 palabras)",
-  "psychologicalFact": "el mecanismo psicológico exacto con su nombre si existe",
-  "viralTrigger": "sorpresa|identificacion|controversia|utilidad|miedo",
-  "emotionalTrigger": "curiosity|fear|awe|validation|urgency|relatability",
-  "durationSeconds": ${TARGET_MID_SECS},
-  "keywords": ["concepto_visual_1", "concepto_visual_2"],
-  "hashtags": ["#psicologia", "#mente", "#cerebro", "#habitos", "#viral"]
-}`;
+Devuelve solo JSON valido.`;
 }
 
 // ─────────────────────────────────────────────
@@ -217,8 +373,11 @@ DEVUELVE SOLO JSON — sin markdown, sin texto extra
 async function generateOptimizedScript(growthContext = {}, options = {}) {
   const { nextTopic, angle, hookType, emotionalTrigger } = growthContext;
   const { retryCount = 0, previousGaps = [], trendContext = null } = options;
+  const perf = createPerfTracker('content-optimizer.generateOptimizedScript', { topic: nextTopic, attempt: retryCount + 1 });
+  const llmMetrics = createLlmMetrics();
 
-  logger.info(`Content Optimizer | topic=${nextTopic} | angle=${angle} | hook=${hookType} | attempt=${retryCount + 1}`);
+  try {
+    logger.info(`Content Optimizer | topic=${nextTopic} | angle=${angle} | hook=${hookType} | attempt=${retryCount + 1}`);
 
   // Cache lookup — solo en el primer intento (retries siempre generan fresco)
   if (retryCount === 0) {
@@ -230,10 +389,10 @@ async function generateOptimizedScript(growthContext = {}, options = {}) {
   let retryFeedback = '';
   if (retryCount > 0) {
     const gapLines = previousGaps.length > 0
-      ? `Fallos del intento anterior:\n${previousGaps.map((g) => `  • ${g}`).join('\n')}`
+      ? `Fallos del intento anterior:\n${buildRetryFeedback(previousGaps)}`
       : '';
     retryFeedback = `\n\n⚠️ REINTENTO ${retryCount}: El intento anterior fue rechazado. ${gapLines}
-Correcciones obligatorias: hook más brutal (<13 palabras), explicación más corta (<40 palabras total), cero relleno.`;
+Correcciones obligatorias: más claridad por segmento, reengage más fuerte, peak más concreto y soft_cta menos genérico.`;
   }
 
   const userPrompt = `Genera un guión de psicología viral de ALTA CALIDAD.
@@ -245,89 +404,150 @@ PARÁMETROS:
 - Trigger emocional: ${emotionalTrigger || 'curiosity'}
 
 EXIGENCIAS DE CALIDAD (se comprueba con scorer automático):
-- Hook: 1 frase, 8-13 palabras, impacto brutal en segundo 0 — sin intro, sin contexto
-- Claim: breve y concreto (≤15 palabras), con dato real: número, nombre de efecto o mecanismo
-- Explanation: 2-3 frases, máximo 40 palabras, cada frase ≤10 palabras, 1 idea
-- CTA: 1 frase de cierre, ≤10 palabras
+- hook: 6-9 palabras, scroll stop brutal, personal e incómodo
+- open_loop: curiosidad sin resolver todavía
+- micro_value: primer pago con efecto o mecanismo real
+- escalation: tensión creciente y frases cortas
+- reengage: golpe breve en segundo ~20
+- peak: ejemplo cotidiano fuerte, identificable y concreto
+- open_ending: deja loop abierto
+- soft_cta: pregunta real, natural, sin pedir follow
 - Total: ${TARGET_MIN_WORDS}-${TARGET_MAX_WORDS} palabras (${TARGET_MIN}-${TARGET_MAX}s)
+- Prohibido "¿Sabías que...?" y prohibido empezar hook con "Tu cerebro..."
+- Devuelve también fullScript y videoInstructions con escenas, ritmo, cortes y keywords visuales
 - Cero intro, cero relleno, cero academicismo${retryFeedback}`;
 
-  const message = await client.messages.create({
-    model: 'claude-sonnet-4-6',
+  const compactUserPrompt = `Genera un guion viral de psicologia.
+
+Parametros:
+- tema: ${nextTopic || 'comportamiento humano'}
+- angulo: ${angle || 'mecanismo cognitivo cotidiano'}
+- hookType: ${hookType || 'revelation'}
+- emotionalTrigger: ${emotionalTrigger || 'curiosity'}
+
+Estilo:
+- espanol natural de Espana
+- voz directa
+- frases cortas
+- tono intimo, incomodo y curioso
+- nada academico
+- nada de blog
+
+Reglas:
+- HOOK maximo 12 palabras
+- OPEN_LOOP 10-15 palabras
+- MICRO_VALUE 12-18 palabras y concreto
+- ESCALATION 20-30 palabras, hablada y cotidiana
+- REENGAGE 8-14 palabras, golpe fuerte
+- PEAK 20-32 palabras, conclusion emocional
+- OPEN_ENDING 8-14 palabras
+- SOFT_CTA 7-12 palabras
+- keywords exactamente 2
+- cero markdown, cero fences, cero texto extra${retryFeedback}
+
+Devuelve solo este JSON minimo:
+${COMPACT_SCRIPT_SCHEMA}`;
+
+
+  perf.start('model_call');
+  llmMetrics.llm_total_calls += 1;
+  const message = await callAnthropicWithTimeout(client, {
+    model: 'claude-haiku-4-5-20251001',
     max_tokens: 450,
     system: buildSystemPrompt(growthContext, trendContext),
-    messages: [{ role: 'user', content: userPrompt }],
-  });
+    messages: [{ role: 'user', content: compactUserPrompt }],
+  }, { label: 'content-optimizer.generateOptimizedScript' });
+  const modelPhase = perf.end({ model: 'claude-haiku-4-5-20251001' });
 
   const rawText  = message.content[0].text.trim();
-  const jsonText = rawText.replace(/^```json?\n?/, '').replace(/\n?```$/, '');
-  const script   = JSON.parse(jsonText);
+  perf.start('json_parse');
+  const { data: script, meta: parseMeta } = await parseModelJsonWithRecovery(rawText, {
+    label: 'content-optimizer.generateOptimizedScript',
+    recover: (failedRaw) => requestJsonRecovery(compactUserPrompt, failedRaw, 'content-optimizer.generateOptimizedScript', llmMetrics, 450, COMPACT_SCRIPT_SCHEMA),
+    validate: (data) => validateGeneratedScriptSchema(data, { label: 'content-optimizer.generateOptimizedScript', requireExpanded: true }),
+  });
+  mergeLlmMetrics(llmMetrics, parseMeta);
+  const parsePhase = perf.end(parseMeta);
 
-  for (const field of ['hook', 'claim', 'explanation', 'cta', 'topic']) {
+  for (const field of ['hook', 'topic']) {
     if (!script[field]) throw new Error(`Campo requerido ausente: ${field}`);
   }
 
-  // Duración real
-  const totalWords = [script.hook, script.claim, script.explanation, script.cta]
-    .filter(Boolean).join(' ').split(/\s+/).length;
-  script.estimatedWords  = totalWords;
-  script.durationSeconds = Math.round(totalWords / WPS);
+  const normalizedScript = finalizeOptimizedScript(script, growthContext);
 
   // ── Scores ──
-  const viralityResult = scoreScript(script);
-  script.viralityScore     = viralityResult.score;
-  script.viralityBreakdown = viralityResult.breakdown;
+  const viralityResult = scoreScript(normalizedScript);
+  normalizedScript.viralityScore     = viralityResult.score;
+  normalizedScript.viralityBreakdown = viralityResult.breakdown;
 
-  const formatResult            = scoreFormatMatch(script);
-  script.formatMatchScore       = formatResult.score;
-  script.formatMatchBreakdown   = formatResult.breakdown;
-  script.formatMatchGaps        = formatResult.gaps;
+  const formatResult                  = scoreFormatMatch(normalizedScript);
+  normalizedScript.formatMatchScore   = formatResult.score;
+  normalizedScript.formatMatchBreakdown = formatResult.breakdown;
+  normalizedScript.formatMatchSegmentGaps = normalizedScript.segmentFeedbackSummary;
+  normalizedScript.formatMatchGaps    = [...formatResult.gaps, ...normalizedScript.segmentFeedbackSummary];
 
-  const emotionalResult           = scoreEmotionalImpact(script);
-  script.emotionalImpactScore     = emotionalResult.score;
-  script.emotionalImpactBreakdown = emotionalResult.breakdown;
+  const emotionalResult                 = scoreEmotionalImpact(normalizedScript);
+  normalizedScript.emotionalImpactScore = emotionalResult.score;
+  normalizedScript.emotionalImpactBreakdown = emotionalResult.breakdown;
 
   // ── Aprobación (para cola) ──
   const minFormat      = parseInt(process.env.MIN_FORMAT_MATCH_SCORE_TO_QUEUE || '70');
-  const minVirality    = parseInt(process.env.MIN_VIRALITY_SCORE_TO_QUEUE     || '55');
+  const minVirality    = parseInt(process.env.MIN_VIRALITY_SCORE_TO_QUEUE     || '60');
   const minHookStrength = parseInt(process.env.MIN_HOOK_STRENGTH              || '8');
 
-  const hookStr    = viralityResult.breakdown?.hookStrength ?? getHookStrength(script.hook);
+  const hookStr    = viralityResult.breakdown?.hookStrength ?? getHookStrength(normalizedScript.hook);
   const formatOk   = formatResult.score >= minFormat;
   const viralityOk = viralityResult.score >= minVirality;
   const hookOk     = hookStr >= minHookStrength;
 
-  script.approved = formatOk && viralityOk && hookOk;
-  script.rejectionReason = !script.approved
+  normalizedScript.approved = formatOk && viralityOk;
+  normalizedScript.rejectionReason = !normalizedScript.approved
     ? [
-        !formatOk   ? `format_match ${formatResult.score}/${minFormat}` : null,
-        !viralityOk ? `virality ${viralityResult.score}/${minVirality}` : null,
-        !hookOk     ? `hook_weak ${hookStr}/${minHookStrength}` : null,
-      ].filter(Boolean).join(' | ')
+          !formatOk   ? `format_match ${formatResult.score}/${minFormat}` : null,
+          !viralityOk ? `virality ${viralityResult.score}/${minVirality}` : null,
+          !hookOk     ? `hook_weak ${hookStr}/${minHookStrength} (penalty)` : null,
+        ...normalizedScript.segmentFeedbackSummary.slice(0, 3).map((issue) => `${issue} (penalty)`),
+        ].filter(Boolean).join(' | ')
     : null;
-
-  // Contexto trazable
-  script.growthContext = {
-    topic:           growthContext.nextTopic,
-    hookType:        growthContext.hookType,
-    emotionalTrigger:growthContext.emotionalTrigger,
-    angle:           growthContext.angle,
-    strategy:        growthContext.strategy,
-    decisionAt:      growthContext.decisionAt,
-  };
+  normalizedScript.selectionPenalties = buildSelectionPenalties(normalizedScript);
 
   logger.info(
-    `Script | ${totalWords}w ${script.durationSeconds}s | ` +
+    `Script | ${normalizedScript.estimatedWords}w ${normalizedScript.durationSeconds}s | ` +
     `virality=${viralityResult.score} format=${formatResult.score} emotion=${emotionalResult.score} | ` +
-    `${script.approved ? '✓ APROBADO' : `✗ RECHAZADO (${script.rejectionReason})`}`,
+    `${normalizedScript.approved ? '✓ APROBADO' : `✗ RECHAZADO (${normalizedScript.rejectionReason})`}`,
   );
 
   // Guardar en caché solo si está aprobado
-  if (script.approved) {
-    saveToCache(nextTopic, angle, hookType, script);
+  logger.info(
+    `Content Optimizer timing | topic=${nextTopic} | attempt=${retryCount + 1} | ` +
+    `llmCalls=${llmMetrics.llm_total_calls} recovery=${llmMetrics.llm_recovery_used ? 1 : 0} truncated=${llmMetrics.llm_truncated_suspected ? 1 : 0} ` +
+    `model=${formatDurationMs(modelPhase.durationMs)} parse=${formatDurationMs(parsePhase.durationMs)} ` +
+    `total=${formatDurationMs(perf.snapshot().totalMs)}`,
+  );
+
+  attachLlmMetrics(normalizedScript, llmMetrics);
+  normalizedScript.generationSource = 'generateOptimizedScript';
+  normalizedScript.llmPath = ['generateOptimizedScript'];
+  if (normalizedScript.approved) {
+    saveLastValidScript(normalizedScript, {
+      topic: normalizedScript.topic,
+      angle,
+      hookType,
+      emotionalTrigger,
+      generationSource: 'generateOptimizedScript',
+      createdAt: new Date().toISOString(),
+    });
+    saveToCache(nextTopic, angle, hookType, normalizedScript);
   }
 
-  return script;
+  return normalizedScript;
+  } catch (err) {
+    markLlmHardFail(llmMetrics, err);
+    err.llmMetrics = { ...llmMetrics };
+    perf.fail(err, llmMetrics);
+    logger.error(`Content Optimizer failed: ${err.message} | reason=${err.llm_truncated_suspected ? 'truncated' : err.llm_schema_fail ? 'schema' : err.llm_parse_fail ? 'parse' : 'hard_fail'}`);
+    throw err;
+  }
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -460,265 +680,104 @@ function buildDynamicContext(growthContext, { trendContext = null } = {}) {
 
 function buildViralSystemPrompt(ctx) {
   const {
-    topic, angle, hookType, emotionalTrigger,
-    topPatterns, worstPatterns, previousWinners, previousFlops,
+    topic, topPatterns, worstPatterns, previousWinners, previousFlops,
     bestHookTypes, channelAverages, recentPerformanceInsights,
-    trendingKeywords, trendingTopics, hasEnoughData,
-    topHooksRef, flopHooks, hookTypePerf, bestHookTypeFromAdv,
+    trendingKeywords, trendingTopics, topHooksRef, flopHooks, hookTypePerf, bestHookTypeFromAdv,
   } = ctx;
 
-  // Formatear patrones ganadores
-  const topPatternsText = topPatterns.length > 0
-    ? topPatterns.map(p =>
-        `  • [${p.id}] "${p.label}"` +
-        (p.avgViews > 0 ? ` — ${p.avgViews} views prom, winRate ${((p.winRate || 0) * 100).toFixed(0)}%` : '') +
-        (p.topExample ? `\n    Ejemplo real: "${p.topExample}"` : '') +
-        (p.topics?.length ? `\n    Funciona en: ${p.topics.join(', ')}` : '')
-      ).join('\n')
-    : '  (sin datos suficientes — el canal está aprendiendo)';
-
-  const worstPatternsText = worstPatterns.length > 0
-    ? worstPatterns.map(p =>
-        `  ✗ [${p.id}] "${p.label}"` +
-        (p.avgViews > 0 ? ` — solo ${p.avgViews} views prom` : '') +
-        (p.topExample ? ` → "${p.topExample}"` : '')
-      ).join('\n')
+  const topPatternsText = topPatterns.length
+    ? topPatterns.map((p) => `  • [${p.id}] "${p.label}"${p.avgViews > 0 ? ` — ${p.avgViews} views` : ''}`).join('\n')
+    : '  (sin datos suficientes)';
+  const worstPatternsText = worstPatterns.length
+    ? worstPatterns.map((p) => `  ✗ [${p.id}] "${p.label}"${p.avgViews > 0 ? ` — ${p.avgViews} views` : ''}`).join('\n')
     : '  (sin datos de fallos todavía)';
-
-  const winnersText = previousWinners.length > 0
-    ? previousWinners.map(w =>
-        `  ✓ "${w.hook}" → ${w.views.toLocaleString()} views${w.engagement > 0 ? `, ${(w.engagement * 100).toFixed(1)}% eng` : ''} [${w.topic}]`
-      ).join('\n')
+  const winnersText = previousWinners.length
+    ? previousWinners.map((w) => `  ✓ "${w.hook}" [${w.topic}]`).join('\n')
     : '  (sin winners registrados todavía)';
-
-  const flopsText = previousFlops.length > 0
-    ? previousFlops.map(f =>
-        `  ✗ "${f.hook}" → solo ${f.views} views [${f.topic}]`
-      ).join('\n')
+  const flopsText = previousFlops.length
+    ? previousFlops.map((f) => `  ✗ "${f.hook}" [${f.topic}]`).join('\n')
     : '  (sin flops registrados todavía)';
-
-  const trendText = trendingKeywords.length > 0
-    ? `Señales activas ahora:\n${trendingKeywords.map(k => `  • "${k}"`).join('\n')}\n\nTopics en tendencia: ${trendingTopics.join(', ')}\n\nCómo usarlas: No solo elijas el tema — usa el lenguaje real de la tendencia en el hook y en el framing. Si trend="doomscrolling", el hook NO es "el doomscrolling es malo" — es "Si haces esto antes de dormir, no es casualidad".`
+  const trendText = trendingKeywords.length
+    ? `Señales activas:\n${trendingKeywords.map((k) => `  • "${k}"`).join('\n')}\nTopics: ${trendingTopics.join(', ')}`
     : '(sin señales de tendencias activas esta sesión)';
-
-  const insightsText = recentPerformanceInsights.length > 0
-    ? recentPerformanceInsights.join('\n  ')
-    : 'sin datos históricos para este topic aún';
-
+  const insightsText = recentPerformanceInsights.length ? recentPerformanceInsights.join('\n  ') : 'sin datos históricos para este topic';
   const channelText = channelAverages.totalVideos > 0
-    ? `${channelAverages.totalVideos} vídeos publicados | virality score promedio: ${channelAverages.avgViralScore} | format score promedio: ${channelAverages.avgFormatScore}`
-    : 'canal en fase inicial — sin datos históricos suficientes';
-
-  const bestHookTypesText = bestHookTypes.length > 0
-    ? bestHookTypes.join(', ')
-    : 'revelation (por defecto, mejor retención documentada)';
-
-  // Top hooks reales del canal como referencia de estructura (Part 16)
-  const topHooksRefText = topHooksRef?.length > 0
-    ? topHooksRef.map(h =>
-        `  ✓ "${h.hook}" [${h.hookType}/${h.topic}]${h.views > 0 ? ` — ${h.views.toLocaleString()} views` : ''}`
-      ).join('\n')
-    : null;
-
-  // Hooks de flop a evitar
-  const flopHooksText = flopHooks?.length > 0
-    ? flopHooks.slice(0, 3).map(h => `  ✗ "${h}"`).join('\n')
-    : null;
-
-  // Rendimiento del hookType actual
-  const hookTypePerfText = hookTypePerf
-    ? `HookType "${hookTypePerf.hookType}": avgViews=${hookTypePerf.avgViews}, winRate=${hookTypePerf.winRate}%, earlyScore=${hookTypePerf.avgEarlyScore ?? 'sin datos'}`
-    : null;
-
-  const topHooksSection = topHooksRefText
-    ? `\n═══════════════════════════════════════\nTOP HOOKS REALES DEL CANAL (top 20% — reutiliza su ESTRUCTURA, no el texto)\n═══════════════════════════════════════\n\n${topHooksRefText}${flopHooksText ? `\n\nHOOKS DE FLOP (evita estas estructuras):\n${flopHooksText}` : ''}${hookTypePerfText ? `\n\nRENDIMIENTO DEL HOOK TYPE ACTUAL:\n  ${hookTypePerfText}` : ''}${bestHookTypeFromAdv ? `\n\nMEJOR HOOK TYPE GLOBAL DEL CANAL: "${bestHookTypeFromAdv}"` : ''}\n`
+    ? `${channelAverages.totalVideos} vídeos | virality medio ${channelAverages.avgViralScore} | format medio ${channelAverages.avgFormatScore}`
+    : 'canal en fase inicial';
+  const bestHookTypesText = bestHookTypes.length ? bestHookTypes.join(', ') : 'revelation';
+  const topHooksSection = topHooksRef?.length
+    ? `\nTOP HOOKS REALES:\n${topHooksRef.map((h) => `  ✓ "${h.hook}" [${h.hookType}/${h.topic}]`).join('\n')}${flopHooks?.length ? `\nHOOKS DE FLOP:\n${flopHooks.slice(0, 3).map((h) => `  ✗ "${h}"`).join('\n')}` : ''}${hookTypePerf ? `\nHookType actual: ${hookTypePerf.hookType} | avgViews=${hookTypePerf.avgViews}` : ''}${bestHookTypeFromAdv ? `\nMejor hook type global: ${bestHookTypeFromAdv}` : ''}`
     : '';
 
-  return `No eres un educador. No eres un divulgador clásico.
-Eres una máquina de retención para YouTube Shorts de psicología.
+  return `No eres un educador. Eres una máquina de retención para YouTube Shorts de psicología.
+Tu objetivo: scroll stop, watch time, comentarios y rewatch.
 
-Tu objetivo NO es informar. Tu objetivo es:
-  • Detener el scroll en menos de 2 segundos
-  • Mantener la atención hasta el final
-  • Provocar identificación emocional
-  • Generar comentarios de forma orgánica
-  • Hacer que el vídeo se repita (rewatch)
-  • Conseguir que el espectador piense "quiero ver más de este canal"
-
-Generas el guión con mayor probabilidad de retención real — usando el histórico real de este canal, no intuición general.
-
-═══════════════════════════════════════
-DATOS REALES DEL CANAL (prioridad máxima)
-═══════════════════════════════════════
-
-📊 ESTADO DEL CANAL:
+DATOS REALES DEL CANAL:
 ${channelText}
 
-🏆 HOOKS GANADORES — reutiliza su estructura:
+HOOKS GANADORES:
 ${winnersText}
 
-💀 HOOKS FALLIDOS — evita estas estructuras:
+HOOKS FALLIDOS:
 ${flopsText}
 
-🎯 TIPOS DE HOOK CON MEJOR RENDIMIENTO (en orden):
+TIPOS DE HOOK CON MEJOR RENDIMIENTO:
 ${bestHookTypesText}
 ${topHooksSection}
 
-📈 RENDIMIENTO RECIENTE PARA ESTE TOPIC (${topic}):
+RENDIMIENTO RECIENTE PARA ${topic}:
   ${insightsText}
 
-═══════════════════════════════════════
-PATRONES ESTRUCTURALES DEL CANAL
-═══════════════════════════════════════
-
-✅ PATRONES GANADORES (prioriza en este orden):
+PATRONES GANADORES:
 ${topPatternsText}
 
-❌ PATRONES DE BAJO RENDIMIENTO (evitar):
+PATRONES A EVITAR:
 ${worstPatternsText}
 
-Si un patrón ganador coincide con el topic → priorízalo sobre cualquier intuición creativa.
-Si el histórico contradice tu decisión → el histórico manda.
-
-═══════════════════════════════════════
-TENDENCIAS ACTIVAS AHORA
-═══════════════════════════════════════
-
+TENDENCIAS:
 ${trendText}
 
-═══════════════════════════════════════
-LA REGLA MÁS IMPORTANTE — EL HOOK
-═══════════════════════════════════════
+REGLA DEL HOOK:
+Debe provocar identificación incómoda, contradicción o duda urgente. Si no frena el scroll, es inválido. Prohibido "¿Sabías que...?" y prohibido empezar con "Tu cerebro...".
 
-El hook debe cumplir AL MENOS UNA:
-  1. Hacer que el espectador se sienta identificado de forma incómoda
-  2. Insinuar que hay algo mal en su comportamiento
-  3. Revelar algo que "no debería saber"
-  4. Crear una duda urgente en su cabeza
-  5. Atacar directamente al espectador ("si haces esto…")
+ESTRUCTURA OBLIGATORIA — OPEN LOOP ESCALATION V1:
+1. hook: scroll stop, 6-9 palabras
+2. open_loop: curiosidad sin resolver, 10-15 palabras
+3. micro_value: primer pago con efecto o mecanismo real, 12-18 palabras
+4. escalation: tensión creciente, 20-30 palabras
+5. reengage: golpe breve en s~20, 8-14 palabras
+6. peak: máximo impacto con ejemplo cotidiano, 20-32 palabras
+7. open_ending: deja loop abierto, 8-14 palabras
+8. soft_cta: provoca comentario sin sonar CTA, 7-12 palabras
+9. fullScript: une los 8 segmentos
+10. videoInstructions: escenas, cortes, ritmo, b-roll y keywords visuales
 
-Si el hook no genera reacción inmediata → ES INVÁLIDO. Reescribe.
+COMPATIBILIDAD:
+claim = micro_value
+explanation = escalation + reengage + peak
+cta = open_ending + soft_cta
 
-NIVEL DE CALIDAD (aprende la diferencia):
-  ✗ MALO:  "Si haces esto, tu cerebro hace X"
-  ✓ BUENO: "Si haces esto sin darte cuenta, tu cerebro está fallando"
+CRITERIO NARRATIVO:
+hook = scroll stop
+open_loop = curiosidad
+micro_value = primer pago
+escalation = densidad
+reengage = evitar caída de segundo 20
+peak = máxima identificación o impacto
+open_ending = loop abierto
+soft_cta = comentario natural
 
-  ✗ MALO:  "Tu cerebro usa atajos cognitivos"
-  ✓ BUENO: "Tu cerebro te convence de que tus decisiones son tuyas. No lo son."
+AUTOEVALUACIÓN OBLIGATORIA:
+1. ¿El hook frena el scroll?
+2. ¿El open_loop no resuelve demasiado pronto?
+3. ¿El micro_value paga algo real?
+4. ¿La escalation sube tensión?
+5. ¿El reengage recupera atención?
+6. ¿El peak es concreto y vivido?
+7. ¿Open ending + soft_cta dejan algo rebotando?
+8. ¿Es mejor que la media del canal?
 
-  ✗ MALO:  "La dopamina afecta tu motivación"
-  ✓ BUENO: "Cada vez que completas algo fácil, tu cerebro mata tu ambición"
-
-REGLAS TÉCNICAS DEL HOOK:
-  • 8-13 palabras exactas
-  • Sin intro ("Hoy", "En este vídeo", "Hola", "Quiero contarte")
-  • Sin puntos suspensivos al final
-
-═══════════════════════════════════════
-ESTRUCTURA OBLIGATORIA DEL GUIÓN
-═══════════════════════════════════════
-
-HOOK (0-2s) → campo "hook":
-  Directo, incómodo, intrigante. Sin contexto previo.
-
-DESARROLLO (2-10s) → campo "claim":
-  Explicación parcial. Mantén tensión. Dato concreto (número, efecto, mecanismo).
-  1-2 frases, máximo 20 palabras.
-
-REVELACIÓN (10-18s) → campo "explanation":
-  Explicación clara pero impactante. Sensación de "esto me pasa".
-  2-3 frases cortas, máximo 40 palabras total.
-  Incluye ejemplo cotidiano + micro-frase orgánica de identificación:
-    "seguro que te ha pasado" / "lo has notado alguna vez" / "esto explica mucho"
-  NO hagas pregunta directa tipo "¿comenta si…". Debe ser natural.
-
-LOOP FINAL (18-22s) → campo "cta":
-  Conecta con el inicio. Deja una idea abierta. Provoca rewatch.
-  Añade micro-conexión emocional para generar suscriptores:
-    "y probablemente te pasa más de lo que crees" / "y no eres el único al que le pasa esto"
-  1 frase, máximo 12 palabras.
-  PROHIBIDO: "suscríbete", "dale like", "sígueme"
-
-TOTAL: 46-69 palabras (20-30 segundos)
-
-═══════════════════════════════════════
-OPTIMIZACIÓN PARA COMENTARIOS Y SUSCRIPTORES
-═══════════════════════════════════════
-
-El contenido debe hacer que el usuario piense:
-  • "quiero ver más de esto"
-  • "este canal me entiende"
-  • "esto me pasa siempre"
-
-Para comentarios: introduce la micro-frase orgánica en la REVELACIÓN (no en el CTA).
-Para suscriptores: introduce la micro-conexión en el LOOP FINAL.
-Ambas deben sonar naturales — jamás como una instrucción.
-
-═══════════════════════════════════════
-AUTOEVALUACIÓN OBLIGATORIA (antes de devolver)
-═══════════════════════════════════════
-
-Responde internamente SÍ/NO. Si alguna es NO → reescribe:
-  1. ¿El hook detiene el scroll en menos de 2 segundos?
-  2. ¿El hook provoca identificación incómoda o duda urgente?
-  3. ¿Cada frase añade algo nuevo — sin repetir ni rellenar?
-  4. ¿Hay progresión: hook → tensión → revelación → loop que conecta con inicio?
-  5. ¿El loop final deja algo rebotando en la cabeza?
-  6. ¿Tiene potencial de rewatch real?
-  7. ¿Es mejor que la media del canal (${channelAverages.avgViralScore} virality, ${channelAverages.avgFormatScore} format)?
-  8. ¿Es diferente a los flops del canal?
-
-═══════════════════════════════════════
-FORMATO DE RESPUESTA — SOLO JSON, SIN MARKDOWN
-═══════════════════════════════════════
-
-{
-  "hooks": {
-    "revelation": "hook tipo revelation — identificación incómoda (8-13 palabras)",
-    "pattern": "hook tipo pattern — comportamiento cotidiano sorprendente (8-13 palabras)",
-    "challenge": "hook tipo challenge — duda urgente o ataque directo (8-13 palabras)"
-  },
-  "selectedHook": {
-    "tipo": "revelation|pattern|challenge",
-    "texto": "el hook seleccionado",
-    "razon": "por qué este hook tiene mayor probabilidad de retención (1 frase)"
-  },
-  "script": {
-    "hook": "(= selectedHook.texto — identificación incómoda)",
-    "claim": "dato concreto, tensión, sin explicar todavía (≤20 palabras)",
-    "explanation": "2-3 frases. Revelación impactante. Ejemplo real. Micro-frase orgánica de identificación. (≤40 palabras)",
-    "cta": "loop mental — conecta con hook — micro-conexión emocional — sin pedir nada (≤12 palabras)"
-  },
-  "topic": "${topic}",
-  "viralTrigger": "sorpresa|identificacion|controversia|utilidad|miedo",
-  "emotionalTrigger": "curiosity|fear|awe|validation|urgency|relatability",
-  "keywords": ["keyword_visual_1", "keyword_visual_2"],
-  "hashtags": ["#psicologia", "#mente", "#cerebro", "#habitos"],
-  "optimizationNotes": {
-    "patronUsado": "id y nombre del patrón estructural elegido",
-    "tendenciaAprovechada": "qué señal de tendencia se usó o 'ninguna activa'",
-    "queSeEvito": "qué estructura de flop o patrón débil se descartó",
-    "porQueEsteHookEsFuerte": "qué regla de identificación/incomodidad cumple",
-    "porQueGeneraRewatch": "por qué el loop final provoca ver el vídeo otra vez",
-    "porQueGeneraComentarios": "qué micro-frase orgánica provoca reacción"
-  },
-  "learningSignals": {
-    "expectedHookTypePerformance": "alto|medio|bajo",
-    "expectedPatternPerformance": "alto|medio|bajo",
-    "expectedAudienceReaction": "descripción de 1 frase",
-    "possibleRisk": "riesgo identificado o 'ninguno detectado'"
-  },
-  "autoevaluacion": {
-    "hookFrenaMenos2s": true,
-    "hookIdentificacionIncomoda": true,
-    "cadaFraseAnade": true,
-    "progresionClara": true,
-    "loopConectaConHook": true,
-    "potencialRewatch": true,
-    "superaMediaCanal": true,
-    "diferenteDeFlops": true
-  }
-}`;
+Devuelve solo JSON.`;
 }
 
 // ─────────────────────────────────────────────
@@ -741,17 +800,95 @@ ${hasEnoughData
 
 Genera EXACTAMENTE 3 hooks (revelation, pattern, challenge).
 Para cada uno evalúa: ¿provoca identificación incómoda? ¿crea duda urgente? ¿ataca directamente?
+Ninguno puede empezar por "Tu cerebro..." ni sonar a "¿Sabías que...?".
 Selecciona el de mayor probabilidad de detener el scroll.
 
 El guión debe:
-  1. Hook → detener scroll en 2s con identificación incómoda o duda urgente
-  2. Desarrollo → tensión creciente, dato concreto, sin explicar todavía
-  3. Revelación → impacto emocional + ejemplo real + micro-frase orgánica de identificación
-  4. Loop final → conectar con el hook, dejar idea abierta, micro-conexión para suscriptores
+  1. hook → detener scroll en 2s con identificación incómoda o duda urgente
+  2. open_loop → abrir curiosidad sin resolver
+  3. micro_value → primer pago real
+  4. escalation → tensión creciente
+  5. reengage → recuperar atención en s~20
+  6. peak → impacto máximo con ejemplo cotidiano
+  7. open_ending → dejar idea abierta
+  8. soft_cta → provocar comentario natural
 
 El objetivo NO es informar. Es crear un vídeo que se repita.
 
-Devuelve SOLO el JSON. Sin texto antes ni después.`;
+Devuelve EXACTAMENTE este JSON:
+{
+  "hooks": {
+    "revelation": "hook tipo revelation",
+    "pattern": "hook tipo pattern",
+    "challenge": "hook tipo challenge"
+  },
+  "selectedHook": {
+    "tipo": "revelation|pattern|challenge",
+    "texto": "hook ganador",
+    "razon": "por qué gana"
+  },
+  "script": {
+    "hook": "segmento hook",
+    "open_loop": "segmento open_loop",
+    "micro_value": "segmento micro_value",
+    "escalation": "segmento escalation",
+    "reengage": "segmento reengage",
+    "peak": "segmento peak",
+    "open_ending": "segmento open_ending",
+    "soft_cta": "segmento soft_cta",
+    "claim": "fallback legacy",
+    "explanation": "fallback legacy",
+    "cta": "fallback legacy"
+  },
+  "topic": "${topic}",
+  "viralTrigger": "sorpresa|identificacion|controversia|utilidad|miedo",
+  "emotionalTrigger": "curiosity|fear|awe|validation|urgency|relatability",
+  "keywords": ["keyword_visual_1", "keyword_visual_2"],
+  "hashtags": ["#psicologia", "#mente", "#cerebro"],
+  "fullScript": "texto unido de los 8 segmentos",
+  "videoInstructions": {
+    "visualStyle": ["cambio de plano cada 2-3 segundos", "zoom progresivo", "movimiento constante"],
+    "subtitleStyle": "subtitulos grandes y sincronizados",
+    "audioStyle": { "voice": "voz clara y con ritmo", "pauses": ["hook", "reengage", "peak"] },
+    "scenes": [{ "segment": "hook", "timing": "0-2s", "visual": "tension social", "cut": "corte rapido" }],
+    "clipKeywords": ["social tension", "phone checking"]
+  },
+  "optimizationNotes": {
+    "patronUsado": "patrón elegido",
+    "tendenciaAprovechada": "tendencia o ninguna",
+    "queSeEvito": "patrón descartado",
+    "porQueEsteHookEsFuerte": "motivo",
+    "segmentDiagnostics": {
+      "hook": "fuerte|mejorable",
+      "open_loop": "fuerte|mejorable",
+      "micro_value": "fuerte|mejorable",
+      "escalation": "fuerte|mejorable",
+      "reengage": "fuerte|mejorable",
+      "peak": "fuerte|mejorable",
+      "open_ending": "fuerte|mejorable",
+      "soft_cta": "fuerte|mejorable"
+    },
+    "porQueGeneraRewatch": "motivo",
+    "porQueGeneraComentarios": "motivo"
+  },
+  "learningSignals": {
+    "expectedHookTypePerformance": "alto|medio|bajo",
+    "expectedPatternPerformance": "alto|medio|bajo",
+    "expectedAudienceReaction": "descripción",
+    "possibleRisk": "riesgo o ninguno"
+  },
+  "autoevaluacion": {
+    "hookFrenaMenos2s": true,
+    "hookIdentificacionIncomoda": true,
+    "cadaFraseAnade": true,
+    "progresionClara": true,
+    "loopConectaConHook": true,
+    "potencialRewatch": true,
+    "superaMediaCanal": true,
+    "diferenteDeFlops": true
+  }
+}
+Sin texto antes ni después.`;
 }
 
 // ─────────────────────────────────────────────
@@ -770,8 +907,11 @@ Devuelve SOLO el JSON. Sin texto antes ni después.`;
 async function generateViralScript(growthContext = {}, options = {}) {
   const { nextTopic, angle, hookType } = growthContext;
   const { retryCount = 0, previousGaps = [], trendContext = null } = options;
+  const perf = createPerfTracker('content-optimizer.generateViralScript', { topic: nextTopic, attempt: retryCount + 1 });
+  const llmMetrics = createLlmMetrics();
 
-  logger.info(`Viral Generator | topic=${nextTopic} | hook=${hookType} | attempt=${retryCount + 1}`);
+  try {
+    logger.info(`Viral Generator | topic=${nextTopic} | hook=${hookType} | attempt=${retryCount + 1}`);
 
   // Cache lookup — solo primer intento
   if (retryCount === 0) {
@@ -783,60 +923,104 @@ async function generateViralScript(growthContext = {}, options = {}) {
   const dynCtx       = buildDynamicContext(growthContext, { trendContext });
   const systemPrompt = buildViralSystemPrompt(dynCtx);
   const userPrompt   = buildViralUserPrompt(dynCtx);
-
   // Feedback de reintento
   let retryFeedback = '';
   if (retryCount > 0 && previousGaps.length > 0) {
-    retryFeedback = `\n\n⚠️ REINTENTO ${retryCount}: El intento anterior fue rechazado.\nCorrecciones obligatorias:\n${previousGaps.map(g => `  • ${g}`).join('\n')}\nReescribe completamente con estas correcciones.`;
+    retryFeedback = `\n\nREINTENTO ${retryCount}:\n${previousGaps.map(g => `- ${g}`).join('\n')}\nCorrige solo esos puntos y manten el resto fuerte.`;
   }
 
-  const message = await client.messages.create({
-    model:      'claude-sonnet-4-6',
-    max_tokens: 1400,
+  const compactUserPrompt = `Genera un guion para Shorts virales de psicologia.
+
+Parametros:
+- topic: ${dynCtx.topic}
+- angulo: ${dynCtx.angle || 'mecanismo cognitivo cotidiano'}
+- hookType: ${dynCtx.hookType || 'revelation'}
+- emotionalTrigger: ${dynCtx.emotionalTrigger || 'curiosity'}
+- contexto: ${dynCtx.hasEnoughData ? 'usa el patron ganador historico del topic' : 'prioriza revelation > pattern > challenge'}
+
+Estilo:
+- espanol natural de Espana
+- humano
+- hablado
+- directo
+- incomodo y curioso
+- no academico
+
+Reglas:
+- selecciona un solo hook ganador
+- no empieces con "Tu cerebro..."
+- no uses "Sabias que..."
+- hook maximo 12 palabras
+- open_loop 10-15 palabras
+- micro_value 12-18 palabras y concreto
+- escalation 20-30 palabras, hablada y cotidiana
+- reengage 8-14 palabras con golpe
+- peak 20-32 palabras
+- open_ending 8-14 palabras
+- soft_cta 7-12 palabras
+- keywords exactamente 2
+- solo JSON puro, sin markdown, sin fences, sin texto extra${retryFeedback}
+
+Devuelve exactamente este JSON minimo:
+${COMPACT_VIRAL_SCHEMA}`;
+
+  perf.start('model_call');
+  llmMetrics.llm_total_calls += 1;
+  const message = await callAnthropicWithTimeout(client, {
+    model:      'claude-haiku-4-5-20251001',
+    max_tokens: 650,
     system:     systemPrompt,
-    messages:   [{ role: 'user', content: userPrompt + retryFeedback }],
-  });
+    messages:   [{ role: 'user', content: compactUserPrompt }],
+  }, { label: 'content-optimizer.generateViralScript' });
+  const modelPhase = perf.end({ model: 'claude-haiku-4-5-20251001' });
 
   const rawText  = message.content[0].text.trim();
-  const jsonText = rawText.replace(/^```json?\n?/, '').replace(/\n?```$/, '');
-  const output   = JSON.parse(jsonText);
+  perf.start('json_parse');
+  const { data: output, meta: parseMeta } = await parseModelJsonWithRecovery(rawText, {
+    label: 'content-optimizer.generateViralScript',
+    recover: (failedRaw) => requestJsonRecovery(compactUserPrompt, failedRaw, 'content-optimizer.generateViralScript', llmMetrics, 500, COMPACT_VIRAL_SCHEMA),
+    validate: (data) => validateGeneratedScriptSchema(data?.script || data, { label: 'content-optimizer.generateViralScript.script', requireExpanded: true }) && data,
+  });
+  mergeLlmMetrics(llmMetrics, parseMeta);
+  const parsePhase = perf.end(parseMeta);
 
   // Validación del output
-  for (const field of ['hooks', 'selectedHook', 'script']) {
+  for (const field of ['script']) {
     if (!output[field]) throw new Error(`Campo requerido ausente en respuesta: ${field}`);
   }
-  for (const field of ['hook', 'claim', 'explanation', 'cta']) {
+  for (const field of ['hook']) {
     if (!output.script[field]) throw new Error(`Campo de script ausente: ${field}`);
   }
 
-  // Construir script compatible con sistema de scoring
-  const script = {
+  const rawScript = {
     title:            `${nextTopic}_${Date.now()}`,
-    topic:            output.topic || nextTopic,
+    topic:            output.topic || output.script.topic || nextTopic,
     hook:             output.script.hook,
+    open_loop:        output.script.open_loop,
+    micro_value:      output.script.micro_value || output.script.claim,
+    escalation:       output.script.escalation,
+    reengage:         output.script.reengage,
+    peak:             output.script.peak || output.script.explanation,
+    open_ending:      output.script.open_ending,
+    soft_cta:         output.script.soft_cta || output.script.cta,
     claim:            output.script.claim,
     explanation:      output.script.explanation,
     cta:              output.script.cta,
-    psychologicalFact:output.optimizationNotes?.patronUsado || '',
+    psychologicalFact:output.script.psychologicalFact || output.patternUsed || '',
     viralTrigger:     output.viralTrigger     || 'identificacion',
-    emotionalTrigger: output.emotionalTrigger || growthContext.emotionalTrigger || 'curiosity',
+    emotionalTrigger: output.emotionalTrigger || output.script.emotionalTrigger || growthContext.emotionalTrigger || 'curiosity',
     durationSeconds:  Math.round((TARGET_MIN + TARGET_MAX) / 2),
-    keywords:         output.keywords  || [],
-    hashtags:         output.hashtags  || ['#psicologia', '#mente', '#cerebro'],
+    keywords:         output.script.keywords || output.keywords || [],
+    hashtags:         output.script.hashtags || output.hashtags || ['#psicologia', '#mente', '#cerebro'],
     // Metadata del sistema viral
-    allHooks:            output.hooks,
-    selectedHookType:    output.selectedHook?.tipo,
-    hookSelectionReason: output.selectedHook?.razon,
-    optimizationNotes:   output.optimizationNotes  || {},
-    learningSignals:     output.learningSignals     || {},
-    autoevaluacion:      output.autoevaluacion      || {},
+    allHooks:            null,
+    selectedHookType:    output.selectedHookType || hookType,
+    hookSelectionReason: output.hookSelectionReason || '',
+    optimizationNotes:   { patronUsado: output.patternUsed || '' },
+    learningSignals:     {},
+    autoevaluacion:      {},
   };
-
-  // Duración real
-  const totalWords       = [script.hook, script.claim, script.explanation, script.cta]
-    .filter(Boolean).join(' ').split(/\s+/).length;
-  script.estimatedWords  = totalWords;
-  script.durationSeconds = Math.round(totalWords / WPS);
+  const script = finalizeOptimizedScript(rawScript, growthContext);
 
   // ── Scores ──
   const viralityResult = scoreScript(script);
@@ -846,7 +1030,8 @@ async function generateViralScript(growthContext = {}, options = {}) {
   const formatResult            = scoreFormatMatch(script);
   script.formatMatchScore       = formatResult.score;
   script.formatMatchBreakdown   = formatResult.breakdown;
-  script.formatMatchGaps        = formatResult.gaps;
+  script.formatMatchSegmentGaps = script.segmentFeedbackSummary;
+  script.formatMatchGaps        = [...formatResult.gaps, ...script.segmentFeedbackSummary];
 
   const emotionalResult           = scoreEmotionalImpact(script);
   script.emotionalImpactScore     = emotionalResult.score;
@@ -854,7 +1039,7 @@ async function generateViralScript(growthContext = {}, options = {}) {
 
   // ── Aprobación ──
   const minFormat       = parseInt(process.env.MIN_FORMAT_MATCH_SCORE_TO_QUEUE || '70');
-  const minVirality     = parseInt(process.env.MIN_VIRALITY_SCORE_TO_QUEUE     || '55');
+  const minVirality     = parseInt(process.env.MIN_VIRALITY_SCORE_TO_QUEUE     || '60');
   const minHookStrength = parseInt(process.env.MIN_HOOK_STRENGTH               || '8');
 
   const hookStr    = viralityResult.breakdown?.hookStrength ?? getHookStrength(script.hook);
@@ -862,37 +1047,62 @@ async function generateViralScript(growthContext = {}, options = {}) {
   const viralityOk = viralityResult.score >= minVirality;
   const hookOk     = hookStr >= minHookStrength;
 
-  script.approved  = formatOk && viralityOk && hookOk;
+  script.approved  = formatOk && viralityOk;
   script.rejectionReason = !script.approved
     ? [
-        !formatOk   ? `format_match ${formatResult.score}/${minFormat}` : null,
-        !viralityOk ? `virality ${viralityResult.score}/${minVirality}` : null,
-        !hookOk     ? `hook_weak ${hookStr}/${minHookStrength}` : null,
-      ].filter(Boolean).join(' | ')
+          !formatOk   ? `format_match ${formatResult.score}/${minFormat}` : null,
+          !viralityOk ? `virality ${viralityResult.score}/${minVirality}` : null,
+          !hookOk     ? `hook_weak ${hookStr}/${minHookStrength} (penalty)` : null,
+        ...script.segmentFeedbackSummary.slice(0, 3).map((issue) => `${issue} (penalty)`),
+        ].filter(Boolean).join(' | ')
     : null;
-
-  // ── Contexto de decisión ──
-  script.growthContext = {
-    topic:            growthContext.nextTopic,
-    hookType:         output.selectedHook?.tipo || growthContext.hookType,
-    emotionalTrigger: growthContext.emotionalTrigger,
-    angle:            growthContext.angle,
-    strategy:         growthContext.strategy,
-    decisionAt:       growthContext.decisionAt,
-  };
+  script.selectionPenalties = buildSelectionPenalties(script);
+  script.growthContext.hookType = output.selectedHookType || growthContext.hookType;
 
   logger.info(
-    `Viral Script | hook=${output.selectedHook?.tipo} | pattern=${output.optimizationNotes?.patronUsado} | ` +
-    `${totalWords}w ${script.durationSeconds}s | ` +
+    `Viral Script | hook=${output.selectedHookType || hookType} | pattern=${output.patternUsed || '-'} | ` +
+    `${script.estimatedWords}w ${script.durationSeconds}s | ` +
     `virality=${viralityResult.score} format=${formatResult.score} | ` +
     `${script.approved ? '✓ APROBADO' : `✗ RECHAZADO (${script.rejectionReason})`}`,
   );
 
+  logger.info(
+    `Viral Generator timing | topic=${nextTopic} | attempt=${retryCount + 1} | ` +
+    `llmCalls=${llmMetrics.llm_total_calls} recovery=${llmMetrics.llm_recovery_used ? 1 : 0} truncated=${llmMetrics.llm_truncated_suspected ? 1 : 0} ` +
+    `model=${formatDurationMs(modelPhase.durationMs)} parse=${formatDurationMs(parsePhase.durationMs)} ` +
+    `total=${formatDurationMs(perf.snapshot().totalMs)}`,
+  );
+
+  attachLlmMetrics(script, llmMetrics);
+  script.generationSource = 'generateViralScript';
+  script.llmPath = ['generateViralScript'];
   if (script.approved) {
-    saveToCache(nextTopic, angle, output.selectedHook?.tipo || hookType, script);
+    saveLastValidScript(script, {
+      topic: script.topic,
+      angle,
+      hookType: output.selectedHookType || hookType,
+      emotionalTrigger: script.emotionalTrigger,
+      generationSource: 'generateViralScript',
+      createdAt: new Date().toISOString(),
+    });
+    saveToCache(nextTopic, angle, output.selectedHookType || hookType, script);
   }
 
   return script;
+  } catch (err) {
+    markLlmHardFail(llmMetrics, err);
+    err.llmMetrics = { ...llmMetrics };
+    perf.fail(err, llmMetrics);
+    logger.error(`Viral Generator failed: ${err.message} | reason=${err.llm_truncated_suspected ? 'truncated' : err.llm_schema_fail ? 'schema' : err.llm_parse_fail ? 'parse' : 'hard_fail'}`);
+    throw err;
+  }
 }
 
-module.exports = { generateOptimizedScript, generateViralScript, buildDynamicContext };
+module.exports = {
+  generateOptimizedScript,
+  generateViralScript,
+  buildDynamicContext,
+  improveWeakSegments,
+  isClearlyInvalidCandidate,
+  buildSelectionPenalties,
+};

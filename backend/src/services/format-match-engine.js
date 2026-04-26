@@ -18,8 +18,8 @@
 
 const WPS = 2.3; // palabras por segundo para narración calmada
 
-const TARGET_MIN = parseInt(process.env.FORMAT_TARGET_MIN_SECONDS || '20');
-const TARGET_MAX = parseInt(process.env.FORMAT_TARGET_MAX_SECONDS || '35');
+const TARGET_MIN = parseInt(process.env.FORMAT_TARGET_MIN_SECONDS || '40');
+const TARGET_MAX = parseInt(process.env.FORMAT_TARGET_MAX_SECONDS || '65');
 
 // ─────────────────────────────────────────────
 //  HOOK FORMAT (0-20 pts)
@@ -79,10 +79,12 @@ function scoreBrevity(durationSeconds, wordCount) {
   if (!dur && wordCount) dur = wordCount / WPS;
   if (!dur) return 5;
 
-  if (dur >= TARGET_MIN && dur <= TARGET_MAX) return 15;
-  if (dur < TARGET_MIN && dur >= 15) return 10; // compacto pero muy corto
-  if (dur > TARGET_MAX && dur <= 45) return 8;
-  if (dur > 45 && dur <= 60) return 5;
+  // Datos reales del canal: 61-75s = 5.06% engagement (mayor)
+  if (dur >= TARGET_MIN && dur <= TARGET_MAX) return 15; // 40-65s = óptimo
+  if (dur > TARGET_MAX && dur <= 75)          return 12; // 65-75s = muy bueno
+  if (dur > 75 && dur <= 90)                  return 7;  // demasiado largo
+  if (dur < TARGET_MIN && dur >= 25)          return 8;  // corto pero válido
+  if (dur < 25)                               return 3;  // demasiado corto
   return 2;
 }
 
@@ -317,6 +319,27 @@ function scoreSingleIdea(script) {
 }
 
 // ─────────────────────────────────────────────
+//  REENGAGE (0-10 pts)
+//  ¿El guión tiene un reenganche en el segmento ~20s?
+// ─────────────────────────────────────────────
+
+function scoreReengage(script) {
+  // Estructura v1: campo reengage explícito
+  if (script.reengage && script.reengage.trim().length > 5) {
+    const text = script.reengage.toLowerCase();
+    let score = 5; // base: tiene segmento reengage
+    if (/y (aquí|ahora|esto|lo que)|pero (hay|lo que|esto)|espera|lo más importante/i.test(text)) score += 3;
+    if (/cuántas veces|te ha pasado|¿(sabes|sabías)|reconoces/i.test(text)) score += 2;
+    return Math.min(10, score);
+  }
+  // Fallback: detectar en explanation frases de reenganche
+  const expl = (script.explanation || '').toLowerCase();
+  if (/y (aquí|ahora|esto)|pero (hay|lo que)|lo más importante|espera/i.test(expl)) return 4;
+  if (/¿(cuántas|sabes|te ha)|¿lo (reconoces|sabías)/i.test(expl)) return 3;
+  return 0;
+}
+
+// ─────────────────────────────────────────────
 //  SCORE TOTAL
 // ─────────────────────────────────────────────
 
@@ -345,8 +368,9 @@ function scoreFormatMatch(script) {
     psychologicalImpact: scorePsychologicalImpact(script),               // 0-15
     scrollStop:          scoreScrollStop(hook),                           // 0-10
     infoDensity:         scoreInfoDensity(script),                        // 0-10
-    earlyRevelation:     scoreEarlyRevelation(script),                   // 0-10  ← NUEVO
+    earlyRevelation:     scoreEarlyRevelation(script),                   // 0-10
     singleIdea:          scoreSingleIdea(script),                         // 0-5
+    reengage:            scoreReengage(script),                           // 0-10 ← estructura v1
   };
   // Máximo teórico: 110. Normalizamos a 100.
   const rawScore = Object.values(breakdown).reduce((s, v) => s + v, 0);

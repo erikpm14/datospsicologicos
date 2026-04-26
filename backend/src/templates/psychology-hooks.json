@@ -299,6 +299,177 @@
       "estimatedScore": 79,
       "source": "viral_research",
       "basedOn": "Señales + manipulación; vídeos 5 y 9 superan 900K vistas"
+    },
+    {
+      "id": "hook_ai_036",
+      "text": "El SECRETO que los manipuladores NO quieren que sepas sobre el contacto visual",
+      "topic": "dark_psychology",
+      "emotionalTrigger": "fear",
+      "estimatedScore": 92,
+      "source": "viral_research",
+      "basedOn": "secret_truth + manipulación + lenguaje corporal = top performers combinados"
+    },
+    {
+      "id": "hook_ai_037",
+      "text": "¿Por qué tu cerebro te miente cuando conoces a alguien por primera vez?",
+      "topic": "first_impressions",
+      "emotionalTrigger": "curiosity",
+      "estimatedScore": 87,
+      "source": "viral_research",
+      "basedOn": "why_question con tema cerebro y primeras impresiones de alto engagement"
+    },
+    {
+      "id": "hook_ai_038",
+      "text": "El experimento más oscuro sobre la memoria que cambió la psicología para siempre",
+      "topic": "memory",
+      "emotionalTrigger": "awe",
+      "estimatedScore": 89,
+      "source": "viral_research",
+      "basedOn": "experimento cruel (2M vistas) + memoria (top words) + secret_truth pattern"
+    },
+    {
+      "id": "hook_ai_039",
+      "text": "El SECRETO detrás de por qué sigues volviendo con personas tóxicas 😳",
+      "topic": "relationships",
+      "emotionalTrigger": "validation",
+      "estimatedScore": 85,
+      "source": "viral_research",
+      "basedOn": "secret_truth + relaciones tóxicas con 1M vistas y engagement 2.33%"
+    },
+    {
+      "id": "hook_ai_040",
+      "text": "¿Por qué los manipuladores eligen exactamente a personas como tú?",
+      "topic": "dark_psychology",
+      "emotionalTrigger": "fear",
+      "estimatedScore": 88,
+      "source": "viral_research",
+      "basedOn": "why_question + manipulación oscura; top 10 con 968K vistas"
+    },
+    {
+      "id": "hook_ai_041",
+      "text": "El SECRETO que revela tu postura cuando alguien te gusta 😳",
+      "topic": "body_language",
+      "emotionalTrigger": "curiosity",
+      "estimatedScore": 91,
+      "source": "viral_research",
+      "basedOn": "secret_truth + lenguaje corporal = top 1 del canal con 2.5M vistas"
+    },
+    {
+      "id": "hook_ai_042",
+      "text": "¿Por qué el manipulador siempre elige a las personas más inteligentes?",
+      "topic": "dark_psychology",
+      "emotionalTrigger": "controversy",
+      "estimatedScore": 88,
+      "source": "viral_research",
+      "basedOn": "why_question + manipulación, patrón con 117k vistas promedio y alto engagement"
+    },
+    {
+      "id": "hook_ai_043",
+      "text": "El experimento que demostró que puedes odiar a alguien sin razón 🧠",
+      "topic": "cognitive_biases",
+      "emotionalTrigger": "awe",
+      "estimatedScore": 86,
+      "source": "viral_research",
+      "basedOn": "experimento viral 2M vistas + formato revelación inesperada"
+    },
+    {
+      "id": "hook_ai_044",
+      "text": "Cómo identificar a alguien peligroso antes de que hable",
+      "topic": "first_impressions",
+      "emotionalTrigger": "fear",
+      "estimatedScore": 84,
+      "source": "viral_research",
+      "basedOn": "how_to + señales + manipulación, tres palabras clave del top del canal"
+    },
+    {
+      "id": "hook_ai_045",
+      "text": "3 señales de que alguien te está estudiando en silencio 👁️",
+      "topic": "dark_psychology",
+      "emotionalTrigger": "fear",
+      "estimatedScore": 82,
+      "source": "viral_research",
+      "basedOn": "número_lista + señales + oscuro, patrón del vídeo 9 con 969k vistas"
+    },
+    {
+      "id": "hook_ai_046",
+      "text": "El SECRETO que tu cuerpo revela cuando alguien te cae mal 😳",
+      "topic": "body_language",
+      "emotionalTrigger": "curiosity",
+      "estimatedScore": 91,
+      "source": "viral_research",
+      "basedOn": "secret_truth + lenguaje corporal = top vistas combinadas"
+    },
+    {
+      "id": "hook_ai_047",
+      "text": "¿Por qué tu cerebro te hace confiar en personas peligrosas?",
+      "topic": "dark_psychology",
+      "emotionalTrigger": "fear",
+      "estimatedScore": 88,
+      "source": "viral_research",
+      "basedOn": "why_question + manipulación = mayor engagement del dataset"
+    },
+    {
+      "id": "hook_ai_048",
+      "text": "El experimento psicológico que cambió cómo vemos la obediencia 🧠",
+      "topic": "cognitive_biases",
+      "emotionalTrigger": "awe",
+      "estimatedScore": 86,
+      "source": "viral_research",
+      "basedOn": "experimento viral 2M vistas, formato educativo evergreen"
+    },
+    {
+      "id": "hook_ai_049",
+      "text": "Cómo identificar a un manipulador en los primeros 30 segundos",
+      "topic": "first_impressions",
+      "emotionalTrigger": "urgency",
+      "estimatedScore": 84,
+      "source": "viral_research",
+      "basedOn": "how_to + manipulación + señales = triple combinación ganadora"
+    },
+    {
+      "id": "hook_ai_050",
+      "text": "3 gestos que delatan lo que alguien realmente siente por ti 👀",
+      "topic": "relationships",
+      "emotionalTrigger": "validation",
+      "estimatedScore": 82,
+      "source": "viral_research",
+      "basedOn": "number_list + señales + relaciones = alta búsqueda orgánica"
+    },
+    {
+      "id": "hook_ai_051",
+      "text": "¿Por qué tu cerebro te miente cuando alguien te gusta?",
+      "topic": "cognitive_biases",
+      "emotionalTrigger": "curiosity",
+      "estimatedScore": 88,
+      "source": "viral_research",
+      "basedOn": "why_question alto engagement + cerebro palabra power"
+    },
+    {
+      "id": "hook_ai_052",
+      "text": "El SECRETO que los manipuladores no quieren que sepas",
+      "topic": "dark_psychology",
+      "emotionalTrigger": "fear",
+      "estimatedScore": 91,
+      "source": "viral_research",
+      "basedOn": "secret_truth 912k vistas + manipulación top 10"
+    },
+    {
+      "id": "hook_ai_053",
+      "text": "¿Por qué el experimento más cruel de la historia cambió la psicología?",
+      "topic": "cognitive_biases",
+      "emotionalTrigger": "awe",
+      "estimatedScore": 89,
+      "source": "viral_research",
+      "basedOn": "experimento 2M vistas + why_question formato ganador"
+    },
+    {
+      "id": "hook_ai_054",
+      "text": "El gesto que delata exactamente lo que alguien siente por ti",
+      "topic": "body_language",
+      "emotionalTrigger": "validation",
+      "estimatedScore": 87,
+      "source": "viral_research",
+      "basedOn": "top 1 viral secret_truth + lenguaje corporal recurrente"
     }
   ]
 }

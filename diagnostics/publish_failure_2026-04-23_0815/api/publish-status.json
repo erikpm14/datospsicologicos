@@ -1,0 +1,231 @@
+{
+    "ok":  true,
+    "data":  {
+                 "type":  "publish",
+                 "enabled":  true,
+                 "phase":  "initial",
+                 "publishTimes":  [
+                                      "08:00",
+                                      "13:00",
+                                      "18:00",
+                                      "21:30"
+                                  ],
+                 "maxPerDay":  4,
+                 "isPublishing":  false,
+                 "todayState":  {
+                                    "date":  "2026-04-23",
+                                    "count":  0,
+                                    "published":  [
+
+                                                  ],
+                                    "lastPublishedAt":  null
+                                },
+                 "recentLog":  [
+                                   {
+                                       "videoId":  "b1848886-7354-4e2b-843c-443401499a27",
+                                       "publishedAt":  "2026-04-22T19:30:02.953Z",
+                                       "platforms":  [
+                                                         "youtube"
+                                                     ],
+                                       "priority":  43,
+                                       "viralityScore":  107.95,
+                                       "topic":  "habits",
+                                       "hook":  "Fíjate en esto justo antes de volver a hacerlo.",
+                                       "batchId":  "batch_1776787200359",
+                                       "slotId":  "batch_1776787200359_slot_5",
+                                       "plannedRole":  "hybrid",
+                                       "plannedCluster":  "habits",
+                                       "recommendedCandidateId":  "habits-2",
+                                       "abExperimentId":  null,
+                                       "abVariantId":  null,
+                                       "errors":  [
+
+                                                  ]
+                                   },
+                                   {
+                                       "videoId":  "9a25c2c3-3022-4552-9c19-57eb76594022",
+                                       "publishedAt":  "2026-04-22T16:00:02.998Z",
+                                       "platforms":  [
+                                                         "youtube"
+                                                     ],
+                                       "priority":  75,
+                                       "viralityScore":  74,
+                                       "formatMatchScore":  86,
+                                       "topic":  "habits",
+                                       "hook":  "El 81% repite hábitos porque una señal los dispara sin notarlo.",
+                                       "batchId":  "batch_1776722642790",
+                                       "slotId":  "batch_1776722642790_slot_1",
+                                       "plannedRole":  "follow",
+                                       "plannedCluster":  "habitos de distraccion movil",
+                                       "recommendedCandidateId":  "habits-2",
+                                       "abExperimentId":  null,
+                                       "abVariantId":  "v_a",
+                                       "errors":  [
+
+                                                  ]
+                                   },
+                                   {
+                                       "videoId":  "36b81376-1e16-4f4b-994d-641232cc584c",
+                                       "publishedAt":  "2026-04-22T11:00:03.372Z",
+                                       "platforms":  [
+                                                         "youtube"
+                                                     ],
+                                       "priority":  75,
+                                       "viralityScore":  74,
+                                       "formatMatchScore":  86,
+                                       "topic":  "habits",
+                                       "hook":  "Tu amígdala controla tus hábitos sin que tu consciencia se entere.",
+                                       "batchId":  "batch_1776722642790",
+                                       "slotId":  "batch_1776722642790_slot_1",
+                                       "plannedRole":  "follow",
+                                       "plannedCluster":  "habitos de distraccion movil",
+                                       "recommendedCandidateId":  "habits-2",
+                                       "abExperimentId":  "exp_1776844833836_a8096914",
+                                       "abVariantId":  "v_b",
+                                       "errors":  [
+
+                                                  ]
+                                   },
+                                   {
+                                       "videoId":  "1540721d-2275-4526-a273-d8cf57860788",
+                                       "publishedAt":  "2026-04-22T06:00:02.794Z",
+                                       "platforms":  [
+                                                         "youtube"
+                                                     ],
+                                       "priority":  63,
+                                       "viralityScore":  72,
+                                       "formatMatchScore":  76,
+                                       "topic":  "body_language",
+                                       "hook":  "El 73% sostiene la mirada para dominar sin saber que lo hace.",
+                                       "batchId":  "batch_1776722562379",
+                                       "slotId":  "batch_1776722562379_slot_1",
+                                       "plannedRole":  "reach",
+                                       "plannedCluster":  "habits",
+                                       "recommendedCandidateId":  "habits-2",
+                                       "abExperimentId":  null,
+                                       "abVariantId":  "v_a",
+                                       "errors":  [
+
+                                                  ]
+                                   },
+                                   {
+                                       "videoId":  "d067b7bf-1bbd-441d-ab6d-887f5411edc8",
+                                       "publishedAt":  "2026-04-21T19:53:06.383Z",
+                                       "platforms":  [
+                                                         "youtube"
+                                                     ],
+                                       "priority":  72,
+                                       "viralityScore":  83,
+                                       "formatMatchScore":  83,
+                                       "topic":  "emotional_patterns",
+                                       "hook":  "Tu cerebro copia emociones ajenas sin permiso ni aviso.",
+                                       "batchId":  "batch_1776722562379",
+                                       "slotId":  "batch_1776722562379_slot_1",
+                                       "plannedRole":  "reach",
+                                       "plannedCluster":  "habits",
+                                       "recommendedCandidateId":  "habits-2",
+                                       "abExperimentId":  "exp_1776754271864_1fc653cb",
+                                       "abVariantId":  "v_b",
+                                       "errors":  [
+
+                                                  ]
+                                   },
+                                   {
+                                       "videoId":  "0d711d5f-0fb0-41da-abbd-660fd9f572d9",
+                                       "publishedAt":  "2026-04-21T11:00:02.652Z",
+                                       "platforms":  [
+                                                         "youtube"
+                                                     ],
+                                       "priority":  72,
+                                       "viralityScore":  83,
+                                       "formatMatchScore":  83,
+                                       "topic":  "emotional_patterns",
+                                       "hook":  "Si alguien está triste cerca tuyo, tu cerebro ya está copiando su tristeza.",
+                                       "batchId":  "batch_1776722562379",
+                                       "slotId":  "batch_1776722562379_slot_1",
+                                       "plannedRole":  "reach",
+                                       "plannedCluster":  "habits",
+                                       "recommendedCandidateId":  "habits-2",
+                                       "abExperimentId":  null,
+                                       "abVariantId":  "v_a",
+                                       "errors":  [
+
+                                                  ]
+                                   },
+                                   {
+                                       "videoId":  "a4ae70da-3049-428a-8638-9156842fb14f",
+                                       "publishedAt":  "2026-04-21T06:00:03.898Z",
+                                       "platforms":  [
+                                                         "youtube"
+                                                     ],
+                                       "priority":  72,
+                                       "viralityScore":  82,
+                                       "formatMatchScore":  84,
+                                       "topic":  "attention",
+                                       "hook":  "Tu cerebro se apaga cada 20 minutos. Neurología pura.",
+                                       "batchId":  null,
+                                       "slotId":  null,
+                                       "plannedRole":  null,
+                                       "plannedCluster":  null,
+                                       "recommendedCandidateId":  null,
+                                       "abExperimentId":  "exp_1776708031148_0fe36b14",
+                                       "abVariantId":  "v_b",
+                                       "errors":  [
+
+                                                  ]
+                                   },
+                                   {
+                                       "videoId":  "5f7146a9-6e79-4d2f-b5a8-50952c7659fa",
+                                       "publishedAt":  "2026-04-20T19:30:03.473Z",
+                                       "platforms":  [
+                                                         "youtube"
+                                                     ],
+                                       "priority":  72,
+                                       "viralityScore":  82,
+                                       "formatMatchScore":  84,
+                                       "topic":  "attention",
+                                       "hook":  "El 87% de personas pierden concentración sin notar cuándo exactamente.",
+                                       "abExperimentId":  null,
+                                       "abVariantId":  "v_a",
+                                       "errors":  [
+
+                                                  ]
+                                   },
+                                   {
+                                       "videoId":  "0aeeb7ea-1eef-4dc1-9133-9672f0b978ce",
+                                       "publishedAt":  "2026-04-20T17:00:02.846Z",
+                                       "platforms":  [
+                                                         "youtube"
+                                                     ],
+                                       "priority":  69,
+                                       "viralityScore":  79,
+                                       "formatMatchScore":  82,
+                                       "topic":  "cognitive_biases",
+                                       "hook":  "¿Por qué tu cerebro ignora oportunidades y solo ve amenazas?",
+                                       "abExperimentId":  "exp_1776690113677_ab76050b",
+                                       "abVariantId":  "v_b",
+                                       "errors":  [
+
+                                                  ]
+                                   },
+                                   {
+                                       "videoId":  "6bcb47a4-a5af-4efc-8874-12e48683bbd9",
+                                       "publishedAt":  "2026-04-20T11:00:03.646Z",
+                                       "platforms":  [
+                                                         "youtube"
+                                                     ],
+                                       "priority":  66,
+                                       "viralityScore":  79,
+                                       "formatMatchScore":  82,
+                                       "topic":  "habits",
+                                       "hook":  "Tu cerebro protege esos hábitos como si fueran tu supervivencia",
+                                       "abExperimentId":  "exp_1776664908852_6949c022",
+                                       "abVariantId":  "v_b",
+                                       "errors":  [
+
+                                                  ]
+                                   }
+                               ],
+                 "readyToPublish":  0
+             }
+}

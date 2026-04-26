@@ -13,6 +13,9 @@ const cron   = require('node-cron');
 const fs     = require('fs');
 const path   = require('path');
 const logger = require('../utils/logger');
+const { formatDurationMs } = require('../utils/perf-tracker');
+const { getQueueSnapshot, getOperationalThresholds, touchPipelineState } = require('./operational-state.service');
+const { notifyQueueLow, notifyGenerationStalled, notifySystemRecovered } = require('./telegram-notifier');
 
 const SCHEDULER_LOG_PATH = path.resolve('./data/scheduler-generation-log.json');
 
@@ -44,25 +47,7 @@ function writeJSON(file, data) {
 
 // Devuelve cuántos vídeos en output/ pasan el umbral de publicación y están listos
 function countPublishableVideos() {
-  const OUTPUT_DIR    = path.resolve(process.env.OUTPUT_DIR || './output');
-  const minVirality   = parseInt(process.env.MIN_VIRALITY_SCORE_TO_PUBLISH || '78');
-
-  if (!fs.existsSync(OUTPUT_DIR)) return 0;
-
-  return fs.readdirSync(OUTPUT_DIR).filter((d) => {
-    const videoPath     = path.join(OUTPUT_DIR, d, 'output.mp4');
-    const scriptPath    = path.join(OUTPUT_DIR, d, 'script.json');
-    const publishedPath = path.join(OUTPUT_DIR, d, 'published.json');
-    if (!fs.existsSync(videoPath) || !fs.existsSync(publishedPath) === false) return false;
-    if (!fs.existsSync(videoPath) || fs.existsSync(publishedPath)) return false;
-    if (!fs.existsSync(scriptPath)) return false;
-    try {
-      const script = JSON.parse(fs.readFileSync(scriptPath, 'utf8'));
-      // Vídeos legacy (sin scores del growth engine) se consideran publicables
-      if (script.viralityScore === undefined && script.growthContext === undefined) return true;
-      return (script.viralityScore || 0) >= minVirality;
-    } catch { return false; }
-  }).length;
+  return getQueueSnapshot().readyCount;
 }
 
 async function runGenerationCycle({ urgent = false } = {}) {
@@ -73,27 +58,49 @@ async function runGenerationCycle({ urgent = false } = {}) {
 
   isRunning = true;
   lastRun   = new Date().toISOString();
+  const cycleStartedMs = Date.now();
+  touchPipelineState({ generationLastStartedAt: lastRun, generationRunning: true });
 
   try {
     const { runGrowthCycle }  = require('./growth-engine');
     const { getQueueStatus }  = require('../queue/video-processor');
-
-    const publishable = countPublishableVideos();
+    const thresholds = getOperationalThresholds();
+    const snapshot = getQueueSnapshot();
+    const publishable = snapshot.readyCount;
     const queueStatus = getQueueStatus();
     const inPipeline  = (queueStatus.waiting || 0) + (queueStatus.active || 0);
 
-    // GATE v2: MAX_QUEUE = total de vídeos pendientes (renderizados + en pipeline)
-    // Estrategia: generate → publicar → medir → ajustar → generar
-    const maxQueue   = parseInt(process.env.QUEUE_MAX_PENDING || '3');
-    const totalPend  = publishable + inPipeline;
-    if (!urgent && totalPend >= maxQueue) {
+    // GATE v2: Buffer policy — máximo de vídeos ready en cola
+    const maxQueue        = parseInt(process.env.QUEUE_MAX_PENDING || '3');
+    const readyMaxBuffer  = parseInt(process.env.READY_MAX_BUFFER || '3');
+    const totalPend       = publishable + inPipeline;
+    const belowMinimumReady = publishable < thresholds.minReady;
+
+    if (belowMinimumReady) {
+      logger.warn(`GenerationScheduler: low ready detected | ready=${publishable}/${thresholds.minReady} | inPipeline=${inPipeline} | target=${thresholds.targetReady}`);
+      await notifyQueueLow({ readyCount: publishable, minReady: thresholds.minReady, inPipeline, reason: 'below_min_ready' });
+    }
+
+    // Buffer policy: si hay demasiados vídeos ready, no generar
+    if (!urgent && publishable >= readyMaxBuffer) {
+      logger.info(`GenerationScheduler: queue buffer full (${publishable}/${readyMaxBuffer} ready) — skipping generation until publish slot`);
+      lastResult = { success: false, reason: 'queue_buffer_full', readyCount: publishable, readyMaxBuffer, cycleAt: lastRun, totalMs: Date.now() - cycleStartedMs };
+      touchPipelineState({ generationLastFinishedAt: new Date().toISOString(), generationLastResult: lastResult, generationRunning: false });
+      return;
+    }
+
+    if (!urgent && !belowMinimumReady && totalPend >= maxQueue) {
       logger.info(`GenerationScheduler: queue full (${totalPend}/${maxQueue} — ${publishable} ready + ${inPipeline} processing) — waiting for publish slot`);
-      lastResult = { success: false, reason: 'queue_full', totalPending: totalPend, maxQueue, cycleAt: lastRun };
+      lastResult = { success: false, reason: 'queue_full', totalPending: totalPend, maxQueue, cycleAt: lastRun, totalMs: Date.now() - cycleStartedMs };
+      touchPipelineState({ generationLastFinishedAt: new Date().toISOString(), generationLastResult: lastResult, generationRunning: false });
       return;
     }
 
     // Modo urgente: sin vídeos buenos y sin nada renderizando
-    const needsUrgent = publishable === 0 && inPipeline === 0;
+    const needsUrgent = urgent || belowMinimumReady || (publishable === 0 && inPipeline === 0);
+    if (needsUrgent) {
+      logger.info(`GenerationScheduler: top-up triggered | urgent=${urgent} | ready=${publishable}/${thresholds.targetReady} | inPipeline=${inPipeline}`);
+    }
 
     if (needsUrgent) {
       logger.warn('GenerationScheduler: NO publishable videos — entering urgent mode');
@@ -101,11 +108,11 @@ async function runGenerationCycle({ urgent = false } = {}) {
       logger.info(`GenerationScheduler: cycle starting... (pending=${totalPend}/${maxQueue} — ${publishable} ready, ${inPipeline} processing)`);
     }
 
-    const maxCycles = needsUrgent ? 3 : 1; // v2: reducir intentos urgentes (calidad > volumen)
+    const maxCycles = needsUrgent ? Math.max(1, parseInt(process.env.GENERATION_URGENT_MAX_CYCLES || '3', 10) || 3) : 1;
     let succeeded   = false;
 
     for (let i = 0; i < maxCycles; i++) {
-      const result = await runGrowthCycle({ forceGenerate: needsUrgent, maxRetries: 4 });
+      const result = await runGrowthCycle({ forceGenerate: needsUrgent, maxRetries: parseInt(process.env.GROWTH_MAX_RETRIES || '3', 10) || 3 });
 
       lastResult = {
         success:          result.success,
@@ -115,6 +122,7 @@ async function runGenerationCycle({ urgent = false } = {}) {
         viralityScore:    result.script?.viralityScore,
         formatMatchScore: result.script?.formatMatchScore,
         attempts:         result.attempts,
+        totalMs:          result.totalMs,
         urgent:           needsUrgent,
         cycleAt:          lastRun,
       };
@@ -126,6 +134,19 @@ async function runGenerationCycle({ urgent = false } = {}) {
       if (result.success) {
         logger.info(`GenerationScheduler: success | jobId=${result.jobId} topic=${result.script?.topic}${needsUrgent ? ' [urgent]' : ''}`);
         succeeded = true;
+        const updatedSnapshot = getQueueSnapshot();
+        if (updatedSnapshot.readyCount >= thresholds.targetReady) {
+          logger.info(`GenerationScheduler: target ready reached | ready=${updatedSnapshot.readyCount}/${thresholds.targetReady}`);
+        } else {
+          logger.info(`GenerationScheduler: top-up still pending | ready=${updatedSnapshot.readyCount}/${thresholds.targetReady} | inPipeline=${updatedSnapshot.inPipeline}`);
+        }
+        touchPipelineState({
+          generationLastSuccessfulAt: new Date().toISOString(),
+          lastProgressAt: new Date().toISOString(),
+          lastProgressType: 'generation_success',
+          lastGeneratedJobId: result.jobId,
+        });
+        await notifySystemRecovered({ scope: 'generation', detail: `job ${result.jobId}` });
         break;
       } else {
         logger.warn(`GenerationScheduler: attempt ${i + 1}/${maxCycles} failed | reason=${result.reason}`);
@@ -137,13 +158,21 @@ async function runGenerationCycle({ urgent = false } = {}) {
 
     if (needsUrgent && !succeeded) {
       logger.error('GenerationScheduler: urgent mode exhausted all attempts — will retry on next cron tick');
+      await notifyGenerationStalled({ reason: lastResult?.reason || 'urgent_generation_failed', attempts: maxCycles });
     }
+    logger.info(`GenerationScheduler: cycle finished in ${formatDurationMs(Date.now() - cycleStartedMs)}`);
 
   } catch (err) {
     logger.error(`GenerationScheduler: cycle error: ${err.message}`);
-    lastResult = { success: false, reason: err.message, cycleAt: lastRun };
+    lastResult = { success: false, reason: err.message, cycleAt: lastRun, totalMs: Date.now() - cycleStartedMs };
+    await notifyGenerationStalled({ reason: err.message });
   } finally {
     isRunning = false;
+    touchPipelineState({
+      generationLastFinishedAt: new Date().toISOString(),
+      generationLastResult: lastResult,
+      generationRunning: false,
+    });
   }
 }
 
@@ -162,7 +191,7 @@ function buildCronExpression(intervalHours) {
   if (intervalHours >= 6)  return '0 6,12,18 * * *';    // 3x día
   if (intervalHours >= 4)  return '0 6,10,14,18,22 * * *'; // ~5x día
   if (intervalHours >= 3)  return '0 6,9,12,15,18,21 * * *'; // 6x día
-  if (intervalHours >= 2)  return '0 6,8,10,12,14,16,18,20,22 * * *'; // 9x día
+  if (intervalHours >= 2)  return '0 0,2,6,8,10,12,14,16,18,20,22 * * *'; // 11x día
   return '0 * * * *'; // cada hora
 }
 
@@ -209,6 +238,9 @@ function startGenerationScheduler() {
   );
 
   logger.info('GenerationScheduler: active');
+  setTimeout(() => {
+    runGenerationCycle({ urgent: true }).catch((err) => logger.warn(`GenerationScheduler: startup warmup failed: ${err.message}`));
+  }, 15000);
 }
 
 function stopGenerationScheduler() {

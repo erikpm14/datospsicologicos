@@ -14,6 +14,9 @@ const { spawn } = require('child_process');
 const fs   = require('fs');
 const path = require('path');
 const logger = require('../utils/logger');
+const { ensureLegacyFields, getCombinedScriptText, getScriptSections } = require('../utils/script-segments');
+const { createPerfTracker, formatDurationMs } = require('../utils/perf-tracker');
+const { buildEmotionalSSML, EMOTIONAL_PROFILES } = require('../utils/emotional-ssml');
 const ffmpegInstaller  = require('@ffmpeg-installer/ffmpeg');
 const ffprobeInstaller = require('@ffprobe-installer/ffprobe');
 const ffmpeg = require('fluent-ffmpeg');
@@ -26,6 +29,8 @@ const KOKORO_SPEED       = process.env.KOKORO_SPEED      || '1.05';
 const KOKORO_ENABLED     = process.env.KOKORO_ENABLED    !== 'false'; // activo por defecto
 const KOKORO_SCRIPT      = path.resolve(__dirname, '../utils/kokoro_tts.py');
 const PYTHON_BIN         = process.env.PYTHON_BIN        || 'python3';
+const SEGMENT_KEYS       = ['hook', 'open_loop', 'micro_value', 'escalation', 'reengage', 'peak', 'open_ending', 'soft_cta'];
+const STOPWORDS = new Set(['que', 'como', 'esto', 'esta', 'este', 'para', 'pero', 'porque', 'aunque', 'donde', 'cuando', 'quien', 'quienes', 'sobre', 'desde', 'hasta', 'entre', 'algo', 'alguien', 'nada', 'todo', 'siempre', 'nunca', 'solo', 'solo', 'mas', 'muy', 'con', 'sin', 'por', 'del', 'las', 'los', 'una', 'uno', 'unos', 'unas', 'esa', 'ese', 'eso', 'aqui', 'ahi', 'alli', 'tambien', 'mismo', 'misma', 'mismas', 'mismos', 'cada', 'justo', 'casi', 'tu', 'tus', 'te', 'ya']);
 
 const SPANISH_VOICES = {
   // Kokoro (local)
@@ -51,9 +56,13 @@ const SPANISH_VOICES = {
  * El hook va más lento visualmente por ser la frase de más impacto.
  */
 function buildText(script) {
-  const { hook, claim, explanation, cta } = script;
-  // Pausa larga post-hook (doble puntos suspensivos = pausa más perceptible en TTS)
-  return `${hook}... ... ${claim}. ${explanation} ${cta}`;
+  const plan = script.narrationPlan || prepareNarrationForTTS(script);
+  return plan.blocks
+    .map((block) => block.text)
+    .filter(Boolean)
+    .join(' ')
+    .replace(/\s{2,}/g, ' ')
+    .trim();
 }
 
 /**
@@ -61,9 +70,7 @@ function buildText(script) {
  * Kokoro interpreta la puntuación natural — punto y coma = pausa corta, punto = pausa media.
  */
 function buildKokoroText(script) {
-  const { hook, claim, explanation, cta } = script;
-  // Kokoro infiere pausas desde la puntuación natural — sin markers ... ...
-  return [hook, claim, explanation, cta].filter(Boolean).join(' ');
+  return buildText(script);
 }
 
 /**
@@ -96,32 +103,184 @@ function normalizeForKokoro(text) {
  * El hook, si es pregunta (termina en ?), recibe prosody con pitch ascendente.
  */
 function buildSSMLContent(script) {
-  const { hook, claim, explanation, cta } = script;
-  const isQuestion = hook.trim().endsWith('?');
+  const plan = script.narrationPlan || prepareNarrationForTTS(script);
+  return plan.blocks.map((block, blockIndex) => {
+    const content = block.parts.map((part, partIndex) => {
+      const profile = part.profile || {};
+      const raw = sanitizeText(part.text || '');
+      if (!raw) return '';
+      const wrapped = `<prosody rate="${profile.ssmlRate || '0%'}" pitch="${profile.ssmlPitch || '0%'}" volume="${profile.ssmlVolume || '0%'}">${raw}</prosody>`;
+      const prefix = partIndex === 0 && blockIndex === 0 ? '' : `<break time="${Math.round((part.pauseBefore || 0) * 1000)}ms"/>`;
+      const suffix = partIndex === block.parts.length - 1 ? '' : (part.joiner || '');
+      return `${prefix}${wrapped}${suffix}`;
+    }).filter(Boolean).join(' ');
+    return block.pauseAfter > 0 ? `${content}<break time="${Math.round(block.pauseAfter * 1000)}ms"/>` : content;
+  }).join(' ').trim();
+}
 
-  // Edge TTS acepta SSML anidado: nuestro <prosody> va dentro del suyo
-  const hookSSML = isQuestion
-    ? `<prosody pitch="+10%" rate="-8%">${hook}</prosody>`
-    : hook;
+function buildAudioBlocks(script) {
+  const plan = script.narrationPlan || prepareNarrationForTTS(script);
+  return plan.blocks;
+}
 
-  // Eliminar emojis del CTA (Edge TTS los lee o los ignora de forma rara)
-  const ctaClean = cta.replace(/[\p{Emoji_Presentation}\p{Extended_Pictographic}]/gu, '').trim();
+function _cleanNarrationText(text = '') {
+  return String(text || '')
+    .replace(/\s{2,}/g, ' ')
+    .replace(/\s+([,.;!?])/g, '$1')
+    .trim();
+}
 
-  // Nota: <break> tags rompen Edge TTS (devuelve 0 bytes). Pausas via puntuación natural.
-  return `${hookSSML}... ${claim}. ${explanation}. ${ctaClean}`;
+function _ensureNarrationEnding(text = '', key = '') {
+  const clean = _cleanNarrationText(text);
+  if (!clean) return '';
+  if (/[.!?…]$/.test(clean)) return clean;
+  if (key === 'hook' || key === 'open_loop' || key === 'reengage') return `${clean}...`;
+  if (key === 'soft_cta') return clean.endsWith('?') ? clean : `${clean}?`;
+  return `${clean}.`;
+}
+
+function _appendJoiner(text = '', joiner = '') {
+  const clean = _cleanNarrationText(text).replace(/[.?!…]+$/g, '');
+  if (!clean) return '';
+  return joiner ? `${clean}${joiner}` : clean;
+}
+
+function _collectEmphasisWords(text = '') {
+  const caps = (String(text || '').match(/\b([A-ZÁÉÍÓÚÜÑ]{3,})\b/g) || []).map((w) => w.toLowerCase());
+  const tokens = String(text || '')
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .match(/[a-zñ]{4,}/g) || [];
+  const content = tokens.filter((token) => !STOPWORDS.has(token));
+  return [...new Set([...caps, ...content.slice(-2)])].slice(0, 3);
+}
+
+function _getSegmentDelivery(key = '') {
+  const map = {
+    hook: { deliveryStyle: 'directo', narrationEnergy: 'alta', pauseStrength: 'fuerte', pacing: 'corto', pauseBefore: 0, pauseAfter: 0.46, joiner: '...', ssmlRate: '-8%', ssmlPitch: '+2%', ssmlVolume: '0%' },
+    open_loop: { deliveryStyle: 'susurrado-tenso', narrationEnergy: 'media-alta', pauseStrength: 'media', pacing: 'tenso', pauseBefore: 0.06, pauseAfter: 0.12, joiner: '.', ssmlRate: '-7%', ssmlPitch: '0%', ssmlVolume: '0%' },
+    micro_value: { deliveryStyle: 'claro', narrationEnergy: 'media', pauseStrength: 'corta', pacing: 'estable', pauseBefore: 0.04, pauseAfter: 0.08, joiner: '.', ssmlRate: '-8%', ssmlPitch: '0%', ssmlVolume: '0%' },
+    escalation: { deliveryStyle: 'creciente', narrationEnergy: 'media-alta', pauseStrength: 'corta', pacing: 'agil', pauseBefore: 0.04, pauseAfter: 0.18, joiner: '.', ssmlRate: '-6%', ssmlPitch: '0%', ssmlVolume: '0%' },
+    reengage: { deliveryStyle: 'remate', narrationEnergy: 'alta', pauseStrength: 'fuerte', pacing: 'marcado', pauseBefore: 0.26, pauseAfter: 0.12, joiner: '...', ssmlRate: '-8%', ssmlPitch: '0%', ssmlVolume: '0%' },
+    peak: { deliveryStyle: 'impacto', narrationEnergy: 'muy alta', pauseStrength: 'media', pacing: 'enfatico', pauseBefore: 0.18, pauseAfter: 0.16, joiner: '.', ssmlRate: '-7%', ssmlPitch: '0%', ssmlVolume: '0%' },
+    open_ending: { deliveryStyle: 'eco', narrationEnergy: 'media', pauseStrength: 'corta', pacing: 'controlado', pauseBefore: 0.08, pauseAfter: 0.06, joiner: '.', ssmlRate: '-7%', ssmlPitch: '0%', ssmlVolume: '0%' },
+    soft_cta: { deliveryStyle: 'conversacional', narrationEnergy: 'media', pauseStrength: 'ninguna', pacing: 'natural', pauseBefore: 0.05, pauseAfter: 0, joiner: '', ssmlRate: '-8%', ssmlPitch: '0%', ssmlVolume: '0%' },
+  };
+  return map[key] || { deliveryStyle: 'natural', narrationEnergy: 'media', pauseStrength: 'corta', pacing: 'estable', pauseBefore: 0.04, pauseAfter: 0.08, joiner: '.', ssmlRate: '-8%', ssmlPitch: '0%', ssmlVolume: '0%' };
+}
+
+function _adaptSegmentText(text = '', key = '') {
+  let adapted = _cleanNarrationText(text);
+  adapted = adapted
+    .replace(/\s+y en ese momento\b/gi, ', y en ese momento')
+    .replace(/\s+y ahi\b/gi, ', y ahi')
+    .replace(/\s+y aqui\b/gi, ', y aqui')
+    .replace(/\s+sin que lo notes\b/gi, ', sin que lo notes')
+    .replace(/\s+aunque\b/gi, ', aunque')
+    .replace(/\s+de verdad\b/gi, ', de verdad');
+  return _ensureNarrationEnding(adapted, key);
+}
+
+function prepareNarrationForTTS(script = {}) {
+  const normalized = ensureLegacyFields(script);
+  const sectionMap = Object.fromEntries(getScriptSections(normalized).map((section) => [section.key, section.text]));
+  const segments = {};
+
+  for (const key of SEGMENT_KEYS) {
+    const rawText = sectionMap[key] || '';
+    if (!rawText) continue;
+    const profile = _getSegmentDelivery(key);
+    segments[key] = {
+      key,
+      text: _adaptSegmentText(rawText, key),
+      deliveryStyle: profile.deliveryStyle,
+      narrationEnergy: profile.narrationEnergy,
+      pauseStrength: profile.pauseStrength,
+      emphasisWords: _collectEmphasisWords(rawText),
+      pacing: profile.pacing,
+      pauseBefore: profile.pauseBefore,
+      pauseAfter: profile.pauseAfter,
+      joiner: profile.joiner,
+      ssmlRate: profile.ssmlRate,
+      ssmlPitch: profile.ssmlPitch,
+      ssmlVolume: profile.ssmlVolume,
+    };
+  }
+
+  const blockDefinitions = [
+    { key: 'block_1', segments: ['hook', 'open_loop'], pauseAfter: 0.46, blockPacing: 'controlado con gancho' },
+    { key: 'block_2', segments: ['micro_value', 'escalation'], pauseAfter: 0.22, blockPacing: 'creciente' },
+    { key: 'block_3', segments: ['reengage', 'peak'], pauseAfter: 0.18, blockPacing: 'impacto' },
+    { key: 'block_4', segments: ['open_ending', 'soft_cta'], pauseAfter: 0, blockPacing: 'cierre conversacional' },
+  ];
+
+  const blocks = blockDefinitions
+    .map((block) => {
+      const parts = block.segments
+        .map((key) => segments[key])
+        .filter(Boolean)
+        .map((segment) => ({
+          key: segment.key,
+          text: segment.text,
+          joiner: segment.joiner,
+          pauseBefore: segment.pauseBefore,
+          profile: segment,
+        }));
+      if (!parts.length) return null;
+      return {
+        key: block.key,
+        pauseAfter: parts[parts.length - 1]?.key === 'hook' ? 0.46 : block.pauseAfter,
+        blockPacing: block.blockPacing,
+        parts,
+        text: parts.map((part, index) => {
+          const clean = String(part.text || '').trim();
+          if (!clean) return '';
+          if (index === parts.length - 1 || !part.joiner) return clean;
+          return _appendJoiner(clean, part.joiner);
+        }).filter(Boolean).join(' '),
+      };
+    })
+    .filter(Boolean);
+
+  return {
+    mode: 'natural_short_v1',
+    segments,
+    blocks,
+  };
+}
+
+function buildSectionDurationsFromBlocks(blockResults) {
+  const sectionDurations = {};
+  let cursor = 0;
+
+  for (const block of blockResults) {
+    const totalWords = block.parts.reduce((sum, part) => sum + String(part.text || '').trim().split(/\s+/).filter(Boolean).length, 0) || 1;
+    let localCursor = 0;
+
+    for (const part of block.parts) {
+      const words = String(part.text || '').trim().split(/\s+/).filter(Boolean).length;
+      const duration = block.duration * (words / totalWords);
+      sectionDurations[part.key] = {
+        start: parseFloat((cursor + localCursor).toFixed(3)),
+        duration: parseFloat(duration.toFixed(3)),
+        segments: [{ start: parseFloat(localCursor.toFixed(3)), end: parseFloat((localCursor + duration).toFixed(3)) }],
+      };
+      localCursor += duration;
+    }
+
+    cursor += block.duration + block.pauseAfter;
+  }
+
+  return sectionDurations;
 }
 
 /**
  * Mapea los word boundaries de TTS a tiempos de inicio/fin por sección.
  * Usa conteo de palabras para asignar cada boundary a su sección.
  */
-function mapSectionTimings({ hook, claim, explanation, cta }, wordBoundaries) {
-  const sections = [
-    { key: 'hook',        text: hook        },
-    { key: 'claim',       text: claim       },
-    { key: 'explanation', text: explanation },
-    { key: 'cta',         text: cta         },
-  ].filter(s => s.text && s.text.trim());
+function mapSectionTimings(script, wordBoundaries) {
+  const sections = getScriptSections(script);
 
   const timings = {};
   let idx = 0;
@@ -147,13 +306,12 @@ function mapSectionTimings({ hook, claim, explanation, cta }, wordBoundaries) {
  * Fallback: calcula tiempos proporcionales al número de palabras por sección.
  * Mucho mejor que los ratios fijos anteriores.
  */
-function proportionalSectionTimings({ hook, claim, explanation, cta }, realDuration) {
-  const sections = [
-    { key: 'hook',        text: hook,        pauseSecs: 0.5 }, // pausa después de "..."
-    { key: 'claim',       text: claim,       pauseSecs: 0.3 },
-    { key: 'explanation', text: explanation, pauseSecs: 0.3 },
-    { key: 'cta',         text: cta,         pauseSecs: 0.0 },
-  ].filter(s => s.text && s.text.trim());
+function proportionalSectionTimings(script, realDuration) {
+  const sections = getScriptSections(script).map((section, index, all) => ({
+    key: section.key,
+    text: section.text,
+    pauseSecs: index === 0 ? 0.5 : index === all.length - 1 ? 0.0 : 0.22,
+  }));
 
   // Peso total = palabras + equivalente en palabras de las pausas (~2.5 pal/s)
   const WPS = 2.5;
@@ -432,13 +590,51 @@ function _synthesizeRawTextWithKokoroOnce(text, outputWavPath, timeoutMs = 90_00
  * @returns {{ audioPath, estimatedDuration, wordBoundaries, sectionDurations }}
  *   sectionDurations = { hook, claim, explanation, cta }  (segundos medidos, sin pausa)
  */
-async function synthesizeWithKokoroSegmented(script, outputDir) {
-  // Pausas entre secciones — equivalentes a las del SSML de Edge TTS
-  const PAUSES = { hook: 0.65, claim: 0.40, explanation: 0.40, cta: 0.0 };
+/**
+ * Sintetiza un segmento con emocionalidad Y humanización:
+ * - Configuración emocional por perfil
+ * - Humanización: micro-pausas irregulares, respiraciones, variación controlada
+ */
+async function _synthesizeEmotionalSegment(text, sectionKey, outputDir) {
+  const profile = EMOTIONAL_PROFILES[sectionKey] || EMOTIONAL_PROFILES.hook;
 
-  const sectionOrder = ['hook', 'claim', 'explanation', 'cta'];
-  const sections = sectionOrder
-    .map(key => ({ key, text: (script[key] || '').trim(), pauseAfter: PAUSES[key] }))
+  // Construir SSML con emocionalidad + humanización
+  const emotionalSSML = buildEmotionalSSML(text, sectionKey, true, true);  // humanize=true
+
+  // Para Kokoro (que usa texto plano), extraer el texto limpio del SSML
+  const cleanText = emotionalSSML
+    .replace(/<[^>]+>/g, '')  // Remover tags SSML
+    .replace(/\s+/g, ' ')     // Normalizar espacios
+    .trim();
+
+  if (cleanText.length < 3) {
+    throw new Error(`Segmento ${sectionKey} después de limpieza: texto vacío`);
+  }
+
+  // Sintetizar el texto (Kokoro maneja el texto plano)
+  const segPath = path.join(outputDir, `seg_${sectionKey}.wav`);
+  const result = await synthesizeRawTextWithKokoro(cleanText, segPath);
+  const realDur = await getSegmentDuration(result.wavPath);
+  const dur = realDur > 0 ? realDur : result.duration;
+
+  return {
+    wavPath: result.wavPath,
+    duration: dur,
+    profile,
+    emotionalConfig: {
+      rate: profile.rate,
+      pitch: profile.pitch,
+      breakBefore: profile.breakBefore,
+      breakAfter: profile.breakAfter,
+    },
+    humanized: true,  // Flag para logging
+  };
+}
+
+async function synthesizeWithKokoroSegmented(script, outputDir) {
+  const perf = createPerfTracker('tts-kokoro-segmented');
+  const sections = buildAudioBlocks(script)
+    .map((block) => ({ key: block.key, text: block.text, pauseAfter: block.pauseAfter, parts: block.parts }))
     .filter(s => s.text.length >= 3);
 
   if (sections.length === 0) throw new Error('Kokoro segmented: script sin secciones válidas');
@@ -447,21 +643,62 @@ async function synthesizeWithKokoroSegmented(script, outputDir) {
   // 4 veces en paralelo (~1.2 GB RAM simultáneos → bad allocation en sistemas con <4 GB libres)
   const segmentResults = [];
   for (const s of sections) {
-    const segPath = path.join(outputDir, `seg_${s.key}.wav`);
-    const result  = await synthesizeRawTextWithKokoro(s.text, segPath);
-    const realDur = await getSegmentDuration(result.wavPath);
-    const dur     = realDur > 0 ? realDur : result.duration;
-    const segments = await detectSpeechSegments(result.wavPath, dur);
-    logger.info(
-      `Kokoro segment [${s.key}]: ${dur.toFixed(3)}s | ${segments.length} speech seg(s) | "${s.text.slice(0, 40)}..."`
-    );
-    segmentResults.push({ ...s, wavPath: result.wavPath, duration: dur, segments });
+    perf.start(`segment_${s.key}`);
+
+    try {
+      // Usar síntesis emocional si está habilitada
+      const emotionalResult = await _synthesizeEmotionalSegment(s.text, s.key, outputDir);
+      const segments = await detectSpeechSegments(emotionalResult.wavPath, emotionalResult.duration);
+
+      const phase = perf.end({ duration: emotionalResult.duration, speechSegments: segments.length });
+      logger.info(
+        `Kokoro segment [${s.key}]: ${emotionalResult.duration.toFixed(3)}s | ${segments.length} speech seg(s) | ` +
+        `synth=${formatDurationMs(phase.durationMs)} | emotional=yes | humanized=yes | ` +
+        `rate=${emotionalResult.profile.rate}% | breakAfter=${emotionalResult.profile.breakAfter}ms | ` +
+        `"${s.text.slice(0, 40)}..."`
+      );
+
+      segmentResults.push({
+        ...s,
+        wavPath: emotionalResult.wavPath,
+        duration: emotionalResult.duration,
+        segments,
+        emotionalConfig: emotionalResult.emotionalConfig,
+      });
+    } catch (err) {
+      // Fallback: sintetizar sin emocionalidad si falla
+      logger.warn(`Emotional synthesis failed for ${s.key}, using standard synthesis: ${err.message}`);
+      const segPath = path.join(outputDir, `seg_${s.key}.wav`);
+      const result = await synthesizeRawTextWithKokoro(s.text, segPath);
+      const realDur = await getSegmentDuration(result.wavPath);
+      const dur = realDur > 0 ? realDur : result.duration;
+      const segments = await detectSpeechSegments(result.wavPath, dur);
+      const phase = perf.end({ duration: dur, speechSegments: segments.length });
+
+      logger.info(
+        `Kokoro segment [${s.key}]: ${dur.toFixed(3)}s | ${segments.length} speech seg(s) | synth=${formatDurationMs(phase.durationMs)} | "${s.text.slice(0, 40)}..."`
+      );
+
+      segmentResults.push({ ...s, wavPath: result.wavPath, duration: dur, segments });
+    }
   }
 
-  // Concatenar con pausas
+  // Concatenar con pausas emocionales
   const combinedWav = path.join(outputDir, 'voice.wav');
-  const concatSegments = segmentResults.map(s => ({ path: s.wavPath, pauseAfter: s.pauseAfter }));
+  const concatSegments = segmentResults.map(s => ({
+    path: s.wavPath,
+    pauseAfter: s.emotionalConfig?.breakAfter || s.pauseAfter || 0,
+    emotional: !!s.emotionalConfig,
+  }));
   await concatenateSegmentsWithPauses(concatSegments, combinedWav);
+
+  // Log de pausas emocionales
+  const emotionalCount = concatSegments.filter(s => s.emotional).length;
+  if (emotionalCount > 0) {
+    logger.info(
+      `Emotional timing applied: ${emotionalCount} segments with emotional pauses and rate variations`
+    );
+  }
 
   // Duración total: sumas de secciones + pausas
   const totalDuration = segmentResults.reduce(
@@ -484,7 +721,7 @@ async function synthesizeWithKokoroSegmented(script, outputDir) {
   const fileSize = fs.statSync(combinedWav).size;
   logger.info(
     `Kokoro segmented: ${(fileSize / 1024).toFixed(0)} KB WAV | ${totalDuration.toFixed(2)}s | ` +
-    segmentResults.map(s => `${s.key}=${s.duration.toFixed(2)}s`).join(' ')
+    `${segmentResults.map(s => `${s.key}=${s.duration.toFixed(2)}s`).join(' ')} | total=${formatDurationMs(perf.snapshot().totalMs)}`
   );
 
   // Limpiar archivos de segmento (ya concatenados)
@@ -492,11 +729,13 @@ async function synthesizeWithKokoroSegmented(script, outputDir) {
     try { fs.unlinkSync(s.wavPath); } catch {}
   }
 
+  const finalSectionDurations = buildSectionDurationsFromBlocks(segmentResults);
+
   return {
     audioPath:         combinedWav,
     estimatedDuration: totalDuration,
     wordBoundaries:    [],
-    sectionDurations,
+    sectionDurations: finalSectionDurations,
   };
 }
 
@@ -523,14 +762,16 @@ async function synthesizeWithKokoro(script, outputPath) {
  * @returns {{ audioPath, estimatedDuration, wordCount, wordBoundaries, provider }}
  */
 async function synthesizeVoice(script, outputPath) {
-  // Validar que el script tenga contenido
+  const normalizedScript = ensureLegacyFields(script);
+  const narrationPlan = prepareNarrationForTTS(normalizedScript);
+  normalizedScript.narrationPlan = narrationPlan;
   const requiredFields = ['hook', 'claim', 'explanation', 'cta'];
-  const missing = requiredFields.filter(f => !script[f] || String(script[f]).trim().length < 3);
+  const missing = requiredFields.filter(f => !normalizedScript[f] || String(normalizedScript[f]).trim().length < 3);
   if (missing.length > 0) {
     throw new Error(`TTS: campos de script vacíos o inválidos: ${missing.join(', ')}`);
   }
 
-  const text = buildText(script);
+  const text = buildText(normalizedScript);
   if (!text || text.trim().length < 10) {
     throw new Error('TTS: texto combinado demasiado corto para sintetizar');
   }
@@ -540,8 +781,8 @@ async function synthesizeVoice(script, outputPath) {
   // ── Intento 1: Kokoro (segmentado — duración real por sección) ───────────
   if (KOKORO_ENABLED) {
     try {
-      const result = await synthesizeWithKokoro(script, outputPath);
-      return { ...result, wordCount, provider: 'kokoro' };
+      const result = await synthesizeWithKokoro(normalizedScript, outputPath);
+      return { ...result, wordCount, provider: 'kokoro', narrationPlan };
     } catch (kokoroErr) {
       logger.warn(`Kokoro TTS failed: ${kokoroErr.message.slice(0, 300)} — falling back to Edge TTS`);
     }
@@ -549,15 +790,16 @@ async function synthesizeVoice(script, outputPath) {
 
   // ── Intento 2: Edge TTS (word boundaries → sync exacto) ──────────────────
   try {
-    const result = await synthesizeWithEdgeTTS(script, text, outputPath);
+    const result = await synthesizeWithEdgeTTS(normalizedScript, text, outputPath);
     // Edge TTS tiene word boundaries → sectionDurations no es necesario
-    return { ...result, wordCount, provider: 'edge', sectionDurations: null };
+    return { ...result, wordCount, provider: 'edge', sectionDurations: null, narrationPlan };
   } catch (edgeErr) {
     throw new Error(`TTS: ambos proveedores fallaron. Edge error: ${edgeErr.message}`);
   }
 }
 
 async function synthesizeWithEdgeTTS(script, text, outputPath) {
+  const perf = createPerfTracker('tts-edge');
   if (!text || text.trim().length < 10) {
     throw new Error('Edge TTS: texto vacío o demasiado corto');
   }
@@ -570,6 +812,15 @@ async function synthesizeWithEdgeTTS(script, text, outputPath) {
     claim:       sanitizeText(script.claim       || ''),
     explanation: sanitizeText(script.explanation || ''),
     cta:         sanitizeText(script.cta         || ''),
+    open_loop:   sanitizeText(script.open_loop   || ''),
+    micro_value: sanitizeText(script.micro_value || ''),
+    escalation:  sanitizeText(script.escalation  || ''),
+    reengage:    sanitizeText(script.reengage    || ''),
+    peak:        sanitizeText(script.peak        || ''),
+    open_ending: sanitizeText(script.open_ending || ''),
+    soft_cta:    sanitizeText(script.soft_cta    || ''),
+    structureVersion: script.structureVersion,
+    hasReengage: script.hasReengage,
   };
 
   // Construir contenido SSML con entonación de pregunta y pausas entre secciones
@@ -665,6 +916,7 @@ async function synthesizeWithEdgeTTS(script, text, outputPath) {
   }
 
   logger.info(`Edge TTS: saved ${(fileSize / 1024).toFixed(0)} KB, ~${estimatedDuration}s`);
+  logger.info(`Edge TTS timing | total=${formatDurationMs(perf.snapshot().totalMs)}`);
 
   return { audioPath: outputPath, estimatedDuration, wordCount, wordBoundaries };
 }
@@ -687,4 +939,4 @@ if (require.main === module) {
     .catch((e) => console.error('❌ Error:', e.message));
 }
 
-module.exports = { synthesizeVoice, getSpanishVoices, SPANISH_VOICES, getSegmentDuration, detectSpeechSegments };
+module.exports = { synthesizeVoice, getSpanishVoices, SPANISH_VOICES, getSegmentDuration, detectSpeechSegments, prepareNarrationForTTS };

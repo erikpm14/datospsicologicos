@@ -19,10 +19,23 @@ const fs   = require('fs');
 const path = require('path');
 
 const { makeDecision, detectWinningPatterns, registerWinningStreak, getActiveStreaks } = require('./decision-engine');
-const { generateOptimizedScript, generateViralScript } = require('./content-optimizer');
+const {
+  generateOptimizedScript,
+  generateViralScript,
+  improveWeakSegments,
+  isClearlyInvalidCandidate,
+  buildSelectionPenalties,
+} = require('./content-optimizer');
+const { generateScript }                         = require('./content-generator');
+const { scoreScript, getHookStrength }          = require('../utils/virality-scorer');
+const { scoreFormatMatch, scoreEmotionalImpact } = require('./format-match-engine');
 const { getFullAnalytics }                     = require('./analytics-tracker');
 const { createMultiVariantExperiment, getABStats } = require('./ab-test-engine');
+const { runLearningCycle, getTopicWeight }     = require('./context-learner');
+const { buildEmergencyScript, loadLastValidScript, saveLastValidScript, registerFallbackUsage, buildScriptMetadata } = require('../utils/script-fallback');
+const { createLlmMetrics, mergeLlmMetrics, classifyLlmFailure, attachLlmMetrics }    = require('../utils/llm-call');
 const logger                                   = require('../utils/logger');
+const { createPerfTracker, formatDurationMs }  = require('../utils/perf-tracker');
 
 const TRENDS_PATH = path.resolve('./data/trends.json');
 
@@ -68,6 +81,125 @@ function logRejected(script, reason) {
   writeJSON(REJECTED_LOG_PATH, rejected.slice(0, 100));
 }
 
+function buildGenerationRoute(script, route, llmMetrics, extras = {}) {
+  return {
+    generationSource: extras.generationSource || script.generationSource || route.at(-1) || 'unknown',
+    generationFallback: extras.generationFallback || script.generationFallback || null,
+    llmPath: route,
+    usedRecovery: Boolean(llmMetrics.llm_recovery_used),
+    usedLastValid: Boolean(extras.usedLastValid || script.reusedLastValidScript),
+    usedEmergencyFallback: Boolean(extras.usedEmergencyFallback || script.emergencyFallback),
+    approvalBypassReason: extras.approvalBypassReason || script.approvalBypass || null,
+    final_generation_route: route.join(' -> '),
+    total_llm_calls: llmMetrics.llm_total_calls || 0,
+    fallback_level_reached: extras.fallbackLevel || 0,
+  };
+}
+
+function hydrateFallbackScript(script, decision, reason, options = {}) {
+  const {
+    generator = 'content-generator',
+    forceApprove = false,
+    llmMetrics = {},
+    approvalBypassReason = null,
+  } = options;
+  const viralityResult = script.viralityScore && script.viralityBreakdown
+    ? { score: script.viralityScore, breakdown: script.viralityBreakdown }
+    : scoreScript(script);
+  script.viralityScore = viralityResult.score;
+  script.viralityBreakdown = viralityResult.breakdown;
+
+  const formatResult = scoreFormatMatch(script);
+  script.formatMatchScore = formatResult.score;
+  script.formatMatchBreakdown = formatResult.breakdown;
+  script.formatMatchSegmentGaps = script.segmentFeedbackSummary || [];
+  script.formatMatchGaps = [...formatResult.gaps, ...(script.segmentFeedbackSummary || [])];
+
+  const emotionalResult = scoreEmotionalImpact(script);
+  script.emotionalImpactScore = emotionalResult.score;
+  script.emotionalImpactBreakdown = emotionalResult.breakdown;
+
+  const minFormat = parseInt(process.env.MIN_FORMAT_MATCH_SCORE_TO_QUEUE || '70');
+  const minVirality = parseInt(process.env.MIN_VIRALITY_SCORE_TO_QUEUE || '60');
+  const minHookStrength = parseInt(process.env.MIN_HOOK_STRENGTH || '8');
+  const hookStr = viralityResult.breakdown?.hookStrength ?? getHookStrength(script.hook);
+  const formatOk = formatResult.score >= minFormat;
+  const viralityOk = viralityResult.score >= minVirality;
+  const hookOk = hookStr >= minHookStrength;
+
+  script.approved = forceApprove ? true : (formatOk && viralityOk);
+  script.rejectionReason = !script.approved
+    ? [
+        !formatOk ? `format_match ${formatResult.score}/${minFormat}` : null,
+        !viralityOk ? `virality ${viralityResult.score}/${minVirality}` : null,
+        !hookOk ? `hook_weak ${hookStr}/${minHookStrength} (penalty)` : null,
+      ].filter(Boolean).join(' | ')
+    : null;
+  script.growthContext = { ...decision, ...(script.growthContext || {}), fallbackGenerator: generator, fallbackReason: reason };
+  script.generationFallback = generator;
+  script.llmMetrics = { ...(script.llmMetrics || {}), ...llmMetrics };
+  if (forceApprove) {
+    script.approvalBypass = approvalBypassReason || `${generator}_fallback`;
+    script.rejectionReason = null;
+  }
+
+  return script;
+}
+
+function calcCandidateScore(script = {}) {
+  const virality = script.viralityScore || 0;
+  const format = script.formatMatchScore || 0;
+  const emotion = script.emotionalImpactScore || 0;
+  return Math.round(virality * 0.5 + format * 0.35 + emotion * 0.15);
+}
+
+function classifySelectedQuality(script = {}, score = calcCandidateScore(script)) {
+  if (script.emergencyFallback || script.reusedLastValidScript || script.generationFallback === 'emergency' || script.generationFallback === 'last-valid-script') {
+    return 'fallback';
+  }
+  const optimalThreshold = parseInt(process.env.GENERATION_OPTIMAL_SCORE || '74', 10) || 74;
+  return score >= optimalThreshold && !script.approvalBypass ? 'optimal' : 'acceptable';
+}
+
+function buildGuaranteedFallbackScript(decision, reason, llmMetrics) {
+  const lastValidScript = loadLastValidScript({
+    topic: decision.nextTopic,
+    angle: decision.angle,
+    hookType: decision.hookType,
+    emotionalTrigger: decision.emotionalTrigger,
+  });
+  if (lastValidScript) {
+    logger.warn(`Growth Engine: reusing last valid script after hard failure | reason=${reason}`);
+    const script = hydrateFallbackScript({
+      ...lastValidScript,
+      title: `${lastValidScript.title || 'last_valid'}_${Date.now()}`,
+      reusedLastValidScript: true,
+    }, decision, reason, {
+      generator: 'last-valid-script',
+      forceApprove: true,
+      llmMetrics,
+    });
+    registerFallbackUsage('last-valid-script', script.lastValidMetadata?.id || script.title);
+    return script;
+  }
+
+  logger.warn(`Growth Engine: using emergency script fallback | topic=${decision.nextTopic} | reason=${reason}`);
+  const script = hydrateFallbackScript(buildEmergencyScript({
+    topic: decision.nextTopic,
+    reason,
+    decision,
+  }), decision, reason, {
+    generator: 'emergency',
+    forceApprove: true,
+    llmMetrics: {
+      ...llmMetrics,
+      emergency_fallback_used: true,
+    },
+  });
+  registerFallbackUsage('emergency', `${script.topic}:${script.emergencyVariantId || script.title}`);
+  return script;
+}
+
 // ─────────────────────────────────────────────
 //  CICLO PRINCIPAL
 // ─────────────────────────────────────────────
@@ -79,7 +211,10 @@ function logRejected(script, reason) {
  * @returns {{ success, jobId?, script?, decision, attempts, reason? }}
  */
 async function runGrowthCycle(options = {}) {
-  const { forceGenerate = false, maxRetries = 3 } = options;
+  const { forceGenerate = false, maxRetries = parseInt(process.env.GROWTH_MAX_RETRIES || '3', 10) || 3 } = options;
+  const maxAttempts = Math.max(1, maxRetries);
+  const perf = createPerfTracker('growth-cycle', { forceGenerate, maxAttempts });
+  const llmMetrics = createLlmMetrics();
 
   logger.info('Growth Engine: starting cycle...');
 
@@ -119,72 +254,219 @@ async function runGrowthCycle(options = {}) {
   let script       = null;
   let attempts     = 0;
   let previousGaps = [];
+  let bestCandidate = null;
 
-  while (attempts <= maxRetries) {
+  while (attempts < maxAttempts) {
     attempts++;
+    const genOptions = { retryCount: attempts - 1, previousGaps, trendContext };
+    const isLastAttempt = attempts >= maxAttempts;
+    const route = [];
+    perf.start(`generation_attempt_${attempts}`);
 
     try {
       // Intentar primero el generador viral (con contexto histórico real del canal)
       // Último intento: siempre usa base generator como safety net
-      const genOptions = { retryCount: attempts - 1, previousGaps, trendContext };
-      const isLastAttempt = attempts >= maxRetries;
       try {
+        route.push('generateViralScript');
         script = await generateViralScript(decision, genOptions);
+        mergeLlmMetrics(llmMetrics, script.llmMetrics || {});
         // Si el viral generator devuelve rechazado en el último intento, probar base generator
         if (!script.approved && isLastAttempt) {
           logger.info('Growth Engine: viral rejected on last attempt — trying base generator');
+          route.push('generateOptimizedScript');
           script = await generateOptimizedScript(decision, genOptions);
+          mergeLlmMetrics(llmMetrics, script.llmMetrics || {});
         }
       } catch (viralErr) {
-        logger.warn(`Growth Engine: viral generator failed (${viralErr.message}), falling back to base generator`);
-        script = await generateOptimizedScript(decision, genOptions);
+        mergeLlmMetrics(llmMetrics, viralErr.llmMetrics || {});
+        llmMetrics.llm_hard_fail = Boolean(llmMetrics.llm_hard_fail || viralErr?.llm_hard_fail || viralErr?.isLlmTimeout);
+        logger.warn(`Growth Engine: viral generator failed | reason=${classifyLlmFailure(viralErr)} | detail=${viralErr.message}`);
+        try {
+          route.push('generateOptimizedScript');
+          script = await generateOptimizedScript(decision, genOptions);
+          mergeLlmMetrics(llmMetrics, script.llmMetrics || {});
+        } catch (baseErr) {
+          mergeLlmMetrics(llmMetrics, baseErr.llmMetrics || {});
+          llmMetrics.llm_hard_fail = true;
+          logger.error(`Growth Engine: optimized generator failed | reason=${classifyLlmFailure(baseErr)} | detail=${baseErr.message}`);
+          if (!isLastAttempt) throw baseErr;
+
+          logger.warn(`Growth Engine: switching to generator fallback after parse/generation failure | topic=${decision.nextTopic}`);
+          try {
+            route.push('generateScript');
+            const fallbackScript = await generateScript({ topic: decision.nextTopic });
+            mergeLlmMetrics(llmMetrics, fallbackScript.llmMetrics || {});
+            script = hydrateFallbackScript(fallbackScript, decision, baseErr.message, {
+              generator: 'content-generator',
+              forceApprove: true,
+              llmMetrics,
+            });
+            logger.info(
+              `Growth Engine: fallback generator completed | topic=${script.topic} virality=${script.viralityScore} format=${script.formatMatchScore} approved=${script.approved}`,
+            );
+          } catch (fallbackErr) {
+            mergeLlmMetrics(llmMetrics, fallbackErr.llmMetrics || {});
+            llmMetrics.llm_hard_fail = true;
+            script = buildGuaranteedFallbackScript(decision, fallbackErr.message, llmMetrics);
+            route.push(script.generationFallback);
+            logger.warn(`Growth Engine: guaranteed fallback completed | generator=${script.generationFallback} topic=${script.topic}`);
+          }
+        }
       }
     } catch (err) {
       logger.error(`Growth Engine: generation failed (attempt ${attempts}): ${err.message}`);
-      if (attempts > maxRetries) {
-        return { success: false, reason: `generation_error: ${err.message}`, decision };
+      mergeLlmMetrics(llmMetrics, err.llmMetrics || {});
+      llmMetrics.llm_hard_fail = Boolean(llmMetrics.llm_hard_fail || err?.llm_hard_fail || err?.isLlmTimeout);
+      const failedPhase = perf.fail(err, { attempt: attempts, ...llmMetrics });
+      logger.warn(`Growth Engine: attempt ${attempts} failed in ${formatDurationMs(failedPhase.durationMs)}`);
+      if (attempts >= maxAttempts) {
+        return { success: false, reason: `generation_error: ${err.message}`, decision, attempts, totalMs: perf.snapshot().totalMs };
       }
       await new Promise((r) => setTimeout(r, 2000 * attempts));
       continue;
     }
 
-    if (script.approved) {
-      logger.info(`Growth Engine: approved (attempt ${attempts}) virality=${script.viralityScore} format=${script.formatMatchScore} emotion=${script.emotionalImpactScore}`);
-      break;
+    // Aplicar multiplicador de topic aprendido (topics con alta tasa de aprobación
+    // obtienen un boost efectivo en su score; los que fallan mucho se penalizan)
+    if (!script.approved && script.viralityScore) {
+      const topicMult = getTopicWeight(script.topic);
+      if (topicMult !== 1.0) {
+        const minVirality = parseInt(process.env.MIN_VIRALITY_SCORE_TO_QUEUE || '60');
+        const effectiveScore = Math.round(script.viralityScore * topicMult);
+        if (effectiveScore >= minVirality && script.formatMatchScore >= parseInt(process.env.MIN_FORMAT_MATCH_SCORE_TO_QUEUE || '60')) {
+          script.approved = true;
+          script.rejectionReason = null;
+          script.topicWeightApplied = topicMult;
+          logger.info(`Growth Engine: topic weight ×${topicMult} applied | effective=${effectiveScore} (raw=${script.viralityScore}) → APPROVED`);
+        }
+      }
+    }
+
+    const routeMeta = buildGenerationRoute(script, route, llmMetrics, {
+      generationSource: script.generationSource || route.at(-1),
+      generationFallback: script.generationFallback || null,
+      usedLastValid: script.generationFallback === 'last-valid-script',
+      usedEmergencyFallback: script.generationFallback === 'emergency',
+      approvalBypassReason: script.approvalBypass || null,
+      fallbackLevel: Math.max(0, route.length - 1),
+    });
+    Object.assign(script, routeMeta);
+    attachLlmMetrics(script, llmMetrics);
+
+    const candidateScore = calcCandidateScore(script);
+    const candidatePenalties = buildSelectionPenalties(script);
+    const clearlyInvalid = isClearlyInvalidCandidate(script);
+    const selectedQuality = classifySelectedQuality(script, candidateScore);
+    if (!clearlyInvalid && (!bestCandidate || candidateScore > bestCandidate.score)) {
+      bestCandidate = {
+        script: JSON.parse(JSON.stringify(script)),
+        score: candidateScore,
+        attempts,
+        penalties: candidatePenalties,
+        reason: script.rejectionReason || (script.approved ? 'valid_candidate' : 'acceptable_candidate'),
+        selectedQuality,
+      };
     }
 
     // Guardar gaps para el siguiente reintento (feedback loop)
-    previousGaps = script.formatMatchGaps || [];
+    previousGaps = script.formatMatchGaps || script.segmentFeedbackSummary || [];
+    const attemptPhase = perf.end({
+      attempt: attempts,
+      approved: script.approved,
+      rejectionReason: script.rejectionReason,
+      viralityScore: script.viralityScore,
+      formatMatchScore: script.formatMatchScore,
+      candidateScore,
+      selectedQuality,
+      ...llmMetrics,
+    });
 
-    logger.warn(`Growth Engine: rejected (attempt ${attempts}) | ${script.rejectionReason}`);
-    logRejected(script, script.rejectionReason);
-
-    if (attempts > maxRetries) {
-      logger.warn('Growth Engine: max retries reached — skipping this cycle');
-      return { success: false, reason: `rejected_after_${attempts}_attempts: ${script.rejectionReason}`, script, decision };
+    logger.info(
+      `Growth Engine: candidate ${attempts}/${maxAttempts} | selectedQuality=${selectedQuality} | ` +
+      `score=${candidateScore} | penalties=${candidatePenalties.join(' || ') || 'none'} | ` +
+      `reason=${script.rejectionReason || 'valid_candidate'}`
+    );
+    logger.info(`Growth Engine: attempt ${attempts} completed in ${formatDurationMs(attemptPhase.durationMs)}`);
+    if (clearlyInvalid) {
+      logRejected(script, script.rejectionReason || 'clearly_invalid_candidate');
     }
 
+    if (!clearlyInvalid && script.approved && selectedQuality === 'optimal') {
+      logger.info(`Growth Engine: selected optimal candidate on attempt ${attempts}`);
+      break;
+    }
+      logger.warn('Growth Engine: max retries reached — skipping this cycle');
     await new Promise((r) => setTimeout(r, 1500));
   }
 
   // 4. Encolar variante A (script aprobado — hook original o mejorado por context-learner)
   script.abExperimentId = null; // se rellena después
+  if ((!script || isClearlyInvalidCandidate(script) || classifySelectedQuality(script, calcCandidateScore(script)) !== 'optimal') && bestCandidate) {
+    let chosen = bestCandidate.script;
+    if (!isClearlyInvalidCandidate(chosen) && !['emergency', 'last-valid-script'].includes(chosen.generationFallback)) {
+      const improved = await improveWeakSegments(chosen, {
+        issues: chosen.segmentFeedbackSummary || chosen.formatMatchGaps || [],
+        growthContext: decision,
+      });
+      chosen = improved.script;
+    }
+    const chosenScore = calcCandidateScore(chosen);
+    chosen.selectionPenalties = buildSelectionPenalties(chosen);
+    chosen.selectedQuality = classifySelectedQuality(chosen, chosenScore);
+    script = chosen.approved
+      ? chosen
+      : hydrateFallbackScript(chosen, decision, bestCandidate.reason, {
+          generator: 'best-available',
+          forceApprove: true,
+          llmMetrics,
+          approvalBypassReason: `best_available_after_${attempts}_attempts`,
+        });
+    script.bestAvailableScore = chosenScore;
+    script.selectionReasons = bestCandidate.penalties || [];
+    script.selectedQuality = script.selectedQuality || classifySelectedQuality(script, chosenScore);
+    logger.warn(
+      `Growth Engine: selected best candidate | selectedQuality=${script.selectedQuality} | ` +
+      `score=${chosenScore} | penalties=${(script.selectionPenalties || []).join(' || ') || 'none'} | reason=${bestCandidate.reason}`
+    );
+  }
+
+  if (!script || isClearlyInvalidCandidate(script)) {
+    script = buildGuaranteedFallbackScript(decision, 'no_valid_candidate_after_attempts', llmMetrics);
+    script.selectedQuality = 'fallback';
+  }
+
   script.abVariantId    = 'v_a';
   const finalJobId = await addVideoToQueue({
     topic:         script.topic,
     prefabScript:  script,
     growthContext: decision,
   });
+  if (!script.emergencyFallback && !script.reusedLastValidScript) {
+    saveLastValidScript(script, {
+      ...buildScriptMetadata(script, {
+        topic: script.topic,
+        angle: decision.angle,
+        hookType: decision.hookType,
+        emotionalTrigger: decision.emotionalTrigger,
+        generationSource: script.generationSource || script.generationFallback || 'growth-cycle',
+        createdAt: new Date().toISOString(),
+      }),
+    });
+  }
 
   // 5. A/B REAL: generar variante B con hook alternativo y encolarla
   //    createMultiVariantExperiment encola v_b internamente con publishAfter +2h
   let experimentId = null;
-  try {
-    const experiment = await createMultiVariantExperiment(script, finalJobId, decision);
-    experimentId = experiment.experimentId;
-    logger.info(`Growth Engine: A/B experiment=${experimentId} | variants=${experiment.variants.length} | topic=${script.topic}`);
-  } catch (abErr) {
-    logger.warn(`Growth Engine: A/B multi-variant failed (${abErr.message}), single publish`);
+  if (['emergency', 'last-valid-script'].includes(script.generationFallback)) {
+    logger.warn(`Growth Engine: skipping A/B for fallback script | generator=${script.generationFallback}`);
+  } else {
+    try {
+      const experiment = await createMultiVariantExperiment(script, finalJobId, decision);
+      experimentId = experiment.experimentId;
+      logger.info(`Growth Engine: A/B experiment=${experimentId} | variants=${experiment.variants.length} | topic=${script.topic}`);
+    } catch (abErr) {
+      logger.warn(`Growth Engine: A/B multi-variant failed (${abErr.message}), single publish`);
+    }
   }
 
   // 6. Growth log
@@ -207,6 +489,20 @@ async function runGrowthCycle(options = {}) {
     abExperimentId:     experimentId || null,
     abHookType:         script.abVariantId || 'v_a',
     trendingTopics:     trendContext?.trendingTopics || [],
+    generationFallback: script.generationFallback || null,
+    generationSource:   script.generationSource || null,
+    final_generation_route: script.final_generation_route || null,
+    approvalBypassReason: script.approvalBypassReason || script.approvalBypass || null,
+    bestAvailableScore:   script.bestAvailableScore || null,
+    selectedQuality:      script.selectedQuality || classifySelectedQuality(script, calcCandidateScore(script)),
+    selectionPenalties:   script.selectionPenalties || [],
+    selectionReasons:     script.selectionReasons || [],
+    usedRecovery:       script.usedRecovery || false,
+    usedLastValid:      script.usedLastValid || false,
+    usedEmergencyFallback: script.usedEmergencyFallback || false,
+    total_llm_calls:    script.total_llm_calls || llmMetrics.llm_total_calls || 0,
+    fallback_level_reached: script.fallback_level_reached || 0,
+    llmMetrics,
   };
   growthLog.unshift(logEntry);
   writeJSON(GROWTH_LOG_PATH, growthLog.slice(0, 200));
@@ -224,9 +520,20 @@ async function runGrowthCycle(options = {}) {
     });
   }
 
-  logger.info(`Growth Engine: cycle done | jobId=${finalJobId} topic=${script.topic} virality=${script.viralityScore} format=${script.formatMatchScore} ab=${script.abSelectedType || 'off'}`);
+  logger.info(`Growth Engine: cycle done | jobId=${finalJobId} topic=${script.topic} virality=${script.viralityScore} format=${script.formatMatchScore} quality=${script.selectedQuality || classifySelectedQuality(script, calcCandidateScore(script))} ab=${script.abSelectedType || 'off'}`);
+  logger.info(
+    `Growth Engine summary | route=${script.final_generation_route} | llmCalls=${script.total_llm_calls || llmMetrics.llm_total_calls || 0} | ` +
+    `fallbackLevel=${script.fallback_level_reached || 0} | bypass=${script.approvalBypassReason || 'none'} | ` +
+    `selectedQuality=${script.selectedQuality || classifySelectedQuality(script, calcCandidateScore(script))} | ` +
+    `scoreFinal=${calcCandidateScore(script)}${script.bestAvailableScore ? ` | fallbackBest=${script.bestAvailableScore}` : ''} | ` +
+    `penalties=${(script.selectionPenalties || []).join(' || ') || 'none'}`
+  );
+  logger.info(`Growth Engine: total cycle time ${formatDurationMs(perf.snapshot().totalMs)}`);
 
-  return { success: true, jobId: finalJobId, script, decision, attempts };
+  // Disparar ciclo de aprendizaje cada LEARNING_CYCLE_INTERVAL generaciones (async, no bloquea)
+  runLearningCycle().catch(err => logger.warn(`Learning cycle error: ${err.message}`));
+
+  return { success: true, jobId: finalJobId, script, decision, attempts, totalMs: perf.snapshot().totalMs };
 }
 
 // ─────────────────────────────────────────────

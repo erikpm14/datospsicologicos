@@ -36,19 +36,22 @@ const MIN_VIRALITY         = parseInt(process.env.MIN_VIRALITY_SCORE_TO_PUBLISH 
 const MIN_FORMAT           = parseInt(process.env.MIN_FORMAT_MATCH_SCORE_TO_QUEUE || '70');
 const MIN_QUALITY_SCORE    = parseInt(process.env.MIN_PRODUCTION_QUALITY_SCORE   || '55');
 const QC_ENABLED           = process.env.PRODUCTION_QC_ENABLED !== 'false'; // activo por defecto
+const MIN_VIDEO_DURATION   = parseFloat(process.env.QC_VIDEO_MIN_DURATION || process.env.QC_MIN_DURATION || '8');
 
 // ── Pesos de cada check en el score total ─────────────────────────────────
 const WEIGHTS = {
   audioExists:    15,  // audio hay y tiene tamaño
   audioDuration:  15,  // duración en rango
   videoExists:    15,  // mp4 generado y con tamaño
+  renderMode:      5,  // clips visibles vs fallback vacío
   scriptComplete: 10,  // hook + claim + explanation + cta
   viralityScore:  20,  // score de viralidad
   formatScore:    15,  // score de format match
   hasTheme:        5,  // tema visual asignado
   contentVersion:  5,  // stamped con v2
+  publishableFile: 10,
 };
-// Suma = 100
+// Suma = 110
 
 // ─────────────────────────────────────────────
 //  CHECKS INDIVIDUALES
@@ -81,6 +84,38 @@ function checkVideoFile(outputDir) {
     sizeKB: Math.round(sizeKB),
     reason: sizeKB < MIN_VIDEO_SIZE_KB ? `video too small (${Math.round(sizeKB)} KB < ${MIN_VIDEO_SIZE_KB} KB)` : null,
   };
+}
+
+function checkRenderMetadata(outputDir) {
+  const p = path.join(outputDir, 'render-metadata.json');
+  if (!fs.existsSync(p)) return { ok: true, mode: 'unknown', reason: null };
+  try {
+    const meta = JSON.parse(fs.readFileSync(p, 'utf8'));
+    const mode = meta?.renderMode || 'unknown';
+    if (mode === 'gradient' || mode === 'gradient_fallback') {
+      return { ok: false, mode, reason: `render mode ${mode}` };
+    }
+    return { ok: true, mode, reason: null };
+  } catch {
+    return { ok: true, mode: 'unknown', reason: null };
+  }
+}
+
+function checkRenderableVisuals(outputDir) {
+  const p = path.join(outputDir, 'render-metadata.json');
+  if (!fs.existsSync(p)) return { ok: false, reason: 'render metadata missing' };
+  try {
+    const meta = JSON.parse(fs.readFileSync(p, 'utf8'));
+    if (meta.visibleVisuals !== true) {
+      return { ok: false, reason: 'render without visible visuals' };
+    }
+    if (['gradient', 'gradient_fallback'].includes(meta.renderMode)) {
+      return { ok: false, reason: `render degraded (${meta.renderMode})` };
+    }
+    return { ok: true, reason: null, renderMode: meta.renderMode };
+  } catch {
+    return { ok: false, reason: 'render metadata invalid' };
+  }
 }
 
 function checkScript(script) {
@@ -147,6 +182,18 @@ function getAudioDuration(audioPath) {
   });
 }
 
+function getMediaMetadata(mediaPath) {
+  return new Promise((resolve) => {
+    ffmpeg.ffprobe(mediaPath, (err, metadata) => {
+      if (err) {
+        resolve(null);
+        return;
+      }
+      resolve(metadata || null);
+    });
+  });
+}
+
 // ─────────────────────────────────────────────
 //  CHECK PRINCIPAL
 // ─────────────────────────────────────────────
@@ -194,6 +241,8 @@ async function checkProductionQuality(outputDir, script = null) {
 
   // 3. Vídeo
   checks.videoExists = checkVideoFile(outputDir);
+  checks.renderMode = checkRenderMetadata(outputDir);
+  checks.renderVisuals = checkRenderableVisuals(outputDir);
 
   // 4. Script
   checks.scriptComplete  = checkScript(script);
@@ -202,18 +251,38 @@ async function checkProductionQuality(outputDir, script = null) {
   checks.hasTheme        = checkTheme(script);
   checks.contentVersion  = checkContentVersion(script);
 
+  const videoMeta = await getMediaMetadata(path.join(outputDir, 'output.mp4'));
+  const videoDuration = parseFloat(videoMeta?.format?.duration || 0);
+  const hasVideoStream = (videoMeta?.streams || []).some((stream) => stream.codec_type === 'video');
+  checks.publishableFile = {
+    ok: checks.videoExists.ok && hasVideoStream && videoDuration >= MIN_VIDEO_DURATION,
+    duration: videoDuration ? Math.round(videoDuration * 10) / 10 : 0,
+    hasVideoStream,
+    reason: !checks.videoExists.ok
+      ? checks.videoExists.reason
+      : !hasVideoStream
+        ? 'output.mp4 has no video stream'
+        : videoDuration < MIN_VIDEO_DURATION
+          ? `video duration ${videoDuration.toFixed(1)}s < ${MIN_VIDEO_DURATION}s`
+          : null,
+  };
+
   // ── Score final ────────────────────────────────────────────────────────────
   let score = 0;
   if (checks.audioExists.ok)   score += WEIGHTS.audioExists;
   if (checks.audioDuration.ok) score += WEIGHTS.audioDuration;
   if (checks.videoExists.ok)   score += WEIGHTS.videoExists;
+  if (checks.renderMode.ok)    score += WEIGHTS.renderMode;
   if (checks.scriptComplete.ok)score += WEIGHTS.scriptComplete;
   if (checks.viralityScore.ok) score += WEIGHTS.viralityScore;
   if (checks.formatScore.ok)   score += WEIGHTS.formatScore;
   if (checks.hasTheme.ok)      score += WEIGHTS.hasTheme;
   if (checks.contentVersion.ok)score += WEIGHTS.contentVersion;
+  if (checks.publishableFile.ok && checks.renderVisuals.ok) score += WEIGHTS.publishableFile;
 
-  const passed  = score >= MIN_QUALITY_SCORE;
+  const hardFailChecks = ['videoExists', 'renderVisuals', 'scriptComplete', 'publishableFile'];
+  const hardFailed = hardFailChecks.some((key) => !checks[key]?.ok);
+  const passed  = !hardFailed && score >= MIN_QUALITY_SCORE;
   const reasons = Object.values(checks).map(c => c.reason).filter(Boolean);
 
   logger.info(

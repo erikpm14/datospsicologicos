@@ -1,0 +1,415 @@
+{
+  "id": "runtime-render-manual-1777024210521",
+  "title": "por que una respuesta tarda y te cambia el cuerpo",
+  "topic": "social_patterns",
+  "effectName": "AMBIGUEDAD SOCIAL Y AMENAZA PREDICTIVA",
+  "psychologicalFact": "Tu cerebro interpreta la ambig?edad social como amenaza y empieza a rellenar huecos con escenarios negativos.",
+  "hook": "Si alguien tarda en responderte y tu cuerpo cambia, no es casualidad.",
+  "open_loop": "Hay un mecanismo muy concreto que convierte un silencio normal en una alarma f?sica antes de que te des cuenta.",
+  "micro_value": "Tu cerebro odia la incertidumbre. Cuando falta informaci?n, intenta predecir lo peor para devolverte sensaci?n de control, aunque te haga da?o.",
+  "escalation": "Por eso no solo piensas m?s. Tambi?n notas el pecho m?s tenso, revisas el m?vil otra vez y sientes que algo est? mal aunque no haya ninguna prueba.",
+  "reengage": "Y aqu? est? lo fuerte: no reaccionas a lo que pas?, reaccionas a la historia que tu mente fabric? en medio del vac?o.",
+  "peak": "Ese vac?o activa amenaza predictiva. Tu sistema nervioso se prepara para rechazo, y por eso un simple retraso puede sentirse como una p?rdida real.",
+  "open_ending": "Cuando entiendes esto, dejas de confundir silencio con verdad y empiezas a ver cu?nto de tu ansiedad ven?a de una predicci?n autom?tica.",
+  "soft_cta": "Si quieres, puedo darte la se?al exacta para cortar esa espiral antes de mirar el m?vil otra vez.",
+  "claim": "Tu cerebro convierte un silencio ambiguo en una amenaza y te hace sentir rechazo antes de tener evidencia.",
+  "explanation": "La incertidumbre social activa predicci?n defensiva, tensi?n corporal y una narrativa negativa que parece real aunque todav?a no haya ocurrido nada.",
+  "cta": "Observa tu cuerpo antes de interpretar el silencio y ver?s cu?ntas veces reaccionas a una predicci?n, no a un hecho.",
+  "keywords": [
+    "silencio social",
+    "rechazo",
+    "ansiedad",
+    "prediccion",
+    "sistema nervioso"
+  ],
+  "hashtags": [
+    "#psicologia",
+    "#ansiedad",
+    "#relaciones",
+    "#cerebro"
+  ],
+  "viralTrigger": "rechazo ambiguo",
+  "emotionalTrigger": "fear",
+  "viralityScore": 90,
+  "formatMatchScore": 84,
+  "emotionalImpactScore": 78,
+  "themeId": "dark_neural",
+  "contentVersion": "v2",
+  "structureVersion": "open_loop_escalation_v1",
+  "hasReengage": true,
+  "narrationPlan": {
+    "mode": "natural_short_v1",
+    "segments": {
+      "hook": {
+        "key": "hook",
+        "text": "Si alguien tarda en responderte y tu cuerpo cambia, no es casualidad.",
+        "deliveryStyle": "directo",
+        "narrationEnergy": "alta",
+        "pauseStrength": "fuerte",
+        "emphasisWords": [
+          "cambia",
+          "casualidad"
+        ],
+        "pacing": "corto",
+        "pauseBefore": 0,
+        "pauseAfter": 0.46,
+        "joiner": "...",
+        "ssmlRate": "-10%",
+        "ssmlPitch": "+6%",
+        "ssmlVolume": "+2%"
+      },
+      "open_loop": {
+        "key": "open_loop",
+        "text": "Hay un mecanismo muy concreto que convierte un silencio normal en una alarma f?sica antes de que te des cuenta.",
+        "deliveryStyle": "susurrado-tenso",
+        "narrationEnergy": "media-alta",
+        "pauseStrength": "media",
+        "emphasisWords": [
+          "antes",
+          "cuenta"
+        ],
+        "pacing": "tenso",
+        "pauseBefore": 0.06,
+        "pauseAfter": 0.12,
+        "joiner": ".",
+        "ssmlRate": "-6%",
+        "ssmlPitch": "+3%",
+        "ssmlVolume": "+1%"
+      },
+      "micro_value": {
+        "key": "micro_value",
+        "text": "Tu cerebro odia la incertidumbre. Cuando falta informaci?n, intenta predecir lo peor para devolverte sensaci?n de control,, aunque te haga da?o.",
+        "deliveryStyle": "claro",
+        "narrationEnergy": "media",
+        "pauseStrength": "corta",
+        "emphasisWords": [
+          "control",
+          "haga"
+        ],
+        "pacing": "estable",
+        "pauseBefore": 0.04,
+        "pauseAfter": 0.08,
+        "joiner": ".",
+        "ssmlRate": "-2%",
+        "ssmlPitch": "0%",
+        "ssmlVolume": "0%"
+      },
+      "escalation": {
+        "key": "escalation",
+        "text": "Por eso no solo piensas m?s. Tambi?n notas el pecho m?s tenso, revisas el m?vil otra vez y sientes que algo est? mal, aunque no haya ninguna prueba.",
+        "deliveryStyle": "creciente",
+        "narrationEnergy": "media-alta",
+        "pauseStrength": "corta",
+        "emphasisWords": [
+          "ninguna",
+          "prueba"
+        ],
+        "pacing": "agil",
+        "pauseBefore": 0.04,
+        "pauseAfter": 0.18,
+        "joiner": ".",
+        "ssmlRate": "+3%",
+        "ssmlPitch": "+1%",
+        "ssmlVolume": "+1%"
+      },
+      "reengage": {
+        "key": "reengage",
+        "text": "Y aqu? est? lo fuerte: no reaccionas a lo que pas?, reaccionas a la historia que tu mente fabric? en medio del vac?o.",
+        "deliveryStyle": "remate",
+        "narrationEnergy": "alta",
+        "pauseStrength": "fuerte",
+        "emphasisWords": [
+          "fabric",
+          "medio"
+        ],
+        "pacing": "marcado",
+        "pauseBefore": 0.26,
+        "pauseAfter": 0.12,
+        "joiner": "...",
+        "ssmlRate": "-4%",
+        "ssmlPitch": "+6%",
+        "ssmlVolume": "+3%"
+      },
+      "peak": {
+        "key": "peak",
+        "text": "Ese vac?o activa amenaza predictiva. Tu sistema nervioso se prepara para rechazo, y por eso un simple retraso puede sentirse como una p?rdida real.",
+        "deliveryStyle": "impacto",
+        "narrationEnergy": "muy alta",
+        "pauseStrength": "media",
+        "emphasisWords": [
+          "rdida",
+          "real"
+        ],
+        "pacing": "enfatico",
+        "pauseBefore": 0.18,
+        "pauseAfter": 0.16,
+        "joiner": ".",
+        "ssmlRate": "-3%",
+        "ssmlPitch": "+4%",
+        "ssmlVolume": "+4%"
+      },
+      "open_ending": {
+        "key": "open_ending",
+        "text": "Cuando entiendes esto, dejas de confundir silencio con verdad y empiezas a ver cu?nto de tu ansiedad ven?a de una predicci?n autom?tica.",
+        "deliveryStyle": "eco",
+        "narrationEnergy": "media",
+        "pauseStrength": "corta",
+        "emphasisWords": [
+          "autom",
+          "tica"
+        ],
+        "pacing": "controlado",
+        "pauseBefore": 0.08,
+        "pauseAfter": 0.06,
+        "joiner": ".",
+        "ssmlRate": "-5%",
+        "ssmlPitch": "-1%",
+        "ssmlVolume": "0%"
+      },
+      "soft_cta": {
+        "key": "soft_cta",
+        "text": "Si quieres, puedo darte la se?al exacta para cortar esa espiral antes de mirar el m?vil otra vez.",
+        "deliveryStyle": "conversacional",
+        "narrationEnergy": "media",
+        "pauseStrength": "ninguna",
+        "emphasisWords": [
+          "mirar",
+          "otra"
+        ],
+        "pacing": "natural",
+        "pauseBefore": 0.05,
+        "pauseAfter": 0,
+        "joiner": "",
+        "ssmlRate": "-7%",
+        "ssmlPitch": "+2%",
+        "ssmlVolume": "0%"
+      }
+    },
+    "blocks": [
+      {
+        "key": "block_1",
+        "pauseAfter": 0.46,
+        "blockPacing": "controlado con gancho",
+        "parts": [
+          {
+            "key": "hook",
+            "text": "Si alguien tarda en responderte y tu cuerpo cambia, no es casualidad.",
+            "joiner": "...",
+            "pauseBefore": 0,
+            "profile": {
+              "key": "hook",
+              "text": "Si alguien tarda en responderte y tu cuerpo cambia, no es casualidad.",
+              "deliveryStyle": "directo",
+              "narrationEnergy": "alta",
+              "pauseStrength": "fuerte",
+              "emphasisWords": [
+                "cambia",
+                "casualidad"
+              ],
+              "pacing": "corto",
+              "pauseBefore": 0,
+              "pauseAfter": 0.46,
+              "joiner": "...",
+              "ssmlRate": "-10%",
+              "ssmlPitch": "+6%",
+              "ssmlVolume": "+2%"
+            }
+          },
+          {
+            "key": "open_loop",
+            "text": "Hay un mecanismo muy concreto que convierte un silencio normal en una alarma f?sica antes de que te des cuenta.",
+            "joiner": ".",
+            "pauseBefore": 0.06,
+            "profile": {
+              "key": "open_loop",
+              "text": "Hay un mecanismo muy concreto que convierte un silencio normal en una alarma f?sica antes de que te des cuenta.",
+              "deliveryStyle": "susurrado-tenso",
+              "narrationEnergy": "media-alta",
+              "pauseStrength": "media",
+              "emphasisWords": [
+                "antes",
+                "cuenta"
+              ],
+              "pacing": "tenso",
+              "pauseBefore": 0.06,
+              "pauseAfter": 0.12,
+              "joiner": ".",
+              "ssmlRate": "-6%",
+              "ssmlPitch": "+3%",
+              "ssmlVolume": "+1%"
+            }
+          }
+        ],
+        "text": "Si alguien tarda en responderte y tu cuerpo cambia, no es casualidad... Hay un mecanismo muy concreto que convierte un silencio normal en una alarma f?sica antes de que te des cuenta."
+      },
+      {
+        "key": "block_2",
+        "pauseAfter": 0.22,
+        "blockPacing": "creciente",
+        "parts": [
+          {
+            "key": "micro_value",
+            "text": "Tu cerebro odia la incertidumbre. Cuando falta informaci?n, intenta predecir lo peor para devolverte sensaci?n de control,, aunque te haga da?o.",
+            "joiner": ".",
+            "pauseBefore": 0.04,
+            "profile": {
+              "key": "micro_value",
+              "text": "Tu cerebro odia la incertidumbre. Cuando falta informaci?n, intenta predecir lo peor para devolverte sensaci?n de control,, aunque te haga da?o.",
+              "deliveryStyle": "claro",
+              "narrationEnergy": "media",
+              "pauseStrength": "corta",
+              "emphasisWords": [
+                "control",
+                "haga"
+              ],
+              "pacing": "estable",
+              "pauseBefore": 0.04,
+              "pauseAfter": 0.08,
+              "joiner": ".",
+              "ssmlRate": "-2%",
+              "ssmlPitch": "0%",
+              "ssmlVolume": "0%"
+            }
+          },
+          {
+            "key": "escalation",
+            "text": "Por eso no solo piensas m?s. Tambi?n notas el pecho m?s tenso, revisas el m?vil otra vez y sientes que algo est? mal, aunque no haya ninguna prueba.",
+            "joiner": ".",
+            "pauseBefore": 0.04,
+            "profile": {
+              "key": "escalation",
+              "text": "Por eso no solo piensas m?s. Tambi?n notas el pecho m?s tenso, revisas el m?vil otra vez y sientes que algo est? mal, aunque no haya ninguna prueba.",
+              "deliveryStyle": "creciente",
+              "narrationEnergy": "media-alta",
+              "pauseStrength": "corta",
+              "emphasisWords": [
+                "ninguna",
+                "prueba"
+              ],
+              "pacing": "agil",
+              "pauseBefore": 0.04,
+              "pauseAfter": 0.18,
+              "joiner": ".",
+              "ssmlRate": "+3%",
+              "ssmlPitch": "+1%",
+              "ssmlVolume": "+1%"
+            }
+          }
+        ],
+        "text": "Tu cerebro odia la incertidumbre. Cuando falta informaci?n, intenta predecir lo peor para devolverte sensaci?n de control,, aunque te haga da?o. Por eso no solo piensas m?s. Tambi?n notas el pecho m?s tenso, revisas el m?vil otra vez y sientes que algo est? mal, aunque no haya ninguna prueba."
+      },
+      {
+        "key": "block_3",
+        "pauseAfter": 0.18,
+        "blockPacing": "impacto",
+        "parts": [
+          {
+            "key": "reengage",
+            "text": "Y aqu? est? lo fuerte: no reaccionas a lo que pas?, reaccionas a la historia que tu mente fabric? en medio del vac?o.",
+            "joiner": "...",
+            "pauseBefore": 0.26,
+            "profile": {
+              "key": "reengage",
+              "text": "Y aqu? est? lo fuerte: no reaccionas a lo que pas?, reaccionas a la historia que tu mente fabric? en medio del vac?o.",
+              "deliveryStyle": "remate",
+              "narrationEnergy": "alta",
+              "pauseStrength": "fuerte",
+              "emphasisWords": [
+                "fabric",
+                "medio"
+              ],
+              "pacing": "marcado",
+              "pauseBefore": 0.26,
+              "pauseAfter": 0.12,
+              "joiner": "...",
+              "ssmlRate": "-4%",
+              "ssmlPitch": "+6%",
+              "ssmlVolume": "+3%"
+            }
+          },
+          {
+            "key": "peak",
+            "text": "Ese vac?o activa amenaza predictiva. Tu sistema nervioso se prepara para rechazo, y por eso un simple retraso puede sentirse como una p?rdida real.",
+            "joiner": ".",
+            "pauseBefore": 0.18,
+            "profile": {
+              "key": "peak",
+              "text": "Ese vac?o activa amenaza predictiva. Tu sistema nervioso se prepara para rechazo, y por eso un simple retraso puede sentirse como una p?rdida real.",
+              "deliveryStyle": "impacto",
+              "narrationEnergy": "muy alta",
+              "pauseStrength": "media",
+              "emphasisWords": [
+                "rdida",
+                "real"
+              ],
+              "pacing": "enfatico",
+              "pauseBefore": 0.18,
+              "pauseAfter": 0.16,
+              "joiner": ".",
+              "ssmlRate": "-3%",
+              "ssmlPitch": "+4%",
+              "ssmlVolume": "+4%"
+            }
+          }
+        ],
+        "text": "Y aqu? est? lo fuerte: no reaccionas a lo que pas?, reaccionas a la historia que tu mente fabric? en medio del vac?o... Ese vac?o activa amenaza predictiva. Tu sistema nervioso se prepara para rechazo, y por eso un simple retraso puede sentirse como una p?rdida real."
+      },
+      {
+        "key": "block_4",
+        "pauseAfter": 0,
+        "blockPacing": "cierre conversacional",
+        "parts": [
+          {
+            "key": "open_ending",
+            "text": "Cuando entiendes esto, dejas de confundir silencio con verdad y empiezas a ver cu?nto de tu ansiedad ven?a de una predicci?n autom?tica.",
+            "joiner": ".",
+            "pauseBefore": 0.08,
+            "profile": {
+              "key": "open_ending",
+              "text": "Cuando entiendes esto, dejas de confundir silencio con verdad y empiezas a ver cu?nto de tu ansiedad ven?a de una predicci?n autom?tica.",
+              "deliveryStyle": "eco",
+              "narrationEnergy": "media",
+              "pauseStrength": "corta",
+              "emphasisWords": [
+                "autom",
+                "tica"
+              ],
+              "pacing": "controlado",
+              "pauseBefore": 0.08,
+              "pauseAfter": 0.06,
+              "joiner": ".",
+              "ssmlRate": "-5%",
+              "ssmlPitch": "-1%",
+              "ssmlVolume": "0%"
+            }
+          },
+          {
+            "key": "soft_cta",
+            "text": "Si quieres, puedo darte la se?al exacta para cortar esa espiral antes de mirar el m?vil otra vez.",
+            "joiner": "",
+            "pauseBefore": 0.05,
+            "profile": {
+              "key": "soft_cta",
+              "text": "Si quieres, puedo darte la se?al exacta para cortar esa espiral antes de mirar el m?vil otra vez.",
+              "deliveryStyle": "conversacional",
+              "narrationEnergy": "media",
+              "pauseStrength": "ninguna",
+              "emphasisWords": [
+                "mirar",
+                "otra"
+              ],
+              "pacing": "natural",
+              "pauseBefore": 0.05,
+              "pauseAfter": 0,
+              "joiner": "",
+              "ssmlRate": "-7%",
+              "ssmlPitch": "+2%",
+              "ssmlVolume": "0%"
+            }
+          }
+        ],
+        "text": "Cuando entiendes esto, dejas de confundir silencio con verdad y empiezas a ver cu?nto de tu ansiedad ven?a de una predicci?n autom?tica. Si quieres, puedo darte la se?al exacta para cortar esa espiral antes de mirar el m?vil otra vez."
+      }
+    ]
+  }
+}

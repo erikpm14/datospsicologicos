@@ -1,0 +1,62 @@
+[Script Info]
+ScriptType: v4.00+
+PlayResX: 1080
+PlayResY: 1920
+WrapStyle: 2
+
+[V4+ Styles]
+Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+Style: Default,Impact,100,&H00FFFFFF,&H00FFFFFF,&H00000000,&H90000000,-1,0,0,0,100,100,0,0,1,6,4,8,10,10,10,1
+
+[Events]
+Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
+Dialogue: 0,0:00:00.00,0:00:01.24,Default,,0,0,0,,{\c&H00FFF7F3\fs109\b-1\bord8\pos(540,1320)}SI alguien tarda en
+Dialogue: 0,0:00:01.26,0:00:02.50,Default,,0,0,0,,{\c&H00FFF7F3\fs109\b0\bord6\pos(540,1320)}responderte y tu cuerpo
+Dialogue: 0,0:00:02.52,0:00:03.88,Default,,0,0,0,,{\c&H00FFF7F3\fs109\b0\bord6\pos(540,1320)}cambia, no es casualidad.
+Dialogue: 0,0:00:07.55,0:00:08.79,Default,,0,0,0,,{\c&H00FF7B4F\fs95\b0\bord6\pos(540,1320)}Hay un mecanismo muy
+Dialogue: 0,0:00:08.81,0:00:10.05,Default,,0,0,0,,{\c&H00FF7B4F\fs95\b0\bord6\pos(540,1320)}concreto que convierte un
+Dialogue: 0,0:00:10.07,0:00:10.51,Default,,0,0,0,,{\c&H00FF7B4F\fs95\b0\bord6\pos(540,1320)}silencio normal en una
+Dialogue: 0,0:00:10.53,0:00:11.31,Default,,0,0,0,,{\c&H00FFF7F3\fs100\b-1\bord8\pos(540,1320)}Tu CEREBRO odia la
+Dialogue: 0,0:00:11.33,0:00:11.56,Default,,0,0,0,,{\c&H00FF7B4F\fs95\b0\bord6\pos(540,1320)}alarma f?sica antes de
+Dialogue: 0,0:00:11.58,0:00:12.57,Default,,0,0,0,,{\c&H00FFF7F3\fs94\b0\bord6\pos(540,1320)}incertidumbre.
+Dialogue: 0,0:00:12.59,0:00:12.62,Default,,0,0,0,,{\c&H00FF7B4F\fs95\b0\bord6\pos(540,1320)}que te des cuenta.
+Dialogue: 0,0:00:12.64,0:00:13.68,Default,,0,0,0,,{\c&H00FFF7F3\fs94\b0\bord6\pos(540,1320)}Cuando falta informaci?n,
+Dialogue: 0,0:00:13.70,0:00:14.73,Default,,0,0,0,,{\c&H00FFF7F3\fs94\b0\bord6\pos(540,1320)}intenta predecir lo peor
+Dialogue: 0,0:00:14.75,0:00:15.79,Default,,0,0,0,,{\c&H00FFF7F3\fs94\b0\bord6\pos(540,1320)}para devolverte sensaci?n de
+Dialogue: 0,0:00:15.80,0:00:16.84,Default,,0,0,0,,{\c&H00FFF7F3\fs94\b0\bord6\pos(540,1320)}control, aunque te haga
+Dialogue: 0,0:00:16.86,0:00:18.02,Default,,0,0,0,,{\c&H00FFF7F3\fs94\b0\bord6\pos(540,1320)}da?o.
+Dialogue: 0,0:00:25.30,0:00:26.38,Default,,0,0,0,,{\c&H00FF7B4F\fs97\b0\bord6\pos(540,1320)}Por eso no solo
+Dialogue: 0,0:00:26.40,0:00:27.47,Default,,0,0,0,,{\c&H00FF7B4F\fs97\b0\bord6\pos(540,1320)}piensas m?s.
+Dialogue: 0,0:00:27.49,0:00:27.97,Default,,0,0,0,,{\c&H00FF7B4F\fs97\b0\bord6\pos(540,1320)}Tambi?n notas el pecho
+Dialogue: 0,0:00:27.99,0:00:28.57,Default,,0,0,0,,{\c&H00303BFF\fs100\b0\bord6\pos(540,1320)}Y aqu?
+Dialogue: 0,0:00:28.59,0:00:28.87,Default,,0,0,0,,{\c&H00FF7B4F\fs97\b0\bord6\pos(540,1320)}m?s tenso,
+Dialogue: 0,0:00:28.89,0:00:29.66,Default,,0,0,0,,{\c&H00303BFF\fs100\b0\bord6\pos(540,1320)}est?
+Dialogue: 0,0:00:29.68,0:00:29.77,Default,,0,0,0,,{\c&H00FF7B4F\fs97\b0\bord6\pos(540,1320)}revisas el m?vil otra
+Dialogue: 0,0:00:29.79,0:00:30.67,Default,,0,0,0,,{\c&H00303BFF\fs100\b0\bord6\pos(540,1320)}lo fuerte:
+Dialogue: 0,0:00:30.69,0:00:30.76,Default,,0,0,0,,{\c&H00303BFF\fs100\b0\bord6\pos(540,1320)}no reaccionas a lo
+Dialogue: 0,0:00:30.78,0:00:31.57,Default,,0,0,0,,{\c&H00FF7B4F\fs97\b0\bord6\pos(540,1320)}vez y sientes que
+Dialogue: 0,0:00:31.59,0:00:31.85,Default,,0,0,0,,{\c&H00303BFF\fs100\b0\bord6\pos(540,1320)}que pas?,
+Dialogue: 0,0:00:31.87,0:00:32.47,Default,,0,0,0,,{\c&H00FF7B4F\fs97\b0\bord6\pos(540,1320)}algo est?
+Dialogue: 0,0:00:32.49,0:00:32.95,Default,,0,0,0,,{\c&H00303BFF\fs100\b0\bord6\pos(540,1320)}reaccionas a la historia
+Dialogue: 0,0:00:32.97,0:00:33.37,Default,,0,0,0,,{\c&H00FF7B4F\fs97\b0\bord6\pos(540,1320)}mal aunque no haya
+Dialogue: 0,0:00:33.39,0:00:34.04,Default,,0,0,0,,{\c&H00303BFF\fs100\b0\bord6\pos(540,1320)}que tu mente fabric?
+Dialogue: 0,0:00:34.06,0:00:34.27,Default,,0,0,0,,{\c&H00FF7B4F\fs97\b0\bord6\pos(540,1320)}ninguna prueba.
+Dialogue: 0,0:00:34.29,0:00:35.29,Default,,0,0,0,,{\c&H00303BFF\fs100\b0\bord6\pos(540,1320)}en medio del vac?o.
+Dialogue: 0,0:00:42.39,0:00:42.87,Default,,0,0,0,,{\c&H00303BFF\fs98\b0\bord6\pos(540,1320)}Ese vac?o activa amenaza
+Dialogue: 0,0:00:42.89,0:00:43.45,Default,,0,0,0,,{\c&H00FF7B4F\fs92\b0\bord6\pos(540,1320)}Cuando entiendes esto,
+Dialogue: 0,0:00:43.47,0:00:44.11,Default,,0,0,0,,{\c&H00303BFF\fs98\b0\bord6\pos(540,1320)}predictiva.
+Dialogue: 0,0:00:44.13,0:00:44.52,Default,,0,0,0,,{\c&H00FF7B4F\fs92\b0\bord6\pos(540,1320)}dejas de confundir silencio
+Dialogue: 0,0:00:44.54,0:00:45.35,Default,,0,0,0,,{\c&H00303BFF\fs98\b0\bord6\pos(540,1320)}Tu sistema nervioso se
+Dialogue: 0,0:00:45.37,0:00:45.59,Default,,0,0,0,,{\c&H00FF7B4F\fs92\b0\bord6\pos(540,1320)}con verdad y empiezas
+Dialogue: 0,0:00:45.62,0:00:46.60,Default,,0,0,0,,{\c&H00303BFF\fs98\b0\bord6\pos(540,1320)}prepara para rechazo,
+Dialogue: 0,0:00:46.62,0:00:46.67,Default,,0,0,0,,{\c&H00FF7B4F\fs92\b0\bord6\pos(540,1320)}a ver cu?nto de
+Dialogue: 0,0:00:46.69,0:00:47.74,Default,,0,0,0,,{\c&H00303BFF\fs98\b0\bord6\pos(540,1320)}y por eso un
+Dialogue: 0,0:00:47.76,0:00:47.84,Default,,0,0,0,,{\c&H00303BFF\fs98\b0\bord6\pos(540,1320)}simple retraso puede sentirse
+Dialogue: 0,0:00:47.86,0:00:48.82,Default,,0,0,0,,{\c&H00FF7B4F\fs92\b0\bord6\pos(540,1320)}tu ansiedad ven?a de
+Dialogue: 0,0:00:48.84,0:00:49.08,Default,,0,0,0,,{\c&H00303BFF\fs98\b0\bord6\pos(540,1320)}como una p?rdida real.
+Dialogue: 0,0:00:49.10,0:00:50.45,Default,,0,0,0,,{\c&H00FF7B4F\fs92\b0\bord6\pos(540,1320)}una predicci?n autom?tica.
+Dialogue: 0,0:00:57.81,0:00:59.01,Default,,0,0,0,,{\c&H00FF7B4F\fs90\b0\bord6\pos(540,1320)}Si quieres,
+Dialogue: 0,0:00:59.03,0:01:00.23,Default,,0,0,0,,{\c&H00FF7B4F\fs90\b0\bord6\pos(540,1320)}puedo darte la se?al
+Dialogue: 0,0:01:00.25,0:01:01.45,Default,,0,0,0,,{\c&H00FF7B4F\fs90\b0\bord6\pos(540,1320)}exacta para cortar esa
+Dialogue: 0,0:01:01.48,0:01:02.68,Default,,0,0,0,,{\c&H00FF7B4F\fs90\b0\bord6\pos(540,1320)}espiral antes de mirar
+Dialogue: 0,0:01:02.70,0:01:04.02,Default,,0,0,0,,{\c&H00FF7B4F\fs90\b0\bord6\pos(540,1320)}el m?vil otra vez.
