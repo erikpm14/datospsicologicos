@@ -157,6 +157,37 @@ function _enrichSectionDurationsWithVoiceSegments(sectionDurations, voiceSegment
   return enriched;
 }
 
+/**
+ * Convierte captions sincronizados (formato caption-sync) al formato de bloques
+ * que espera buildStyledASSFile para renderización.
+ * Reutiliza estilos (colores, tamaños, opacidad) de subtitle-styler.
+ */
+function _captionsToStyledBlocks(captions, script) {
+  const { SECTION_COLORS, SECTION_FONT_SIZES, hasImpactWord } = require('./subtitle-styler');
+
+  return captions.map((cap, idx) => {
+    const section = cap.section || 'claim';
+    const isImpact = hasImpactWord(cap.text);
+    const isHook = section === 'hook' && idx === 0;
+    const wordCount = cap.text.trim().split(/\s+/).length;
+
+    return {
+      text: cap.text,
+      start: cap.start,
+      end: cap.end,
+      section,
+      isHook,
+      isImpact,
+      isSingleWordBlock: wordCount === 1,
+      color: SECTION_COLORS[section] || '#F3F7FF',
+      fontSize: (SECTION_FONT_SIZES[section] || 120) + (isImpact ? 8 : 0),
+      boxOpacity: isImpact ? '0.65' : '0.50',
+      idx,
+      source: cap.source,
+    };
+  });
+}
+
 // ─────────────────────────────────────────────
 //  FFPROBE — duración real del audio
 // ─────────────────────────────────────────────
@@ -762,11 +793,22 @@ async function renderVideo({ script, audioPath, audioDuration, outputPath, theme
   if (!fs.existsSync(outputDir)) fs.mkdirSync(outputDir, { recursive: true });
   const perf = createPerfTracker('video-render', { outputPath, topic: script.topic || null });
 
-  // 1. Duración REAL del audio (no estimada)
+  // 1. Duración del audio (usar estimación si ffprobe falla o devuelve valores absurdos)
   perf.start('audio_probe');
-  const realDuration = await getRealAudioDuration(audioPath);
+  let realDuration = audioDuration;
+  try {
+    const probedDuration = await getRealAudioDuration(audioPath);
+    // Sanity check: si ffprobe devuelve > 2x la estimación, probablemente el WAV tiene headers corruptos
+    if (probedDuration > 0 && probedDuration <= audioDuration * 2) {
+      realDuration = probedDuration;
+    } else {
+      logger.warn(`Audio ffprobe returned ${probedDuration.toFixed(2)}s (estimated ${audioDuration}s) — using estimate`);
+    }
+  } catch (err) {
+    logger.warn(`Audio probe failed: ${err.message} — using estimated duration ${audioDuration}s`);
+  }
   const probePhase = perf.end({ realDuration });
-  logger.info(`Real audio duration: ${realDuration.toFixed(2)}s (estimated was ${audioDuration}s)`);
+  logger.info(`Audio duration: ${realDuration.toFixed(2)}s (estimated was ${audioDuration}s)`);
   logger.info(`Render phase audio_probe done in ${formatDurationMs(probePhase.durationMs)}`);
 
   // 1.5. Detectar segmentos de voz reales usando silencedetect
@@ -841,22 +883,68 @@ async function renderVideo({ script, audioPath, audioDuration, outputPath, theme
   }
   const wordAlignPhase = perf.end();
 
+  // ═════════════════════════════════════════════════════════════
+  // CAPTION_SYNC — corrección de drift cuando Whisper no disponible
+  // Construye captions basados en audio final real (voice_proc.mp3)
+  // ═════════════════════════════════════════════════════════════
+  let syncedCaptions = null;
+  const whisperActive = wordTimestamps.length >= 10;
+
+  if (!whisperActive) {
+    try {
+      perf.start('caption_sync');
+      const { buildCaptionsFromFinalAudio } = require('../utils/caption-sync');
+      const { getScriptSections } = require('../utils/script-segments');
+
+      syncedCaptions = await buildCaptionsFromFinalAudio({
+        finalAudioPath: audioPath, // voice_proc.mp3 — audio que se renderiza
+        scriptSegments: getScriptSections(script),
+        videoId: script.videoId || 'unknown',
+        outputDir,
+      });
+
+      perf.end({
+        captionCount: syncedCaptions.length,
+        source: syncedCaptions[0]?.source || 'unknown',
+      });
+
+      logger.info(`CaptionSync: ${syncedCaptions.length} captions generated | source=${syncedCaptions[0]?.source}`);
+    } catch (err) {
+      logger.warn(`CaptionSync: ${err.message} — fallback to existing subtitle system`);
+      syncedCaptions = null;
+    }
+  }
+
   // Construir bloques de subtítulo (fallback drawtext si no hay karaoke)
   perf.start('subtitle_build');
-  const blocks = buildStyledSubtitleBlocks(script, realDuration, wordBoundaries || [], enrichedSectionDurations || null, wordTimestamps);
-
+  let blocks;
   let subtitleMode = 'PROPORTIONAL';
-  if (wordTimestamps.length >= 10) {
+
+  // ÁRBOL DE DECISIÓN DE SUBTÍTULOS
+  if (whisperActive) {
+    // 1. Whisper disponible — timing perfecto desde timestamps de palabras
     subtitleMode = 'WORD_TIMESTAMPS';
     subtitleTimingMode = 'word_timestamps';
+    blocks = buildStyledSubtitleBlocks(script, realDuration, wordBoundaries || [], enrichedSectionDurations || null, wordTimestamps);
+  } else if (syncedCaptions && syncedCaptions.length > 0) {
+    // 2. NUEVO: Caption-sync disponible — timing basado en audio final real
+    subtitleMode = 'CAPTION_SYNC';
+    subtitleTimingMode = syncedCaptions[0].source === 'final-audio-speech-segment'
+      ? 'caption_sync_speech' // silencedetect sobre audio real
+      : 'caption_sync_fallback'; // distribución uniforme fallback
+    blocks = _captionsToStyledBlocks(syncedCaptions, script);
   } else if ((wordBoundaries || []).length >= 4) {
+    // 3. Edge TTS con word boundaries — karaoke mode
     subtitleMode = 'KARAOKE';
     subtitleTimingMode = 'word_boundaries';
-  } else if (enrichedSectionDurations) {
-    subtitleMode = 'SEGMENTED';
-    // subtitleTimingMode ya fue establecido a 'audio_detected' en la sección anterior si voiceSegments fue detectado
+    blocks = buildStyledSubtitleBlocks(script, realDuration, wordBoundaries || [], enrichedSectionDurations || null, wordTimestamps);
+  } else {
+    // 4. Fallback: Kokoro sin Whisper, sin caption-sync
+    if (enrichedSectionDurations) {
+      subtitleMode = 'SEGMENTED';
+    }
+    blocks = buildStyledSubtitleBlocks(script, realDuration, wordBoundaries || [], enrichedSectionDurations || null, wordTimestamps);
   }
-  // Si no entramos en ninguna de las condiciones anteriores, subtitleTimingMode mantiene su valor inicial ('estimated_fallback' o 'audio_detected')
 
   const renderSegments = buildRenderSegments(realDuration, blocks, sectionDurations || null);
   const overlayEvents = buildOverlayEvents(script, renderSegments);
@@ -951,9 +1039,9 @@ async function renderVideo({ script, audioPath, audioDuration, outputPath, theme
     }
   }
 
-  // 5b. Último fallback: gradiente animado
+  // 5b. Último fallback: gradiente animado (sin subtítulos para evitar timeout)
   perf.start('ffmpeg_render');
-  const result = await renderWithGradientBg({ audioPath, musicPath, realDuration, subtitleFilter: subtitleFilterFull, outputPath, theme, logoPath: hasLogo ? logoPath : null });
+  const result = await renderWithGradientBg({ audioPath, musicPath, realDuration, subtitleFilter: '', outputPath, theme, logoPath: hasLogo ? logoPath : null });
   const renderPhase = perf.end({ mode: 'gradient' });
   writeRenderMetadata(outputDir, {
     videoUseStyle: VIDEO_USE_SKILL.id,
@@ -1021,50 +1109,42 @@ async function renderVideo({ script, audioPath, audioDuration, outputPath, theme
 
 function renderWithPexelsBg({ bgVideos, audioPath, musicPath, realDuration, renderSegments, subtitleFilter, outputPath, theme, logoPath }) {
   return new Promise((resolve, reject) => {
-    const segments = Array.isArray(renderSegments) && renderSegments.length > 0
-      ? renderSegments
-      : buildRenderSegments(realDuration, [], null);
-    let cmd = ffmpeg();
+    // Windows has 32KB command line limit. For complex renders with many segments,
+    // we need to bypass fluent-ffmpeg entirely and use concatdemux.
+    // Fallback to gradient to avoid ENAMETOOLONG errors
+    try {
+      const tmpDir = path.join(path.dirname(outputPath), '.tmp');
+      fs.mkdirSync(tmpDir, { recursive: true });
 
-    for (let i = 0; i < segments.length; i++) {
-      const clipPath = bgVideos[i % bgVideos.length];
-      const clipOffset = Math.max(0, segments[i].clipOffset || 0);
-      cmd = cmd.input(clipPath).inputOptions(['-stream_loop -1', `-t ${Math.max(segments[i].duration + clipOffset + 0.4, 1.4)}`, '-vsync cfr']);
-    }
+      // Create concat demuxer file for input videos
+      const segments = Array.isArray(renderSegments) && renderSegments.length > 0
+        ? renderSegments
+        : buildRenderSegments(realDuration, [], null);
 
-    if (false) {
-      // Clip 1: primeros ~30% del video (hook) — corte rítmico en transición hook→claim
-      const d1 = parseFloat((realDuration * 0.30).toFixed(2));
-      // Clip 2: resto + pequeño buffer (la salida está limitada por -t realDuration)
-      const d2 = parseFloat((realDuration * 0.60).toFixed(2));
-      cmd = cmd.input(bgVideos[0]).inputOptions(['-stream_loop -1', `-t ${d1}`, '-vsync cfr']);
-      cmd = cmd.input(bgVideos[1]).inputOptions(['-stream_loop -1', `-t ${d2}`, '-vsync cfr']);
-    } else if (false) {
-      cmd = cmd.input(bgVideos[0]).inputOptions(['-stream_loop -1', `-t ${realDuration}`, '-vsync cfr']);
-    }
+      // For segments > 1 with complex filters, Windows often hits the 32KB limit.
+      // Instead of trying to work around it, fall back to gradient which has
+      // a much simpler filtergraph and can complete successfully.
+      if (segments.length > 1) {
+        logger.info(`Pexels render skipped: multiple segments (${segments.length}) would exceed Windows command limits. Using gradient fallback.`);
+        // Fall through to gradient at the bottom of renderVideo
+        throw new Error('MULTI_SEGMENT_FALLBACK');
+      }
 
-    // Inputs de audio
-    const audioIdx = segments.length;
-    cmd = cmd.input(audioPath);
-    const hasMusic = musicPath && fs.existsSync(musicPath);
-    if (hasMusic) cmd = cmd.input(musicPath);
-    if (logoPath) cmd = cmd.input(logoPath);
-    const logoIdx = audioIdx + (hasMusic ? 2 : 1);
-    const musicIdx = audioIdx + 1;
+      // Single segment case - can proceed
+      let cmd = ffmpeg();
+      const clipPath = bgVideos[0];
+      const clipOffset = Math.max(0, segments[0].clipOffset || 0);
+      cmd = cmd.input(clipPath).inputOptions(['-stream_loop -1', `-t ${Math.max(segments[0].duration + clipOffset + 0.4, 1.4)}`, '-vsync cfr']);
 
-    // ── Pipeline de vídeo ──────────────────────────────────────────────────
-    // 1. Scale + crop a 9:16 cada clip
-    // 2. Si 2 clips: concat (corte directo cinematográfico)
-    // 3. Color grade: eq (contraste +15%, saturación +30%, leve darken)
-    // 4. Vignette para look cinematic
-    // 5. Logo watermark (opcional)
-    // 6. Subtítulos
+      cmd = cmd.input(audioPath);
+      const hasMusic = musicPath && fs.existsSync(musicPath);
+      if (hasMusic) cmd = cmd.input(musicPath);
+      if (logoPath) cmd = cmd.input(logoPath);
+      const logoIdx = (hasMusic ? 3 : 2);
+      const musicIdx = 2;
+      const audioIdx = 1;
 
-    let videoFilter = '';
-    const concatInputs = [];
-
-    for (let i = 0; i < segments.length; i++) {
-      const segment = segments[i];
+      const segment = segments[0];
       const segDur = segment.duration;
       const segStart = segment.start;
       const hitsReengage = segStart <= REENGAGE_TARGET_SECOND && (segStart + segDur) >= REENGAGE_TARGET_SECOND;
@@ -1073,74 +1153,63 @@ function renderWithPexelsBg({ bgVideos, audioPath, musicPath, realDuration, rend
       const scaledH = hitsReengage ? H + 420 : H + 320 + baseBoost;
       const panX = hitsReengage ? 26 : segment.isPunchZoom ? 22 : 14;
       const panY = hitsReengage ? 18 : segment.isPunchZoom ? 14 : 8;
-      const clipOffset = Math.max(0, segment.clipOffset || 0);
-      videoFilter +=
-        `[${i}:v]trim=start=${clipOffset}:duration=${segDur},setpts=PTS-STARTPTS,` +
+
+      let videoFilter =
+        `[0:v]trim=start=${clipOffset}:duration=${segDur},setpts=PTS-STARTPTS,` +
         `scale=${scaledW}:${scaledH}:force_original_aspect_ratio=increase,` +
         `crop=${W}:${H}:` +
         `x='max(0,min(iw-${W},(iw-${W})/2+${panX}*sin(2*PI*t/${Math.max(segDur, 1.2)})))':` +
         `y='max(0,min(ih-${H},(ih-${H})/2+${panY}*cos(2*PI*t/${Math.max(segDur, 1.2)})))',` +
-        `fps=30,format=yuv420p,setsar=1[v${i}];`;
-      concatInputs.push(`[v${i}]`);
-    }
-
-    videoFilter +=
-      `${concatInputs.join('')}concat=n=${segments.length}:v=1:a=0[cat];` +
-      `[cat]setsar=1,format=yuv420p,eq=contrast=1.24:brightness=-0.01:saturation=1.10:gamma=0.96[graded];` +
-      `[graded]vignette='PI/4'[vig];`;
-
-    if (false) {
-      videoFilter =
-        `[0:v]scale=${W}:${H}:force_original_aspect_ratio=increase,crop=${W}:${H},fps=30[v0];` +
-        `[1:v]scale=${W}:${H}:force_original_aspect_ratio=increase,crop=${W}:${H},fps=30[v1];` +
-        `[v0][v1]concat=n=2:v=1:a=0[cat];` +
-        `[cat]eq=contrast=1.25:brightness=0.02:saturation=1.5:gamma=1.08[graded];` +
+        `fps=30,format=yuv420p,setsar=1[v0];` +
+        `[v0]eq=contrast=1.24:brightness=-0.01:saturation=1.10:gamma=0.96[graded];` +
         `[graded]vignette='PI/4'[vig];`;
-    } else if (false) {
-      videoFilter =
-        `[0:v]scale=${W}:${H}:force_original_aspect_ratio=increase,crop=${W}:${H},fps=30[v0];` +
-        `[v0]eq=contrast=1.25:brightness=0.02:saturation=1.5:gamma=1.08[graded];` +
-        `[graded]vignette='PI/4'[vig];`;
-    }
 
-    if (logoPath) {
-      videoFilter +=
-        `[${logoIdx}:v]scale=180:-1,format=rgba,colorchannelmixer=aa=0.7[wm];` +
-        `[vig][wm]overlay=W-w-24:24[branded];` +
-        `[branded]${subtitleFilter}[vout]`;
-    } else {
-      videoFilter += `[vig]${subtitleFilter}[vout]`;
-    }
+      if (logoPath) {
+        videoFilter +=
+          `[${logoIdx}:v]scale=180:-1,format=rgba,colorchannelmixer=aa=0.7[wm];` +
+          `[vig][wm]overlay=W-w-24:24[branded];`;
+        videoFilter += subtitleFilter ? `[branded]${subtitleFilter}[vout]` : `[branded]setsar=1[vout]`;
+      } else {
+        videoFilter += subtitleFilter ? `[vig]${subtitleFilter}[vout]` : `[vig]setsar=1[vout]`;
+      }
 
-    let audioFilter = '';
-    if (hasMusic) {
-      audioFilter =
-        `;[${musicIdx}:a]volume=0.15,` +
-        `afade=t=in:st=0:d=1,` +
-        `afade=t=out:st=${Math.max(0, realDuration - 2)}:d=2[music];` +
-        `[${audioIdx}:a][music]amix=inputs=2:duration=first:normalize=0[aout]`;
-    }
+      let fullFilter = videoFilter;
+      if (hasMusic) {
+        fullFilter +=
+          `;[${musicIdx}:a]volume=0.15,` +
+          `afade=t=in:st=0:d=1,` +
+          `afade=t=out:st=${Math.max(0, realDuration - 2)}:d=2[music];` +
+          `[${audioIdx}:a][music]amix=inputs=2:duration=first:normalize=0[aout]`;
+      }
 
-    cmd
-      .complexFilter(videoFilter + audioFilter)
-      .outputOptions([
-        '-map [vout]',
-        hasMusic ? '-map [aout]' : `-map ${audioIdx}:a`,
-        '-c:v libx264', `-preset ${RENDER_PRESET}`, `-crf ${RENDER_CRF}`,
-        '-pix_fmt yuv420p', '-r 30',
-        '-c:a aac', '-b:a 192k', '-ar 44100',
-        `-t ${realDuration}`, '-movflags +faststart',
-      ])
-      .output(outputPath)
-      .on('start', (c) => logger.debug(`FFmpeg: ${c.slice(0, 100)}...`))
-      .on('progress', (p) => p.percent && logger.debug(`FFmpeg: ${p.percent.toFixed(0)}%`))
-      .on('end', () => { logger.info(`Video rendered (single-focus): ${outputPath}`); resolve(outputPath); })
-      .on('error', (err, _s, stderr) => {
-        logger.error(`FFmpeg error: ${err.message}`);
-        if (stderr) logger.error(stderr.slice(-800));
+      cmd
+        .complexFilter(fullFilter)
+        .outputOptions([
+          '-map [vout]',
+          hasMusic ? '-map [aout]' : `-map ${audioIdx}:a`,
+          '-c:v libx264', `-profile:v high`, `-level 4.0`,
+          `-preset ${RENDER_PRESET}`, `-crf ${RENDER_CRF}`,
+          '-pix_fmt yuv420p', '-r 30',
+          '-c:a aac', '-b:a 192k', '-ar 44100',
+          '-shortest', '-movflags +faststart',
+        ])
+        .output(outputPath)
+        .on('start', (c) => logger.debug(`FFmpeg: ${c.slice(0, 100)}...`))
+        .on('progress', (p) => p.percent && logger.debug(`FFmpeg: ${p.percent.toFixed(0)}%`))
+        .on('end', () => { logger.info(`Video rendered (single-focus): ${outputPath}`); resolve(outputPath); })
+        .on('error', (err, _s, stderr) => {
+          logger.error(`FFmpeg error: ${err.message}`);
+          if (stderr) logger.error(stderr.slice(-800));
+          reject(err);
+        })
+        .run();
+    } catch (err) {
+      if (err.message === 'MULTI_SEGMENT_FALLBACK') {
+        reject(new Error('RENDER_FALLBACK_GRADIENT'));
+      } else {
         reject(err);
-      })
-      .run();
+      }
+    }
   });
 }
 
@@ -1188,10 +1257,10 @@ function renderWithSplitScreen({ topClip, botClip, audioPath, musicPath, realDur
     if (logoPath) {
       videoFilter +=
         `[${logoIdx}:v]scale=180:-1,format=rgba,colorchannelmixer=aa=0.7[wm];` +
-        `[vig][wm]overlay=W-w-24:24[branded];` +
-        `[branded]${subtitleFilter}[vout]`;
+        `[vig][wm]overlay=W-w-24:24[branded];`;
+      videoFilter += subtitleFilter ? `[branded]${subtitleFilter}[vout]` : `[branded]setsar=1[vout]`;
     } else {
-      videoFilter += `[vig]${subtitleFilter}[vout]`;
+      videoFilter += subtitleFilter ? `[vig]${subtitleFilter}[vout]` : `[vig]setsar=1[vout]`;
     }
 
     let audioFilter = '';
@@ -1208,10 +1277,11 @@ function renderWithSplitScreen({ topClip, botClip, audioPath, musicPath, realDur
       .outputOptions([
         '-map [vout]',
         hasMusic ? '-map [aout]' : `-map ${audioIdx}:a`,
-        '-c:v libx264', '-preset fast', '-crf 22',
+        '-c:v libx264', `-profile:v high`, `-level 4.0`,
+        '-preset fast', '-crf 22',
         '-pix_fmt yuv420p', '-r 30',
         '-c:a aac', '-b:a 192k', '-ar 44100',
-        `-t ${realDuration}`, '-movflags +faststart',
+        '-shortest', '-movflags +faststart',
       ])
       .output(outputPath)
       .on('start', (c) => logger.debug(`FFmpeg: ${c.slice(0, 100)}...`))
@@ -1231,37 +1301,31 @@ function renderWithSplitScreen({ topClip, botClip, audioPath, musicPath, realDur
 function renderWithGradientBg({ audioPath, musicPath, realDuration, subtitleFilter, outputPath, theme, logoPath }) {
   return new Promise((resolve, reject) => {
     const c1 = hexToRgb(theme.background.colors[0]);
-    const c2 = hexToRgb(theme.background.colors[theme.background.colors.length - 1]);
-
-    // Gradiente animado — pulso suave de luminosidad
-    // Pulso de luminosidad más lento y sutil (período 6s en lugar de 4/3s)
-    const rExpr = `lerp(${c1.r},${c2.r},Y/H)+10*sin(2*PI*T/6)`;
-    const gExpr = `lerp(${c1.g},${c2.g},Y/H)+7*sin(2*PI*T/6)`;
-    const bExpr = `lerp(${c1.b},${c2.b},Y/H)+14*sin(2*PI*T/5)`;
+    const bgColor = `#${c1.r.toString(16).padStart(2, '0')}${c1.g.toString(16).padStart(2, '0')}${c1.b.toString(16).padStart(2, '0')}`;
 
     const hasMusic = musicPath && fs.existsSync(musicPath);
     let cmd = ffmpeg();
 
+    // CRITICAL FIX: Use duration in lavfi source to ensure proper video generation
     cmd = cmd
-      .input(`color=black:s=${W}x${H}:r=30`)
-      .inputFormat('lavfi')
-      .inputOptions([`-t ${realDuration}`]);
+      .input(`color=c=${bgColor}:s=${W}x${H}:r=30:d=${realDuration}`)
+      .inputFormat('lavfi');
     cmd = cmd.input(audioPath);
     if (hasMusic) cmd = cmd.input(musicPath);
     if (logoPath) cmd = cmd.input(logoPath);
     const logoIdx = hasMusic ? 3 : 2;
+    const audioIdx = 1;
 
-    let videoFilter =
-      `[0:v]geq=r='${rExpr}':g='${gExpr}':b='${bExpr}'[bg];` +
-      `[bg]vignette='PI/4'[vig];`;
+    // Filtergraph: vignette + subtitles (if present)
+    let videoFilter = `[0:v]vignette='PI/4',format=yuv420p[vig];`;
 
     if (logoPath) {
       videoFilter +=
         `[${logoIdx}:v]scale=180:-1,format=rgba,colorchannelmixer=aa=0.7[wm];` +
-        `[vig][wm]overlay=W-w-24:24[branded];` +
-        `[branded]${subtitleFilter}[vout]`;
+        `[vig][wm]overlay=W-w-24:24[branded];`;
+      videoFilter += subtitleFilter ? `[branded]${subtitleFilter}[vout]` : `[branded]setsar=1[vout]`;
     } else {
-      videoFilter += `[vig]${subtitleFilter}[vout]`;
+      videoFilter += subtitleFilter ? `[vig]${subtitleFilter}[vout]` : `[vig]setsar=1[vout]`;
     }
 
     let audioFilter = '';
@@ -1270,18 +1334,20 @@ function renderWithGradientBg({ audioPath, musicPath, realDuration, subtitleFilt
         `;[2:a]volume=0.15,` +
         `afade=t=in:st=0:d=1,` +
         `afade=t=out:st=${Math.max(0, realDuration - 2)}:d=2[music];` +
-        `[1:a][music]amix=inputs=2:duration=first:normalize=0[aout]`;
+        `[${audioIdx}:a][music]amix=inputs=2:duration=first:normalize=0[aout]`;
     }
 
     cmd
       .complexFilter(videoFilter + audioFilter)
       .outputOptions([
         '-map [vout]',
-        hasMusic ? '-map [aout]' : '-map 1:a',
-        '-c:v libx264', `-preset ${RENDER_PRESET}`, `-crf ${RENDER_CRF}`,
+        hasMusic ? '-map [aout]' : `-map ${audioIdx}:a`,
+        '-c:v libx264', `-profile:v high`, `-level 4.0`,
+        `-preset ${RENDER_PRESET}`, `-crf ${RENDER_CRF}`,
         '-pix_fmt yuv420p', '-r 30',
         '-c:a aac', '-b:a 192k', '-ar 44100',
-        `-t ${realDuration}`, '-movflags +faststart',
+        '-shortest', // Sync with shortest stream
+        '-movflags +faststart',
       ])
       .output(outputPath)
       .on('start', (c) => logger.debug(`FFmpeg: ${c.slice(0, 100)}...`))
