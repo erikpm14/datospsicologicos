@@ -43,6 +43,10 @@ const {
   notifySystemRecovered,
   notifyPipelineBlocked,
 } = require('./telegram-notifier');
+const {
+  validateCaptionsForPublish,
+  logCaptionValidation,
+} = require('./caption-pre-publish-validator');
 
 const OUTPUT_DIR         = path.resolve(process.env.OUTPUT_DIR || './output');
 const PUBLISH_LOG_PATH   = path.resolve('./data/publish-log.json');
@@ -187,11 +191,21 @@ async function validateReadyCandidate(video) {
   if (snapshot.render?.visibleVisuals !== true) reasons.push('render without visible visuals');
   if (['gradient', 'gradient_fallback'].includes(snapshot.render?.renderMode)) reasons.push(`render degraded (${snapshot.render.renderMode})`);
 
+  // ✨ NUEVA VALIDACIÓN: Captions-debug.json OBLIGATORIO
+  const captionValidation = validateCaptionsForPublish(video.videoId);
+  if (!captionValidation.ok) {
+    reasons.push(`captions_invalid | ${captionValidation.reason}`);
+    logCaptionValidation(video.videoId, captionValidation, 'CHECK');
+  } else {
+    logCaptionValidation(video.videoId, captionValidation, 'CHECK');
+  }
+
   return {
     ok: reasons.length === 0,
     reasons,
     qc,
     snapshot,
+    captionValidation,
   };
 }
 
