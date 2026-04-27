@@ -4,12 +4,19 @@
  * Gestiona horarios óptimos, captions y hashtags dinámicos.
  */
 
-require('dotenv').config();
+const path = require('path');
+require('dotenv').config({ path: path.resolve(__dirname, '../../.env') });
+if (process.env.OUTPUT_DIR && !path.isAbsolute(process.env.OUTPUT_DIR)) {
+  process.env.OUTPUT_DIR = path.resolve(__dirname, '../../', process.env.OUTPUT_DIR);
+}
+if (process.env.QUEUE_DIR && !path.isAbsolute(process.env.QUEUE_DIR)) {
+  process.env.QUEUE_DIR = path.resolve(__dirname, '../../', process.env.QUEUE_DIR);
+}
 const axios = require('axios');
 const fs = require('fs');
-const path = require('path');
 const logger = require('../utils/logger');
 const { validateForPublish, discardInvalidVideo } = require('./publish-validator.service');
+const { validateCaptionsForPublish } = require('./caption-pre-publish-validator');
 const PUBLISH_RETRY_DELAY_MS = Math.max(1000, parseInt(process.env.PUBLISH_RETRY_DELAY_MS || '4000', 10) || 4000);
 const PUBLISH_MAX_RETRIES = Math.max(1, parseInt(process.env.PUBLISH_MAX_RETRIES || '3', 10) || 3);
 
@@ -295,36 +302,100 @@ async function getYouTubeAccessToken() {
  * Solo intenta plataformas con credenciales reales (no "RELLENAR").
  */
 async function publishAll(videoPath, script, videoUrl = null) {
-  // VALIDACIÓN DURA PRE-PUBLISH
-  const validation = validateForPublish(script);
-  if (!validation.valid) {
-    logger.error('PublishAll: video failed validation — REJECTED', {
-      videoId: script.id,
-      failures: validation.failures,
+  const videoId = script?.videoId || script?.id || path.basename(path.dirname(videoPath || 'unknown'));
+  const hasLegacyValidationShape = Boolean(
+    script?.data?.prefabScript ||
+    script?.prefabScript
+  );
+
+  // ═══════════════════════════════════════════════════════════════
+  // GATE 0: VALIDAR ARCHIVOS LOCALES (PREVIO A TODO)
+  // Impide publicar vídeos sin archivos físicos
+  // ═══════════════════════════════════════════════════════════════
+  if (!videoPath || !fs.existsSync(videoPath)) {
+    logger.error('FILES_MISSING | publish', {
+      videoId,
+      error: 'output.mp4 no existe',
+      videoPath,
+      exists: videoPath ? fs.existsSync(videoPath) : false,
     });
-
-    // Mover a discarded
-    const doneFilePath = path.resolve(`./queue/done/${script.id}.json`);
-    if (fs.existsSync(doneFilePath)) {
-      discardInvalidVideo(script, doneFilePath);
-      logger.warn('PublishAll: moved to discarded-invalid-current/', { videoId: script.id });
-    }
-
     return {
       success: false,
-      error: 'REJECTED_VALIDATION',
-      reason: validation.reason,
-      failures: validation.failures,
+      error: 'FILES_MISSING',
+      reason: `output.mp4 no existe: ${videoPath}`,
       discarded: true,
     };
   }
 
-  logger.info('PublishAll: video passed validation ✓', {
-    videoId: script.id,
-    duration: validation.duration,
-    virality: validation.viralityScore,
-    humanity: validation.humanityScore,
-  });
+  const assPath = path.join(path.dirname(videoPath), 'subtitles.ass');
+  if (!fs.existsSync(assPath)) {
+    logger.error('FILES_MISSING | publish', {
+      videoId,
+      error: 'subtitles.ass no existe',
+      assPath,
+    });
+    return {
+      success: false,
+      error: 'FILES_MISSING',
+      reason: `subtitles.ass no existe: ${assPath}`,
+      discarded: true,
+    };
+  }
+
+  logger.info(`NEXT_SLOT_CAPTION_CHECK_START videoId=${videoId}`);
+  const captionValidation = validateCaptionsForPublish(videoId);
+  if (!captionValidation.ok) {
+    logger.error(`NEXT_SLOT_CAPTION_CHECK_BLOCKED reason=${captionValidation.reason} videoId=${videoId}`);
+    return {
+      success: false,
+      error: 'CAPTION_PREPUBLISH_BLOCKED',
+      reason: captionValidation.reason,
+      discarded: true,
+    };
+  }
+  logger.info(
+    `NEXT_SLOT_CAPTION_CHECK_PASS videoId=${videoId} source=${captionValidation.debugData?.source || 'unknown'} driftStatus=${captionValidation.debugData?.drift?.status || 'unknown'}`
+  );
+
+  // ═══════════════════════════════════════════════════════════════
+  // GATE 1: VALIDACIÓN SCRIPT + QC HARD
+  // ═══════════════════════════════════════════════════════════════
+  if (hasLegacyValidationShape) {
+    const validation = validateForPublish({
+      ...script,
+      id: videoId,
+      videoId,
+    });
+    if (!validation.valid) {
+      logger.error('PublishAll: video failed validation — REJECTED', {
+        videoId,
+        failures: validation.failures,
+      });
+
+      const doneFilePath = path.resolve(`./queue/done/${videoId}.json`);
+      if (fs.existsSync(doneFilePath)) {
+        discardInvalidVideo({ ...script, id: videoId }, doneFilePath);
+        logger.warn('PublishAll: moved to discarded-invalid-current/', { videoId });
+      }
+
+      return {
+        success: false,
+        error: 'REJECTED_VALIDATION',
+        reason: validation.reason,
+        failures: validation.failures,
+        discarded: true,
+      };
+    }
+
+    logger.info('PublishAll: video passed validation ✓', {
+      videoId,
+      duration: validation.duration,
+      virality: validation.viralityScore,
+      humanity: validation.humanityScore,
+    });
+  } else {
+    logger.info(`PublishAll: legacy validator skipped for ready render | videoId=${videoId}`);
+  }
 
   const results = [];
   const errors = [];
@@ -377,7 +448,16 @@ async function publishAll(videoPath, script, videoUrl = null) {
       const ytResult = await runWithRetry('YouTube', () => publishToYouTube(videoPath, script));
       results.push(ytResult);
     } catch (err) {
-      errors.push({ platform: 'youtube', error: err.message });
+      // ⚠️  ESPECIAL: No descartar si OAuth falla con invalid_grant
+      // El vídeo es válido, solo el token expiró. Permitir reintento.
+      const isOAuthInvalidGrant = err.message?.includes('invalid_grant');
+      if (isOAuthInvalidGrant) {
+        logger.warn(`YouTube: OAuth token expired (invalid_grant) — video preserved for retry | videoId=${videoId}`);
+        // No añadir a errors para no bloquear publish (fallback a otras plataformas)
+        // pero tampoco marcar como discarded — el vídeo permanece en ready
+      } else {
+        errors.push({ platform: 'youtube', error: err.message });
+      }
     }
   } else {
     logger.warn('YouTube: YOUTUBE_REFRESH_TOKEN no configurado — saltando');
