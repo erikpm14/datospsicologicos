@@ -19,6 +19,9 @@ const { createPerfTracker, formatDurationMs } = require('../utils/perf-tracker')
 // HOOK QUALITY SYSTEM
 const { selectTopHooks, improveHook } = require('./hook-quality-filter');
 const { validateHookConfessional, applyHookPenalty } = require('./hook-validator.service');
+const { validateVideoV4 } = require('../contracts/video-v4.contract');
+const { scoreHumanity } = require('../utils/humanity-scorer');
+const { getOptimizationContext } = require('./insights-optimizer.service');
 
 const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 const COMPACT_SCRIPT_SCHEMA = `{
@@ -478,13 +481,91 @@ function selectHook(topic = null) {
   return hooks[Math.floor(Math.random() * hooks.length)];
 }
 
+/**
+ * ═════════════════════════════════════════════════════════════
+ * WINNERS EXPLOITATION: 70/30 Strategy
+ * ═════════════════════════════════════════════════════════════
+ */
+
+/**
+ * Decide entre EXPLOIT (70%) o EXPLORE (30%)
+ */
+function decideExploitationStrategy() {
+  const exploit = Math.random() < 0.7;
+  return exploit ? 'EXPLOIT' : 'EXPLORE';
+}
+
+/**
+ * Seleccionar topic usando contexto de optimización
+ */
+function selectTopicWithInsights(strategy, optContext) {
+  if (strategy === 'EXPLORE' || !optContext.available || !optContext.recommendations.useTopics) {
+    return null; // Usar flujo normal
+  }
+
+  // EXPLOIT: usar preferredTopics
+  if (optContext.preferredTopics.length > 0) {
+    const topic = optContext.preferredTopics[Math.floor(Math.random() * optContext.preferredTopics.length)];
+    return topic;
+  }
+
+  return null; // Fallback a flujo normal
+}
+
+/**
+ * Validar que topic no está en avoidTopics
+ */
+function isTopicAllowed(topic, optContext) {
+  if (!optContext.available || !optContext.recommendations.avoidTopics) {
+    return true;
+  }
+
+  if (optContext.avoidTopics.includes(topic)) {
+    logger.debug(`Topic "${topic}" filtered (AVOID)`);
+    return false;
+  }
+
+  return true;
+}
+
+/**
+ * Obtener inspiración de bestHooks
+ */
+function getHookInspirationFromWinners(optContext) {
+  if (!optContext.available || !optContext.recommendations.useHooks || optContext.bestHooks.length === 0) {
+    return null;
+  }
+
+  // Retornar uno de los hooks ganadores como inspiración
+  const winnerHook = optContext.bestHooks[Math.floor(Math.random() * optContext.bestHooks.length)];
+  return winnerHook?.hook || null;
+}
+
 async function generateScript(options = {}) {
   const { topic, hookId } = options;
   const perf = createPerfTracker('content-generator');
   const llmMetrics = createLlmMetrics();
 
-  // FORZAR topic a 'relationships' si no se especifica (patrón ganador)
-  const finalTopic = topic || 'relationships';
+  // ═════════════════════════════════════════════════════════════
+  // WINNERS EXPLOITATION: 70/30 Strategy
+  // ═════════════════════════════════════════════════════════════
+  const strategy = decideExploitationStrategy();
+  const optContext = getOptimizationContext();
+
+  // Intentar seleccionar topic desde WINNERS si EXPLOIT
+  let finalTopic = topic;
+  let exploitedTopic = null;
+
+  if (!finalTopic && strategy === 'EXPLOIT') {
+    const insightTopic = selectTopicWithInsights(strategy, optContext);
+    if (insightTopic && isTopicAllowed(insightTopic, optContext)) {
+      finalTopic = insightTopic;
+      exploitedTopic = insightTopic;
+    }
+  }
+
+  // Fallback a 'relationships' si no se especifica (patrón ganador)
+  finalTopic = finalTopic || 'relationships';
 
   const baseHook = hookId
     ? hooksData.hooks.find((h) => h.id === hookId)
@@ -558,6 +639,9 @@ async function generateScript(options = {}) {
 
   // Registrar el hook para evitar repetición
   addRecentHook(selectedHookText);
+
+  // Log de estrategia 70/30
+  logger.info(`GEN_STRATEGY | ${strategy} | topic=${exploitedTopic ? 'from-winners' : 'fallback'} | confidence=${optContext.confidence}%`);
 
   logger.info(`Generating script | Topic: ${finalTopic} | Hook variety: ${hookVariety}`);
 
@@ -711,6 +795,21 @@ ${COMPACT_SCRIPT_SCHEMA}`;
       throw new Error(`Script demasiado corto: ${totalWords} palabras (mín 90). Regenerando.`);
     }
 
+    // ═══════════════════════════════════════════════════════════════
+    // HUMANITYCORE CALCULATION (REQUIRED FOR V4.1)
+    // ═══════════════════════════════════════════════════════════════
+    script.humanityScore = scoreHumanity(script);
+
+    // ═══════════════════════════════════════════════════════════════
+    // V4.1 METADATA INJECTION (CRÍTICO)
+    // ═══════════════════════════════════════════════════════════════
+    script.structureVersion = 'confessional';
+    script.retentionSpikeVersion = 'v4.1';
+    script.renderMode = 'video_use';
+    script.subtitleTimingMode = 'word_timestamps';
+    script.wordAlignmentEngine = 'whisper';
+    script.duration = script.durationSeconds;
+
     attachLlmMetrics(script, llmMetrics);
     script.generationSource = 'generateScript';
     script.llmPath = ['generateScript'];
@@ -719,7 +818,18 @@ ${COMPACT_SCRIPT_SCHEMA}`;
       generationSource: 'generateScript',
       createdAt: new Date().toISOString(),
     });
-    logger.info(`Script OK | words=${totalWords} | duration=${script.durationSeconds}s | structure=open_loop_escalation | reengage=${script.hasReengage} | score=${viralityResult.score} | llmCalls=${llmMetrics.llm_total_calls} | recovery=${llmMetrics.llm_recovery_used ? 1 : 0} | truncated=${llmMetrics.llm_truncated_suspected ? 1 : 0} | model=${formatDurationMs(modelPhase.durationMs)} | parse=${formatDurationMs(parsePhase.durationMs)} | total=${formatDurationMs(perf.snapshot().totalMs)}`);
+
+    // ═══════════════════════════════════════════════════════════════
+    // V4.1 CONTRACT VALIDATION (FAIL-FAST)
+    // ═══════════════════════════════════════════════════════════════
+    const v4Validation = validateVideoV4(script);
+    if (!v4Validation.valid) {
+      logger.error('V4_FAIL | generation', { videoId: script.videoId, errors: v4Validation.errors });
+      throw new Error(`V4 contract violation: ${v4Validation.errors.join(' | ')}`);
+    }
+    logger.info(`V4_PASS | generation | videoId=${script.videoId}`);
+
+    logger.info(`Script OK | words=${totalWords} | duration=${script.durationSeconds}s | structure=confessional | v4.1=true | reengage=${script.hasReengage} | score=${viralityResult.score} | llmCalls=${llmMetrics.llm_total_calls} | recovery=${llmMetrics.llm_recovery_used ? 1 : 0} | truncated=${llmMetrics.llm_truncated_suspected ? 1 : 0} | model=${formatDurationMs(modelPhase.durationMs)} | parse=${formatDurationMs(parsePhase.durationMs)} | total=${formatDurationMs(perf.snapshot().totalMs)}`);
     return script;
 
   } catch (err) {

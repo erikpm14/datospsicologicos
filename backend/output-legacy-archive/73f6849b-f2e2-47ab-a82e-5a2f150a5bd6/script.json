@@ -1,0 +1,118 @@
+{
+  "part": 1,
+  "totalParts": 3,
+  "hook": "Tu cuerpo está mintiendo por ti en este momento y ni te das cuenta",
+  "claim": "El 93% de la comunicación NO es lo que dices, sino cómo lo dices con tu cuerpo",
+  "explanation": "¿Sabías que cuando cruzas los brazos, comunicas defensa aunque hables de forma amigable? Tu postura revela inseguridad, tu mirada expone mentiras, tus manos gritan lo que tu boca calla. Los estudios de Albert Mehrabian demuestran que solo el 7% de tu mensaje depende de palabras. El resto es lenguaje corporal. Hoy te mostraremos las 3 señales silenciosas que delatan tus intenciones reales.",
+  "cta": "¿Quieres saber cuál es la señal número 1? Parte 2 en mi perfil →",
+  "psychologicalFact": "El lenguaje corporal representa el 93% de la comunicación efectiva",
+  "viralTrigger": "sorpresa",
+  "emotionalTrigger": "urgency",
+  "keywords": [
+    "lenguaje corporal",
+    "comunicación no verbal",
+    "psicología",
+    "verdades ocultas"
+  ],
+  "hashtags": [
+    "#psicologia",
+    "#lenguajecorporal",
+    "#comunicacion",
+    "#serie",
+    "#parte1",
+    "#viral"
+  ],
+  "title": "Lo que tu cuerpo revela: Las 3 verdades que ocultas sin saber Parte 1/3_parte1",
+  "topic": "body_language",
+  "durationSeconds": 58,
+  "isSeries": true,
+  "seriesTitle": "Lo que tu cuerpo revela: Las 3 verdades que ocultas sin saber Parte 1/3",
+  "viralityScore": 51,
+  "viralityBreakdown": {
+    "hookStrength": 18,
+    "emotionalTrigger": 5,
+    "relatability": 13,
+    "loopPotential": 13,
+    "durationBonus": 2
+  },
+  "estimatedWords": 107,
+  "slotTracking": {
+    "batchId": "batch_1777208400591",
+    "slotId": "batch_1777208400591_slot_1",
+    "plannedOrder": 1,
+    "plannedRole": "follow",
+    "plannedCluster": "relationships",
+    "plannedHookType": "challenge",
+    "plannedMicroAction": "REPEAT_CHECK",
+    "recommendedCandidateId": "relationships-2",
+    "recommendedCandidateTitle": "Cuando te responden tarde pero miras la hora exacta",
+    "businessMode": "monetization_priority",
+    "targetGoal": "monetization_priority",
+    "scheduleWindow": "4 días",
+    "recommendedPublishTime": "6 horas x slot 1",
+    "attributionType": "cluster_match",
+    "slotState": "assigned",
+    "assignmentConfidence": 0.12,
+    "traceConfidence": 0.12,
+    "exactTraceAvailable": true,
+    "abLinked": false
+  },
+  "contentVersion": "v2",
+  "narrationPlan": {
+    "mode": "natural_short_v1",
+    "segments": {
+      "hook": {
+        "key": "hook",
+        "text": "Tu cuerpo está mintiendo por ti en este momento y ni te das cuenta...",
+        "deliveryStyle": "directo",
+        "narrationEnergy": "alta",
+        "pauseStrength": "fuerte",
+        "emphasisWords": [
+          "momento",
+          "cuenta"
+        ],
+        "pacing": "corto",
+        "pauseBefore": 0,
+        "pauseAfter": 0.46,
+        "joiner": "...",
+        "ssmlRate": "-8%",
+        "ssmlPitch": "+2%",
+        "ssmlVolume": "0%"
+      }
+    },
+    "blocks": [
+      {
+        "key": "block_1",
+        "pauseAfter": 0.46,
+        "blockPacing": "controlado con gancho",
+        "parts": [
+          {
+            "key": "hook",
+            "text": "Tu cuerpo está mintiendo por ti en este momento y ni te das cuenta...",
+            "joiner": "...",
+            "pauseBefore": 0,
+            "profile": {
+              "key": "hook",
+              "text": "Tu cuerpo está mintiendo por ti en este momento y ni te das cuenta...",
+              "deliveryStyle": "directo",
+              "narrationEnergy": "alta",
+              "pauseStrength": "fuerte",
+              "emphasisWords": [
+                "momento",
+                "cuenta"
+              ],
+              "pacing": "corto",
+              "pauseBefore": 0,
+              "pauseAfter": 0.46,
+              "joiner": "...",
+              "ssmlRate": "-8%",
+              "ssmlPitch": "+2%",
+              "ssmlVolume": "0%"
+            }
+          }
+        ],
+        "text": "Tu cuerpo está mintiendo por ti en este momento y ni te das cuenta..."
+      }
+    ]
+  }
+}

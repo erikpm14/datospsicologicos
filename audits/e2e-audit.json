@@ -1,0 +1,16 @@
+{
+  "timestamp": "2026-04-26T21:09:07.749Z",
+  "status": "OK",
+  "issues": [],
+  "warnings": [],
+  "components": {
+    "GENERATED": "pass",
+    "RENDERED": "pass",
+    "GENERATION": "pass",
+    "RENDER": "pass",
+    "SUBTITLES": "pass",
+    "QC": "pass",
+    "QUEUES": "pass",
+    "PUBLISH": "warning"
+  }
+}

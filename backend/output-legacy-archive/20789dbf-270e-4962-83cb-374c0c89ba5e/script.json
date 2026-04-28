@@ -1,0 +1,769 @@
+{
+  "title": "confirmacion_automatica",
+  "topic": "relationships",
+  "hook": "Mira esto justo antes de necesitas buscar confirmación sin darte cuenta.",
+  "open_loop": "Acabas de escribir un mensaje y esperas respuesta mirando el móvil cada dos segundos.",
+  "micro_value": "La búsqueda automática de confirmación en relaciones cercanas.",
+  "escalation": "Preguntás 'está todo bien?' cuando el otro tarda en responder. Revisás si vio el mensaje. Interpretas su tono de forma negativa aunque sea neutral.",
+  "reengage": "No es inseguridad tuya. Es un patrón que todos hacemos con quien nos importa.",
+  "peak": "Buscas confirmación porque necesitas saber que sigues siendo importante para esa persona. Es validación disfrazada de pregunta.",
+  "open_ending": "¿Cuántas veces al día haces esto sin darte cuenta?",
+  "soft_cta": "Si te pasa, no estás solo. Te ha pasado?",
+  "effectName": "Búsqueda Automática de Validación Relacional",
+  "psychologicalFact": "El apego nos hace buscar señales de confirmación en personas importantes, incluso en detalles pequeños.",
+  "viralTrigger": "identificacion",
+  "emotionalTrigger": "validation",
+  "keywords": [
+    "relaciones",
+    "inseguridad",
+    "validación",
+    "apego",
+    "comportamiento automático",
+    "parejas",
+    "mensajes"
+  ],
+  "claim": "La búsqueda automática de confirmación en relaciones cercanas.",
+  "explanation": "Preguntás 'está todo bien?' cuando el otro tarda en responder. Revisás si vio el mensaje. Interpretas su tono de forma negativa aunque sea neutral. No es inseguridad tuya. Es un patrón que todos hacemos con quien nos importa. Buscas confirmación porque necesitas saber que sigues siendo importante para esa persona. Es validación disfrazada de pregunta.",
+  "cta": "¿Cuántas veces al día haces esto sin darte cuenta? Si te pasa, no estás solo. Te ha pasado?",
+  "segments": [
+    {
+      "type": "HOOK",
+      "text": "Mira esto justo antes de necesitas buscar confirmación sin darte cuenta.",
+      "visualIntent": "punch zoom, texto impactante, fondo oscuro",
+      "emotion": "tension"
+    },
+    {
+      "type": "OPEN_LOOP",
+      "text": "Acabas de escribir un mensaje y esperas respuesta mirando el móvil cada dos segundos.",
+      "visualIntent": "zoom lento, rostro pensativo, tension",
+      "emotion": "curiosity"
+    },
+    {
+      "type": "MICRO_VALUE",
+      "text": "La búsqueda automática de confirmación en relaciones cercanas.",
+      "visualIntent": "zoom lento, rostro pensativo, tension",
+      "emotion": "curiosity"
+    },
+    {
+      "type": "ESCALATION",
+      "text": "Preguntás 'está todo bien?' cuando el otro tarda en responder. Revisás si vio el mensaje. Interpretas su tono de forma negativa aunque sea neutral.",
+      "visualIntent": "zoom lento, rostro pensativo, tension",
+      "emotion": "curiosity"
+    },
+    {
+      "type": "REENGAGE",
+      "text": "No es inseguridad tuya. Es un patrón que todos hacemos con quien nos importa.",
+      "visualIntent": "cambio brusco, tension, zoom corto",
+      "emotion": "curiosity"
+    },
+    {
+      "type": "PEAK",
+      "text": "Buscas confirmación porque necesitas saber que sigues siendo importante para esa persona. Es validación disfrazada de pregunta.",
+      "visualIntent": "aislamiento, silueta, punch zoom",
+      "emotion": "impacto"
+    },
+    {
+      "type": "OPEN_ENDING",
+      "text": "¿Cuántas veces al día haces esto sin darte cuenta?",
+      "visualIntent": "zoom lento, rostro pensativo, tension",
+      "emotion": "curiosity"
+    },
+    {
+      "type": "SOFT_CTA",
+      "text": "Si te pasa, no estás solo. Te ha pasado?",
+      "visualIntent": "zoom lento, rostro pensativo, tension",
+      "emotion": "cercania"
+    }
+  ],
+  "structureVersion": "open_loop_escalation_v1",
+  "hasReengage": true,
+  "fullScript": "Mira esto justo antes de necesitas buscar confirmación sin darte cuenta. Acabas de escribir un mensaje y esperas respuesta mirando el móvil cada dos segundos. La búsqueda automática de confirmación en relaciones cercanas. Preguntás 'está todo bien?' cuando el otro tarda en responder. Revisás si vio el mensaje. Interpretas su tono de forma negativa aunque sea neutral. No es inseguridad tuya. Es un patrón que todos hacemos con quien nos importa. Buscas confirmación porque necesitas saber que sigues siendo importante para esa persona. Es validación disfrazada de pregunta. ¿Cuántas veces al día haces esto sin darte cuenta? Si te pasa, no estás solo. Te ha pasado?",
+  "videoInstructions": {
+    "singleFocus": true,
+    "visualStyle": [
+      "estetica cinematografica oscura",
+      "fondo negro o casi negro",
+      "alto contraste con azul electrico dominante",
+      "acento rojo oscuro solo para tension",
+      "single focus constante sin overlays complejos",
+      "cambio de plano cada 2-3 segundos",
+      "zoom progresivo y movimiento suave"
+    ],
+    "subtitleStyle": "tipografia condensada bold, blanco frio con acentos azul electrico y rojo oscuro, subtitulos grandes y sincronizados",
+    "audioStyle": {
+      "voice": "voz clara y con ritmo",
+      "pauses": [
+        "hook",
+        "reengage",
+        "peak"
+      ]
+    },
+    "scenes": [
+      {
+        "segment": "hook",
+        "timing": "0-2.2s",
+        "visual": "primer plano de cerebro luminoso o rostro inquietante, relacionado con relationships, fondo negro o muy oscuro, contraste alto, azul electrico y rojo oscuro como acentos, zoom lento, iluminacion dramatica, sensacion de misterio psicologico",
+        "cut": "corte rapido con push-in",
+        "startSeconds": 0,
+        "endSeconds": 2.2,
+        "durationSeconds": 2.2,
+        "shotType": "primer plano",
+        "framing": "primer plano",
+        "intensity": "alta",
+        "movement": "push-in rapido",
+        "transition": "hard cut",
+        "emphasis": "scroll-stop inmediato",
+        "syncCue": "movimiento continuo con remate en palabra fuerte"
+      },
+      {
+        "segment": "open_loop",
+        "timing": "2.2-5s",
+        "visual": "ojo humano extremo o gesto suspendido en sombra, relacionado con relationships, fondo negro o muy oscuro, contraste alto, azul electrico y rojo oscuro como acentos, zoom lento, iluminacion dramatica, sensacion de misterio psicologico",
+        "cut": "zoom corto continuo",
+        "startSeconds": 2.2,
+        "endSeconds": 5,
+        "durationSeconds": 2.8,
+        "shotType": "plano detalle",
+        "framing": "plano detalle",
+        "intensity": "alta",
+        "movement": "zoom lento continuo",
+        "transition": "match cut",
+        "emphasis": "curiosidad sostenida",
+        "syncCue": "movimiento continuo con remate en palabra fuerte"
+      },
+      {
+        "segment": "micro_value",
+        "timing": "5-8.2s",
+        "visual": "detalle simbolico del mecanismo mental en glow azul, relacionado con relationships, fondo negro o muy oscuro, contraste alto, azul electrico y rojo oscuro como acentos, zoom lento, iluminacion dramatica, sensacion de misterio psicologico",
+        "cut": "cambio de plano limpio",
+        "startSeconds": 5,
+        "endSeconds": 8.2,
+        "durationSeconds": 3.2,
+        "shotType": "plano medio",
+        "framing": "plano medio",
+        "intensity": "media",
+        "movement": "micro paneo lateral",
+        "transition": "cut limpio",
+        "emphasis": "primer pago de valor",
+        "syncCue": "movimiento continuo con remate en palabra fuerte"
+      },
+      {
+        "segment": "escalation",
+        "timing": "8.2-11.6s",
+        "visual": "silueta humana o tension social en contraluz, relacionado con relationships, fondo negro o muy oscuro, contraste alto, azul electrico y rojo oscuro como acentos, zoom lento, iluminacion dramatica, sensacion de misterio psicologico",
+        "cut": "cortes cada 2-3s",
+        "startSeconds": 8.2,
+        "endSeconds": 11.6,
+        "durationSeconds": 3.4,
+        "shotType": "plano abierto",
+        "framing": "plano abierto",
+        "intensity": "media-alta",
+        "movement": "acercamiento progresivo",
+        "transition": "cut ritmico",
+        "emphasis": "tension creciente",
+        "syncCue": "movimiento continuo con remate en palabra fuerte"
+      },
+      {
+        "segment": "reengage",
+        "timing": "11.6-14.2s",
+        "visual": "cambio brusco a plano mas cercano con rojo alerta, relacionado con relationships, fondo negro o muy oscuro, contraste alto, azul electrico y rojo oscuro como acentos, zoom lento, iluminacion dramatica, sensacion de misterio psicologico",
+        "cut": "cambio brusco + zoom agresivo",
+        "startSeconds": 11.6,
+        "endSeconds": 14.2,
+        "durationSeconds": 2.6,
+        "shotType": "primer plano",
+        "framing": "primer plano",
+        "intensity": "muy alta",
+        "movement": "zoom agresivo",
+        "transition": "whip cut",
+        "emphasis": "ruptura de patron",
+        "syncCue": "acercamiento en frase clave"
+      },
+      {
+        "segment": "peak",
+        "timing": "14.2-17.8s",
+        "visual": "escena humana real de conflicto, pareja o decision, relacionado con relationships, fondo negro o muy oscuro, contraste alto, azul electrico y rojo oscuro como acentos, zoom lento, iluminacion dramatica, sensacion de misterio psicologico",
+        "cut": "alternancia de planos cerrados",
+        "startSeconds": 14.2,
+        "endSeconds": 17.8,
+        "durationSeconds": 3.6,
+        "shotType": "plano medio",
+        "framing": "plano medio",
+        "intensity": "maxima",
+        "movement": "push-in sostenido",
+        "transition": "impact cut",
+        "emphasis": "impacto emocional",
+        "syncCue": "acercamiento en frase clave"
+      },
+      {
+        "segment": "open_ending",
+        "timing": "17.8-20.9s",
+        "visual": "figura sola alejandose en oscuridad con particulas, relacionado con relationships, fondo negro o muy oscuro, contraste alto, azul electrico y rojo oscuro como acentos, zoom lento, iluminacion dramatica, sensacion de misterio psicologico",
+        "cut": "desaceleracion ligera",
+        "startSeconds": 17.8,
+        "endSeconds": 20.9,
+        "durationSeconds": 3.1,
+        "shotType": "plano abierto",
+        "framing": "plano abierto",
+        "intensity": "media",
+        "movement": "zoom out suave",
+        "transition": "cut limpio",
+        "emphasis": "eco mental",
+        "syncCue": "movimiento continuo con remate en palabra fuerte"
+      },
+      {
+        "segment": "soft_cta",
+        "timing": "20.9-23.6s",
+        "visual": "rostro o silueta frontal con espacio negativo para cierre, relacionado con relationships, fondo negro o muy oscuro, contraste alto, azul electrico y rojo oscuro como acentos, zoom lento, iluminacion dramatica, sensacion de misterio psicologico",
+        "cut": "ultimo corte limpio",
+        "startSeconds": 20.9,
+        "endSeconds": 23.6,
+        "durationSeconds": 2.7,
+        "shotType": "plano detalle",
+        "framing": "plano detalle",
+        "intensity": "media",
+        "movement": "micro acercamiento",
+        "transition": "hold corto",
+        "emphasis": "cierre abierto",
+        "syncCue": "movimiento continuo con remate en palabra fuerte"
+      }
+    ],
+    "style": {
+      "theme": "psicologia oscura / mente humana / comportamiento",
+      "colorPalette": "negro absoluto, azul electrico, azul neon frio, rojo oscuro, blanco frio",
+      "visualStyle": "cinematografico, minimalista, alto contraste, single focus",
+      "lighting": "oscura, dramatica, contraluz duro, glow electrico dirigido, sombras marcadas",
+      "cameraMotion": "zoom lento constante, push-in suave, micro paneo lateral, cambio de plano cada 2-3 segundos",
+      "effects": "glow ligero, particulas sutiles, neblina tenue, ruido cinematografico muy fino",
+      "composition": "single focus, sujeto dominante a la derecha o centrado, texto respirando a la izquierda, primeros planos y siluetas, profundidad negativa",
+      "emotionalTone": "misterio psicologico, obsesion, tension contenida, intriga oscura",
+      "consistencyRules": [
+        "una sola escena principal por segmento",
+        "fondo siempre oscuro o casi negro",
+        "usar azul electrico como color dominante y rojo solo para tension o reengage",
+        "priorizar cerebros, ojos, siluetas y escenas humanas reconocibles",
+        "evitar stock luminoso, lifestyle genérico o composiciones planas"
+      ],
+      "clipKeywords": [
+        "relaciones",
+        "inseguridad",
+        "validación",
+        "apego",
+        "comportamiento automático",
+        "parejas",
+        "mensajes",
+        "glowing brain dark background"
+      ]
+    },
+    "clipKeywords": [
+      "relaciones",
+      "inseguridad",
+      "validación",
+      "apego",
+      "comportamiento automático",
+      "parejas",
+      "mensajes",
+      "glowing brain dark background",
+      "blue eye close up dark",
+      "person silhouette red light"
+    ],
+    "rhythmRule": "cambio visual cada 2-3 segundos, sin escenas estaticas ni repeticiones consecutivas de encuadre",
+    "timeline": [
+      {
+        "segment": "hook",
+        "timing": "0-2.2s",
+        "durationSeconds": 2.2,
+        "shotType": "primer plano",
+        "intensity": "alta",
+        "movement": "push-in rapido",
+        "transition": "hard cut"
+      },
+      {
+        "segment": "open_loop",
+        "timing": "2.2-5s",
+        "durationSeconds": 2.8,
+        "shotType": "plano detalle",
+        "intensity": "alta",
+        "movement": "zoom lento continuo",
+        "transition": "match cut"
+      },
+      {
+        "segment": "micro_value",
+        "timing": "5-8.2s",
+        "durationSeconds": 3.2,
+        "shotType": "plano medio",
+        "intensity": "media",
+        "movement": "micro paneo lateral",
+        "transition": "cut limpio"
+      },
+      {
+        "segment": "escalation",
+        "timing": "8.2-11.6s",
+        "durationSeconds": 3.4,
+        "shotType": "plano abierto",
+        "intensity": "media-alta",
+        "movement": "acercamiento progresivo",
+        "transition": "cut ritmico"
+      },
+      {
+        "segment": "reengage",
+        "timing": "11.6-14.2s",
+        "durationSeconds": 2.6,
+        "shotType": "primer plano",
+        "intensity": "muy alta",
+        "movement": "zoom agresivo",
+        "transition": "whip cut"
+      },
+      {
+        "segment": "peak",
+        "timing": "14.2-17.8s",
+        "durationSeconds": 3.6,
+        "shotType": "plano medio",
+        "intensity": "maxima",
+        "movement": "push-in sostenido",
+        "transition": "impact cut"
+      },
+      {
+        "segment": "open_ending",
+        "timing": "17.8-20.9s",
+        "durationSeconds": 3.1,
+        "shotType": "plano abierto",
+        "intensity": "media",
+        "movement": "zoom out suave",
+        "transition": "cut limpio"
+      },
+      {
+        "segment": "soft_cta",
+        "timing": "20.9-23.6s",
+        "durationSeconds": 2.7,
+        "shotType": "plano detalle",
+        "intensity": "media",
+        "movement": "micro acercamiento",
+        "transition": "hold corto"
+      }
+    ]
+  },
+  "identificationScore": 80,
+  "viralityScore": 40,
+  "viralityBreakdown": {
+    "hookStrength": 5,
+    "emotionalTrigger": 5,
+    "relatability": 13,
+    "loopPotential": 15,
+    "durationBonus": 2
+  },
+  "approved": false,
+  "estimatedWords": 106,
+  "durationSeconds": 45,
+  "llmMetrics": {
+    "llm_total_calls": 1,
+    "llm_parse_fail": false,
+    "llm_recovery_used": false,
+    "llm_hard_fail": false,
+    "emergency_fallback_used": false,
+    "llm_schema_fail": false,
+    "llm_truncated_suspected": true
+  },
+  "usedRecovery": false,
+  "generationSource": "generateScript",
+  "llmPath": [
+    "generateScript"
+  ],
+  "slotTracking": {
+    "batchId": "batch_1777030138458",
+    "slotId": "batch_1777030138458_slot_1",
+    "plannedOrder": 1,
+    "plannedRole": "follow",
+    "plannedCluster": "relationships",
+    "plannedHookType": "challenge",
+    "plannedMicroAction": "REPEAT_CHECK",
+    "recommendedCandidateId": "relationships-3",
+    "recommendedCandidateTitle": "El gesto pequeño que te cambia el día",
+    "businessMode": "monetization_priority",
+    "targetGoal": "monetization_priority",
+    "scheduleWindow": "4 días",
+    "recommendedPublishTime": "6 horas x slot 1",
+    "attributionType": "cluster_match",
+    "slotState": "queued",
+    "assignmentConfidence": 0.12,
+    "traceConfidence": 0.12,
+    "exactTraceAvailable": true,
+    "abLinked": false
+  },
+  "contentVersion": "v2",
+  "narrationPlan": {
+    "mode": "natural_short_v1",
+    "segments": {
+      "hook": {
+        "key": "hook",
+        "text": "Mira esto justo antes de necesitas buscar confirmación sin darte cuenta.",
+        "deliveryStyle": "directo",
+        "narrationEnergy": "alta",
+        "pauseStrength": "fuerte",
+        "emphasisWords": [
+          "darte",
+          "cuenta"
+        ],
+        "pacing": "corto",
+        "pauseBefore": 0,
+        "pauseAfter": 0.46,
+        "joiner": "...",
+        "ssmlRate": "-10%",
+        "ssmlPitch": "+6%",
+        "ssmlVolume": "+2%"
+      },
+      "open_loop": {
+        "key": "open_loop",
+        "text": "Acabas de escribir un mensaje y esperas respuesta mirando el móvil cada dos segundos.",
+        "deliveryStyle": "susurrado-tenso",
+        "narrationEnergy": "media-alta",
+        "pauseStrength": "media",
+        "emphasisWords": [
+          "movil",
+          "segundos"
+        ],
+        "pacing": "tenso",
+        "pauseBefore": 0.06,
+        "pauseAfter": 0.12,
+        "joiner": ".",
+        "ssmlRate": "-6%",
+        "ssmlPitch": "+3%",
+        "ssmlVolume": "+1%"
+      },
+      "micro_value": {
+        "key": "micro_value",
+        "text": "La búsqueda automática de confirmación en relaciones cercanas.",
+        "deliveryStyle": "claro",
+        "narrationEnergy": "media",
+        "pauseStrength": "corta",
+        "emphasisWords": [
+          "relaciones",
+          "cercanas"
+        ],
+        "pacing": "estable",
+        "pauseBefore": 0.04,
+        "pauseAfter": 0.08,
+        "joiner": ".",
+        "ssmlRate": "-2%",
+        "ssmlPitch": "0%",
+        "ssmlVolume": "0%"
+      },
+      "escalation": {
+        "key": "escalation",
+        "text": "Preguntás 'está todo bien?' cuando el otro tarda en responder. Revisás si vio el mensaje. Interpretas su tono de forma negativa, aunque sea neutral.",
+        "deliveryStyle": "creciente",
+        "narrationEnergy": "media-alta",
+        "pauseStrength": "corta",
+        "emphasisWords": [
+          "negativa",
+          "neutral"
+        ],
+        "pacing": "agil",
+        "pauseBefore": 0.04,
+        "pauseAfter": 0.18,
+        "joiner": ".",
+        "ssmlRate": "+3%",
+        "ssmlPitch": "+1%",
+        "ssmlVolume": "+1%"
+      },
+      "reengage": {
+        "key": "reengage",
+        "text": "No es inseguridad tuya. Es un patrón que todos hacemos con quien nos importa.",
+        "deliveryStyle": "remate",
+        "narrationEnergy": "alta",
+        "pauseStrength": "fuerte",
+        "emphasisWords": [
+          "hacemos",
+          "importa"
+        ],
+        "pacing": "marcado",
+        "pauseBefore": 0.26,
+        "pauseAfter": 0.12,
+        "joiner": "...",
+        "ssmlRate": "-4%",
+        "ssmlPitch": "+6%",
+        "ssmlVolume": "+3%"
+      },
+      "peak": {
+        "key": "peak",
+        "text": "Buscas confirmación porque necesitas saber que sigues siendo importante para esa persona. Es validación disfrazada de pregunta.",
+        "deliveryStyle": "impacto",
+        "narrationEnergy": "muy alta",
+        "pauseStrength": "media",
+        "emphasisWords": [
+          "disfrazada",
+          "pregunta"
+        ],
+        "pacing": "enfatico",
+        "pauseBefore": 0.18,
+        "pauseAfter": 0.16,
+        "joiner": ".",
+        "ssmlRate": "-3%",
+        "ssmlPitch": "+4%",
+        "ssmlVolume": "+4%"
+      },
+      "open_ending": {
+        "key": "open_ending",
+        "text": "¿Cuántas veces al día haces esto sin darte cuenta?",
+        "deliveryStyle": "eco",
+        "narrationEnergy": "media",
+        "pauseStrength": "corta",
+        "emphasisWords": [
+          "darte",
+          "cuenta"
+        ],
+        "pacing": "controlado",
+        "pauseBefore": 0.08,
+        "pauseAfter": 0.06,
+        "joiner": ".",
+        "ssmlRate": "-5%",
+        "ssmlPitch": "-1%",
+        "ssmlVolume": "0%"
+      },
+      "soft_cta": {
+        "key": "soft_cta",
+        "text": "Si te pasa, no estás solo. Te ha pasado?",
+        "deliveryStyle": "conversacional",
+        "narrationEnergy": "media",
+        "pauseStrength": "ninguna",
+        "emphasisWords": [
+          "estas",
+          "pasado"
+        ],
+        "pacing": "natural",
+        "pauseBefore": 0.05,
+        "pauseAfter": 0,
+        "joiner": "",
+        "ssmlRate": "-7%",
+        "ssmlPitch": "+2%",
+        "ssmlVolume": "0%"
+      }
+    },
+    "blocks": [
+      {
+        "key": "block_1",
+        "pauseAfter": 0.46,
+        "blockPacing": "controlado con gancho",
+        "parts": [
+          {
+            "key": "hook",
+            "text": "Mira esto justo antes de necesitas buscar confirmación sin darte cuenta.",
+            "joiner": "...",
+            "pauseBefore": 0,
+            "profile": {
+              "key": "hook",
+              "text": "Mira esto justo antes de necesitas buscar confirmación sin darte cuenta.",
+              "deliveryStyle": "directo",
+              "narrationEnergy": "alta",
+              "pauseStrength": "fuerte",
+              "emphasisWords": [
+                "darte",
+                "cuenta"
+              ],
+              "pacing": "corto",
+              "pauseBefore": 0,
+              "pauseAfter": 0.46,
+              "joiner": "...",
+              "ssmlRate": "-10%",
+              "ssmlPitch": "+6%",
+              "ssmlVolume": "+2%"
+            }
+          },
+          {
+            "key": "open_loop",
+            "text": "Acabas de escribir un mensaje y esperas respuesta mirando el móvil cada dos segundos.",
+            "joiner": ".",
+            "pauseBefore": 0.06,
+            "profile": {
+              "key": "open_loop",
+              "text": "Acabas de escribir un mensaje y esperas respuesta mirando el móvil cada dos segundos.",
+              "deliveryStyle": "susurrado-tenso",
+              "narrationEnergy": "media-alta",
+              "pauseStrength": "media",
+              "emphasisWords": [
+                "movil",
+                "segundos"
+              ],
+              "pacing": "tenso",
+              "pauseBefore": 0.06,
+              "pauseAfter": 0.12,
+              "joiner": ".",
+              "ssmlRate": "-6%",
+              "ssmlPitch": "+3%",
+              "ssmlVolume": "+1%"
+            }
+          }
+        ],
+        "text": "Mira esto justo antes de necesitas buscar confirmación sin darte cuenta... Acabas de escribir un mensaje y esperas respuesta mirando el móvil cada dos segundos."
+      },
+      {
+        "key": "block_2",
+        "pauseAfter": 0.22,
+        "blockPacing": "creciente",
+        "parts": [
+          {
+            "key": "micro_value",
+            "text": "La búsqueda automática de confirmación en relaciones cercanas.",
+            "joiner": ".",
+            "pauseBefore": 0.04,
+            "profile": {
+              "key": "micro_value",
+              "text": "La búsqueda automática de confirmación en relaciones cercanas.",
+              "deliveryStyle": "claro",
+              "narrationEnergy": "media",
+              "pauseStrength": "corta",
+              "emphasisWords": [
+                "relaciones",
+                "cercanas"
+              ],
+              "pacing": "estable",
+              "pauseBefore": 0.04,
+              "pauseAfter": 0.08,
+              "joiner": ".",
+              "ssmlRate": "-2%",
+              "ssmlPitch": "0%",
+              "ssmlVolume": "0%"
+            }
+          },
+          {
+            "key": "escalation",
+            "text": "Preguntás 'está todo bien?' cuando el otro tarda en responder. Revisás si vio el mensaje. Interpretas su tono de forma negativa, aunque sea neutral.",
+            "joiner": ".",
+            "pauseBefore": 0.04,
+            "profile": {
+              "key": "escalation",
+              "text": "Preguntás 'está todo bien?' cuando el otro tarda en responder. Revisás si vio el mensaje. Interpretas su tono de forma negativa, aunque sea neutral.",
+              "deliveryStyle": "creciente",
+              "narrationEnergy": "media-alta",
+              "pauseStrength": "corta",
+              "emphasisWords": [
+                "negativa",
+                "neutral"
+              ],
+              "pacing": "agil",
+              "pauseBefore": 0.04,
+              "pauseAfter": 0.18,
+              "joiner": ".",
+              "ssmlRate": "+3%",
+              "ssmlPitch": "+1%",
+              "ssmlVolume": "+1%"
+            }
+          }
+        ],
+        "text": "La búsqueda automática de confirmación en relaciones cercanas. Preguntás 'está todo bien?' cuando el otro tarda en responder. Revisás si vio el mensaje. Interpretas su tono de forma negativa, aunque sea neutral."
+      },
+      {
+        "key": "block_3",
+        "pauseAfter": 0.18,
+        "blockPacing": "impacto",
+        "parts": [
+          {
+            "key": "reengage",
+            "text": "No es inseguridad tuya. Es un patrón que todos hacemos con quien nos importa.",
+            "joiner": "...",
+            "pauseBefore": 0.26,
+            "profile": {
+              "key": "reengage",
+              "text": "No es inseguridad tuya. Es un patrón que todos hacemos con quien nos importa.",
+              "deliveryStyle": "remate",
+              "narrationEnergy": "alta",
+              "pauseStrength": "fuerte",
+              "emphasisWords": [
+                "hacemos",
+                "importa"
+              ],
+              "pacing": "marcado",
+              "pauseBefore": 0.26,
+              "pauseAfter": 0.12,
+              "joiner": "...",
+              "ssmlRate": "-4%",
+              "ssmlPitch": "+6%",
+              "ssmlVolume": "+3%"
+            }
+          },
+          {
+            "key": "peak",
+            "text": "Buscas confirmación porque necesitas saber que sigues siendo importante para esa persona. Es validación disfrazada de pregunta.",
+            "joiner": ".",
+            "pauseBefore": 0.18,
+            "profile": {
+              "key": "peak",
+              "text": "Buscas confirmación porque necesitas saber que sigues siendo importante para esa persona. Es validación disfrazada de pregunta.",
+              "deliveryStyle": "impacto",
+              "narrationEnergy": "muy alta",
+              "pauseStrength": "media",
+              "emphasisWords": [
+                "disfrazada",
+                "pregunta"
+              ],
+              "pacing": "enfatico",
+              "pauseBefore": 0.18,
+              "pauseAfter": 0.16,
+              "joiner": ".",
+              "ssmlRate": "-3%",
+              "ssmlPitch": "+4%",
+              "ssmlVolume": "+4%"
+            }
+          }
+        ],
+        "text": "No es inseguridad tuya. Es un patrón que todos hacemos con quien nos importa... Buscas confirmación porque necesitas saber que sigues siendo importante para esa persona. Es validación disfrazada de pregunta."
+      },
+      {
+        "key": "block_4",
+        "pauseAfter": 0,
+        "blockPacing": "cierre conversacional",
+        "parts": [
+          {
+            "key": "open_ending",
+            "text": "¿Cuántas veces al día haces esto sin darte cuenta?",
+            "joiner": ".",
+            "pauseBefore": 0.08,
+            "profile": {
+              "key": "open_ending",
+              "text": "¿Cuántas veces al día haces esto sin darte cuenta?",
+              "deliveryStyle": "eco",
+              "narrationEnergy": "media",
+              "pauseStrength": "corta",
+              "emphasisWords": [
+                "darte",
+                "cuenta"
+              ],
+              "pacing": "controlado",
+              "pauseBefore": 0.08,
+              "pauseAfter": 0.06,
+              "joiner": ".",
+              "ssmlRate": "-5%",
+              "ssmlPitch": "-1%",
+              "ssmlVolume": "0%"
+            }
+          },
+          {
+            "key": "soft_cta",
+            "text": "Si te pasa, no estás solo. Te ha pasado?",
+            "joiner": "",
+            "pauseBefore": 0.05,
+            "profile": {
+              "key": "soft_cta",
+              "text": "Si te pasa, no estás solo. Te ha pasado?",
+              "deliveryStyle": "conversacional",
+              "narrationEnergy": "media",
+              "pauseStrength": "ninguna",
+              "emphasisWords": [
+                "estas",
+                "pasado"
+              ],
+              "pacing": "natural",
+              "pauseBefore": 0.05,
+              "pauseAfter": 0,
+              "joiner": "",
+              "ssmlRate": "-7%",
+              "ssmlPitch": "+2%",
+              "ssmlVolume": "0%"
+            }
+          }
+        ],
+        "text": "¿Cuántas veces al día haces esto sin darte cuenta. Si te pasa, no estás solo. Te ha pasado?"
+      }
+    ]
+  }
+}

@@ -1,0 +1,53 @@
+[Script Info]
+ScriptType: v4.00+
+PlayResX: 1080
+PlayResY: 1920
+WrapStyle: 2
+
+[V4+ Styles]
+Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+Style: Default,Impact,100,&H00FFFFFF,&H00FFFFFF,&H00000000,&H90000000,-1,0,0,0,100,100,0,0,1,6,4,8,10,10,10,1
+
+[Events]
+Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
+Dialogue: 0,0:00:00.00,0:00:01.01,Default,,0,0,0,,{\c&H00FFF7F3\fs115\b-1\bord8\pos(540,1320)}TU CEREBRO pide DOPAMINA
+Dialogue: 0,0:00:01.03,0:00:02.04,Default,,0,0,0,,{\c&H00FFF7F3\fs109\b0\bord6\pos(540,1320)}cada treinta segundos sin
+Dialogue: 0,0:00:02.06,0:00:03.19,Default,,0,0,0,,{\c&H00FFF7F3\fs109\b0\bord6\pos(540,1320)}notarlo.
+Dialogue: 0,0:00:06.18,0:00:07.27,Default,,0,0,0,,{\c&H00FF7B4F\fs95\b0\bord6\pos(540,1320)}Y no es debilidad
+Dialogue: 0,0:00:07.29,0:00:07.99,Default,,0,0,0,,{\c&H00FF7B4F\fs95\b0\bord6\pos(540,1320)}tuya.
+Dialogue: 0,0:00:08.01,0:00:08.39,Default,,0,0,0,,{\c&H00FFF7F3\fs100\b-1\bord8\pos(540,1320)}La DOPAMINA no se
+Dialogue: 0,0:00:08.41,0:00:09.10,Default,,0,0,0,,{\c&H00FF7B4F\fs95\b0\bord6\pos(540,1320)}Es química pura trabajando
+Dialogue: 0,0:00:09.12,0:00:09.51,Default,,0,0,0,,{\c&H00FFF7F3\fs94\b0\bord6\pos(540,1320)}libera cuando consigues algo.
+Dialogue: 0,0:00:09.53,0:00:10.21,Default,,0,0,0,,{\c&H00FF7B4F\fs95\b0\bord6\pos(540,1320)}contra ti cada día.
+Dialogue: 0,0:00:10.23,0:00:11.32,Default,,0,0,0,,{\c&H00FFF7F3\fs94\b0\bord6\pos(540,1320)}Se libera cuando esperas
+Dialogue: 0,0:00:11.34,0:00:12.43,Default,,0,0,0,,{\c&H00FFF7F3\fs94\b0\bord6\pos(540,1320)}conseguirlo.
+Dialogue: 0,0:00:12.45,0:00:13.54,Default,,0,0,0,,{\c&H00FFF7F3\fs94\b0\bord6\pos(540,1320)}Por eso no paras
+Dialogue: 0,0:00:13.55,0:00:14.76,Default,,0,0,0,,{\c&H00FFF7F3\fs94\b0\bord6\pos(540,1320)}de buscar.
+Dialogue: 0,0:00:21.31,0:00:22.39,Default,,0,0,0,,{\c&H00FF7B4F\fs97\b0\bord6\pos(540,1320)}Miras el móvil treinta
+Dialogue: 0,0:00:22.41,0:00:23.48,Default,,0,0,0,,{\c&H00FF7B4F\fs97\b0\bord6\pos(540,1320)}veces sin recordarlo.
+Dialogue: 0,0:00:23.50,0:00:23.62,Default,,0,0,0,,{\c&H00FF7B4F\fs97\b0\bord6\pos(540,1320)}No buscas información.
+Dialogue: 0,0:00:23.64,0:00:24.58,Default,,0,0,0,,{\c&H00303BFF\fs100\b0\bord6\pos(540,1320)}Lo peor no es
+Dialogue: 0,0:00:24.60,0:00:24.58,Default,,0,0,0,,{\c&H00FF7B4F\fs97\b0\bord6\pos(540,1320)}Buscas ese pico de
+Dialogue: 0,0:00:24.60,0:00:25.55,Default,,0,0,0,,{\c&H00303BFF\fs100\b0\bord6\pos(540,1320)}la adicción.
+Dialogue: 0,0:00:25.57,0:00:25.67,Default,,0,0,0,,{\c&H00303BFF\fs100\b0\bord6\pos(540,1320)}Es que ya no
+Dialogue: 0,0:00:25.69,0:00:26.51,Default,,0,0,0,,{\c&H00FF7B4F\fs97\b0\bord6\pos(540,1320)}incertidumbre.
+Dialogue: 0,0:00:26.53,0:00:26.76,Default,,0,0,0,,{\c&H00303BFF\fs100\b0\bord6\pos(540,1320)}disfrutas nada sin ese
+Dialogue: 0,0:00:26.78,0:00:27.48,Default,,0,0,0,,{\c&H00FF7B4F\fs103\b-1\bord8\pos(540,1320)}Tu CEREBRO apuesta por
+Dialogue: 0,0:00:27.50,0:00:27.86,Default,,0,0,0,,{\c&H00303BFF\fs100\b0\bord6\pos(540,1320)}disparo químico.
+Dialogue: 0,0:00:27.88,0:00:28.95,Default,,0,0,0,,{\c&H00FF7B4F\fs97\b0\bord6\pos(540,1320)}la sorpresa,
+Dialogue: 0,0:00:28.97,0:00:30.17,Default,,0,0,0,,{\c&H00FF7B4F\fs97\b0\bord6\pos(540,1320)}no por la realidad.
+Dialogue: 0,0:00:33.30,0:00:34.25,Default,,0,0,0,,{\c&H00303BFF\fs98\b0\bord6\pos(540,1320)}Cuando dejas el móvil
+Dialogue: 0,0:00:34.27,0:00:35.22,Default,,0,0,0,,{\c&H00303BFF\fs98\b0\bord6\pos(540,1320)}te aburres en cinco
+Dialogue: 0,0:00:35.24,0:00:36.20,Default,,0,0,0,,{\c&H00303BFF\fs98\b0\bord6\pos(540,1320)}minutos.
+Dialogue: 0,0:00:36.22,0:00:37.17,Default,,0,0,0,,{\c&H00303BFF\fs105\b-1\bord8\pos(540,1320)}Tu DOPAMINA está tan
+Dialogue: 0,0:00:37.19,0:00:37.38,Default,,0,0,0,,{\c&H00303BFF\fs98\b0\bord6\pos(540,1320)}alta que la vida
+Dialogue: 0,0:00:37.40,0:00:38.14,Default,,0,0,0,,{\c&H00FF7B4F\fs92\b0\bord6\pos(540,1320)}¿Cuántas veces miraste el
+Dialogue: 0,0:00:38.16,0:00:38.32,Default,,0,0,0,,{\c&H00303BFF\fs98\b0\bord6\pos(540,1320)}normal es gris.
+Dialogue: 0,0:00:38.34,0:00:39.12,Default,,0,0,0,,{\c&H00FF7B4F\fs98\b-1\bord8\pos(540,1320)}móvil hoy sin darte
+Dialogue: 0,0:00:39.14,0:00:39.27,Default,,0,0,0,,{\c&H00303BFF\fs98\b0\bord6\pos(540,1320)}Eso no es debilidad.
+Dialogue: 0,0:00:39.29,0:00:40.09,Default,,0,0,0,,{\c&H00FF7B4F\fs92\b0\bord6\pos(540,1320)}cuenta?
+Dialogue: 0,0:00:40.11,0:00:41.06,Default,,0,0,0,,{\c&H00303BFF\fs98\b0\bord6\pos(540,1320)}Es tu neurobiología pidiendo
+Dialogue: 0,0:00:41.08,0:00:42.16,Default,,0,0,0,,{\c&H00303BFF\fs98\b0\bord6\pos(540,1320)}mercy.
+Dialogue: 0,0:00:43.05,0:00:43.87,Default,,0,0,0,,{\c&H00FF7B4F\fs90\b0\bord6\pos(540,1320)}Sigue el hilo.
+Dialogue: 0,0:00:43.89,0:00:44.70,Default,,0,0,0,,{\c&H00FF7B4F\fs90\b0\bord6\pos(540,1320)}Tu bolsillo tiene la
+Dialogue: 0,0:00:44.73,0:00:45.66,Default,,0,0,0,,{\c&H00FF7B4F\fs90\b0\bord6\pos(540,1320)}respuesta.

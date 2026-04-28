@@ -1,0 +1,52 @@
+[Script Info]
+ScriptType: v4.00+
+PlayResX: 1080
+PlayResY: 1920
+WrapStyle: 2
+
+[V4+ Styles]
+Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+Style: Default,Impact,100,&H00FFFFFF,&H00FFFFFF,&H00000000,&H90000000,-1,0,0,0,100,100,0,0,1,6,4,8,10,10,10,1
+
+[Events]
+Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
+Dialogue: 0,0:00:00.00,0:00:00.94,Default,,0,0,0,,{\c&H0000FFFF\fs109\b-1\bord8\pos(540,1460)}Si explicas de
+Dialogue: 0,0:00:00.96,0:00:02.02,Default,,0,0,0,,{\c&H0000FFFF\fs109\b0\bord6\pos(540,1460)}mas, ya perdiste
+Dialogue: 0,0:00:02.57,0:00:02.96,Default,,0,0,0,,{\c&H00FFFFFF\fs94\b0\bord6\pos(540,1460)}Se llama DARVO.
+Dialogue: 0,0:00:02.98,0:00:03.49,Default,,0,0,0,,{\c&H00FFFFFF\fs94\b0\bord6\pos(540,1460)}Niega, te ataca
+Dialogue: 0,0:00:03.61,0:00:04.12,Default,,0,0,0,,{\c&H00FFFFFF\fs94\b0\bord6\pos(540,1460)}y luego se
+Dialogue: 0,0:00:04.16,0:00:05.62,Default,,0,0,0,,{\c&H00FFFFFF\fs94\b0\bord6\pos(540,1460)}hace victima delante
+Dialogue: 0,0:00:05.64,0:00:06.75,Default,,0,0,0,,{\c&H00FFFFFF\fs94\b0\bord6\pos(540,1460)}de ti.
+Dialogue: 0,0:00:07.04,0:00:07.58,Default,,0,0,0,,{\c&H0000D7FF\fs97\b0\bord6\pos(540,1460)}Primero distorsiona lo
+Dialogue: 0,0:00:07.60,0:00:08.23,Default,,0,0,0,,{\c&H0000D7FF\fs97\b0\bord6\pos(540,1460)}que paso. Despues
+Dialogue: 0,0:00:08.25,0:00:08.40,Default,,0,0,0,,{\c&H0000D7FF\fs97\b0\bord6\pos(540,1460)}cuestiona tu memoria.
+Dialogue: 0,0:00:08.42,0:00:08.82,Default,,0,0,0,,{\c&H0000D7FF\fs97\b0\bord6\pos(540,1460)}Luego te obliga
+Dialogue: 0,0:00:08.90,0:00:09.15,Default,,0,0,0,,{\c&H0000D7FF\fs97\b0\bord6\pos(540,1460)}a justificar cada
+Dialogue: 0,0:00:09.17,0:00:09.73,Default,,0,0,0,,{\c&H0000D7FF\fs97\b0\bord6\pos(540,1460)}detalle. Mientras respondes,
+Dialogue: 0,0:00:09.75,0:00:10.43,Default,,0,0,0,,{\c&H0000D7FF\fs97\b0\bord6\pos(540,1460)}ya cambio el
+Dialogue: 0,0:00:10.64,0:00:12.93,Default,,0,0,0,,{\c&H0000D7FF\fs97\b0\bord6\pos(540,1460)}foco. Tu cuerpo
+Dialogue: 0,0:00:13.10,0:00:13.33,Default,,0,0,0,,{\c&H0000D7FF\fs97\b0\bord6\pos(540,1460)}entra en defensa
+Dialogue: 0,0:00:13.35,0:00:13.67,Default,,0,0,0,,{\c&H0000D7FF\fs97\b0\bord6\pos(540,1460)}automatica. Y cuando
+Dialogue: 0,0:00:13.69,0:00:14.99,Default,,0,0,0,,{\c&H0000D7FF\fs97\b0\bord6\pos(540,1460)}intentas cerrar, ya
+Dialogue: 0,0:00:15.04,0:00:15.90,Default,,0,0,0,,{\c&H0000D7FF\fs97\b0\bord6\pos(540,1460)}estas pidiendo calma
+Dialogue: 0,0:00:15.93,0:00:16.91,Default,,0,0,0,,{\c&H0000D7FF\fs97\b0\bord6\pos(540,1460)}tu. Pero aqui
+Dialogue: 0,0:00:17.06,0:00:19.53,Default,,0,0,0,,{\c&H0000D7FF\fs97\b0\bord6\pos(540,1460)}es donde te
+Dialogue: 0,0:00:19.67,0:00:20.68,Default,,0,0,0,,{\c&H0000D7FF\fs103\b-1\bord8\pos(540,1460)}engancha sin que
+Dialogue: 0,0:00:20.70,0:00:21.82,Default,,0,0,0,,{\c&H0000D7FF\fs97\b0\bord6\pos(540,1460)}lo notes. Lo
+Dialogue: 0,0:00:22.09,0:00:24.18,Default,,0,0,0,,{\c&H0000D7FF\fs97\b0\bord6\pos(540,1460)}hacen contigo en
+Dialogue: 0,0:00:24.36,0:00:24.53,Default,,0,0,0,,{\c&H0000D7FF\fs97\b0\bord6\pos(540,1460)}una discusion normal:
+Dialogue: 0,0:00:24.55,0:00:24.80,Default,,0,0,0,,{\c&H0000D7FF\fs97\b0\bord6\pos(540,1460)}acabas pidiendo perdon
+Dialogue: 0,0:00:24.82,0:00:25.22,Default,,0,0,0,,{\c&H0000D7FF\fs97\b0\bord6\pos(540,1460)}por decir la
+Dialogue: 0,0:00:25.24,0:00:25.84,Default,,0,0,0,,{\c&H0000D7FF\fs97\b0\bord6\pos(540,1460)}verdad, dudando de
+Dialogue: 0,0:00:25.86,0:00:26.57,Default,,0,0,0,,{\c&H0000D7FF\fs97\b0\bord6\pos(540,1460)}tu recuerdo y
+Dialogue: 0,0:00:26.71,0:00:27.50,Default,,0,0,0,,{\c&H0000D7FF\fs97\b0\bord6\pos(540,1460)}sintiendo que el
+Dialogue: 0,0:00:27.52,0:00:28.98,Default,,0,0,0,,{\c&H0000D7FF\fs103\b-1\bord8\pos(540,1460)}problema siempre eras
+Dialogue: 0,0:00:29.00,0:00:30.55,Default,,0,0,0,,{\c&H0000D7FF\fs97\b0\bord6\pos(540,1460)}tu desde el
+Dialogue: 0,0:00:30.57,0:00:30.98,Default,,0,0,0,,{\c&H0000D7FF\fs97\b0\bord6\pos(540,1460)}principio.
+Dialogue: 0,0:00:31.17,0:00:31.73,Default,,0,0,0,,{\c&H00FFE500\fs90\b0\bord6\pos(540,1460)}Y cuando lo
+Dialogue: 0,0:00:31.75,0:00:32.43,Default,,0,0,0,,{\c&H00FFE500\fs90\b0\bord6\pos(540,1460)}ves una vez,
+Dialogue: 0,0:00:32.54,0:00:33.84,Default,,0,0,0,,{\c&H00FFE500\fs90\b0\bord6\pos(540,1460)}empieza a aparecer
+Dialogue: 0,0:00:33.85,0:00:35.27,Default,,0,0,0,,{\c&H00FFE500\fs90\b0\bord6\pos(540,1460)}en muchas conversaciones
+Dialogue: 0,0:00:35.59,0:00:36.05,Default,,0,0,0,,{\c&H00FFE500\fs90\b0\bord6\pos(540,1460)}mas. Te ha
+Dialogue: 0,0:00:36.07,0:00:36.65,Default,,0,0,0,,{\c&H00FFE500\fs90\b0\bord6\pos(540,1460)}pasado esto exactamente
+Dialogue: 0,0:00:36.66,0:00:38.22,Default,,0,0,0,,{\c&H00FFE500\fs90\b0\bord6\pos(540,1460)}con alguien cercano?

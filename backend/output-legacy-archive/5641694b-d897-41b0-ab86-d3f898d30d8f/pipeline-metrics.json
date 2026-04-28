@@ -1,0 +1,58 @@
+{
+  "label": "video-pipeline",
+  "startedAt": "2026-04-26T18:23:02.137Z",
+  "totalMs": 86664,
+  "phases": [
+    {
+      "name": "script_generation",
+      "startedAt": "2026-04-26T18:23:02.138Z",
+      "status": "completed",
+      "endedAt": "2026-04-26T18:23:02.140Z",
+      "durationMs": 2,
+      "source": "prefab",
+      "estimatedWords": 116,
+      "durationSeconds": 50
+    },
+    {
+      "name": "tts",
+      "startedAt": "2026-04-26T18:23:02.142Z",
+      "status": "completed",
+      "endedAt": "2026-04-26T18:23:43.178Z",
+      "durationMs": 41036,
+      "provider": "kokoro",
+      "estimatedDuration": 45.318667,
+      "wordBoundaries": 0
+    },
+    {
+      "name": "audio_postprocess",
+      "startedAt": "2026-04-26T18:23:43.179Z",
+      "status": "completed",
+      "endedAt": "2026-04-26T18:23:44.788Z",
+      "durationMs": 1609,
+      "outputPath": "C:\\Users\\Erik\\Desktop\\Generador_videos\\output\\5641694b-d897-41b0-ab86-d3f898d30d8f\\voice_proc.mp3"
+    },
+    {
+      "name": "render",
+      "startedAt": "2026-04-26T18:23:44.790Z",
+      "status": "completed",
+      "endedAt": "2026-04-26T18:24:27.835Z",
+      "durationMs": 43045,
+      "outputPath": "C:\\Users\\Erik\\Desktop\\Generador_videos\\output\\5641694b-d897-41b0-ab86-d3f898d30d8f\\output.mp4"
+    },
+    {
+      "name": "quality_check",
+      "startedAt": "2026-04-26T18:24:27.843Z",
+      "status": "completed",
+      "endedAt": "2026-04-26T18:24:28.798Z",
+      "durationMs": 954,
+      "passed": true,
+      "score": 95,
+      "threshold": 70
+    }
+  ],
+  "activePhase": null,
+  "jobId": "62fb44f2-5162-4021-b9d0-24a735c9ee49",
+  "videoId": "5641694b-d897-41b0-ab86-d3f898d30d8f",
+  "topic": "habits",
+  "result": "deferred"
+}

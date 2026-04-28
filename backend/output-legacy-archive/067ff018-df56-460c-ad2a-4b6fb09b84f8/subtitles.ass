@@ -1,0 +1,50 @@
+[Script Info]
+ScriptType: v4.00+
+PlayResX: 1080
+PlayResY: 1920
+WrapStyle: 2
+
+[V4+ Styles]
+Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+Style: Default,Impact,100,&H00FFFFFF,&H00FFFFFF,&H00000000,&H90000000,-1,0,0,0,100,100,0,0,1,6,4,8,10,10,10,1
+
+[Events]
+Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
+Dialogue: 0,0:00:00.00,0:00:01.02,Default,,0,0,0,,{\c&H0000FFFF\fs109\b-1\bord8\pos(540,1460)}Crees que eliges,
+Dialogue: 0,0:00:01.04,0:00:02.15,Default,,0,0,0,,{\c&H0000FFFF\fs109\b0\bord6\pos(540,1460)}pero ya decidieron
+Dialogue: 0,0:00:02.70,0:00:03.17,Default,,0,0,0,,{\c&H00FFFFFF\fs94\b0\bord6\pos(540,1460)}Se llama ILUSION
+Dialogue: 0,0:00:03.19,0:00:03.65,Default,,0,0,0,,{\c&H00FFFFFF\fs94\b0\bord6\pos(540,1460)}DE CONTROL. Tu
+Dialogue: 0,0:00:03.67,0:00:04.26,Default,,0,0,0,,{\c&H00FFFFFF\fs94\b0\bord6\pos(540,1460)}mente confunde influencia
+Dialogue: 0,0:00:04.54,0:00:06.26,Default,,0,0,0,,{\c&H00FFFFFF\fs94\b0\bord6\pos(540,1460)}con poder real
+Dialogue: 0,0:00:06.28,0:00:08.11,Default,,0,0,0,,{\c&H00FFFFFF\fs94\b0\bord6\pos(540,1460)}sobre la situacion.
+Dialogue: 0,0:00:08.41,0:00:09.13,Default,,0,0,0,,{\c&H0000D7FF\fs97\b0\bord6\pos(540,1460)}Te dan dos
+Dialogue: 0,0:00:09.15,0:00:09.100,Default,,0,0,0,,{\c&H0000D7FF\fs97\b0\bord6\pos(540,1460)}opciones cerradas. Sientes
+Dialogue: 0,0:00:10.09,0:00:10.75,Default,,0,0,0,,{\c&H0000D7FF\fs97\b0\bord6\pos(540,1460)}libertad. El contexto
+Dialogue: 0,0:00:10.77,0:00:10.82,Default,,0,0,0,,{\c&H0000D7FF\fs97\b0\bord6\pos(540,1460)}ya venia dise?ado.
+Dialogue: 0,0:00:10.84,0:00:11.24,Default,,0,0,0,,{\c&H0000D7FF\fs97\b0\bord6\pos(540,1460)}Los colores, el
+Dialogue: 0,0:00:11.28,0:00:12.65,Default,,0,0,0,,{\c&H0000D7FF\fs97\b0\bord6\pos(540,1460)}orden y la
+Dialogue: 0,0:00:12.67,0:00:12.79,Default,,0,0,0,,{\c&H0000D7FF\fs97\b0\bord6\pos(540,1460)}urgencia empujan tu
+Dialogue: 0,0:00:12.81,0:00:13.01,Default,,0,0,0,,{\c&H0000D7FF\fs103\b-1\bord8\pos(540,1460)}respuesta. Tu cerebro
+Dialogue: 0,0:00:13.03,0:00:15.49,Default,,0,0,0,,{\c&H0000D7FF\fs97\b0\bord6\pos(540,1460)}rellena el resto
+Dialogue: 0,0:00:15.51,0:00:15.65,Default,,0,0,0,,{\c&H0000D7FF\fs97\b0\bord6\pos(540,1460)}automaticamente. Y luego
+Dialogue: 0,0:00:15.67,0:00:16.07,Default,,0,0,0,,{\c&H0000D7FF\fs97\b0\bord6\pos(540,1460)}lo llama eleccion
+Dialogue: 0,0:00:16.16,0:00:18.41,Default,,0,0,0,,{\c&H0000D7FF\fs97\b0\bord6\pos(540,1460)}personal sin dudarlo.
+Dialogue: 0,0:00:18.58,0:00:19.70,Default,,0,0,0,,{\c&H0000D7FF\fs97\b0\bord6\pos(540,1460)}Y aqui cambia
+Dialogue: 0,0:00:19.72,0:00:20.95,Default,,0,0,0,,{\c&H0000D7FF\fs97\b0\bord6\pos(540,1460)}todo lo que
+Dialogue: 0,0:00:21.21,0:00:21.91,Default,,0,0,0,,{\c&H0000D7FF\fs97\b0\bord6\pos(540,1460)}crees sobre decidir.
+Dialogue: 0,0:00:21.93,0:00:22.57,Default,,0,0,0,,{\c&H0000D7FF\fs97\b0\bord6\pos(540,1460)}Lo hacen contigo
+Dialogue: 0,0:00:22.59,0:00:23.36,Default,,0,0,0,,{\c&H0000D7FF\fs97\b0\bord6\pos(540,1460)}en compras, formularios
+Dialogue: 0,0:00:23.72,0:00:25.15,Default,,0,0,0,,{\c&H0000D7FF\fs97\b0\bord6\pos(540,1460)}y conversaciones: eliges
+Dialogue: 0,0:00:25.17,0:00:25.93,Default,,0,0,0,,{\c&H0000D7FF\fs97\b0\bord6\pos(540,1460)}justo lo que
+Dialogue: 0,0:00:25.95,0:00:26.84,Default,,0,0,0,,{\c&H0000D7FF\fs97\b0\bord6\pos(540,1460)}querias evitar y
+Dialogue: 0,0:00:27.06,0:00:30.11,Default,,0,0,0,,{\c&H0000D7FF\fs97\b0\bord6\pos(540,1460)}sales convencido de
+Dialogue: 0,0:00:30.13,0:00:30.30,Default,,0,0,0,,{\c&H0000D7FF\fs97\b0\bord6\pos(540,1460)}que fue idea
+Dialogue: 0,0:00:30.32,0:00:30.60,Default,,0,0,0,,{\c&H0000D7FF\fs97\b0\bord6\pos(540,1460)}tuya desde el
+Dialogue: 0,0:00:30.62,0:00:32.10,Default,,0,0,0,,{\c&H0000D7FF\fs97\b0\bord6\pos(540,1460)}primer segundo.
+Dialogue: 0,0:00:32.41,0:00:33.37,Default,,0,0,0,,{\c&H00FFE500\fs90\b0\bord6\pos(540,1460)}Por eso sigues
+Dialogue: 0,0:00:33.39,0:00:34.36,Default,,0,0,0,,{\c&H00FFE500\fs90\b0\bord6\pos(540,1460)}defendiendo decisiones que
+Dialogue: 0,0:00:34.38,0:00:35.34,Default,,0,0,0,,{\c&H00FFE500\fs96\b-1\bord8\pos(540,1460)}en realidad nunca
+Dialogue: 0,0:00:35.37,0:00:36.45,Default,,0,0,0,,{\c&H00FFE500\fs90\b0\bord6\pos(540,1460)}empezaron en ti.
+Dialogue: 0,0:00:36.81,0:00:37.50,Default,,0,0,0,,{\c&H00FFE500\fs90\b0\bord6\pos(540,1460)}Cuantas veces has
+Dialogue: 0,0:00:37.52,0:00:38.20,Default,,0,0,0,,{\c&H00FFE500\fs90\b0\bord6\pos(540,1460)}caido en esto
+Dialogue: 0,0:00:38.23,0:00:39.03,Default,,0,0,0,,{\c&H00FFE500\fs90\b0\bord6\pos(540,1460)}sin verlo?

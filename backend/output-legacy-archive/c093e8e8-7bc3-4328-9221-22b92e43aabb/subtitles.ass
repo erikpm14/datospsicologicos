@@ -1,0 +1,56 @@
+[Script Info]
+ScriptType: v4.00+
+PlayResX: 1080
+PlayResY: 1920
+WrapStyle: 2
+
+[V4+ Styles]
+Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+Style: Default,Impact,100,&H00FFFFFF,&H00FFFFFF,&H00000000,&H90000000,-1,0,0,0,100,100,0,0,1,6,4,8,10,10,10,1
+
+[Events]
+Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
+Dialogue: 0,0:00:00.00,0:00:00.74,Default,,0,0,0,,{\c&H00FFF7F3\fs109\b-1\bord8\pos(540,1320)}TRISTESA no es
+Dialogue: 0,0:00:00.76,0:00:01.36,Default,,0,0,0,,{\c&H00FFF7F3\fs109\b0\bord6\pos(540,1320)}tuya, es del
+Dialogue: 0,0:00:01.38,0:00:02.12,Default,,0,0,0,,{\c&H00FFF7F3\fs109\b0\bord6\pos(540,1320)}grupo, llevas una
+Dialogue: 0,0:00:02.14,0:00:03.00,Default,,0,0,0,,{\c&H00FF7B4F\fs95\b0\bord6\pos(540,1320)}semana mal sin
+Dialogue: 0,0:00:03.02,0:00:03.58,Default,,0,0,0,,{\c&H00FF7B4F\fs95\b0\bord6\pos(540,1320)}saber por qué
+Dialogue: 0,0:00:03.60,0:00:04.18,Default,,0,0,0,,{\c&H00FF7B4F\fs95\b0\bord6\pos(540,1320)}tu grupo está
+Dialogue: 0,0:00:04.20,0:00:04.54,Default,,0,0,0,,{\c&H00FF7B4F\fs105\b-1\bord8\pos(540,1320)}PEOR.
+Dialogue: 0,0:00:04.56,0:00:04.88,Default,,0,0,0,,{\c&H00FF7B4F\fs101\b-1\bord8\pos(540,1320)}El EFECTO sin
+Dialogue: 0,0:00:04.90,0:00:06.06,Default,,0,0,0,,{\c&H00FFF7F3\fs94\b0\bord6\pos(540,1320)}cronía emocional, cuando
+Dialogue: 0,0:00:06.08,0:00:06.92,Default,,0,0,0,,{\c&H00FFF7F3\fs94\b0\bord6\pos(540,1320)}alguien colapsa a
+Dialogue: 0,0:00:06.94,0:00:07.78,Default,,0,0,0,,{\c&H00FFF7F3\fs100\b-1\bord8\pos(540,1320)}su CORTISOL sube
+Dialogue: 0,0:00:07.80,0:00:08.16,Default,,0,0,0,,{\c&H00FFF7F3\fs94\b0\bord6\pos(540,1320)}y el tuyo
+Dialogue: 0,0:00:08.18,0:00:09.04,Default,,0,0,0,,{\c&H00FFF7F3\fs94\b0\bord6\pos(540,1320)}también sin hablar,
+Dialogue: 0,0:00:09.12,0:00:09.78,Default,,0,0,0,,{\c&H00FF7B4F\fs97\b0\bord6\pos(540,1320)}imagina estar en
+Dialogue: 0,0:00:09.80,0:00:10.74,Default,,0,0,0,,{\c&H00FF7B4F\fs97\b0\bord6\pos(540,1320)}una comida 0MS
+Dialogue: 0,0:00:10.76,0:00:11.68,Default,,0,0,0,,{\c&H00FF7B4F\fs97\b0\bord6\pos(540,1320)}barra con amigos.
+Dialogue: 0,0:00:11.80,0:00:12.90,Default,,0,0,0,,{\c&H00FF7B4F\fs97\b0\bord6\pos(540,1320)}Uno llega destrozado,
+Dialogue: 0,0:00:12.92,0:00:13.40,Default,,0,0,0,,{\c&H00FF7B4F\fs97\b0\bord6\pos(540,1320)}de repente tu
+Dialogue: 0,0:00:13.42,0:00:14.02,Default,,0,0,0,,{\c&H00FF7B4F\fs97\b0\bord6\pos(540,1320)}también te sientes
+Dialogue: 0,0:00:14.04,0:00:15.16,Default,,0,0,0,,{\c&H00FF7B4F\fs97\b0\bord6\pos(540,1320)}raro, pesado, como
+Dialogue: 0,0:00:15.18,0:00:15.74,Default,,0,0,0,,{\c&H00FF7B4F\fs97\b0\bord6\pos(540,1320)}si su angústia
+Dialogue: 0,0:00:15.76,0:00:16.58,Default,,0,0,0,,{\c&H00FF7B4F\fs97\b0\bord6\pos(540,1320)}fuera contagiosa.
+Dialogue: 0,0:00:16.64,0:00:17.20,Default,,0,0,0,,{\c&H00FF7B4F\fs97\b0\bord6\pos(540,1320)}Porque lo es,
+Dialogue: 0,0:00:17.19,0:00:17.86,Default,,0,0,0,,{\c&H00FF7B4F\fs103\b-1\bord8\pos(540,1320)}tu CEREBRO copia
+Dialogue: 0,0:00:17.88,0:00:18.54,Default,,0,0,0,,{\c&H00FF7B4F\fs97\b0\bord6\pos(540,1320)}su estado sin
+Dialogue: 0,0:00:18.56,0:00:19.42,Default,,0,0,0,,{\c&H00303BFF\fs100\b0\bord6\pos(540,1320)}pedir permiso.
+Dialogue: 0,0:00:19.44,0:00:19.70,Default,,0,0,0,,{\c&H00303BFF\fs100\b0\bord6\pos(540,1320)}Y aquí está
+Dialogue: 0,0:00:19.72,0:00:20.50,Default,,0,0,0,,{\c&H00303BFF\fs100\b0\bord6\pos(540,1320)}la trampa, crees
+Dialogue: 0,0:00:20.52,0:00:21.10,Default,,0,0,0,,{\c&H00303BFF\fs100\b0\bord6\pos(540,1320)}que algo anda
+Dialogue: 0,0:00:21.12,0:00:21.72,Default,,0,0,0,,{\c&H00303BFF\fs98\b0\bord6\pos(540,1320)}mal en ti,
+Dialogue: 0,0:00:21.74,0:00:22.74,Default,,0,0,0,,{\c&H00303BFF\fs98\b0\bord6\pos(540,1320)}pasas horas intentando
+Dialogue: 0,0:00:22.76,0:00:23.82,Default,,0,0,0,,{\c&H00303BFF\fs98\b0\bord6\pos(540,1320)}arreglar tu tristesa,
+Dialogue: 0,0:00:23.84,0:00:24.24,Default,,0,0,0,,{\c&H00303BFF\fs98\b0\bord6\pos(540,1320)}pero no es
+Dialogue: 0,0:00:24.56,0:00:25.10,Default,,0,0,0,,{\c&H00303BFF\fs98\b0\bord6\pos(540,1320)}tuya, es del
+Dialogue: 0,0:00:24.82,0:00:25.54,Default,,0,0,0,,{\c&H00303BFF\fs98\b0\bord6\pos(540,1320)}grupo, cuando te
+Dialogue: 0,0:00:25.87,0:00:26.99,Default,,0,0,0,,{\c&H00303BFF\fs98\b0\bord6\pos(540,1320)}alejas desaparece,
+Dialogue: 0,0:00:26.70,0:00:27.76,Default,,0,0,0,,{\c&H00303BFF\fs98\b0\bord6\pos(540,1320)}cuando vuelves vuelve,
+Dialogue: 0,0:00:27.78,0:00:28.36,Default,,0,0,0,,{\c&H00303BFF\fs98\b0\bord6\pos(540,1320)}eso es contagio
+Dialogue: 0,0:00:28.38,0:00:29.06,Default,,0,0,0,,{\c&H00FF7B4F\fs92\b0\bord6\pos(540,1320)}emocional puro.
+Dialogue: 0,0:00:29.08,0:00:29.58,Default,,0,0,0,,{\c&H00FF7B4F\fs98\b-1\bord8\pos(540,1320)}Y en CONTROL
+Dialogue: 0,0:00:29.60,0:00:30.64,Default,,0,0,0,,{\c&H00FF7B4F\fs92\b0\bord6\pos(540,1320)}arrealmente como te
+Dialogue: 0,0:00:30.66,0:00:31.74,Default,,0,0,0,,{\c&H00FF7B4F\fs90\b0\bord6\pos(540,1320)}sientes hoy, comparte
+Dialogue: 0,0:00:31.76,0:00:32.30,Default,,0,0,0,,{\c&H00FF7B4F\fs90\b0\bord6\pos(540,1320)}esto con quien
+Dialogue: 0,0:00:32.32,0:00:33.02,Default,,0,0,0,,{\c&H00303BFF\fs97\b0\bord6\pos(540,1320)}te contagia.

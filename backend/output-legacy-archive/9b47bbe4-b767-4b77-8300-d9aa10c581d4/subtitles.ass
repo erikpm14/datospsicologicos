@@ -1,0 +1,54 @@
+[Script Info]
+ScriptType: v4.00+
+PlayResX: 1080
+PlayResY: 1920
+WrapStyle: 2
+
+[V4+ Styles]
+Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+Style: Default,Impact,100,&H00FFFFFF,&H00FFFFFF,&H00000000,&H90000000,-1,0,0,0,100,100,0,0,1,6,4,8,10,10,10,1
+
+[Events]
+Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
+Dialogue: 0,0:00:00.00,0:00:00.84,Default,,0,0,0,,{\c&H00FFF7F3\fs115\b-1\bord8\pos(540,1320)}81 %
+Dialogue: 0,0:00:00.86,0:00:01.66,Default,,0,0,0,,{\c&H00FFF7F3\fs109\b0\bord6\pos(540,1320)}tiene un gatillo
+Dialogue: 0,0:00:01.68,0:00:02.06,Default,,0,0,0,,{\c&H00FFF7F3\fs109\b0\bord6\pos(540,1320)}que no ve
+Dialogue: 0,0:00:02.08,0:00:02.98,Default,,0,0,0,,{\c&H00FFF7F3\fs109\b0\bord6\pos(540,1320)}venir, una señal
+Dialogue: 0,0:00:03.00,0:00:04.06,Default,,0,0,0,,{\c&H00FF7B4F\fs95\b0\bord6\pos(540,1320)}microscópica dispara a
+Dialogue: 0,0:00:04.08,0:00:04.74,Default,,0,0,0,,{\c&H00FF7B4F\fs95\b0\bord6\pos(540,1320)}acción sin que
+Dialogue: 0,0:00:04.76,0:00:05.58,Default,,0,0,0,,{\c&H00FF7B4F\fs95\b0\bord6\pos(540,1320)}decidas nada, cuál
+Dialogue: 0,0:00:05.60,0:00:06.20,Default,,0,0,0,,{\c&H00FF7B4F\fs95\b0\bord6\pos(540,1320)}es la tuya,
+Dialogue: 0,0:00:06.22,0:00:06.62,Default,,0,0,0,,{\c&H00FFF7F3\fs94\b0\bord6\pos(540,1320)}se llama a
+Dialogue: 0,0:00:06.64,0:00:07.42,Default,,0,0,0,,{\c&H00FFF7F3\fs94\b0\bord6\pos(540,1320)}cuéreo tiene reuart,
+Dialogue: 0,0:00:07.44,0:00:08.50,Default,,0,0,0,,{\c&H00FFF7F3\fs94\b0\bord6\pos(540,1320)}las señales invisibles
+Dialogue: 0,0:00:08.52,0:00:09.06,Default,,0,0,0,,{\c&H00FFF7F3\fs94\b0\bord6\pos(540,1320)}pero mata tu
+Dialogue: 0,0:00:09.08,0:00:09.74,Default,,0,0,0,,{\c&H00FFF7F3\fs94\b0\bord6\pos(540,1320)}fuerza de voluntad
+Dialogue: 0,0:00:09.76,0:00:10.50,Default,,0,0,0,,{\c&H00FF7B4F\fs97\b0\bord6\pos(540,1320)}cada vez, ves
+Dialogue: 0,0:00:10.52,0:00:11.22,Default,,0,0,0,,{\c&H00FF7B4F\fs97\b0\bord6\pos(540,1320)}el teléfono sobre
+Dialogue: 0,0:00:11.45,0:00:12.03,Default,,0,0,0,,{\c&H00FF7B4F\fs97\b0\bord6\pos(540,1320)}la mesa y
+Dialogue: 0,0:00:12.10,0:00:13.12,Default,,0,0,0,,{\c&H00FF7B4F\fs97\b0\bord6\pos(540,1320)}ya estás scroyando,
+Dialogue: 0,0:00:12.92,0:00:13.32,Default,,0,0,0,,{\c&H00FF7B4F\fs97\b0\bord6\pos(540,1320)}no decide,
+Dialogue: 0,0:00:13.62,0:00:14.30,Default,,0,0,0,,{\c&H00FF7B4F\fs97\b0\bord6\pos(540,1320)}el aburrimiento fue
+Dialogue: 0,0:00:14.32,0:00:15.00,Default,,0,0,0,,{\c&H00FF7B4F\fs97\b0\bord6\pos(540,1320)}la señal, tu
+Dialogue: 0,0:00:15.02,0:00:15.82,Default,,0,0,0,,{\c&H00FF7B4F\fs103\b-1\bord8\pos(540,1320)}CEREBRO ejegutó el
+Dialogue: 0,0:00:15.84,0:00:16.98,Default,,0,0,0,,{\c&H00FF7B4F\fs97\b0\bord6\pos(540,1320)}programa automático mientras
+Dialogue: 0,0:00:17.00,0:00:17.96,Default,,0,0,0,,{\c&H00FF7B4F\fs97\b0\bord6\pos(540,1320)}tu mirabas, pasaron
+Dialogue: 0,0:00:17.98,0:00:18.88,Default,,0,0,0,,{\c&H00303BFF\fs106\b-1\bord8\pos(540,1320)}40 minutos, pero
+Dialogue: 0,0:00:18.90,0:00:19.92,Default,,0,0,0,,{\c&H00303BFF\fs100\b0\bord6\pos(540,1320)}espera, si identificas
+Dialogue: 0,0:00:19.94,0:00:20.72,Default,,0,0,0,,{\c&H00303BFF\fs100\b0\bord6\pos(540,1320)}la señal exacta
+Dialogue: 0,0:00:20.82,0:00:20.82,Default,,0,0,0,,{\c&H00303BFF\fs108\b-1\bord8\pos(540,1320)}LAS
+Dialogue: 0,0:00:20.92,0:00:21.30,Default,,0,0,0,,{\c&H00303BFF\fs108\b-1\bord8\pos(540,1320)}ROMPES,
+Dialogue: 0,0:00:21.40,0:00:22.42,Default,,0,0,0,,{\c&H00303BFF\fs98\b0\bord6\pos(540,1320)}desaquiva la notificación,
+Dialogue: 0,0:00:22.64,0:00:23.22,Default,,0,0,0,,{\c&H00303BFF\fs98\b0\bord6\pos(540,1320)}guarda el móvil
+Dialogue: 0,0:00:23.24,0:00:24.14,Default,,0,0,0,,{\c&H00303BFF\fs98\b0\bord6\pos(540,1320)}en otra habitación,
+Dialogue: 0,0:00:24.24,0:00:25.26,Default,,0,0,0,,{\c&H00303BFF\fs98\b0\bord6\pos(540,1320)}la señal desaparece
+Dialogue: 0,0:00:25.28,0:00:26.24,Default,,0,0,0,,{\c&H00303BFF\fs98\b0\bord6\pos(540,1320)}el hábito colapsa,
+Dialogue: 0,0:00:26.26,0:00:26.84,Default,,0,0,0,,{\c&H00303BFF\fs98\b0\bord6\pos(540,1320)}así funciona con
+Dialogue: 0,0:00:26.86,0:00:27.96,Default,,0,0,0,,{\c&H00303BFF\fs98\b0\bord6\pos(540,1320)}todo, siga rillos,
+Dialogue: 0,0:00:28.04,0:00:28.74,Default,,0,0,0,,{\c&H00303BFF\fs98\b0\bord6\pos(540,1320)}comida, redes,
+Dialogue: 0,0:00:28.90,0:00:29.80,Default,,0,0,0,,{\c&H00FF7B4F\fs92\b0\bord6\pos(540,1320)}trabajo compulsivo, cuál
+Dialogue: 0,0:00:29.82,0:00:30.42,Default,,0,0,0,,{\c&H00FF7B4F\fs92\b0\bord6\pos(540,1320)}es tu señal
+Dialogue: 0,0:00:30.44,0:00:31.10,Default,,0,0,0,,{\c&H00FF7B4F\fs92\b0\bord6\pos(540,1320)}real, la que
+Dialogue: 0,0:00:31.12,0:00:31.98,Default,,0,0,0,,{\c&H00FF7B4F\fs96\b-1\bord8\pos(540,1320)}NADIE ve, cuéntame
+Dialogue: 0,0:00:32.00,0:00:32.78,Default,,0,0,0,,{\c&H00FF7B4F\fs90\b0\bord6\pos(540,1320)}en comentarios cuál
+Dialogue: 0,0:00:32.80,0:00:33.52,Default,,0,0,0,,{\c&H00303BFF\fs97\b0\bord6\pos(540,1320)}es tu gatillo.

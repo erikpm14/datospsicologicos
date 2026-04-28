@@ -1,0 +1,869 @@
+{
+  "title": "repeticion_falsa_memoria",
+  "topic": "memory",
+  "hook": "Repites algo tres veces y tu cerebro lo cree verdad.",
+  "open_loop": "Pero no es porque lo recuerdes mejor. Es porque tu mente juega sucio.",
+  "micro_value": "El efecto illusory truth: repetir una mentira la convierte en recuerdo real. Tu cerebro confunde familiaridad con verdad absoluta.",
+  "escalation": "Imagina que alguien te cuenta una historia falsa sobre ti en una cena. La vuelve a contar dos semanas después. Y otra vez al mes. Un día tú mismo la cuentas como si fuera tuya. Pasó. Tu memoria se la apropió.",
+  "reengage": "Y aquí viene lo peor: no lo sabes cuando pasa.",
+  "peak": "Cada vez que repites algo en tu cabeza, debilitas la memoria real y fortaleces la versión que contaste. Tu pasado no es lo que viviste. Es lo que repetiste.",
+  "open_ending": "¿Cuántos recuerdos tuyos son inventados?",
+  "soft_cta": "¿Quieres saber cuál es el tuyo?",
+  "psychologicalFact": "La repetición no consolida recuerdos precisos, sino que facilita distorsiones mediante el efecto de verdad ilusoria.",
+  "viralTrigger": "sorpresa",
+  "emotionalTrigger": "curiosity",
+  "effectName": "Illusory Truth Effect + Source Confusion",
+  "keywords": [
+    "memoria distorsionada",
+    "efecto verdad ilusoria"
+  ],
+  "claim": "El efecto illusory truth: repetir una mentira la convierte en recuerdo real. Tu cerebro confunde familiaridad con verdad absoluta.",
+  "explanation": "Imagina que alguien te cuenta una historia falsa sobre ti en una cena. La vuelve a contar dos semanas después. Y otra vez al mes. Un día tú mismo la cuentas como si fuera tuya. Pasó. Tu memoria se la apropió. Lo grave no es olvidar. Es recordar cosas que nunca pasaron. Cada vez que repites algo en tu cabeza, debilitas la memoria real y fortaleces la versión que contaste. Tu pasado no es lo que viviste. Es lo que repetiste.",
+  "cta": "¿Cuántos recuerdos tuyos son inventados? ¿Quieres saber cuál es el tuyo?",
+  "segments": [
+    {
+      "type": "HOOK",
+      "text": "Repites algo tres veces y tu cerebro lo cree verdad.",
+      "visualIntent": "punch zoom, texto impactante, fondo oscuro",
+      "emotion": "tension"
+    },
+    {
+      "type": "OPEN_LOOP",
+      "text": "Pero no es porque lo recuerdes mejor. Es porque tu mente juega sucio.",
+      "visualIntent": "zoom lento, rostro pensativo, tension",
+      "emotion": "curiosity"
+    },
+    {
+      "type": "MICRO_VALUE",
+      "text": "El efecto illusory truth: repetir una mentira la convierte en recuerdo real. Tu cerebro confunde familiaridad con verdad absoluta.",
+      "visualIntent": "zoom lento, rostro pensativo, tension",
+      "emotion": "curiosity"
+    },
+    {
+      "type": "ESCALATION",
+      "text": "Imagina que alguien te cuenta una historia falsa sobre ti en una cena. La vuelve a contar dos semanas después. Y otra vez al mes. Un día tú mismo la cuentas como si fuera tuya. Pasó. Tu memoria se la apropió.",
+      "visualIntent": "zoom lento, rostro pensativo, tension",
+      "emotion": "curiosity"
+    },
+    {
+      "type": "REENGAGE",
+      "text": "Lo grave no es olvidar. Es recordar cosas que nunca pasaron.",
+      "visualIntent": "cambio brusco, tension, zoom corto",
+      "emotion": "curiosity"
+    },
+    {
+      "type": "PEAK",
+      "text": "Cada vez que repites algo en tu cabeza, debilitas la memoria real y fortaleces la versión que contaste. Tu pasado no es lo que viviste. Es lo que repetiste.",
+      "visualIntent": "aislamiento, silueta, punch zoom",
+      "emotion": "impacto"
+    },
+    {
+      "type": "OPEN_ENDING",
+      "text": "¿Cuántos recuerdos tuyos son inventados?",
+      "visualIntent": "zoom lento, rostro pensativo, tension",
+      "emotion": "curiosity"
+    },
+    {
+      "type": "SOFT_CTA",
+      "text": "¿Quieres saber cuál es el tuyo?",
+      "visualIntent": "zoom lento, rostro pensativo, tension",
+      "emotion": "cercania"
+    }
+  ],
+  "structureVersion": "open_loop_escalation_v1",
+  "hasReengage": true,
+  "segmentFeedback": [
+    {
+      "segment": "open_loop",
+      "issue": "open_loop demasiado resolutivo"
+    },
+    {
+      "segment": "reengage",
+      "issue": "reengage poco agresivo"
+    }
+  ],
+  "segmentFeedbackSummary": [
+    "[open_loop] open_loop demasiado resolutivo",
+    "[reengage] reengage poco agresivo"
+  ],
+  "estimatedWords": 133,
+  "durationSeconds": 58,
+  "fullScript": "Repites algo tres veces y tu cerebro lo cree verdad. Pero no es porque lo recuerdes mejor. Es porque tu mente juega sucio. El efecto illusory truth: repetir una mentira la convierte en recuerdo real. Tu cerebro confunde familiaridad con verdad absoluta. Imagina que alguien te cuenta una historia falsa sobre ti en una cena. La vuelve a contar dos semanas después. Y otra vez al mes. Un día tú mismo la cuentas como si fuera tuya. Pasó. Tu memoria se la apropió. Lo grave no es olvidar. Es recordar cosas que nunca pasaron. Cada vez que repites algo en tu cabeza, debilitas la memoria real y fortaleces la versión que contaste. Tu pasado no es lo que viviste. Es lo que repetiste. ¿Cuántos recuerdos tuyos son inventados? ¿Quieres saber cuál es el tuyo?",
+  "videoInstructions": {
+    "singleFocus": true,
+    "visualStyle": [
+      "estetica cinematografica oscura",
+      "fondo negro o casi negro",
+      "alto contraste con azul electrico dominante",
+      "acento rojo oscuro solo para tension",
+      "single focus constante sin overlays complejos",
+      "cambio de plano cada 2-3 segundos",
+      "zoom progresivo y movimiento suave"
+    ],
+    "subtitleStyle": "tipografia condensada bold, blanco frio con acentos azul electrico y rojo oscuro, subtitulos grandes y sincronizados",
+    "audioStyle": {
+      "voice": "voz clara y con ritmo",
+      "pauses": [
+        "hook",
+        "reengage",
+        "peak"
+      ]
+    },
+    "scenes": [
+      {
+        "segment": "hook",
+        "timing": "0-2.2s",
+        "visual": "primer plano de cerebro luminoso o rostro inquietante, relacionado con memory, fondo negro o muy oscuro, contraste alto, azul electrico y rojo oscuro como acentos, zoom lento, iluminacion dramatica, sensacion de misterio psicologico",
+        "cut": "corte rapido con push-in",
+        "startSeconds": 0,
+        "endSeconds": 2.2,
+        "durationSeconds": 2.2,
+        "shotType": "primer plano",
+        "framing": "primer plano",
+        "intensity": "alta",
+        "movement": "push-in rapido",
+        "transition": "hard cut",
+        "emphasis": "scroll-stop inmediato",
+        "syncCue": "movimiento continuo con remate en palabra fuerte"
+      },
+      {
+        "segment": "open_loop",
+        "timing": "2.2-5s",
+        "visual": "ojo humano extremo o gesto suspendido en sombra, relacionado con memory, fondo negro o muy oscuro, contraste alto, azul electrico y rojo oscuro como acentos, zoom lento, iluminacion dramatica, sensacion de misterio psicologico",
+        "cut": "zoom corto continuo",
+        "startSeconds": 2.2,
+        "endSeconds": 5,
+        "durationSeconds": 2.8,
+        "shotType": "plano detalle",
+        "framing": "plano detalle",
+        "intensity": "alta",
+        "movement": "zoom lento continuo",
+        "transition": "match cut",
+        "emphasis": "curiosidad sostenida",
+        "syncCue": "movimiento continuo con remate en palabra fuerte"
+      },
+      {
+        "segment": "micro_value",
+        "timing": "5-8.2s",
+        "visual": "detalle simbolico del mecanismo mental en glow azul, relacionado con memory, fondo negro o muy oscuro, contraste alto, azul electrico y rojo oscuro como acentos, zoom lento, iluminacion dramatica, sensacion de misterio psicologico",
+        "cut": "cambio de plano limpio",
+        "startSeconds": 5,
+        "endSeconds": 8.2,
+        "durationSeconds": 3.2,
+        "shotType": "plano medio",
+        "framing": "plano medio",
+        "intensity": "media",
+        "movement": "micro paneo lateral",
+        "transition": "cut limpio",
+        "emphasis": "primer pago de valor",
+        "syncCue": "movimiento continuo con remate en palabra fuerte"
+      },
+      {
+        "segment": "escalation",
+        "timing": "8.2-11.6s",
+        "visual": "silueta humana o tension social en contraluz, relacionado con memory, fondo negro o muy oscuro, contraste alto, azul electrico y rojo oscuro como acentos, zoom lento, iluminacion dramatica, sensacion de misterio psicologico",
+        "cut": "cortes cada 2-3s",
+        "startSeconds": 8.2,
+        "endSeconds": 11.6,
+        "durationSeconds": 3.4,
+        "shotType": "plano abierto",
+        "framing": "plano abierto",
+        "intensity": "media-alta",
+        "movement": "acercamiento progresivo",
+        "transition": "cut ritmico",
+        "emphasis": "tension creciente",
+        "syncCue": "movimiento continuo con remate en palabra fuerte"
+      },
+      {
+        "segment": "reengage",
+        "timing": "11.6-14.2s",
+        "visual": "cambio brusco a plano mas cercano con rojo alerta, relacionado con memory, fondo negro o muy oscuro, contraste alto, azul electrico y rojo oscuro como acentos, zoom lento, iluminacion dramatica, sensacion de misterio psicologico",
+        "cut": "cambio brusco + zoom agresivo",
+        "startSeconds": 11.6,
+        "endSeconds": 14.2,
+        "durationSeconds": 2.6,
+        "shotType": "primer plano",
+        "framing": "primer plano",
+        "intensity": "muy alta",
+        "movement": "zoom agresivo",
+        "transition": "whip cut",
+        "emphasis": "ruptura de patron",
+        "syncCue": "acercamiento en frase clave"
+      },
+      {
+        "segment": "peak",
+        "timing": "14.2-17.8s",
+        "visual": "escena humana real de conflicto, pareja o decision, relacionado con memory, fondo negro o muy oscuro, contraste alto, azul electrico y rojo oscuro como acentos, zoom lento, iluminacion dramatica, sensacion de misterio psicologico",
+        "cut": "alternancia de planos cerrados",
+        "startSeconds": 14.2,
+        "endSeconds": 17.8,
+        "durationSeconds": 3.6,
+        "shotType": "plano medio",
+        "framing": "plano medio",
+        "intensity": "maxima",
+        "movement": "push-in sostenido",
+        "transition": "impact cut",
+        "emphasis": "impacto emocional",
+        "syncCue": "acercamiento en frase clave"
+      },
+      {
+        "segment": "open_ending",
+        "timing": "17.8-20.9s",
+        "visual": "figura sola alejandose en oscuridad con particulas, relacionado con memory, fondo negro o muy oscuro, contraste alto, azul electrico y rojo oscuro como acentos, zoom lento, iluminacion dramatica, sensacion de misterio psicologico",
+        "cut": "desaceleracion ligera",
+        "startSeconds": 17.8,
+        "endSeconds": 20.9,
+        "durationSeconds": 3.1,
+        "shotType": "plano abierto",
+        "framing": "plano abierto",
+        "intensity": "media",
+        "movement": "zoom out suave",
+        "transition": "cut limpio",
+        "emphasis": "eco mental",
+        "syncCue": "movimiento continuo con remate en palabra fuerte"
+      },
+      {
+        "segment": "soft_cta",
+        "timing": "20.9-23.6s",
+        "visual": "rostro o silueta frontal con espacio negativo para cierre, relacionado con memory, fondo negro o muy oscuro, contraste alto, azul electrico y rojo oscuro como acentos, zoom lento, iluminacion dramatica, sensacion de misterio psicologico",
+        "cut": "ultimo corte limpio",
+        "startSeconds": 20.9,
+        "endSeconds": 23.6,
+        "durationSeconds": 2.7,
+        "shotType": "plano detalle",
+        "framing": "plano detalle",
+        "intensity": "media",
+        "movement": "micro acercamiento",
+        "transition": "hold corto",
+        "emphasis": "cierre abierto",
+        "syncCue": "movimiento continuo con remate en palabra fuerte"
+      }
+    ],
+    "style": {
+      "theme": "psicologia oscura / mente humana / comportamiento",
+      "colorPalette": "negro absoluto, azul electrico, azul neon frio, rojo oscuro, blanco frio",
+      "visualStyle": "cinematografico, minimalista, alto contraste, single focus",
+      "lighting": "oscura, dramatica, contraluz duro, glow electrico dirigido, sombras marcadas",
+      "cameraMotion": "zoom lento constante, push-in suave, micro paneo lateral, cambio de plano cada 2-3 segundos",
+      "effects": "glow ligero, particulas sutiles, neblina tenue, ruido cinematografico muy fino",
+      "composition": "single focus, sujeto dominante a la derecha o centrado, texto respirando a la izquierda, primeros planos y siluetas, profundidad negativa",
+      "emotionalTone": "misterio psicologico, obsesion, tension contenida, intriga oscura",
+      "consistencyRules": [
+        "una sola escena principal por segmento",
+        "fondo siempre oscuro o casi negro",
+        "usar azul electrico como color dominante y rojo solo para tension o reengage",
+        "priorizar cerebros, ojos, siluetas y escenas humanas reconocibles",
+        "evitar stock luminoso, lifestyle genérico o composiciones planas"
+      ],
+      "clipKeywords": [
+        "memoria distorsionada",
+        "efecto verdad ilusoria",
+        "glowing brain dark background",
+        "blue eye close up dark",
+        "person silhouette red light",
+        "couple argument silhouette blue light",
+        "moody face close up shadow",
+        "dark cinematic person thinking"
+      ]
+    },
+    "clipKeywords": [
+      "memoria distorsionada",
+      "efecto verdad ilusoria",
+      "glowing brain dark background",
+      "blue eye close up dark",
+      "person silhouette red light",
+      "couple argument silhouette blue light",
+      "moody face close up shadow",
+      "dark cinematic person thinking"
+    ],
+    "rhythmRule": "cambio visual cada 2-3 segundos, sin escenas estaticas ni repeticiones consecutivas de encuadre",
+    "timeline": [
+      {
+        "segment": "hook",
+        "timing": "0-2.2s",
+        "durationSeconds": 2.2,
+        "shotType": "primer plano",
+        "intensity": "alta",
+        "movement": "push-in rapido",
+        "transition": "hard cut"
+      },
+      {
+        "segment": "open_loop",
+        "timing": "2.2-5s",
+        "durationSeconds": 2.8,
+        "shotType": "plano detalle",
+        "intensity": "alta",
+        "movement": "zoom lento continuo",
+        "transition": "match cut"
+      },
+      {
+        "segment": "micro_value",
+        "timing": "5-8.2s",
+        "durationSeconds": 3.2,
+        "shotType": "plano medio",
+        "intensity": "media",
+        "movement": "micro paneo lateral",
+        "transition": "cut limpio"
+      },
+      {
+        "segment": "escalation",
+        "timing": "8.2-11.6s",
+        "durationSeconds": 3.4,
+        "shotType": "plano abierto",
+        "intensity": "media-alta",
+        "movement": "acercamiento progresivo",
+        "transition": "cut ritmico"
+      },
+      {
+        "segment": "reengage",
+        "timing": "11.6-14.2s",
+        "durationSeconds": 2.6,
+        "shotType": "primer plano",
+        "intensity": "muy alta",
+        "movement": "zoom agresivo",
+        "transition": "whip cut"
+      },
+      {
+        "segment": "peak",
+        "timing": "14.2-17.8s",
+        "durationSeconds": 3.6,
+        "shotType": "plano medio",
+        "intensity": "maxima",
+        "movement": "push-in sostenido",
+        "transition": "impact cut"
+      },
+      {
+        "segment": "open_ending",
+        "timing": "17.8-20.9s",
+        "durationSeconds": 3.1,
+        "shotType": "plano abierto",
+        "intensity": "media",
+        "movement": "zoom out suave",
+        "transition": "cut limpio"
+      },
+      {
+        "segment": "soft_cta",
+        "timing": "20.9-23.6s",
+        "durationSeconds": 2.7,
+        "shotType": "plano detalle",
+        "intensity": "media",
+        "movement": "micro acercamiento",
+        "transition": "hold corto"
+      }
+    ]
+  },
+  "growthContext": {
+    "nextTopic": "memory",
+    "hookType": "challenge",
+    "emotionalTrigger": "curiosity",
+    "angle": "efectos de la repetición en el recuerdo",
+    "avoidTopics": [
+      "cognitive_biases",
+      "relationships",
+      "decision_making",
+      "emotional_patterns",
+      "habits",
+      "attention",
+      "dopamine",
+      "body_language",
+      "emotions",
+      "procrastination"
+    ],
+    "avoidRecentHooks": [
+      "Sabes que tienes que hacerlo pero tu cuerpo dice que no.",
+      "Tu cerebro pide dopamina cada treinta segundos sin notarlo.",
+      "Tu sonrisa miente. Tu cara no.",
+      "Tu cerebro no puede hacer dos cosas. Elige una.",
+      "El 73% elige mal cuando tiene demasiadas opciones",
+      "El 73% elige mal cuando tiene demasiadas opciones",
+      "Tu cerebro ve peligro donde no hay",
+      "Tu cerebro necesita aburrimiento para funcionar"
+    ],
+    "reasoning": "Topic 'memory' por estrategia explore. Saturados evitados: cognitive_biases, relationships, decision_making, emotional_patterns, habits, attention, dopamine, body_language, emotions, procrastination.",
+    "confidence": 0.5,
+    "strategy": "explore",
+    "decisionAt": "2026-04-24T11:28:58.551Z",
+    "fallbackGenerator": "best-available",
+    "fallbackReason": "format_match 69/75 | virality 53/60 | [open_loop] open_loop demasiado resolutivo (penalty) | [reengage] reengage poco agresivo (penalty)"
+  },
+  "viralityScore": 53,
+  "viralityBreakdown": {
+    "hookStrength": 20,
+    "emotionalTrigger": 8,
+    "relatability": 10,
+    "loopPotential": 13,
+    "durationBonus": 2
+  },
+  "formatMatchScore": 72,
+  "formatMatchBreakdown": {
+    "hookFormat": 16,
+    "brevity": 12,
+    "clarity": 13,
+    "narrativeRhythm": 4,
+    "psychologicalImpact": 6,
+    "scrollStop": 3,
+    "infoDensity": 2,
+    "earlyRevelation": 5,
+    "singleIdea": 3,
+    "reengage": 8
+  },
+  "formatMatchSegmentGaps": [
+    "[open_loop] open_loop demasiado resolutivo",
+    "[reengage] reengage poco agresivo"
+  ],
+  "formatMatchGaps": [
+    "Hay relleno o rodeos — elimina intro, empieza con el dato",
+    "Revelación psicológica débil — añade nombre de efecto o cifra concreta",
+    "Hook no para el scroll — falta tensión, shock o reconocimiento inmediato",
+    "Baja densidad — más información útil en menos palabras",
+    "[open_loop] open_loop demasiado resolutivo",
+    "[reengage] reengage poco agresivo"
+  ],
+  "emotionalImpactScore": 26,
+  "emotionalImpactBreakdown": {
+    "powerWords": 6,
+    "personalId": 20,
+    "surpriseFactor": 0,
+    "visceral": 0,
+    "tensionResolution": 0
+  },
+  "approved": true,
+  "rejectionReason": null,
+  "selectionPenalties": [
+    "virality_low:53",
+    "format_low:69",
+    "[open_loop] open_loop demasiado resolutivo",
+    "[reengage] reengage poco agresivo"
+  ],
+  "llmMetrics": {
+    "llm_total_calls": 4,
+    "llm_parse_fail": false,
+    "llm_recovery_used": false,
+    "llm_hard_fail": false,
+    "emergency_fallback_used": false,
+    "llm_schema_fail": false,
+    "llm_truncated_suspected": true
+  },
+  "usedRecovery": false,
+  "generationSource": "generateOptimizedScript",
+  "llmPath": [
+    "generateViralScript",
+    "generateOptimizedScript"
+  ],
+  "generationFallback": "best-available",
+  "usedLastValid": false,
+  "usedEmergencyFallback": false,
+  "approvalBypassReason": null,
+  "final_generation_route": "generateViralScript -> generateOptimizedScript",
+  "total_llm_calls": 4,
+  "fallback_level_reached": 1,
+  "quickOptimizedSegment": "reengage",
+  "quickOptimizedReason": "[reengage] reengage poco agresivo",
+  "selectedQuality": "acceptable",
+  "approvalBypass": "best_available_after_3_attempts",
+  "bestAvailableScore": 55,
+  "selectionReasons": [
+    "virality_low:53",
+    "format_low:69",
+    "[open_loop] open_loop demasiado resolutivo",
+    "[reengage] reengage poco agresivo"
+  ],
+  "abVariantId": "v_a",
+  "slotTracking": {
+    "batchId": "batch_1777029792691",
+    "slotId": "batch_1777029792691_slot_1",
+    "plannedOrder": 1,
+    "plannedRole": "follow",
+    "plannedCluster": "relationships",
+    "plannedHookType": "challenge",
+    "plannedMicroAction": "REPEAT_CHECK",
+    "recommendedCandidateId": "relationships-3",
+    "recommendedCandidateTitle": "El gesto pequeño que te cambia el día",
+    "businessMode": "monetization_priority",
+    "targetGoal": "monetization_priority",
+    "scheduleWindow": "4 días",
+    "recommendedPublishTime": "6 horas x slot 1",
+    "attributionType": "ab_linked",
+    "slotState": "assigned",
+    "assignmentConfidence": 0.12,
+    "traceConfidence": 0.12,
+    "exactTraceAvailable": true,
+    "abLinked": true
+  },
+  "contentVersion": "v2",
+  "narrationPlan": {
+    "mode": "natural_short_v1",
+    "segments": {
+      "hook": {
+        "key": "hook",
+        "text": "Repites algo tres veces y tu cerebro lo cree verdad.",
+        "deliveryStyle": "directo",
+        "narrationEnergy": "alta",
+        "pauseStrength": "fuerte",
+        "emphasisWords": [
+          "cree",
+          "verdad"
+        ],
+        "pacing": "corto",
+        "pauseBefore": 0,
+        "pauseAfter": 0.46,
+        "joiner": "...",
+        "ssmlRate": "-10%",
+        "ssmlPitch": "+6%",
+        "ssmlVolume": "+2%"
+      },
+      "open_loop": {
+        "key": "open_loop",
+        "text": "Pero no es porque lo recuerdes mejor. Es porque tu mente juega sucio.",
+        "deliveryStyle": "susurrado-tenso",
+        "narrationEnergy": "media-alta",
+        "pauseStrength": "media",
+        "emphasisWords": [
+          "juega",
+          "sucio"
+        ],
+        "pacing": "tenso",
+        "pauseBefore": 0.06,
+        "pauseAfter": 0.12,
+        "joiner": ".",
+        "ssmlRate": "-6%",
+        "ssmlPitch": "+3%",
+        "ssmlVolume": "+1%"
+      },
+      "micro_value": {
+        "key": "micro_value",
+        "text": "El efecto illusory truth: repetir una mentira la convierte en recuerdo real. Tu cerebro confunde familiaridad con verdad absoluta.",
+        "deliveryStyle": "claro",
+        "narrationEnergy": "media",
+        "pauseStrength": "corta",
+        "emphasisWords": [
+          "verdad",
+          "absoluta"
+        ],
+        "pacing": "estable",
+        "pauseBefore": 0.04,
+        "pauseAfter": 0.08,
+        "joiner": ".",
+        "ssmlRate": "-2%",
+        "ssmlPitch": "0%",
+        "ssmlVolume": "0%"
+      },
+      "escalation": {
+        "key": "escalation",
+        "text": "Imagina que alguien te cuenta una historia falsa sobre ti en una cena. La vuelve a contar dos semanas después. Y otra vez al mes. Un día tú mismo la cuentas como si fuera tuya. Pasó. Tu memoria se la apropió.",
+        "deliveryStyle": "creciente",
+        "narrationEnergy": "media-alta",
+        "pauseStrength": "corta",
+        "emphasisWords": [
+          "memoria",
+          "apropio"
+        ],
+        "pacing": "agil",
+        "pauseBefore": 0.04,
+        "pauseAfter": 0.18,
+        "joiner": ".",
+        "ssmlRate": "+3%",
+        "ssmlPitch": "+1%",
+        "ssmlVolume": "+1%"
+      },
+      "reengage": {
+        "key": "reengage",
+        "text": "Y aquí viene lo peor: no lo sabes cuando pasa.",
+        "deliveryStyle": "remate",
+        "narrationEnergy": "alta",
+        "pauseStrength": "fuerte",
+        "emphasisWords": [
+          "sabes",
+          "pasa"
+        ],
+        "pacing": "marcado",
+        "pauseBefore": 0.26,
+        "pauseAfter": 0.12,
+        "joiner": "...",
+        "ssmlRate": "-4%",
+        "ssmlPitch": "+6%",
+        "ssmlVolume": "+3%"
+      },
+      "peak": {
+        "key": "peak",
+        "text": "Cada vez que repites algo en tu cabeza, debilitas la memoria real y fortaleces la versión que contaste. Tu pasado no es lo que viviste. Es lo que repetiste.",
+        "deliveryStyle": "impacto",
+        "narrationEnergy": "muy alta",
+        "pauseStrength": "media",
+        "emphasisWords": [
+          "viviste",
+          "repetiste"
+        ],
+        "pacing": "enfatico",
+        "pauseBefore": 0.18,
+        "pauseAfter": 0.16,
+        "joiner": ".",
+        "ssmlRate": "-3%",
+        "ssmlPitch": "+4%",
+        "ssmlVolume": "+4%"
+      },
+      "open_ending": {
+        "key": "open_ending",
+        "text": "¿Cuántos recuerdos tuyos son inventados?",
+        "deliveryStyle": "eco",
+        "narrationEnergy": "media",
+        "pauseStrength": "corta",
+        "emphasisWords": [
+          "tuyos",
+          "inventados"
+        ],
+        "pacing": "controlado",
+        "pauseBefore": 0.08,
+        "pauseAfter": 0.06,
+        "joiner": ".",
+        "ssmlRate": "-5%",
+        "ssmlPitch": "-1%",
+        "ssmlVolume": "0%"
+      },
+      "soft_cta": {
+        "key": "soft_cta",
+        "text": "¿Quieres saber cuál es el tuyo?",
+        "deliveryStyle": "conversacional",
+        "narrationEnergy": "media",
+        "pauseStrength": "ninguna",
+        "emphasisWords": [
+          "cual",
+          "tuyo"
+        ],
+        "pacing": "natural",
+        "pauseBefore": 0.05,
+        "pauseAfter": 0,
+        "joiner": "",
+        "ssmlRate": "-7%",
+        "ssmlPitch": "+2%",
+        "ssmlVolume": "0%"
+      }
+    },
+    "blocks": [
+      {
+        "key": "block_1",
+        "pauseAfter": 0.46,
+        "blockPacing": "controlado con gancho",
+        "parts": [
+          {
+            "key": "hook",
+            "text": "Repites algo tres veces y tu cerebro lo cree verdad.",
+            "joiner": "...",
+            "pauseBefore": 0,
+            "profile": {
+              "key": "hook",
+              "text": "Repites algo tres veces y tu cerebro lo cree verdad.",
+              "deliveryStyle": "directo",
+              "narrationEnergy": "alta",
+              "pauseStrength": "fuerte",
+              "emphasisWords": [
+                "cree",
+                "verdad"
+              ],
+              "pacing": "corto",
+              "pauseBefore": 0,
+              "pauseAfter": 0.46,
+              "joiner": "...",
+              "ssmlRate": "-10%",
+              "ssmlPitch": "+6%",
+              "ssmlVolume": "+2%"
+            }
+          },
+          {
+            "key": "open_loop",
+            "text": "Pero no es porque lo recuerdes mejor. Es porque tu mente juega sucio.",
+            "joiner": ".",
+            "pauseBefore": 0.06,
+            "profile": {
+              "key": "open_loop",
+              "text": "Pero no es porque lo recuerdes mejor. Es porque tu mente juega sucio.",
+              "deliveryStyle": "susurrado-tenso",
+              "narrationEnergy": "media-alta",
+              "pauseStrength": "media",
+              "emphasisWords": [
+                "juega",
+                "sucio"
+              ],
+              "pacing": "tenso",
+              "pauseBefore": 0.06,
+              "pauseAfter": 0.12,
+              "joiner": ".",
+              "ssmlRate": "-6%",
+              "ssmlPitch": "+3%",
+              "ssmlVolume": "+1%"
+            }
+          }
+        ],
+        "text": "Repites algo tres veces y tu cerebro lo cree verdad... Pero no es porque lo recuerdes mejor. Es porque tu mente juega sucio."
+      },
+      {
+        "key": "block_2",
+        "pauseAfter": 0.22,
+        "blockPacing": "creciente",
+        "parts": [
+          {
+            "key": "micro_value",
+            "text": "El efecto illusory truth: repetir una mentira la convierte en recuerdo real. Tu cerebro confunde familiaridad con verdad absoluta.",
+            "joiner": ".",
+            "pauseBefore": 0.04,
+            "profile": {
+              "key": "micro_value",
+              "text": "El efecto illusory truth: repetir una mentira la convierte en recuerdo real. Tu cerebro confunde familiaridad con verdad absoluta.",
+              "deliveryStyle": "claro",
+              "narrationEnergy": "media",
+              "pauseStrength": "corta",
+              "emphasisWords": [
+                "verdad",
+                "absoluta"
+              ],
+              "pacing": "estable",
+              "pauseBefore": 0.04,
+              "pauseAfter": 0.08,
+              "joiner": ".",
+              "ssmlRate": "-2%",
+              "ssmlPitch": "0%",
+              "ssmlVolume": "0%"
+            }
+          },
+          {
+            "key": "escalation",
+            "text": "Imagina que alguien te cuenta una historia falsa sobre ti en una cena. La vuelve a contar dos semanas después. Y otra vez al mes. Un día tú mismo la cuentas como si fuera tuya. Pasó. Tu memoria se la apropió.",
+            "joiner": ".",
+            "pauseBefore": 0.04,
+            "profile": {
+              "key": "escalation",
+              "text": "Imagina que alguien te cuenta una historia falsa sobre ti en una cena. La vuelve a contar dos semanas después. Y otra vez al mes. Un día tú mismo la cuentas como si fuera tuya. Pasó. Tu memoria se la apropió.",
+              "deliveryStyle": "creciente",
+              "narrationEnergy": "media-alta",
+              "pauseStrength": "corta",
+              "emphasisWords": [
+                "memoria",
+                "apropio"
+              ],
+              "pacing": "agil",
+              "pauseBefore": 0.04,
+              "pauseAfter": 0.18,
+              "joiner": ".",
+              "ssmlRate": "+3%",
+              "ssmlPitch": "+1%",
+              "ssmlVolume": "+1%"
+            }
+          }
+        ],
+        "text": "El efecto illusory truth: repetir una mentira la convierte en recuerdo real. Tu cerebro confunde familiaridad con verdad absoluta. Imagina que alguien te cuenta una historia falsa sobre ti en una cena. La vuelve a contar dos semanas después. Y otra vez al mes. Un día tú mismo la cuentas como si fuera tuya. Pasó. Tu memoria se la apropió."
+      },
+      {
+        "key": "block_3",
+        "pauseAfter": 0.18,
+        "blockPacing": "impacto",
+        "parts": [
+          {
+            "key": "reengage",
+            "text": "Y aquí viene lo peor: no lo sabes cuando pasa.",
+            "joiner": "...",
+            "pauseBefore": 0.26,
+            "profile": {
+              "key": "reengage",
+              "text": "Y aquí viene lo peor: no lo sabes cuando pasa.",
+              "deliveryStyle": "remate",
+              "narrationEnergy": "alta",
+              "pauseStrength": "fuerte",
+              "emphasisWords": [
+                "sabes",
+                "pasa"
+              ],
+              "pacing": "marcado",
+              "pauseBefore": 0.26,
+              "pauseAfter": 0.12,
+              "joiner": "...",
+              "ssmlRate": "-4%",
+              "ssmlPitch": "+6%",
+              "ssmlVolume": "+3%"
+            }
+          },
+          {
+            "key": "peak",
+            "text": "Cada vez que repites algo en tu cabeza, debilitas la memoria real y fortaleces la versión que contaste. Tu pasado no es lo que viviste. Es lo que repetiste.",
+            "joiner": ".",
+            "pauseBefore": 0.18,
+            "profile": {
+              "key": "peak",
+              "text": "Cada vez que repites algo en tu cabeza, debilitas la memoria real y fortaleces la versión que contaste. Tu pasado no es lo que viviste. Es lo que repetiste.",
+              "deliveryStyle": "impacto",
+              "narrationEnergy": "muy alta",
+              "pauseStrength": "media",
+              "emphasisWords": [
+                "viviste",
+                "repetiste"
+              ],
+              "pacing": "enfatico",
+              "pauseBefore": 0.18,
+              "pauseAfter": 0.16,
+              "joiner": ".",
+              "ssmlRate": "-3%",
+              "ssmlPitch": "+4%",
+              "ssmlVolume": "+4%"
+            }
+          }
+        ],
+        "text": "Y aquí viene lo peor: no lo sabes cuando pasa... Cada vez que repites algo en tu cabeza, debilitas la memoria real y fortaleces la versión que contaste. Tu pasado no es lo que viviste. Es lo que repetiste."
+      },
+      {
+        "key": "block_4",
+        "pauseAfter": 0,
+        "blockPacing": "cierre conversacional",
+        "parts": [
+          {
+            "key": "open_ending",
+            "text": "¿Cuántos recuerdos tuyos son inventados?",
+            "joiner": ".",
+            "pauseBefore": 0.08,
+            "profile": {
+              "key": "open_ending",
+              "text": "¿Cuántos recuerdos tuyos son inventados?",
+              "deliveryStyle": "eco",
+              "narrationEnergy": "media",
+              "pauseStrength": "corta",
+              "emphasisWords": [
+                "tuyos",
+                "inventados"
+              ],
+              "pacing": "controlado",
+              "pauseBefore": 0.08,
+              "pauseAfter": 0.06,
+              "joiner": ".",
+              "ssmlRate": "-5%",
+              "ssmlPitch": "-1%",
+              "ssmlVolume": "0%"
+            }
+          },
+          {
+            "key": "soft_cta",
+            "text": "¿Quieres saber cuál es el tuyo?",
+            "joiner": "",
+            "pauseBefore": 0.05,
+            "profile": {
+              "key": "soft_cta",
+              "text": "¿Quieres saber cuál es el tuyo?",
+              "deliveryStyle": "conversacional",
+              "narrationEnergy": "media",
+              "pauseStrength": "ninguna",
+              "emphasisWords": [
+                "cual",
+                "tuyo"
+              ],
+              "pacing": "natural",
+              "pauseBefore": 0.05,
+              "pauseAfter": 0,
+              "joiner": "",
+              "ssmlRate": "-7%",
+              "ssmlPitch": "+2%",
+              "ssmlVolume": "0%"
+            }
+          }
+        ],
+        "text": "¿Cuántos recuerdos tuyos son inventados. ¿Quieres saber cuál es el tuyo?"
+      }
+    ]
+  }
+}

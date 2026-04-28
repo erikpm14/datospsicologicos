@@ -1,0 +1,47 @@
+[Script Info]
+ScriptType: v4.00+
+PlayResX: 1080
+PlayResY: 1920
+WrapStyle: 2
+
+[V4+ Styles]
+Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+Style: Default,Impact,100,&H00FFFFFF,&H00FFFFFF,&H00000000,&H90000000,-1,0,0,0,100,100,0,0,1,6,4,8,10,10,10,1
+
+[Events]
+Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
+Dialogue: 0,0:00:00.00,0:00:01.06,Default,,0,0,0,,{\c&H00FFF7F3\fs109\b-1\bord8\pos(540,1320)}TU rabia viene de
+Dialogue: 0,0:00:01.08,0:00:02.14,Default,,0,0,0,,{\c&H00FFF7F3\fs109\b0\bord6\pos(540,1320)}los ocho años,
+Dialogue: 0,0:00:02.16,0:00:03.34,Default,,0,0,0,,{\c&H00FFF7F3\fs109\b0\bord6\pos(540,1320)}no de hoy.
+Dialogue: 0,0:00:06.48,0:00:07.25,Default,,0,0,0,,{\c&H00FF7B4F\fs101\b-1\bord8\pos(540,1320)}Y tu CEREBRO la
+Dialogue: 0,0:00:07.26,0:00:07.65,Default,,0,0,0,,{\c&H00FFF7F3\fs94\b0\bord6\pos(540,1320)}Cuando ignoran tu mensaje,
+Dialogue: 0,0:00:07.67,0:00:08.54,Default,,0,0,0,,{\c&H00FF7B4F\fs95\b0\bord6\pos(540,1320)}esconde perfectamente bajo capas
+Dialogue: 0,0:00:08.56,0:00:08.84,Default,,0,0,0,,{\c&H00FFF7F3\fs94\b0\bord6\pos(540,1320)}reaccionas como rechazo porque
+Dialogue: 0,0:00:08.86,0:00:09.84,Default,,0,0,0,,{\c&H00FF7B4F\fs95\b0\bord6\pos(540,1320)}de justificación racional.
+Dialogue: 0,0:00:09.86,0:00:11.13,Default,,0,0,0,,{\c&H00FFF7F3\fs94\b0\bord6\pos(540,1320)}tu padre lo hizo.
+Dialogue: 0,0:00:11.15,0:00:12.55,Default,,0,0,0,,{\c&H00FFF7F3\fs100\b-1\bord8\pos(540,1320)}Patrón grabado en AMÍGDALA.
+Dialogue: 0,0:00:17.63,0:00:18.68,Default,,0,0,0,,{\c&H00FF7B4F\fs97\b0\bord6\pos(540,1320)}Discutes con tu pareja
+Dialogue: 0,0:00:18.70,0:00:19.75,Default,,0,0,0,,{\c&H00FF7B4F\fs97\b0\bord6\pos(540,1320)}y salta algo sin
+Dialogue: 0,0:00:19.77,0:00:20.82,Default,,0,0,0,,{\c&H00FF7B4F\fs97\b0\bord6\pos(540,1320)}relación.
+Dialogue: 0,0:00:20.84,0:00:21.89,Default,,0,0,0,,{\c&H00FF7B4F\fs97\b0\bord6\pos(540,1320)}Te cierras.
+Dialogue: 0,0:00:21.91,0:00:22.96,Default,,0,0,0,,{\c&H00FF7B4F\fs97\b0\bord6\pos(540,1320)}Te pones rígido.
+Dialogue: 0,0:00:22.98,0:00:23.34,Default,,0,0,0,,{\c&H00FF7B4F\fs97\b0\bord6\pos(540,1320)}Ella cree que es
+Dialogue: 0,0:00:23.36,0:00:24.02,Default,,0,0,0,,{\c&H00303BFF\fs100\b0\bord6\pos(540,1320)}Pero aquí está la
+Dialogue: 0,0:00:24.04,0:00:24.41,Default,,0,0,0,,{\c&H00FF7B4F\fs97\b0\bord6\pos(540,1320)}su culpa pero no.
+Dialogue: 0,0:00:24.43,0:00:25.09,Default,,0,0,0,,{\c&H00303BFF\fs100\b0\bord6\pos(540,1320)}trampa: crees que esto
+Dialogue: 0,0:00:25.11,0:00:25.49,Default,,0,0,0,,{\c&H00FF7B4F\fs97\b0\bord6\pos(540,1320)}Volviste a los nueve
+Dialogue: 0,0:00:25.51,0:00:26.16,Default,,0,0,0,,{\c&H00303BFF\fs100\b0\bord6\pos(540,1320)}es normal.
+Dialogue: 0,0:00:26.18,0:00:27.23,Default,,0,0,0,,{\c&H00FF7B4F\fs97\b0\bord6\pos(540,1320)}años donde desaparecer era
+Dialogue: 0,0:00:27.25,0:00:28.42,Default,,0,0,0,,{\c&H00FF7B4F\fs97\b0\bord6\pos(540,1320)}tu única defensa.
+Dialogue: 0,0:00:29.83,0:00:30.78,Default,,0,0,0,,{\c&H00303BFF\fs98\b0\bord6\pos(540,1320)}Ese patrón sigue ganando
+Dialogue: 0,0:00:30.80,0:00:31.75,Default,,0,0,0,,{\c&H00303BFF\fs98\b0\bord6\pos(540,1320)}cada día.
+Dialogue: 0,0:00:31.77,0:00:32.72,Default,,0,0,0,,{\c&H00303BFF\fs98\b0\bord6\pos(540,1320)}Alguien se acerca y
+Dialogue: 0,0:00:32.74,0:00:33.54,Default,,0,0,0,,{\c&H00303BFF\fs98\b0\bord6\pos(540,1320)}tu cuerpo se defiende
+Dialogue: 0,0:00:33.56,0:00:33.69,Default,,0,0,0,,{\c&H00FF7B4F\fs92\b0\bord6\pos(540,1320)}¿Cuántas veces esta semana
+Dialogue: 0,0:00:33.71,0:00:34.66,Default,,0,0,0,,{\c&H00303BFF\fs98\b0\bord6\pos(540,1320)}como amenaza.
+Dialogue: 0,0:00:34.68,0:00:34.77,Default,,0,0,0,,{\c&H00303BFF\fs98\b0\bord6\pos(540,1320)}Repites la historia sin
+Dialogue: 0,0:00:34.79,0:00:35.63,Default,,0,0,0,,{\c&H00FF7B4F\fs92\b0\bord6\pos(540,1320)}hiciste exactamente esto?
+Dialogue: 0,0:00:35.65,0:00:36.72,Default,,0,0,0,,{\c&H00303BFF\fs98\b0\bord6\pos(540,1320)}saberlo.
+Dialogue: 0,0:00:38.48,0:00:39.74,Default,,0,0,0,,{\c&H00FF7B4F\fs90\b0\bord6\pos(540,1320)}Dime si reconociste algo
+Dialogue: 0,0:00:39.76,0:00:41.03,Default,,0,0,0,,{\c&H00FF7B4F\fs90\b0\bord6\pos(540,1320)}tuyo en esto que
+Dialogue: 0,0:00:41.05,0:00:42.44,Default,,0,0,0,,{\c&H00FF7B4F\fs90\b0\bord6\pos(540,1320)}acabo de contar.

@@ -1,0 +1,459 @@
+{
+  "id": "d8732efb-cb11-47fd-b3d0-071306e11971",
+  "createdAt": "2026-04-26T19:09:56.637Z",
+  "status": "active",
+  "progress": 25,
+  "performance": {
+    "label": "video-pipeline",
+    "startedAt": "2026-04-27T12:45:37.123Z",
+    "totalMs": 4,
+    "phases": [
+      {
+        "name": "script_generation",
+        "startedAt": "2026-04-27T12:45:37.125Z",
+        "status": "completed",
+        "endedAt": "2026-04-27T12:45:37.127Z",
+        "durationMs": 2,
+        "source": "prefab",
+        "estimatedWords": 119,
+        "durationSeconds": 51
+      }
+    ],
+    "activePhase": null,
+    "jobId": "d8732efb-cb11-47fd-b3d0-071306e11971",
+    "videoId": "5d52ce57-ac01-4d0c-8327-94d52edf567d",
+    "topic": "relationships"
+  },
+  "data": {
+    "topic": "relationships",
+    "prefabScript": {
+      "title": "intuicion_o_costumbre",
+      "topic": "relationships",
+      "hook": "¿Y si no era intuición sino costumbre?",
+      "open_loop": "Confundes lo que conoces con lo que te hace bien",
+      "micro_value": "Sigues con alguien porque ya sabes cómo es, no porque sea lo correcto",
+      "escalation": "Ignoras señales rojas porque ya estás acostumbrado. Temes empezar de cero. Prefieres lo malo conocido antes que lo bueno desconocido. Eso se siente como amor pero es miedo",
+      "reengage": "Y lo peor es que lo llamas intuición cuando es solo familiaridad",
+      "peak": "Por eso reaccionas así cuando alguien nuevo llega: no sabes el patrón, no sabes qué esperar, y eso te asusta más que estar con alguien que te lastima",
+      "open_ending": "La intuición se siente cómoda. La costumbre también. Mira dónde está la diferencia",
+      "soft_cta": "¿Qué relación en tu vida es realmente intuición?",
+      "effectName": "Ilusión de familiaridad en relaciones",
+      "psychologicalFact": "Confundimos comodidad con certeza cuando pasamos tiempo suficiente con algo o alguien",
+      "viralTrigger": "identificacion",
+      "emotionalTrigger": "validation",
+      "keywords": [
+        "relaciones",
+        "intuicion",
+        "costumbre",
+        "patrones",
+        "miedo al cambio"
+      ],
+      "claim": "Sigues con alguien porque ya sabes cómo es, no porque sea lo correcto",
+      "explanation": "Ignoras señales rojas porque ya estás acostumbrado. Temes empezar de cero. Prefieres lo malo conocido antes que lo bueno desconocido. Eso se siente como amor pero es miedo Y lo peor es que lo llamas intuición cuando es solo familiaridad Por eso reaccionas así cuando alguien nuevo llega: no sabes el patrón, no sabes qué esperar, y eso te asusta más que estar con alguien que te lastima",
+      "cta": "La intuición se siente cómoda. La costumbre también. Mira dónde está la diferencia ¿Qué relación en tu vida es realmente intuición?",
+      "segments": [
+        {
+          "type": "HOOK",
+          "text": "¿Y si no era intuición sino costumbre?",
+          "visualIntent": "punch zoom, texto impactante, fondo oscuro",
+          "emotion": "tension"
+        },
+        {
+          "type": "OPEN_LOOP",
+          "text": "Confundes lo que conoces con lo que te hace bien",
+          "visualIntent": "zoom lento, rostro pensativo, tension",
+          "emotion": "curiosity"
+        },
+        {
+          "type": "MICRO_VALUE",
+          "text": "Sigues con alguien porque ya sabes cómo es, no porque sea lo correcto",
+          "visualIntent": "zoom lento, rostro pensativo, tension",
+          "emotion": "curiosity"
+        },
+        {
+          "type": "ESCALATION",
+          "text": "Ignoras señales rojas porque ya estás acostumbrado. Temes empezar de cero. Prefieres lo malo conocido antes que lo bueno desconocido. Eso se siente como amor pero es miedo",
+          "visualIntent": "zoom lento, rostro pensativo, tension",
+          "emotion": "curiosity"
+        },
+        {
+          "type": "REENGAGE",
+          "text": "Y lo peor es que lo llamas intuición cuando es solo familiaridad",
+          "visualIntent": "cambio brusco, tension, zoom corto",
+          "emotion": "curiosity"
+        },
+        {
+          "type": "PEAK",
+          "text": "Por eso reaccionas así cuando alguien nuevo llega: no sabes el patrón, no sabes qué esperar, y eso te asusta más que estar con alguien que te lastima",
+          "visualIntent": "aislamiento, silueta, punch zoom",
+          "emotion": "impacto"
+        },
+        {
+          "type": "OPEN_ENDING",
+          "text": "La intuición se siente cómoda. La costumbre también. Mira dónde está la diferencia",
+          "visualIntent": "zoom lento, rostro pensativo, tension",
+          "emotion": "curiosity"
+        },
+        {
+          "type": "SOFT_CTA",
+          "text": "¿Qué relación en tu vida es realmente intuición?",
+          "visualIntent": "zoom lento, rostro pensativo, tension",
+          "emotion": "cercania"
+        }
+      ],
+      "structureVersion": "confessional",
+      "hasReengage": true,
+      "hookConfessionalScore": 100,
+      "fullScript": "¿Y si no era intuición sino costumbre? Confundes lo que conoces con lo que te hace bien Sigues con alguien porque ya sabes cómo es, no porque sea lo correcto Ignoras señales rojas porque ya estás acostumbrado. Temes empezar de cero. Prefieres lo malo conocido antes que lo bueno desconocido. Eso se siente como amor pero es miedo Y lo peor es que lo llamas intuición cuando es solo familiaridad Por eso reaccionas así cuando alguien nuevo llega: no sabes el patrón, no sabes qué esperar, y eso te asusta más que estar con alguien que te lastima La intuición se siente cómoda. La costumbre también. Mira dónde está la diferencia ¿Qué relación en tu vida es realmente intuición?",
+      "videoInstructions": {
+        "singleFocus": true,
+        "visualStyle": [
+          "estetica cinematografica oscura",
+          "fondo negro o casi negro",
+          "alto contraste con azul electrico dominante",
+          "acento rojo oscuro solo para tension",
+          "single focus constante sin overlays complejos",
+          "cambio de plano cada 2-3 segundos",
+          "zoom progresivo y movimiento suave"
+        ],
+        "subtitleStyle": "tipografia condensada bold, blanco frio con acentos azul electrico y rojo oscuro, subtitulos grandes y sincronizados",
+        "audioStyle": {
+          "voice": "voz clara y con ritmo",
+          "pauses": [
+            "hook",
+            "reengage",
+            "peak"
+          ]
+        },
+        "scenes": [
+          {
+            "segment": "hook",
+            "timing": "0-2.2s",
+            "visual": "primer plano de cerebro luminoso o rostro inquietante, relacionado con relationships, fondo negro o muy oscuro, contraste alto, azul electrico y rojo oscuro como acentos, zoom lento, iluminacion dramatica, sensacion de misterio psicologico",
+            "cut": "corte rapido con push-in",
+            "startSeconds": 0,
+            "endSeconds": 2.2,
+            "durationSeconds": 2.2,
+            "shotType": "primer plano",
+            "framing": "primer plano",
+            "intensity": "alta",
+            "movement": "push-in rapido",
+            "transition": "hard cut",
+            "emphasis": "scroll-stop inmediato",
+            "syncCue": "movimiento continuo con remate en palabra fuerte"
+          },
+          {
+            "segment": "open_loop",
+            "timing": "2.2-5s",
+            "visual": "ojo humano extremo o gesto suspendido en sombra, relacionado con relationships, fondo negro o muy oscuro, contraste alto, azul electrico y rojo oscuro como acentos, zoom lento, iluminacion dramatica, sensacion de misterio psicologico",
+            "cut": "zoom corto continuo",
+            "startSeconds": 2.2,
+            "endSeconds": 5,
+            "durationSeconds": 2.8,
+            "shotType": "plano detalle",
+            "framing": "plano detalle",
+            "intensity": "alta",
+            "movement": "zoom lento continuo",
+            "transition": "match cut",
+            "emphasis": "curiosidad sostenida",
+            "syncCue": "movimiento continuo con remate en palabra fuerte"
+          },
+          {
+            "segment": "micro_value",
+            "timing": "5-8.2s",
+            "visual": "detalle simbolico del mecanismo mental en glow azul, relacionado con relationships, fondo negro o muy oscuro, contraste alto, azul electrico y rojo oscuro como acentos, zoom lento, iluminacion dramatica, sensacion de misterio psicologico",
+            "cut": "cambio de plano limpio",
+            "startSeconds": 5,
+            "endSeconds": 8.2,
+            "durationSeconds": 3.2,
+            "shotType": "plano medio",
+            "framing": "plano medio",
+            "intensity": "media",
+            "movement": "micro paneo lateral",
+            "transition": "cut limpio",
+            "emphasis": "primer pago de valor",
+            "syncCue": "movimiento continuo con remate en palabra fuerte"
+          },
+          {
+            "segment": "escalation",
+            "timing": "8.2-11.6s",
+            "visual": "silueta humana o tension social en contraluz, relacionado con relationships, fondo negro o muy oscuro, contraste alto, azul electrico y rojo oscuro como acentos, zoom lento, iluminacion dramatica, sensacion de misterio psicologico",
+            "cut": "cortes cada 2-3s",
+            "startSeconds": 8.2,
+            "endSeconds": 11.6,
+            "durationSeconds": 3.4,
+            "shotType": "plano abierto",
+            "framing": "plano abierto",
+            "intensity": "media-alta",
+            "movement": "acercamiento progresivo",
+            "transition": "cut ritmico",
+            "emphasis": "tension creciente",
+            "syncCue": "movimiento continuo con remate en palabra fuerte"
+          },
+          {
+            "segment": "reengage",
+            "timing": "11.6-14.2s",
+            "visual": "cambio brusco a plano mas cercano con rojo alerta, relacionado con relationships, fondo negro o muy oscuro, contraste alto, azul electrico y rojo oscuro como acentos, zoom lento, iluminacion dramatica, sensacion de misterio psicologico",
+            "cut": "cambio brusco + zoom agresivo",
+            "startSeconds": 11.6,
+            "endSeconds": 14.2,
+            "durationSeconds": 2.6,
+            "shotType": "primer plano",
+            "framing": "primer plano",
+            "intensity": "muy alta",
+            "movement": "zoom agresivo",
+            "transition": "whip cut",
+            "emphasis": "ruptura de patron",
+            "syncCue": "acercamiento en frase clave"
+          },
+          {
+            "segment": "peak",
+            "timing": "14.2-17.8s",
+            "visual": "escena humana real de conflicto, pareja o decision, relacionado con relationships, fondo negro o muy oscuro, contraste alto, azul electrico y rojo oscuro como acentos, zoom lento, iluminacion dramatica, sensacion de misterio psicologico",
+            "cut": "alternancia de planos cerrados",
+            "startSeconds": 14.2,
+            "endSeconds": 17.8,
+            "durationSeconds": 3.6,
+            "shotType": "plano medio",
+            "framing": "plano medio",
+            "intensity": "maxima",
+            "movement": "push-in sostenido",
+            "transition": "impact cut",
+            "emphasis": "impacto emocional",
+            "syncCue": "acercamiento en frase clave"
+          },
+          {
+            "segment": "open_ending",
+            "timing": "17.8-20.9s",
+            "visual": "figura sola alejandose en oscuridad con particulas, relacionado con relationships, fondo negro o muy oscuro, contraste alto, azul electrico y rojo oscuro como acentos, zoom lento, iluminacion dramatica, sensacion de misterio psicologico",
+            "cut": "desaceleracion ligera",
+            "startSeconds": 17.8,
+            "endSeconds": 20.9,
+            "durationSeconds": 3.1,
+            "shotType": "plano abierto",
+            "framing": "plano abierto",
+            "intensity": "media",
+            "movement": "zoom out suave",
+            "transition": "cut limpio",
+            "emphasis": "eco mental",
+            "syncCue": "movimiento continuo con remate en palabra fuerte"
+          },
+          {
+            "segment": "soft_cta",
+            "timing": "20.9-23.6s",
+            "visual": "rostro o silueta frontal con espacio negativo para cierre, relacionado con relationships, fondo negro o muy oscuro, contraste alto, azul electrico y rojo oscuro como acentos, zoom lento, iluminacion dramatica, sensacion de misterio psicologico",
+            "cut": "ultimo corte limpio",
+            "startSeconds": 20.9,
+            "endSeconds": 23.6,
+            "durationSeconds": 2.7,
+            "shotType": "plano detalle",
+            "framing": "plano detalle",
+            "intensity": "media",
+            "movement": "micro acercamiento",
+            "transition": "hold corto",
+            "emphasis": "cierre abierto",
+            "syncCue": "movimiento continuo con remate en palabra fuerte"
+          }
+        ],
+        "style": {
+          "theme": "psicologia oscura / mente humana / comportamiento",
+          "colorPalette": "negro absoluto, azul electrico, azul neon frio, rojo oscuro, blanco frio",
+          "visualStyle": "cinematografico, minimalista, alto contraste, single focus",
+          "lighting": "oscura, dramatica, contraluz duro, glow electrico dirigido, sombras marcadas",
+          "cameraMotion": "zoom lento constante, push-in suave, micro paneo lateral, cambio de plano cada 2-3 segundos",
+          "effects": "glow ligero, particulas sutiles, neblina tenue, ruido cinematografico muy fino",
+          "composition": "single focus, sujeto dominante a la derecha o centrado, texto respirando a la izquierda, primeros planos y siluetas, profundidad negativa",
+          "emotionalTone": "misterio psicologico, obsesion, tension contenida, intriga oscura",
+          "consistencyRules": [
+            "una sola escena principal por segmento",
+            "fondo siempre oscuro o casi negro",
+            "usar azul electrico como color dominante y rojo solo para tension o reengage",
+            "priorizar cerebros, ojos, siluetas y escenas humanas reconocibles",
+            "evitar stock luminoso, lifestyle genérico o composiciones planas"
+          ],
+          "clipKeywords": [
+            "relaciones",
+            "intuicion",
+            "costumbre",
+            "patrones",
+            "miedo al cambio",
+            "glowing brain dark background",
+            "blue eye close up dark",
+            "person silhouette red light"
+          ]
+        },
+        "clipKeywords": [
+          "relaciones",
+          "intuicion",
+          "costumbre",
+          "patrones",
+          "miedo al cambio",
+          "glowing brain dark background",
+          "blue eye close up dark",
+          "person silhouette red light",
+          "couple argument silhouette blue light",
+          "moody face close up shadow"
+        ],
+        "rhythmRule": "cambio visual cada 2-3 segundos, sin escenas estaticas ni repeticiones consecutivas de encuadre",
+        "timeline": [
+          {
+            "segment": "hook",
+            "timing": "0-2.2s",
+            "durationSeconds": 2.2,
+            "shotType": "primer plano",
+            "intensity": "alta",
+            "movement": "push-in rapido",
+            "transition": "hard cut"
+          },
+          {
+            "segment": "open_loop",
+            "timing": "2.2-5s",
+            "durationSeconds": 2.8,
+            "shotType": "plano detalle",
+            "intensity": "alta",
+            "movement": "zoom lento continuo",
+            "transition": "match cut"
+          },
+          {
+            "segment": "micro_value",
+            "timing": "5-8.2s",
+            "durationSeconds": 3.2,
+            "shotType": "plano medio",
+            "intensity": "media",
+            "movement": "micro paneo lateral",
+            "transition": "cut limpio"
+          },
+          {
+            "segment": "escalation",
+            "timing": "8.2-11.6s",
+            "durationSeconds": 3.4,
+            "shotType": "plano abierto",
+            "intensity": "media-alta",
+            "movement": "acercamiento progresivo",
+            "transition": "cut ritmico"
+          },
+          {
+            "segment": "reengage",
+            "timing": "11.6-14.2s",
+            "durationSeconds": 2.6,
+            "shotType": "primer plano",
+            "intensity": "muy alta",
+            "movement": "zoom agresivo",
+            "transition": "whip cut"
+          },
+          {
+            "segment": "peak",
+            "timing": "14.2-17.8s",
+            "durationSeconds": 3.6,
+            "shotType": "plano medio",
+            "intensity": "maxima",
+            "movement": "push-in sostenido",
+            "transition": "impact cut"
+          },
+          {
+            "segment": "open_ending",
+            "timing": "17.8-20.9s",
+            "durationSeconds": 3.1,
+            "shotType": "plano abierto",
+            "intensity": "media",
+            "movement": "zoom out suave",
+            "transition": "cut limpio"
+          },
+          {
+            "segment": "soft_cta",
+            "timing": "20.9-23.6s",
+            "durationSeconds": 2.7,
+            "shotType": "plano detalle",
+            "intensity": "media",
+            "movement": "micro acercamiento",
+            "transition": "hold corto"
+          }
+        ]
+      },
+      "identificationScore": 75,
+      "viralityScore": 38,
+      "viralityBreakdown": {
+        "hookStrength": 8,
+        "emotionalTrigger": 5,
+        "relatability": 10,
+        "loopPotential": 13,
+        "durationBonus": 2
+      },
+      "approved": false,
+      "estimatedWords": 119,
+      "durationSeconds": 51,
+      "retentionSpikeVersion": "v4.1",
+      "renderMode": "video_use",
+      "subtitleTimingMode": "word_timestamps",
+      "wordAlignmentEngine": "whisper",
+      "duration": 51,
+      "llmMetrics": {
+        "llm_total_calls": 1,
+        "llm_parse_fail": false,
+        "llm_recovery_used": false,
+        "llm_hard_fail": false,
+        "emergency_fallback_used": false,
+        "llm_schema_fail": false,
+        "llm_truncated_suspected": true
+      },
+      "usedRecovery": false,
+      "generationSource": "generateScript",
+      "llmPath": [
+        "generateScript"
+      ],
+      "videoId": "1aecc327-9522-467d-aa52-0af8b9f85d77",
+      "createdAt": "2026-04-26T19:07:01.906Z",
+      "slotTracking": {
+        "batchId": "batch_1777230001025",
+        "slotId": "batch_1777230001025_slot_2",
+        "plannedOrder": 2,
+        "plannedRole": "monetization",
+        "plannedCluster": "habitos de distraccion movil",
+        "plannedHookType": "challenge",
+        "plannedMicroAction": "SCREEN_ACTION",
+        "recommendedCandidateId": "mobile-2",
+        "recommendedCandidateTitle": "La notificación que no abres",
+        "businessMode": "monetization_priority",
+        "targetGoal": "monetization_priority",
+        "scheduleWindow": "4 días",
+        "recommendedPublishTime": "6 horas x slot 2",
+        "attributionType": "cluster_match",
+        "slotState": "assigned",
+        "assignmentConfidence": 0.12,
+        "traceConfidence": 0.12,
+        "exactTraceAvailable": true,
+        "abLinked": false
+      },
+      "contentVersion": "v2"
+    },
+    "hookId": null,
+    "themeIndex": 0,
+    "slotTracking": {
+      "batchId": "batch_1777230001025",
+      "slotId": "batch_1777230001025_slot_2",
+      "plannedOrder": 2,
+      "plannedRole": "monetization",
+      "plannedCluster": "habitos de distraccion movil",
+      "plannedHookType": "challenge",
+      "plannedMicroAction": "SCREEN_ACTION",
+      "recommendedCandidateId": "mobile-2",
+      "recommendedCandidateTitle": "La notificación que no abres",
+      "businessMode": "monetization_priority",
+      "targetGoal": "monetization_priority",
+      "scheduleWindow": "4 días",
+      "recommendedPublishTime": "6 horas x slot 2",
+      "attributionType": "cluster_match",
+      "slotState": "assigned",
+      "assignmentConfidence": 0.12,
+      "traceConfidence": 0.12,
+      "exactTraceAvailable": true,
+      "abLinked": false
+    }
+  },
+  "startedAt": "2026-04-27T12:45:37.123Z",
+  "videoId": "5d52ce57-ac01-4d0c-8327-94d52edf567d",
+  "lastStage": "script_generated",
+  "lastProgressAt": "2026-04-27T12:45:37.127Z",
+  "recoveredAt": "2026-04-27T12:45:37.120Z",
+  "recoveredFrom": "active"
+}

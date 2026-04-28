@@ -1,0 +1,48 @@
+[Script Info]
+ScriptType: v4.00+
+PlayResX: 1080
+PlayResY: 1920
+WrapStyle: 2
+
+[V4+ Styles]
+Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+Style: Default,Impact,100,&H00FFFFFF,&H00FFFFFF,&H00000000,&H90000000,-1,0,0,0,100,100,0,0,1,6,4,8,10,10,10,1
+
+[Events]
+Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
+Dialogue: 0,0:00:00.00,0:00:01.05,Default,,0,0,0,,{\c&H00FFF7F3\fs109\b-1\bord8\pos(540,1320)}SABES que tienes que
+Dialogue: 0,0:00:01.07,0:00:02.13,Default,,0,0,0,,{\c&H00FFF7F3\fs109\b0\bord6\pos(540,1320)}hacerlo pero tu cuerpo
+Dialogue: 0,0:00:02.15,0:00:03.32,Default,,0,0,0,,{\c&H00FFF7F3\fs109\b0\bord6\pos(540,1320)}dice que no.
+Dialogue: 0,0:00:06.44,0:00:06.88,Default,,0,0,0,,{\c&H00FF7B4F\fs95\b0\bord6\pos(540,1320)}¿Por qué esa sensación
+Dialogue: 0,0:00:06.90,0:00:07.50,Default,,0,0,0,,{\c&H00FFF7F3\fs100\b-1\bord8\pos(540,1320)}Tu CEREBRO elige dolor
+Dialogue: 0,0:00:07.52,0:00:08.07,Default,,0,0,0,,{\c&H00FF7B4F\fs101\b-1\bord8\pos(540,1320)}gana SIEMPRE en los
+Dialogue: 0,0:00:08.09,0:00:08.57,Default,,0,0,0,,{\c&H00FFF7F3\fs94\b0\bord6\pos(540,1320)}ahora si promete placer
+Dialogue: 0,0:00:08.59,0:00:09.25,Default,,0,0,0,,{\c&H00FF7B4F\fs95\b0\bord6\pos(540,1320)}primeros cinco minutos?
+Dialogue: 0,0:00:09.27,0:00:10.44,Default,,0,0,0,,{\c&H00FFF7F3\fs94\b0\bord6\pos(540,1320)}en treinta segundos.
+Dialogue: 0,0:00:10.46,0:00:11.74,Default,,0,0,0,,{\c&H00FFF7F3\fs94\b0\bord6\pos(540,1320)}Eso es todo.
+Dialogue: 0,0:00:16.38,0:00:17.49,Default,,0,0,0,,{\c&H00FF7B4F\fs97\b0\bord6\pos(540,1320)}Mientras tú planeas estudiar,
+Dialogue: 0,0:00:17.51,0:00:18.61,Default,,0,0,0,,{\c&H00FF7B4F\fs97\b0\bord6\pos(540,1320)}tu sistema de recompensa
+Dialogue: 0,0:00:18.64,0:00:19.74,Default,,0,0,0,,{\c&H00FF7B4F\fs103\b-1\bord8\pos(540,1320)}está buscando DOPAMINA fácil.
+Dialogue: 0,0:00:19.76,0:00:20.87,Default,,0,0,0,,{\c&H00FF7B4F\fs97\b0\bord6\pos(540,1320)}El móvil,
+Dialogue: 0,0:00:20.89,0:00:21.99,Default,,0,0,0,,{\c&H00FF7B4F\fs97\b0\bord6\pos(540,1320)}Netflix, scrollear.
+Dialogue: 0,0:00:22.01,0:00:22.00,Default,,0,0,0,,{\c&H00303BFF\fs100\b0\bord6\pos(540,1320)}Y lo peor:
+Dialogue: 0,0:00:22.02,0:00:23.13,Default,,0,0,0,,{\c&H00FF7B4F\fs97\b0\bord6\pos(540,1320)}Aunque sabes que en
+Dialogue: 0,0:00:23.15,0:00:23.15,Default,,0,0,0,,{\c&H00FF7B4F\fs97\b0\bord6\pos(540,1320)}dos horas te odiarás,
+Dialogue: 0,0:00:23.17,0:00:24.26,Default,,0,0,0,,{\c&H00303BFF\fs106\b-1\bord8\pos(540,1320)}tu CEREBRO sabe que
+Dialogue: 0,0:00:24.28,0:00:24.32,Default,,0,0,0,,{\c&H00FF7B4F\fs97\b0\bord6\pos(540,1320)}en este momento gana
+Dialogue: 0,0:00:24.34,0:00:25.38,Default,,0,0,0,,{\c&H00303BFF\fs100\b0\bord6\pos(540,1320)}es una trampa pero
+Dialogue: 0,0:00:25.40,0:00:25.48,Default,,0,0,0,,{\c&H00FF7B4F\fs97\b0\bord6\pos(540,1320)}lo rápido.
+Dialogue: 0,0:00:25.50,0:00:26.76,Default,,0,0,0,,{\c&H00303BFF\fs100\b0\bord6\pos(540,1320)}lo hace igual.
+Dialogue: 0,0:00:31.30,0:00:32.28,Default,,0,0,0,,{\c&H00303BFF\fs98\b0\bord6\pos(540,1320)}El ejercicio que aplazas
+Dialogue: 0,0:00:32.30,0:00:33.27,Default,,0,0,0,,{\c&H00303BFF\fs98\b0\bord6\pos(540,1320)}duele ahora.
+Dialogue: 0,0:00:33.29,0:00:34.27,Default,,0,0,0,,{\c&H00303BFF\fs98\b0\bord6\pos(540,1320)}El móvil te recompensa
+Dialogue: 0,0:00:34.29,0:00:34.78,Default,,0,0,0,,{\c&H00303BFF\fs98\b0\bord6\pos(540,1320)}ahora.
+Dialogue: 0,0:00:34.80,0:00:35.27,Default,,0,0,0,,{\c&H00FF7B4F\fs92\b0\bord6\pos(540,1320)}¿Qué pasa si cambias
+Dialogue: 0,0:00:35.28,0:00:35.79,Default,,0,0,0,,{\c&H00303BFF\fs98\b0\bord6\pos(540,1320)}El futuro no recompensa,
+Dialogue: 0,0:00:35.81,0:00:36.26,Default,,0,0,0,,{\c&H00FF7B4F\fs92\b0\bord6\pos(540,1320)}dónde está la recompensa
+Dialogue: 0,0:00:36.28,0:00:36.80,Default,,0,0,0,,{\c&H00303BFF\fs98\b0\bord6\pos(540,1320)}solo castig.
+Dialogue: 0,0:00:36.82,0:00:37.26,Default,,0,0,0,,{\c&H00FF7B4F\fs92\b0\bord6\pos(540,1320)}inmediata?
+Dialogue: 0,0:00:37.27,0:00:38.25,Default,,0,0,0,,{\c&H00303BFF\fs98\b0\bord6\pos(540,1320)}Por eso postergamos aunque
+Dialogue: 0,0:00:38.27,0:00:39.37,Default,,0,0,0,,{\c&H00303BFF\fs105\b-1\bord8\pos(540,1320)}nos arrepintamos SIEMPRE.
+Dialogue: 0,0:00:40.85,0:00:42.01,Default,,0,0,0,,{\c&H00FF7B4F\fs90\b0\bord6\pos(540,1320)}Cuéntame en comentarios cómo
+Dialogue: 0,0:00:42.02,0:00:43.30,Default,,0,0,0,,{\c&H00FF7B4F\fs90\b0\bord6\pos(540,1320)}lo hacés vos.

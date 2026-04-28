@@ -1,0 +1,18 @@
+{
+  "videos": [
+    {
+      "videoId": "51ef6963-d243-4a17-9bec-b048a0c3a8cb",
+      "hook": "¿Cuándo empezaste a sentir que algo estaba mal?",
+      "hookType": "observable",
+      "topic": "relationships",
+      "duration": 33.01,
+      "viralityScore": 78,
+      "formatScore": 0,
+      "emotionalImpactScore": 0,
+      "publishSlot": "unknown",
+      "exportedAt": "2026-04-26T20:28:38.389Z",
+      "createdAt": "2026-04-26T20:28:38.384Z",
+      "collectedAt": "2026-04-26T20:28:38.391Z"
+    }
+  ]
+}

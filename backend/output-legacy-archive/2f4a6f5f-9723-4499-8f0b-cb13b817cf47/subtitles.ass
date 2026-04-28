@@ -1,0 +1,59 @@
+[Script Info]
+ScriptType: v4.00+
+PlayResX: 1080
+PlayResY: 1920
+WrapStyle: 2
+
+[V4+ Styles]
+Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+Style: Default,Impact,100,&H00FFFFFF,&H00FFFFFF,&H00000000,&H90000000,-1,0,0,0,100,100,0,0,1,6,4,8,10,10,10,1
+
+[Events]
+Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
+Dialogue: 0,0:00:00.00,0:00:00.74,Default,,0,0,0,,{\c&H00FFF7F3\fs109\b-1\bord8\pos(540,1320)}TRISTESA es
+Dialogue: 0,0:00:00.76,0:00:01.62,Default,,0,0,0,,{\c&H00FFF7F3\fs109\b0\bord6\pos(540,1320)}contagiosa sin que
+Dialogue: 0,0:00:01.64,0:00:02.22,Default,,0,0,0,,{\c&H00FFF7F3\fs109\b0\bord6\pos(540,1320)}los sebas.
+Dialogue: 0,0:00:02.32,0:00:02.96,Default,,0,0,0,,{\c&H00FFF7F3\fs109\b0\bord6\pos(540,1320)}Hay un mecanismo
+Dialogue: 0,0:00:02.98,0:00:03.96,Default,,0,0,0,,{\c&H00FF7B4F\fs101\b-1\bord8\pos(540,1320)}NEURONAL que propaga
+Dialogue: 0,0:00:03.98,0:00:04.84,Default,,0,0,0,,{\c&H00FF7B4F\fs95\b0\bord6\pos(540,1320)}tu estado emocional
+Dialogue: 0,0:00:04.86,0:00:05.34,Default,,0,0,0,,{\c&H00FF7B4F\fs95\b0\bord6\pos(540,1320)}a otros
+Dialogue: 0,0:00:05.36,0:00:06.22,Default,,0,0,0,,{\c&H00FF7B4F\fs105\b-1\bord8\pos(540,1320)}AUTOMÁTICAMENTE.
+Dialogue: 0,0:00:06.30,0:00:06.88,Default,,0,0,0,,{\c&H00FF7B4F\fs95\b0\bord6\pos(540,1320)}Se llama esejo
+Dialogue: 0,0:00:06.90,0:00:07.44,Default,,0,0,0,,{\c&H00FFF7F3\fs103\b-1\bord8\pos(540,1320)}EMOCIONAL.
+Dialogue: 0,0:00:07.54,0:00:08.18,Default,,0,0,0,,{\c&H00FFF7F3\fs94\b0\bord6\pos(540,1320)}Tu expresión facial
+Dialogue: 0,0:00:08.20,0:00:09.12,Default,,0,0,0,,{\c&H00FFF7F3\fs94\b0\bord6\pos(540,1320)}activa las mismas
+Dialogue: 0,0:00:09.14,0:00:09.82,Default,,0,0,0,,{\c&H00FFF7F3\fs100\b-1\bord8\pos(540,1320)}NEURONAS en quien
+Dialogue: 0,0:00:09.84,0:00:10.24,Default,,0,0,0,,{\c&H00FFF7F3\fs94\b0\bord6\pos(540,1320)}te ve.
+Dialogue: 0,0:00:10.26,0:00:10.62,Default,,0,0,0,,{\c&H00FFF7F3\fs94\b0\bord6\pos(540,1320)}Por eso tu
+Dialogue: 0,0:00:10.64,0:00:11.40,Default,,0,0,0,,{\c&H00FF7B4F\fs97\b0\bord6\pos(540,1320)}mal día ruina
+Dialogue: 0,0:00:11.42,0:00:11.66,Default,,0,0,0,,{\c&H00FF7B4F\fs97\b0\bord6\pos(540,1320)}el de tu
+Dialogue: 0,0:00:11.68,0:00:12.58,Default,,0,0,0,,{\c&H00FF7B4F\fs97\b0\bord6\pos(540,1320)}pareja, tu amigo,
+Dialogue: 0,0:00:12.62,0:00:13.12,Default,,0,0,0,,{\c&H00FF7B4F\fs97\b0\bord6\pos(540,1320)}tu familia.
+Dialogue: 0,0:00:13.24,0:00:13.92,Default,,0,0,0,,{\c&H00FF7B4F\fs97\b0\bord6\pos(540,1320)}Ellos no eligen
+Dialogue: 0,0:00:13.94,0:00:14.48,Default,,0,0,0,,{\c&H00FF7B4F\fs103\b-1\bord8\pos(540,1320)}sentir lo que
+Dialogue: 0,0:00:14.50,0:00:15.04,Default,,0,0,0,,{\c&H00FF7B4F\fs97\b0\bord6\pos(540,1320)}tú sientes.
+Dialogue: 0,0:00:15.18,0:00:15.70,Default,,0,0,0,,{\c&H00FF7B4F\fs97\b0\bord6\pos(540,1320)}Sus cuerpos lo
+Dialogue: 0,0:00:15.72,0:00:16.56,Default,,0,0,0,,{\c&H00FF7B4F\fs97\b0\bord6\pos(540,1320)}hacen por instinto
+Dialogue: 0,0:00:16.58,0:00:17.26,Default,,0,0,0,,{\c&H00FF7B4F\fs97\b0\bord6\pos(540,1320)}evolutivo de su
+Dialogue: 0,0:00:17.36,0:00:17.98,Default,,0,0,0,,{\c&H00FF7B4F\fs106\b-1\bord8\pos(540,1320)}PERVIVENCIA.
+Dialogue: 0,0:00:18.30,0:00:18.90,Default,,0,0,0,,{\c&H00303BFF\fs100\b0\bord6\pos(540,1320)}Pero espera, hay
+Dialogue: 0,0:00:18.62,0:00:19.16,Default,,0,0,0,,{\c&H00303BFF\fs100\b0\bord6\pos(540,1320)}un giro oscuro
+Dialogue: 0,0:00:19.26,0:00:19.46,Default,,0,0,0,,{\c&H00303BFF\fs109\b-1\bord8\pos(540,1320)}AQUÍ.
+Dialogue: 0,0:00:19.48,0:00:20.02,Default,,0,0,0,,{\c&H00303BFF\fs98\b0\bord6\pos(540,1320)}Tú también estás
+Dialogue: 0,0:00:20.04,0:00:21.08,Default,,0,0,0,,{\c&H00303BFF\fs98\b0\bord6\pos(540,1320)}siendo contagiado ahora
+Dialogue: 0,0:00:21.10,0:00:22.28,Default,,0,0,0,,{\c&H00303BFF\fs98\b0\bord6\pos(540,1320)}mismo sin saberlo.
+Dialogue: 0,0:00:22.64,0:00:22.98,Default,,0,0,0,,{\c&H00303BFF\fs105\b-1\bord8\pos(540,1320)}El MIEDO de
+Dialogue: 0,0:00:22.74,0:00:23.36,Default,,0,0,0,,{\c&H00303BFF\fs98\b0\bord6\pos(540,1320)}otros entra en
+Dialogue: 0,0:00:23.38,0:00:24.06,Default,,0,0,0,,{\c&H00303BFF\fs98\b0\bord6\pos(540,1320)}ti, la alegría
+Dialogue: 0,0:00:24.08,0:00:24.92,Default,,0,0,0,,{\c&H00303BFF\fs98\b0\bord6\pos(540,1320)}ajena de sube,
+Dialogue: 0,0:00:25.09,0:00:25.54,Default,,0,0,0,,{\c&H00303BFF\fs105\b-1\bord8\pos(540,1320)}la ANSIEDAD del
+Dialogue: 0,0:00:25.56,0:00:26.42,Default,,0,0,0,,{\c&H00303BFF\fs98\b0\bord6\pos(540,1320)}grupo de paraliza.
+Dialogue: 0,0:00:26.48,0:00:27.06,Default,,0,0,0,,{\c&H00303BFF\fs98\b0\bord6\pos(540,1320)}Eres un receptor
+Dialogue: 0,0:00:27.08,0:00:28.16,Default,,0,0,0,,{\c&H00303BFF\fs98\b0\bord6\pos(540,1320)}de emociones ajenas
+Dialogue: 0,0:00:28.26,0:00:28.84,Default,,0,0,0,,{\c&H00303BFF\fs108\b-1\bord8\pos(540,1320)}CONSTANTEMENTE.
+Dialogue: 0,0:00:28.86,0:00:29.44,Default,,0,0,0,,{\c&H00FF7B4F\fs92\b0\bord6\pos(540,1320)}¿Cuántas de tus
+Dialogue: 0,0:00:29.46,0:00:30.48,Default,,0,0,0,,{\c&H00FF7B4F\fs92\b0\bord6\pos(540,1320)}emociones hoy son
+Dialogue: 0,0:00:30.50,0:00:31.46,Default,,0,0,0,,{\c&H00FF7B4F\fs92\b0\bord6\pos(540,1320)}realmente tuyas?
+Dialogue: 0,0:00:31.60,0:00:32.10,Default,,0,0,0,,{\c&H00FF7B4F\fs90\b0\bord6\pos(540,1320)}¿Me equivoco o
+Dialogue: 0,0:00:32.12,0:00:32.68,Default,,0,0,0,,{\c&H00FF7B4F\fs90\b0\bord6\pos(540,1320)}tú también lo
+Dialogue: 0,0:00:32.70,0:00:33.12,Default,,0,0,0,,{\c&H00FF7B4F\fs90\b0\bord6\pos(540,1320)}has sentido?

@@ -1,0 +1,118 @@
+{
+  "part": 2,
+  "totalParts": 3,
+  "hook": "Esta señal de tu cuerpo grita 'no confío en ti' aunque sonrías",
+  "claim": "Si tocas tu cuello mientras hablas, estás revelando que mientes o tienes dudas",
+  "explanation": "Cuando una persona se toca el cuello, la garganta o se ajusta el cuello de la camisa, está activando una respuesta de estrés involuntaria. Es como si tu cuerpo dijera 'siento que estoy bajo presión'. Los mentirosos profesionales lo hacen sin saberlo. También aparece cuando tienes miedo al rechazo o desaprobación. Los negociadores expertos buscan este gesto para detectar si el otro lado está realmente cómodo con el acuerdo. Ahora viene lo más revelador.",
+  "cta": "La verdad número 2 es MUCHO más impactante. Parte 3 en mi perfil →",
+  "psychologicalFact": "Tocarse el cuello indica estrés, duda o deshonestidad involuntaria",
+  "viralTrigger": "identificacion",
+  "emotionalTrigger": "awe",
+  "keywords": [
+    "señales corporales",
+    "mentiras detectadas",
+    "estrés corporal",
+    "verdad oculta"
+  ],
+  "hashtags": [
+    "#psicologia",
+    "#lenguajecorporal",
+    "#detectarmentiras",
+    "#serie",
+    "#parte2",
+    "#revelacion"
+  ],
+  "title": "Lo que tu cuerpo revela: Las 3 verdades que ocultas sin saber Parte 1/3_parte2",
+  "topic": "body_language",
+  "durationSeconds": 58,
+  "isSeries": true,
+  "seriesTitle": "Lo que tu cuerpo revela: Las 3 verdades que ocultas sin saber Parte 1/3",
+  "viralityScore": 37,
+  "viralityBreakdown": {
+    "hookStrength": 18,
+    "emotionalTrigger": 2,
+    "relatability": 10,
+    "loopPotential": 5,
+    "durationBonus": 2
+  },
+  "estimatedWords": 113,
+  "slotTracking": {
+    "batchId": "batch_1777057200433",
+    "slotId": "batch_1777057200433_slot_2",
+    "plannedOrder": 2,
+    "plannedRole": "monetization",
+    "plannedCluster": "habitos de distraccion movil",
+    "plannedHookType": "challenge",
+    "plannedMicroAction": "SCREEN_ACTION",
+    "recommendedCandidateId": "mobile-2",
+    "recommendedCandidateTitle": "La notificación que no abres",
+    "businessMode": "monetization_priority",
+    "targetGoal": "monetization_priority",
+    "scheduleWindow": "4 días",
+    "recommendedPublishTime": "6 horas x slot 2",
+    "attributionType": "cluster_match",
+    "slotState": "assigned",
+    "assignmentConfidence": 0.12,
+    "traceConfidence": 0.12,
+    "exactTraceAvailable": true,
+    "abLinked": false
+  },
+  "contentVersion": "v2",
+  "narrationPlan": {
+    "mode": "natural_short_v1",
+    "segments": {
+      "hook": {
+        "key": "hook",
+        "text": "Esta señal de tu cuerpo grita 'no confío en ti', aunque sonrías...",
+        "deliveryStyle": "directo",
+        "narrationEnergy": "alta",
+        "pauseStrength": "fuerte",
+        "emphasisWords": [
+          "confio",
+          "sonrias"
+        ],
+        "pacing": "corto",
+        "pauseBefore": 0,
+        "pauseAfter": 0.46,
+        "joiner": "...",
+        "ssmlRate": "-8%",
+        "ssmlPitch": "+2%",
+        "ssmlVolume": "0%"
+      }
+    },
+    "blocks": [
+      {
+        "key": "block_1",
+        "pauseAfter": 0.46,
+        "blockPacing": "controlado con gancho",
+        "parts": [
+          {
+            "key": "hook",
+            "text": "Esta señal de tu cuerpo grita 'no confío en ti', aunque sonrías...",
+            "joiner": "...",
+            "pauseBefore": 0,
+            "profile": {
+              "key": "hook",
+              "text": "Esta señal de tu cuerpo grita 'no confío en ti', aunque sonrías...",
+              "deliveryStyle": "directo",
+              "narrationEnergy": "alta",
+              "pauseStrength": "fuerte",
+              "emphasisWords": [
+                "confio",
+                "sonrias"
+              ],
+              "pacing": "corto",
+              "pauseBefore": 0,
+              "pauseAfter": 0.46,
+              "joiner": "...",
+              "ssmlRate": "-8%",
+              "ssmlPitch": "+2%",
+              "ssmlVolume": "0%"
+            }
+          }
+        ],
+        "text": "Esta señal de tu cuerpo grita 'no confío en ti', aunque sonrías..."
+      }
+    ]
+  }
+}

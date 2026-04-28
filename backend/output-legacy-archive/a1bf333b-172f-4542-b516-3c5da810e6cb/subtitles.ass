@@ -1,0 +1,54 @@
+[Script Info]
+ScriptType: v4.00+
+PlayResX: 1080
+PlayResY: 1920
+WrapStyle: 2
+
+[V4+ Styles]
+Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+Style: Default,Impact,100,&H00FFFFFF,&H00FFFFFF,&H00000000,&H90000000,-1,0,0,0,100,100,0,0,1,6,4,8,10,10,10,1
+
+[Events]
+Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
+Dialogue: 0,0:00:00.00,0:00:00.97,Default,,0,0,0,,{\c&H00FFF7F3\fs115\b-1\bord8\pos(540,1320)}TU CEREBRO no puede
+Dialogue: 0,0:00:00.99,0:00:01.96,Default,,0,0,0,,{\c&H00FFF7F3\fs109\b0\bord6\pos(540,1320)}hacer dos cosas.
+Dialogue: 0,0:00:01.98,0:00:03.08,Default,,0,0,0,,{\c&H00FFF7F3\fs109\b0\bord6\pos(540,1320)}Elige una.
+Dialogue: 0,0:00:05.95,0:00:07.01,Default,,0,0,0,,{\c&H00FF7B4F\fs95\b0\bord6\pos(540,1320)}Lo que crees que
+Dialogue: 0,0:00:07.03,0:00:07.71,Default,,0,0,0,,{\c&H00FF7B4F\fs95\b0\bord6\pos(540,1320)}es productividad es en
+Dialogue: 0,0:00:07.74,0:00:08.08,Default,,0,0,0,,{\c&H00FFF7F3\fs94\b0\bord6\pos(540,1320)}Cada vez que cambias
+Dialogue: 0,0:00:08.10,0:00:08.85,Default,,0,0,0,,{\c&H00FF7B4F\fs95\b0\bord6\pos(540,1320)}realidad tu peor enemigo
+Dialogue: 0,0:00:08.87,0:00:09.16,Default,,0,0,0,,{\c&H00FFF7F3\fs94\b0\bord6\pos(540,1320)}de tarea pierdes 23
+Dialogue: 0,0:00:09.18,0:00:09.99,Default,,0,0,0,,{\c&H00FF7B4F\fs95\b0\bord6\pos(540,1320)}silencioso.
+Dialogue: 0,0:00:10.01,0:00:11.13,Default,,0,0,0,,{\c&H00FFF7F3\fs94\b0\bord6\pos(540,1320)}minutos de concentración real.
+Dialogue: 0,0:00:11.15,0:00:12.27,Default,,0,0,0,,{\c&H00FFF7F3\fs94\b0\bord6\pos(540,1320)}No son segundos.
+Dialogue: 0,0:00:12.29,0:00:13.53,Default,,0,0,0,,{\c&H00FFF7F3\fs94\b0\bord6\pos(540,1320)}Son minutos.
+Dialogue: 0,0:00:19.13,0:00:20.27,Default,,0,0,0,,{\c&H00FF7B4F\fs97\b0\bord6\pos(540,1320)}Cuando abres WhatsApp mientras
+Dialogue: 0,0:00:20.29,0:00:21.42,Default,,0,0,0,,{\c&H00FF7B4F\fs103\b-1\bord8\pos(540,1320)}trabajas tu CEREBRO tarda
+Dialogue: 0,0:00:21.44,0:00:22.58,Default,,0,0,0,,{\c&H00FF7B4F\fs97\b0\bord6\pos(540,1320)}casi media hora en
+Dialogue: 0,0:00:22.60,0:00:23.74,Default,,0,0,0,,{\c&H00FF7B4F\fs97\b0\bord6\pos(540,1320)}volver al nivel anterior.
+Dialogue: 0,0:00:23.76,0:00:24.90,Default,,0,0,0,,{\c&H00FF7B4F\fs97\b0\bord6\pos(540,1320)}Media hora.
+Dialogue: 0,0:00:24.92,0:00:26.05,Default,,0,0,0,,{\c&H00FF7B4F\fs97\b0\bord6\pos(540,1320)}Eso significa que esos
+Dialogue: 0,0:00:26.07,0:00:26.37,Default,,0,0,0,,{\c&H00FF7B4F\fs97\b0\bord6\pos(540,1320)}tres mensajes te cuestan
+Dialogue: 0,0:00:26.39,0:00:27.21,Default,,0,0,0,,{\c&H00303BFF\fs100\b0\bord6\pos(540,1320)}No es que tengas
+Dialogue: 0,0:00:27.23,0:00:27.26,Default,,0,0,0,,{\c&H00FF7B4F\fs97\b0\bord6\pos(540,1320)}dos horas de rendimiento
+Dialogue: 0,0:00:27.28,0:00:28.15,Default,,0,0,0,,{\c&H00303BFF\fs100\b0\bord6\pos(540,1320)}poco tiempo.
+Dialogue: 0,0:00:28.17,0:00:28.37,Default,,0,0,0,,{\c&H00303BFF\fs100\b0\bord6\pos(540,1320)}Es que lo estás
+Dialogue: 0,0:00:28.39,0:00:29.04,Default,,0,0,0,,{\c&H00FF7B4F\fs97\b0\bord6\pos(540,1320)}real.
+Dialogue: 0,0:00:29.06,0:00:29.53,Default,,0,0,0,,{\c&H00303BFF\fs100\b0\bord6\pos(540,1320)}despedazando.
+Dialogue: 0,0:00:29.55,0:00:30.69,Default,,0,0,0,,{\c&H00FF7B4F\fs97\b0\bord6\pos(540,1320)}Y tu jefe cree
+Dialogue: 0,0:00:30.71,0:00:31.96,Default,,0,0,0,,{\c&H00FF7B4F\fs97\b0\bord6\pos(540,1320)}que eres lento.
+Dialogue: 0,0:00:33.51,0:00:34.53,Default,,0,0,0,,{\c&H00303BFF\fs98\b0\bord6\pos(540,1320)}La multitarea no existe.
+Dialogue: 0,0:00:34.55,0:00:35.57,Default,,0,0,0,,{\c&H00303BFF\fs98\b0\bord6\pos(540,1320)}Lo que existe es
+Dialogue: 0,0:00:35.59,0:00:36.60,Default,,0,0,0,,{\c&H00303BFF\fs98\b0\bord6\pos(540,1320)}tu incapacidad de decir
+Dialogue: 0,0:00:36.62,0:00:37.64,Default,,0,0,0,,{\c&H00303BFF\fs98\b0\bord6\pos(540,1320)}que no.
+Dialogue: 0,0:00:37.66,0:00:38.68,Default,,0,0,0,,{\c&H00303BFF\fs105\b-1\bord8\pos(540,1320)}Tu CEREBRO sigue siendo
+Dialogue: 0,0:00:38.70,0:00:39.71,Default,,0,0,0,,{\c&H00303BFF\fs98\b0\bord6\pos(540,1320)}el del Paleolítico.
+Dialogue: 0,0:00:39.73,0:00:40.48,Default,,0,0,0,,{\c&H00303BFF\fs98\b0\bord6\pos(540,1320)}No evolucionó para esto.
+Dialogue: 0,0:00:40.50,0:00:40.75,Default,,0,0,0,,{\c&H00FF7B4F\fs92\b0\bord6\pos(540,1320)}¿Cuántas horas pierdes cada
+Dialogue: 0,0:00:40.77,0:00:41.74,Default,,0,0,0,,{\c&H00303BFF\fs98\b0\bord6\pos(540,1320)}Necesita obsesionarse con una
+Dialogue: 0,0:00:41.76,0:00:41.79,Default,,0,0,0,,{\c&H00FF7B4F\fs98\b-1\bord8\pos(540,1320)}día sin saberlo?
+Dialogue: 0,0:00:41.81,0:00:42.82,Default,,0,0,0,,{\c&H00303BFF\fs98\b0\bord6\pos(540,1320)}cosa.
+Dialogue: 0,0:00:42.84,0:00:43.98,Default,,0,0,0,,{\c&H00303BFF\fs98\b0\bord6\pos(540,1320)}Solo una.
+Dialogue: 0,0:00:45.55,0:00:46.50,Default,,0,0,0,,{\c&H00FF7B4F\fs90\b0\bord6\pos(540,1320)}Prueba a apagar notificaciones
+Dialogue: 0,0:00:46.52,0:00:47.46,Default,,0,0,0,,{\c&H00FF7B4F\fs90\b0\bord6\pos(540,1320)}una hora.
+Dialogue: 0,0:00:47.48,0:00:48.55,Default,,0,0,0,,{\c&H00FF7B4F\fs90\b0\bord6\pos(540,1320)}Solo una.

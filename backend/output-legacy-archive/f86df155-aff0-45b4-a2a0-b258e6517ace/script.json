@@ -1,0 +1,864 @@
+{
+  "title": "body_language_1777117911126",
+  "topic": "body_language",
+  "hook": "Tocarte la cara delata todo lo que intentas ocultar.",
+  "open_loop": "Pero hay tres señales que ni los psicólogos mencionan.",
+  "micro_value": "Cuando rozas tu cuello, tu cuerpo grita que no crees lo que dices. Efecto Pacifier.",
+  "escalation": "En una entrevista, en una cita, frente a tu jefe. Esa mano pequeña en el cuello es traición del sistema nervioso simpático. No puedes controlarla aunque lo intentes. Sucede en milisegundos.",
+  "reengage": "Pero aquí está la trampa: todos lo ven menos tú.",
+  "peak": "Un abogado descubrió que sus clientes perdían juicios porque tocaban el cuello durante declaraciones. El jurado lo interpretaba como culpa instantánea, aunque fuera inocencia pura.",
+  "open_ending": "¿Cuántas veces lo has hecho sin darte cuenta?",
+  "soft_cta": "Cuéntame: ¿cuál es tu señal de nerviosismo?",
+  "claim": "Cuando rozas tu cuello, tu cuerpo grita que no crees lo que dices. Efecto Pacifier.",
+  "explanation": "En una entrevista, en una cita, frente a tu jefe. Esa mano pequeña en el cuello es traición del sistema nervioso simpático. No puedes controlarla aunque lo intentes. Sucede en milisegundos. Y lo peor: otros lo ven antes que tú. Un abogado descubrió que sus clientes perdían juicios porque tocaban el cuello durante declaraciones. El jurado lo interpretaba como culpa instantánea, aunque fuera inocencia pura.",
+  "cta": "¿Cuántas veces lo has hecho sin darte cuenta? Cuéntame: ¿cuál es tu señal de nerviosismo?",
+  "psychologicalFact": "El Pacifier Effect es la autoestimulación táctil del sistema nervioso ante estrés.",
+  "viralTrigger": "identificacion",
+  "emotionalTrigger": "urgency",
+  "durationSeconds": 50,
+  "keywords": [
+    "body_language",
+    "nerviosismo"
+  ],
+  "hashtags": [
+    "#psicologia",
+    "#mente",
+    "#cerebro"
+  ],
+  "allHooks": null,
+  "selectedHookType": "challenge",
+  "hookSelectionReason": "desafío directo genera identificación incómoda y urgencia sin resolver",
+  "optimizationNotes": {
+    "patronUsado": "señal_nerviosismo_inconsciente"
+  },
+  "learningSignals": {},
+  "autoevaluacion": {},
+  "segments": [
+    {
+      "type": "HOOK",
+      "text": "Tocarte la cara delata todo lo que intentas ocultar.",
+      "visualIntent": "punch zoom, texto impactante, fondo oscuro",
+      "emotion": "tension"
+    },
+    {
+      "type": "OPEN_LOOP",
+      "text": "Pero hay tres señales que ni los psicólogos mencionan.",
+      "visualIntent": "zoom lento, rostro pensativo, tension",
+      "emotion": "curiosity"
+    },
+    {
+      "type": "MICRO_VALUE",
+      "text": "Cuando rozas tu cuello, tu cuerpo grita que no crees lo que dices. Efecto Pacifier.",
+      "visualIntent": "zoom lento, rostro pensativo, tension",
+      "emotion": "curiosity"
+    },
+    {
+      "type": "ESCALATION",
+      "text": "En una entrevista, en una cita, frente a tu jefe. Esa mano pequeña en el cuello es traición del sistema nervioso simpático. No puedes controlarla aunque lo intentes. Sucede en milisegundos.",
+      "visualIntent": "zoom lento, rostro pensativo, tension",
+      "emotion": "curiosity"
+    },
+    {
+      "type": "REENGAGE",
+      "text": "Y lo peor: otros lo ven antes que tú.",
+      "visualIntent": "cambio brusco, tension, zoom corto",
+      "emotion": "curiosity"
+    },
+    {
+      "type": "PEAK",
+      "text": "Un abogado descubrió que sus clientes perdían juicios porque tocaban el cuello durante declaraciones. El jurado lo interpretaba como culpa instantánea, aunque fuera inocencia pura.",
+      "visualIntent": "aislamiento, silueta, punch zoom",
+      "emotion": "impacto"
+    },
+    {
+      "type": "OPEN_ENDING",
+      "text": "¿Cuántas veces lo has hecho sin darte cuenta?",
+      "visualIntent": "zoom lento, rostro pensativo, tension",
+      "emotion": "curiosity"
+    },
+    {
+      "type": "SOFT_CTA",
+      "text": "Cuéntame: ¿cuál es tu señal de nerviosismo?",
+      "visualIntent": "zoom lento, rostro pensativo, tension",
+      "emotion": "cercania"
+    }
+  ],
+  "structureVersion": "open_loop_escalation_v1",
+  "hasReengage": true,
+  "segmentFeedback": [
+    {
+      "segment": "peak",
+      "issue": "peak abstracto"
+    }
+  ],
+  "segmentFeedbackSummary": [
+    "[peak] peak abstracto"
+  ],
+  "estimatedWords": 114,
+  "fullScript": "Tocarte la cara delata todo lo que intentas ocultar. Pero hay tres señales que ni los psicólogos mencionan. Cuando rozas tu cuello, tu cuerpo grita que no crees lo que dices. Efecto Pacifier. En una entrevista, en una cita, frente a tu jefe. Esa mano pequeña en el cuello es traición del sistema nervioso simpático. No puedes controlarla aunque lo intentes. Sucede en milisegundos. Y lo peor: otros lo ven antes que tú. Un abogado descubrió que sus clientes perdían juicios porque tocaban el cuello durante declaraciones. El jurado lo interpretaba como culpa instantánea, aunque fuera inocencia pura. ¿Cuántas veces lo has hecho sin darte cuenta? Cuéntame: ¿cuál es tu señal de nerviosismo?",
+  "videoInstructions": {
+    "singleFocus": true,
+    "visualStyle": [
+      "estetica cinematografica oscura",
+      "fondo negro o casi negro",
+      "alto contraste con azul electrico dominante",
+      "acento rojo oscuro solo para tension",
+      "single focus constante sin overlays complejos",
+      "cambio de plano cada 2-3 segundos",
+      "zoom progresivo y movimiento suave"
+    ],
+    "subtitleStyle": "tipografia condensada bold, blanco frio con acentos azul electrico y rojo oscuro, subtitulos grandes y sincronizados",
+    "audioStyle": {
+      "voice": "voz clara y con ritmo",
+      "pauses": [
+        "hook",
+        "reengage",
+        "peak"
+      ]
+    },
+    "scenes": [
+      {
+        "segment": "hook",
+        "timing": "0-2.2s",
+        "visual": "primer plano de cerebro luminoso o rostro inquietante, relacionado con body_language, fondo negro o muy oscuro, contraste alto, azul electrico y rojo oscuro como acentos, zoom lento, iluminacion dramatica, sensacion de misterio psicologico",
+        "cut": "corte rapido con push-in",
+        "startSeconds": 0,
+        "endSeconds": 2.2,
+        "durationSeconds": 2.2,
+        "shotType": "primer plano",
+        "framing": "primer plano",
+        "intensity": "alta",
+        "movement": "push-in rapido",
+        "transition": "hard cut",
+        "emphasis": "scroll-stop inmediato",
+        "syncCue": "movimiento continuo con remate en palabra fuerte"
+      },
+      {
+        "segment": "open_loop",
+        "timing": "2.2-5s",
+        "visual": "ojo humano extremo o gesto suspendido en sombra, relacionado con body_language, fondo negro o muy oscuro, contraste alto, azul electrico y rojo oscuro como acentos, zoom lento, iluminacion dramatica, sensacion de misterio psicologico",
+        "cut": "zoom corto continuo",
+        "startSeconds": 2.2,
+        "endSeconds": 5,
+        "durationSeconds": 2.8,
+        "shotType": "plano detalle",
+        "framing": "plano detalle",
+        "intensity": "alta",
+        "movement": "zoom lento continuo",
+        "transition": "match cut",
+        "emphasis": "curiosidad sostenida",
+        "syncCue": "movimiento continuo con remate en palabra fuerte"
+      },
+      {
+        "segment": "micro_value",
+        "timing": "5-8.2s",
+        "visual": "detalle simbolico del mecanismo mental en glow azul, relacionado con body_language, fondo negro o muy oscuro, contraste alto, azul electrico y rojo oscuro como acentos, zoom lento, iluminacion dramatica, sensacion de misterio psicologico",
+        "cut": "cambio de plano limpio",
+        "startSeconds": 5,
+        "endSeconds": 8.2,
+        "durationSeconds": 3.2,
+        "shotType": "plano medio",
+        "framing": "plano medio",
+        "intensity": "media",
+        "movement": "micro paneo lateral",
+        "transition": "cut limpio",
+        "emphasis": "primer pago de valor",
+        "syncCue": "movimiento continuo con remate en palabra fuerte"
+      },
+      {
+        "segment": "escalation",
+        "timing": "8.2-11.6s",
+        "visual": "silueta humana o tension social en contraluz, relacionado con body_language, fondo negro o muy oscuro, contraste alto, azul electrico y rojo oscuro como acentos, zoom lento, iluminacion dramatica, sensacion de misterio psicologico",
+        "cut": "cortes cada 2-3s",
+        "startSeconds": 8.2,
+        "endSeconds": 11.6,
+        "durationSeconds": 3.4,
+        "shotType": "plano abierto",
+        "framing": "plano abierto",
+        "intensity": "media-alta",
+        "movement": "acercamiento progresivo",
+        "transition": "cut ritmico",
+        "emphasis": "tension creciente",
+        "syncCue": "movimiento continuo con remate en palabra fuerte"
+      },
+      {
+        "segment": "reengage",
+        "timing": "11.6-14.2s",
+        "visual": "cambio brusco a plano mas cercano con rojo alerta, relacionado con body_language, fondo negro o muy oscuro, contraste alto, azul electrico y rojo oscuro como acentos, zoom lento, iluminacion dramatica, sensacion de misterio psicologico",
+        "cut": "cambio brusco + zoom agresivo",
+        "startSeconds": 11.6,
+        "endSeconds": 14.2,
+        "durationSeconds": 2.6,
+        "shotType": "primer plano",
+        "framing": "primer plano",
+        "intensity": "muy alta",
+        "movement": "zoom agresivo",
+        "transition": "whip cut",
+        "emphasis": "ruptura de patron",
+        "syncCue": "acercamiento en frase clave"
+      },
+      {
+        "segment": "peak",
+        "timing": "14.2-17.8s",
+        "visual": "escena humana real de conflicto, pareja o decision, relacionado con body_language, fondo negro o muy oscuro, contraste alto, azul electrico y rojo oscuro como acentos, zoom lento, iluminacion dramatica, sensacion de misterio psicologico",
+        "cut": "alternancia de planos cerrados",
+        "startSeconds": 14.2,
+        "endSeconds": 17.8,
+        "durationSeconds": 3.6,
+        "shotType": "plano medio",
+        "framing": "plano medio",
+        "intensity": "maxima",
+        "movement": "push-in sostenido",
+        "transition": "impact cut",
+        "emphasis": "impacto emocional",
+        "syncCue": "acercamiento en frase clave"
+      },
+      {
+        "segment": "open_ending",
+        "timing": "17.8-20.9s",
+        "visual": "figura sola alejandose en oscuridad con particulas, relacionado con body_language, fondo negro o muy oscuro, contraste alto, azul electrico y rojo oscuro como acentos, zoom lento, iluminacion dramatica, sensacion de misterio psicologico",
+        "cut": "desaceleracion ligera",
+        "startSeconds": 17.8,
+        "endSeconds": 20.9,
+        "durationSeconds": 3.1,
+        "shotType": "plano abierto",
+        "framing": "plano abierto",
+        "intensity": "media",
+        "movement": "zoom out suave",
+        "transition": "cut limpio",
+        "emphasis": "eco mental",
+        "syncCue": "movimiento continuo con remate en palabra fuerte"
+      },
+      {
+        "segment": "soft_cta",
+        "timing": "20.9-23.6s",
+        "visual": "rostro o silueta frontal con espacio negativo para cierre, relacionado con body_language, fondo negro o muy oscuro, contraste alto, azul electrico y rojo oscuro como acentos, zoom lento, iluminacion dramatica, sensacion de misterio psicologico",
+        "cut": "ultimo corte limpio",
+        "startSeconds": 20.9,
+        "endSeconds": 23.6,
+        "durationSeconds": 2.7,
+        "shotType": "plano detalle",
+        "framing": "plano detalle",
+        "intensity": "media",
+        "movement": "micro acercamiento",
+        "transition": "hold corto",
+        "emphasis": "cierre abierto",
+        "syncCue": "movimiento continuo con remate en palabra fuerte"
+      }
+    ],
+    "style": {
+      "theme": "psicologia oscura / mente humana / comportamiento",
+      "colorPalette": "negro absoluto, azul electrico, azul neon frio, rojo oscuro, blanco frio",
+      "visualStyle": "cinematografico, minimalista, alto contraste, single focus",
+      "lighting": "oscura, dramatica, contraluz duro, glow electrico dirigido, sombras marcadas",
+      "cameraMotion": "zoom lento constante, push-in suave, micro paneo lateral, cambio de plano cada 2-3 segundos",
+      "effects": "glow ligero, particulas sutiles, neblina tenue, ruido cinematografico muy fino",
+      "composition": "single focus, sujeto dominante a la derecha o centrado, texto respirando a la izquierda, primeros planos y siluetas, profundidad negativa",
+      "emotionalTone": "misterio psicologico, obsesion, tension contenida, intriga oscura",
+      "consistencyRules": [
+        "una sola escena principal por segmento",
+        "fondo siempre oscuro o casi negro",
+        "usar azul electrico como color dominante y rojo solo para tension o reengage",
+        "priorizar cerebros, ojos, siluetas y escenas humanas reconocibles",
+        "evitar stock luminoso, lifestyle genérico o composiciones planas"
+      ],
+      "clipKeywords": [
+        "body_language",
+        "nerviosismo",
+        "glowing brain dark background",
+        "blue eye close up dark",
+        "person silhouette red light",
+        "couple argument silhouette blue light",
+        "moody face close up shadow",
+        "dark cinematic person thinking"
+      ]
+    },
+    "clipKeywords": [
+      "body_language",
+      "nerviosismo",
+      "glowing brain dark background",
+      "blue eye close up dark",
+      "person silhouette red light",
+      "couple argument silhouette blue light",
+      "moody face close up shadow",
+      "dark cinematic person thinking"
+    ],
+    "rhythmRule": "cambio visual cada 2-3 segundos, sin escenas estaticas ni repeticiones consecutivas de encuadre",
+    "timeline": [
+      {
+        "segment": "hook",
+        "timing": "0-2.2s",
+        "durationSeconds": 2.2,
+        "shotType": "primer plano",
+        "intensity": "alta",
+        "movement": "push-in rapido",
+        "transition": "hard cut"
+      },
+      {
+        "segment": "open_loop",
+        "timing": "2.2-5s",
+        "durationSeconds": 2.8,
+        "shotType": "plano detalle",
+        "intensity": "alta",
+        "movement": "zoom lento continuo",
+        "transition": "match cut"
+      },
+      {
+        "segment": "micro_value",
+        "timing": "5-8.2s",
+        "durationSeconds": 3.2,
+        "shotType": "plano medio",
+        "intensity": "media",
+        "movement": "micro paneo lateral",
+        "transition": "cut limpio"
+      },
+      {
+        "segment": "escalation",
+        "timing": "8.2-11.6s",
+        "durationSeconds": 3.4,
+        "shotType": "plano abierto",
+        "intensity": "media-alta",
+        "movement": "acercamiento progresivo",
+        "transition": "cut ritmico"
+      },
+      {
+        "segment": "reengage",
+        "timing": "11.6-14.2s",
+        "durationSeconds": 2.6,
+        "shotType": "primer plano",
+        "intensity": "muy alta",
+        "movement": "zoom agresivo",
+        "transition": "whip cut"
+      },
+      {
+        "segment": "peak",
+        "timing": "14.2-17.8s",
+        "durationSeconds": 3.6,
+        "shotType": "plano medio",
+        "intensity": "maxima",
+        "movement": "push-in sostenido",
+        "transition": "impact cut"
+      },
+      {
+        "segment": "open_ending",
+        "timing": "17.8-20.9s",
+        "durationSeconds": 3.1,
+        "shotType": "plano abierto",
+        "intensity": "media",
+        "movement": "zoom out suave",
+        "transition": "cut limpio"
+      },
+      {
+        "segment": "soft_cta",
+        "timing": "20.9-23.6s",
+        "durationSeconds": 2.7,
+        "shotType": "plano detalle",
+        "intensity": "media",
+        "movement": "micro acercamiento",
+        "transition": "hold corto"
+      }
+    ]
+  },
+  "growthContext": {
+    "nextTopic": "body_language",
+    "hookType": "challenge",
+    "emotionalTrigger": "urgency|validation",
+    "angle": "señales de nerviosismo sin saberlo",
+    "avoidTopics": [
+      "emotions",
+      "relationships",
+      "habits"
+    ],
+    "avoidRecentHooks": [
+      "Tu tristeza no es tuya. Es del grupo.",
+      "Tu tristeza no es tuya. Es del grupo.",
+      "Crees que aprendiste de tu ex. Mentira.",
+      "Tu cerebro te controla sin que lo sepas",
+      "Crees que sabes psicología pero no tienes ni idea.",
+      "Llevas 17 minutos y ya perdiste el hilo.",
+      "Tu amígdala decide por ti antes de pensar.",
+      "Tu cerebro pide dopamina cada treinta segundos sin notarlo."
+    ],
+    "reasoning": "Topic 'body_language' por estrategia explore. Saturados evitados: emotions, relationships, habits.",
+    "confidence": 0.5,
+    "strategy": "explore",
+    "decisionAt": "2026-04-25T11:51:38.464Z",
+    "fallbackGenerator": "best-available",
+    "fallbackReason": "format_match 69/75 | virality 46/60 | hook_weak 5/8 (penalty) | [reengage] reengage poco agresivo (penalty) | [peak] peak abstracto (penalty)"
+  },
+  "viralityScore": 46,
+  "viralityBreakdown": {
+    "hookStrength": 5,
+    "emotionalTrigger": 11,
+    "relatability": 13,
+    "loopPotential": 15,
+    "durationBonus": 2
+  },
+  "formatMatchScore": 69,
+  "formatMatchBreakdown": {
+    "hookFormat": 14,
+    "brevity": 12,
+    "clarity": 15,
+    "narrativeRhythm": 6,
+    "psychologicalImpact": 4,
+    "scrollStop": 0,
+    "infoDensity": 2,
+    "earlyRevelation": 8,
+    "singleIdea": 3,
+    "reengage": 5
+  },
+  "formatMatchSegmentGaps": [
+    "[peak] peak abstracto"
+  ],
+  "formatMatchGaps": [
+    "Revelación psicológica débil — añade nombre de efecto o cifra concreta",
+    "Hook no para el scroll — falta tensión, shock o reconocimiento inmediato",
+    "Baja densidad — más información útil en menos palabras",
+    "[peak] peak abstracto"
+  ],
+  "emotionalImpactScore": 27,
+  "emotionalImpactBreakdown": {
+    "powerWords": 6,
+    "personalId": 16,
+    "surpriseFactor": 0,
+    "visceral": 5,
+    "tensionResolution": 0
+  },
+  "approved": true,
+  "rejectionReason": null,
+  "selectionPenalties": [
+    "virality_low:46",
+    "format_low:69",
+    "[peak] peak abstracto"
+  ],
+  "llmMetrics": {
+    "llm_total_calls": 4,
+    "llm_parse_fail": false,
+    "llm_recovery_used": false,
+    "llm_hard_fail": false,
+    "emergency_fallback_used": false,
+    "llm_schema_fail": false,
+    "llm_truncated_suspected": true
+  },
+  "usedRecovery": false,
+  "generationSource": "generateViralScript",
+  "llmPath": [
+    "generateViralScript"
+  ],
+  "generationFallback": "best-available",
+  "usedLastValid": false,
+  "usedEmergencyFallback": false,
+  "approvalBypassReason": null,
+  "final_generation_route": "generateViralScript",
+  "total_llm_calls": 2,
+  "fallback_level_reached": 0,
+  "quickOptimizedSegment": "reengage",
+  "quickOptimizedReason": "[reengage] reengage poco agresivo",
+  "selectedQuality": "acceptable",
+  "approvalBypass": "best_available_after_3_attempts",
+  "bestAvailableScore": 51,
+  "selectionReasons": [
+    "virality_low:46",
+    "format_low:69",
+    "[reengage] reengage poco agresivo",
+    "[peak] peak abstracto"
+  ],
+  "abVariantId": "v_a",
+  "slotTracking": {
+    "batchId": "batch_1777046400504",
+    "slotId": "batch_1777046400504_slot_2",
+    "plannedOrder": 2,
+    "plannedRole": "monetization",
+    "plannedCluster": "habitos de distraccion movil",
+    "plannedHookType": "challenge",
+    "plannedMicroAction": "SCREEN_ACTION",
+    "recommendedCandidateId": "mobile-2",
+    "recommendedCandidateTitle": "La notificación que no abres",
+    "businessMode": "monetization_priority",
+    "targetGoal": "monetization_priority",
+    "scheduleWindow": "4 días",
+    "recommendedPublishTime": "6 horas x slot 2",
+    "attributionType": "ab_linked",
+    "slotState": "assigned",
+    "assignmentConfidence": 0.12,
+    "traceConfidence": 0.12,
+    "exactTraceAvailable": true,
+    "abLinked": true
+  },
+  "contentVersion": "v2",
+  "narrationPlan": {
+    "mode": "natural_short_v1",
+    "segments": {
+      "hook": {
+        "key": "hook",
+        "text": "Tocarte la cara delata todo lo que intentas ocultar.",
+        "deliveryStyle": "directo",
+        "narrationEnergy": "alta",
+        "pauseStrength": "fuerte",
+        "emphasisWords": [
+          "intentas",
+          "ocultar"
+        ],
+        "pacing": "corto",
+        "pauseBefore": 0,
+        "pauseAfter": 0.46,
+        "joiner": "...",
+        "ssmlRate": "-8%",
+        "ssmlPitch": "+2%",
+        "ssmlVolume": "0%"
+      },
+      "open_loop": {
+        "key": "open_loop",
+        "text": "Pero hay tres señales que ni los psicólogos mencionan.",
+        "deliveryStyle": "susurrado-tenso",
+        "narrationEnergy": "media-alta",
+        "pauseStrength": "media",
+        "emphasisWords": [
+          "psicologos",
+          "mencionan"
+        ],
+        "pacing": "tenso",
+        "pauseBefore": 0.06,
+        "pauseAfter": 0.12,
+        "joiner": ".",
+        "ssmlRate": "-7%",
+        "ssmlPitch": "0%",
+        "ssmlVolume": "0%"
+      },
+      "micro_value": {
+        "key": "micro_value",
+        "text": "Cuando rozas tu cuello, tu cuerpo grita que no crees lo que dices. Efecto Pacifier.",
+        "deliveryStyle": "claro",
+        "narrationEnergy": "media",
+        "pauseStrength": "corta",
+        "emphasisWords": [
+          "efecto",
+          "pacifier"
+        ],
+        "pacing": "estable",
+        "pauseBefore": 0.04,
+        "pauseAfter": 0.08,
+        "joiner": ".",
+        "ssmlRate": "-8%",
+        "ssmlPitch": "0%",
+        "ssmlVolume": "0%"
+      },
+      "escalation": {
+        "key": "escalation",
+        "text": "En una entrevista, en una cita, frente a tu jefe. Esa mano pequeña en el cuello es traición del sistema nervioso simpático. No puedes controlarla, aunque lo intentes. Sucede en milisegundos.",
+        "deliveryStyle": "creciente",
+        "narrationEnergy": "media-alta",
+        "pauseStrength": "corta",
+        "emphasisWords": [
+          "sucede",
+          "milisegundos"
+        ],
+        "pacing": "agil",
+        "pauseBefore": 0.04,
+        "pauseAfter": 0.18,
+        "joiner": ".",
+        "ssmlRate": "-6%",
+        "ssmlPitch": "0%",
+        "ssmlVolume": "0%"
+      },
+      "reengage": {
+        "key": "reengage",
+        "text": "Pero aquí está la trampa: todos lo ven menos tú.",
+        "deliveryStyle": "remate",
+        "narrationEnergy": "alta",
+        "pauseStrength": "fuerte",
+        "emphasisWords": [
+          "todos",
+          "menos"
+        ],
+        "pacing": "marcado",
+        "pauseBefore": 0.26,
+        "pauseAfter": 0.12,
+        "joiner": "...",
+        "ssmlRate": "-8%",
+        "ssmlPitch": "0%",
+        "ssmlVolume": "0%"
+      },
+      "peak": {
+        "key": "peak",
+        "text": "Un abogado descubrió que sus clientes perdían juicios porque tocaban el cuello durante declaraciones. El jurado lo interpretaba como culpa instantánea,, aunque fuera inocencia pura.",
+        "deliveryStyle": "impacto",
+        "narrationEnergy": "muy alta",
+        "pauseStrength": "media",
+        "emphasisWords": [
+          "inocencia",
+          "pura"
+        ],
+        "pacing": "enfatico",
+        "pauseBefore": 0.18,
+        "pauseAfter": 0.16,
+        "joiner": ".",
+        "ssmlRate": "-7%",
+        "ssmlPitch": "0%",
+        "ssmlVolume": "0%"
+      },
+      "open_ending": {
+        "key": "open_ending",
+        "text": "¿Cuántas veces lo has hecho sin darte cuenta?",
+        "deliveryStyle": "eco",
+        "narrationEnergy": "media",
+        "pauseStrength": "corta",
+        "emphasisWords": [
+          "darte",
+          "cuenta"
+        ],
+        "pacing": "controlado",
+        "pauseBefore": 0.08,
+        "pauseAfter": 0.06,
+        "joiner": ".",
+        "ssmlRate": "-7%",
+        "ssmlPitch": "0%",
+        "ssmlVolume": "0%"
+      },
+      "soft_cta": {
+        "key": "soft_cta",
+        "text": "Cuéntame: ¿cuál es tu señal de nerviosismo?",
+        "deliveryStyle": "conversacional",
+        "narrationEnergy": "media",
+        "pauseStrength": "ninguna",
+        "emphasisWords": [
+          "senal",
+          "nerviosismo"
+        ],
+        "pacing": "natural",
+        "pauseBefore": 0.05,
+        "pauseAfter": 0,
+        "joiner": "",
+        "ssmlRate": "-8%",
+        "ssmlPitch": "0%",
+        "ssmlVolume": "0%"
+      }
+    },
+    "blocks": [
+      {
+        "key": "block_1",
+        "pauseAfter": 0.46,
+        "blockPacing": "controlado con gancho",
+        "parts": [
+          {
+            "key": "hook",
+            "text": "Tocarte la cara delata todo lo que intentas ocultar.",
+            "joiner": "...",
+            "pauseBefore": 0,
+            "profile": {
+              "key": "hook",
+              "text": "Tocarte la cara delata todo lo que intentas ocultar.",
+              "deliveryStyle": "directo",
+              "narrationEnergy": "alta",
+              "pauseStrength": "fuerte",
+              "emphasisWords": [
+                "intentas",
+                "ocultar"
+              ],
+              "pacing": "corto",
+              "pauseBefore": 0,
+              "pauseAfter": 0.46,
+              "joiner": "...",
+              "ssmlRate": "-8%",
+              "ssmlPitch": "+2%",
+              "ssmlVolume": "0%"
+            }
+          },
+          {
+            "key": "open_loop",
+            "text": "Pero hay tres señales que ni los psicólogos mencionan.",
+            "joiner": ".",
+            "pauseBefore": 0.06,
+            "profile": {
+              "key": "open_loop",
+              "text": "Pero hay tres señales que ni los psicólogos mencionan.",
+              "deliveryStyle": "susurrado-tenso",
+              "narrationEnergy": "media-alta",
+              "pauseStrength": "media",
+              "emphasisWords": [
+                "psicologos",
+                "mencionan"
+              ],
+              "pacing": "tenso",
+              "pauseBefore": 0.06,
+              "pauseAfter": 0.12,
+              "joiner": ".",
+              "ssmlRate": "-7%",
+              "ssmlPitch": "0%",
+              "ssmlVolume": "0%"
+            }
+          }
+        ],
+        "text": "Tocarte la cara delata todo lo que intentas ocultar... Pero hay tres señales que ni los psicólogos mencionan."
+      },
+      {
+        "key": "block_2",
+        "pauseAfter": 0.22,
+        "blockPacing": "creciente",
+        "parts": [
+          {
+            "key": "micro_value",
+            "text": "Cuando rozas tu cuello, tu cuerpo grita que no crees lo que dices. Efecto Pacifier.",
+            "joiner": ".",
+            "pauseBefore": 0.04,
+            "profile": {
+              "key": "micro_value",
+              "text": "Cuando rozas tu cuello, tu cuerpo grita que no crees lo que dices. Efecto Pacifier.",
+              "deliveryStyle": "claro",
+              "narrationEnergy": "media",
+              "pauseStrength": "corta",
+              "emphasisWords": [
+                "efecto",
+                "pacifier"
+              ],
+              "pacing": "estable",
+              "pauseBefore": 0.04,
+              "pauseAfter": 0.08,
+              "joiner": ".",
+              "ssmlRate": "-8%",
+              "ssmlPitch": "0%",
+              "ssmlVolume": "0%"
+            }
+          },
+          {
+            "key": "escalation",
+            "text": "En una entrevista, en una cita, frente a tu jefe. Esa mano pequeña en el cuello es traición del sistema nervioso simpático. No puedes controlarla, aunque lo intentes. Sucede en milisegundos.",
+            "joiner": ".",
+            "pauseBefore": 0.04,
+            "profile": {
+              "key": "escalation",
+              "text": "En una entrevista, en una cita, frente a tu jefe. Esa mano pequeña en el cuello es traición del sistema nervioso simpático. No puedes controlarla, aunque lo intentes. Sucede en milisegundos.",
+              "deliveryStyle": "creciente",
+              "narrationEnergy": "media-alta",
+              "pauseStrength": "corta",
+              "emphasisWords": [
+                "sucede",
+                "milisegundos"
+              ],
+              "pacing": "agil",
+              "pauseBefore": 0.04,
+              "pauseAfter": 0.18,
+              "joiner": ".",
+              "ssmlRate": "-6%",
+              "ssmlPitch": "0%",
+              "ssmlVolume": "0%"
+            }
+          }
+        ],
+        "text": "Cuando rozas tu cuello, tu cuerpo grita que no crees lo que dices. Efecto Pacifier. En una entrevista, en una cita, frente a tu jefe. Esa mano pequeña en el cuello es traición del sistema nervioso simpático. No puedes controlarla, aunque lo intentes. Sucede en milisegundos."
+      },
+      {
+        "key": "block_3",
+        "pauseAfter": 0.18,
+        "blockPacing": "impacto",
+        "parts": [
+          {
+            "key": "reengage",
+            "text": "Pero aquí está la trampa: todos lo ven menos tú.",
+            "joiner": "...",
+            "pauseBefore": 0.26,
+            "profile": {
+              "key": "reengage",
+              "text": "Pero aquí está la trampa: todos lo ven menos tú.",
+              "deliveryStyle": "remate",
+              "narrationEnergy": "alta",
+              "pauseStrength": "fuerte",
+              "emphasisWords": [
+                "todos",
+                "menos"
+              ],
+              "pacing": "marcado",
+              "pauseBefore": 0.26,
+              "pauseAfter": 0.12,
+              "joiner": "...",
+              "ssmlRate": "-8%",
+              "ssmlPitch": "0%",
+              "ssmlVolume": "0%"
+            }
+          },
+          {
+            "key": "peak",
+            "text": "Un abogado descubrió que sus clientes perdían juicios porque tocaban el cuello durante declaraciones. El jurado lo interpretaba como culpa instantánea,, aunque fuera inocencia pura.",
+            "joiner": ".",
+            "pauseBefore": 0.18,
+            "profile": {
+              "key": "peak",
+              "text": "Un abogado descubrió que sus clientes perdían juicios porque tocaban el cuello durante declaraciones. El jurado lo interpretaba como culpa instantánea,, aunque fuera inocencia pura.",
+              "deliveryStyle": "impacto",
+              "narrationEnergy": "muy alta",
+              "pauseStrength": "media",
+              "emphasisWords": [
+                "inocencia",
+                "pura"
+              ],
+              "pacing": "enfatico",
+              "pauseBefore": 0.18,
+              "pauseAfter": 0.16,
+              "joiner": ".",
+              "ssmlRate": "-7%",
+              "ssmlPitch": "0%",
+              "ssmlVolume": "0%"
+            }
+          }
+        ],
+        "text": "Pero aquí está la trampa: todos lo ven menos tú... Un abogado descubrió que sus clientes perdían juicios porque tocaban el cuello durante declaraciones. El jurado lo interpretaba como culpa instantánea,, aunque fuera inocencia pura."
+      },
+      {
+        "key": "block_4",
+        "pauseAfter": 0,
+        "blockPacing": "cierre conversacional",
+        "parts": [
+          {
+            "key": "open_ending",
+            "text": "¿Cuántas veces lo has hecho sin darte cuenta?",
+            "joiner": ".",
+            "pauseBefore": 0.08,
+            "profile": {
+              "key": "open_ending",
+              "text": "¿Cuántas veces lo has hecho sin darte cuenta?",
+              "deliveryStyle": "eco",
+              "narrationEnergy": "media",
+              "pauseStrength": "corta",
+              "emphasisWords": [
+                "darte",
+                "cuenta"
+              ],
+              "pacing": "controlado",
+              "pauseBefore": 0.08,
+              "pauseAfter": 0.06,
+              "joiner": ".",
+              "ssmlRate": "-7%",
+              "ssmlPitch": "0%",
+              "ssmlVolume": "0%"
+            }
+          },
+          {
+            "key": "soft_cta",
+            "text": "Cuéntame: ¿cuál es tu señal de nerviosismo?",
+            "joiner": "",
+            "pauseBefore": 0.05,
+            "profile": {
+              "key": "soft_cta",
+              "text": "Cuéntame: ¿cuál es tu señal de nerviosismo?",
+              "deliveryStyle": "conversacional",
+              "narrationEnergy": "media",
+              "pauseStrength": "ninguna",
+              "emphasisWords": [
+                "senal",
+                "nerviosismo"
+              ],
+              "pacing": "natural",
+              "pauseBefore": 0.05,
+              "pauseAfter": 0,
+              "joiner": "",
+              "ssmlRate": "-8%",
+              "ssmlPitch": "0%",
+              "ssmlVolume": "0%"
+            }
+          }
+        ],
+        "text": "¿Cuántas veces lo has hecho sin darte cuenta. Cuéntame: ¿cuál es tu señal de nerviosismo?"
+      }
+    ]
+  }
+}

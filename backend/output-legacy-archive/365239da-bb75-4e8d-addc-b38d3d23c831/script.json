@@ -1,0 +1,137 @@
+{
+  "title": "darvo_discusion_perdida_v1",
+  "topic": "relationships",
+  "effectName": "DARVO",
+  "hook": "Si explicas de mas, ya perdiste",
+  "open_loop": "Y lo peor es que parece culpa tuya, no de la otra persona.",
+  "micro_value": "Se llama DARVO. Niega, te ataca y luego se hace victima delante de ti.",
+  "escalation": "Primero distorsiona lo que paso. Despues cuestiona tu memoria. Luego te obliga a justificar cada detalle. Mientras respondes, ya cambio el foco. Tu cuerpo entra en defensa automatica. Y cuando intentas cerrar, ya estas pidiendo calma tu.",
+  "reengage": "Pero aqui es donde te engancha sin que lo notes.",
+  "peak": "Lo hacen contigo en una discusion normal: acabas pidiendo perdon por decir la verdad, dudando de tu recuerdo y sintiendo que el problema siempre eras tu desde el principio.",
+  "open_ending": "Y cuando lo ves una vez, empieza a aparecer en muchas conversaciones mas.",
+  "soft_cta": "Te ha pasado esto exactamente con alguien cercano?",
+  "psychologicalFact": "DARVO: deny, attack, reverse victim and offender en discusiones de manipulacion relacional.",
+  "viralTrigger": "identificacion",
+  "emotionalTrigger": "urgency",
+  "keywords": [
+    "couple argument",
+    "manipulation conversation",
+    "person apologizing"
+  ],
+  "hashtags": [
+    "#psicologia",
+    "#relaciones",
+    "#manipulacion",
+    "#darvo",
+    "#shorts"
+  ],
+  "claim": "Se llama DARVO. Niega, te ataca y luego se hace victima delante de ti.",
+  "explanation": "Primero distorsiona lo que paso. Despues cuestiona tu memoria. Luego te obliga a justificar cada detalle. Mientras respondes, ya cambio el foco. Tu cuerpo entra en defensa automatica. Y cuando intentas cerrar, ya estas pidiendo calma tu. Pero aqui es donde te engancha sin que lo notes. Lo hacen contigo en una discusion normal: acabas pidiendo perdon por decir la verdad, dudando de tu recuerdo y sintiendo que el problema siempre eras tu desde el principio.",
+  "cta": "Y cuando lo ves una vez, empieza a aparecer en muchas conversaciones mas. Te ha pasado esto exactamente con alguien cercano?",
+  "structureVersion": "open_loop_escalation_v1",
+  "hasReengage": true,
+  "fullScript": "Si explicas de mas, ya perdiste Y lo peor es que parece culpa tuya, no de la otra persona. Se llama DARVO. Niega, te ataca y luego se hace victima delante de ti. Primero distorsiona lo que paso. Despues cuestiona tu memoria. Luego te obliga a justificar cada detalle. Mientras respondes, ya cambio el foco. Tu cuerpo entra en defensa automatica. Y cuando intentas cerrar, ya estas pidiendo calma tu. Pero aqui es donde te engancha sin que lo notes. Lo hacen contigo en una discusion normal: acabas pidiendo perdon por decir la verdad, dudando de tu recuerdo y sintiendo que el problema siempre eras tu desde el principio. Y cuando lo ves una vez, empieza a aparecer en muchas conversaciones mas. Te ha pasado esto exactamente con alguien cercano?",
+  "videoInstructions": {
+    "singleFocus": true,
+    "visualStyle": [
+      "una sola escena principal por momento",
+      "cambio de plano cada 2-3 segundos",
+      "zoom progresivo",
+      "movimiento constante",
+      "sin pantalla dividida ni overlays complejos"
+    ],
+    "subtitleStyle": "subtitulos grandes, sincronizados y con palabras clave destacadas",
+    "audioStyle": {
+      "voice": "voz clara y con ritmo",
+      "pauses": [
+        "hook",
+        "reengage",
+        "peak"
+      ]
+    },
+    "scenes": [
+      {
+        "segment": "hook",
+        "timing": "0-2s",
+        "visual": "primer plano humano con gesto tenso",
+        "cut": "corte rapido"
+      },
+      {
+        "segment": "open_loop",
+        "timing": "2-5s",
+        "visual": "duda o distancia emocional real",
+        "cut": "zoom corto"
+      },
+      {
+        "segment": "micro_value",
+        "timing": "5-10s",
+        "visual": "detalle facial o situacion reconocible",
+        "cut": "cambio de plano"
+      },
+      {
+        "segment": "escalation",
+        "timing": "10-20s",
+        "visual": "interaccion social real con movimiento",
+        "cut": "cortes cada 2-3s"
+      },
+      {
+        "segment": "reengage",
+        "timing": "20-25s",
+        "visual": "cambio de plano fuerte con zoom mas agresivo y pausa breve",
+        "cut": "pausa + zoom agresivo"
+      },
+      {
+        "segment": "peak",
+        "timing": "25-40s",
+        "visual": "situacion cotidiana muy concreta",
+        "cut": "alternancia de planos"
+      },
+      {
+        "segment": "open_ending",
+        "timing": "40-50s",
+        "visual": "reaccion abierta o plano suspendido",
+        "cut": "desaceleracion ligera"
+      },
+      {
+        "segment": "soft_cta",
+        "timing": "50-60s",
+        "visual": "cierre directo y limpio",
+        "cut": "ultimo corte"
+      }
+    ],
+    "clipKeywords": [
+      "couple argument",
+      "manipulation conversation",
+      "person apologizing",
+      "person close up",
+      "real conversation",
+      "human tension",
+      "phone checking"
+    ]
+  },
+  "estimatedWords": 130,
+  "durationSeconds": 60,
+  "approved": true,
+  "slotTracking": {
+    "batchId": "batch_1776776401017",
+    "slotId": "batch_1776776401017_slot_1",
+    "plannedOrder": 1,
+    "plannedRole": "follow",
+    "plannedCluster": "habitos de distraccion movil",
+    "plannedHookType": "unknown",
+    "plannedMicroAction": "PHYSICAL_GESTURE",
+    "recommendedCandidateId": "habits-2",
+    "recommendedCandidateTitle": "El vídeo más antes de dormir",
+    "businessMode": "monetization_priority",
+    "targetGoal": "monetization_priority",
+    "scheduleWindow": "4 días",
+    "recommendedPublishTime": "6 horas x slot 1",
+    "attributionType": "cluster_match",
+    "slotState": "assigned",
+    "assignmentConfidence": 0.12,
+    "traceConfidence": 0.12,
+    "exactTraceAvailable": true,
+    "abLinked": false
+  },
+  "contentVersion": "v2"
+}

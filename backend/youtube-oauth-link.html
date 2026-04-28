@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>YouTube OAuth - Generador de Videos</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #1f2937;
+            margin-bottom: 20px;
+        }
+        p {
+            color: #555;
+            line-height: 1.6;
+            margin: 15px 0;
+        }
+        .step {
+            background: #f0f9ff;
+            padding: 15px;
+            margin: 15px 0;
+            border-left: 4px solid #3b82f6;
+            border-radius: 4px;
+        }
+        .button {
+            display: inline-block;
+            background: #3b82f6;
+            color: white;
+            padding: 12px 30px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: bold;
+            margin: 20px 0;
+            text-align: center;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .button:hover {
+            background: #2563eb;
+        }
+        .info {
+            background: #fffbeb;
+            border-left: 4px solid #f59e0b;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+        code {
+            background: #f3f4f6;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: monospace;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎬 YouTube OAuth Renewal</h1>
+
+        <p>Para renovar tu token de YouTube y publicar el vídeo, sigue estos pasos:</p>
+
+        <div class="step">
+            <strong>PASO 1: Haz clic en el botón de abajo</strong>
+            <p>Google te pedirá autorización para que la app acceda a YouTube.</p>
+        </div>
+
+        <a href="https://accounts.google.com/o/oauth2/v2/auth?client_id=964796540627-dl22fspvuvg4j55qdnsq7uufper6ltqh.apps.googleusercontent.com&redirect_uri=http%3A%2F%2Flocalhost%3A3000%2Foauth%2Fyoutube%2Fcallback&response_type=code&scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fyoutube.upload%20https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fyoutube&access_type=offline&prompt=consent"
+           class="button" target="_blank">
+            ✅ AUTORIZAR YOUTUBE
+        </a>
+
+        <div class="step">
+            <strong>PASO 2: Cuando hagas clic</strong>
+            <p>Se abrirá una ventana de Google. Haz login con tu cuenta y haz clic en "Permitir".</p>
+        </div>
+
+        <div class="step">
+            <strong>PASO 3: Vuelve aquí</strong>
+            <p>Cuando autorices, verás una página que dice "✅ Éxito". El token se habrá renovado automáticamente.</p>
+        </div>
+
+        <div class="info">
+            <strong>ℹ️ Nota:</strong> El servidor está esperando en <code>localhost:3000</code>. Asegúrate de que no hay nada bloqueando ese puerto.
+        </div>
+
+        <p><strong>¿Necesitas ayuda?</strong> El servidor capturará automáticamente el código cuando autorices.</p>
+    </div>
+
+    <script>
+        // Información en la consola
+        console.log('Si el botón no funciona, intenta copiar esta URL:');
+        console.log('https://accounts.google.com/o/oauth2/v2/auth?client_id=964796540627-dl22fspvuvg4j55qdnsq7uufper6ltqh.apps.googleusercontent.com&redirect_uri=http%3A%2F%2Flocalhost%3A3000%2Foauth%2Fyoutube%2Fcallback&response_type=code&scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fyoutube.upload%20https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fyoutube&access_type=offline&prompt=consent');
+    </script>
+</body>
+</html>

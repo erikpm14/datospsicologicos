@@ -38,6 +38,7 @@ const { analyzeHookPerformance, getHookPerformanceAnalysis, getTopHooks, getHook
 const { startPublishScheduler, runPublishCycle, getPublishSchedulerStatus, getReadyToPublishVideos } = require('./services/publish-scheduler.service');
 const { startPipelineWatchdog } = require('./services/pipeline-watchdog.service');
 const { getQueueSnapshot } = require('./services/operational-state.service');
+const { getVideoStatus, getNextSlot, getHealth } = require('./services/dashboard-stats.service');
 const hooksData = require('./templates/psychology-hooks.json');
 const themesData = require('./templates/visual-themes.json');
 
@@ -1276,21 +1277,6 @@ app.get('/api/dashboard/operations', (_req, res) => {
 });
 
 // ─────────────────────────────────────────────
-//  FRONTEND ESTÁTICO (build de producción)
-// ─────────────────────────────────────────────
-
-const frontendDist = path.resolve(__dirname, '../../frontend/dist');
-if (fs.existsSync(frontendDist)) {
-  app.use(express.static(frontendDist));
-  // SPA fallback — cualquier ruta no-API sirve index.html
-  app.get('*', (req, res) => {
-    if (!req.path.startsWith('/api')) {
-      res.sendFile(path.join(frontendDist, 'index.html'));
-    }
-  });
-  logger.info(`Frontend serving from: ${frontendDist}`);
-}
-
 // ─────────────────────────────────────────────
 //  ERROR HANDLER
 // ─────────────────────────────────────────────
@@ -1350,6 +1336,57 @@ app.get('/api/analytics/optimization-weights', (_req, res) => {
     res.status(500).json({ ok: false, error: err.message });
   }
 });
+
+// ─────────────────────────────────────────────
+//  DASHBOARD — OBSERVABILIDAD DE VÍDEOS
+// ─────────────────────────────────────────────
+
+app.get('/api/dashboard/video-status', async (req, res) => {
+  try {
+    const limit = Math.min(parseInt(req.query.limit || '50', 10), 100);
+    const status = await getVideoStatus(limit);
+    res.json(status);
+  } catch (err) {
+    logger.error(`Dashboard video-status error: ${err.message}`);
+    res.status(500).json({ ok: false, error: err.message, summary: { published: 0, ready: 0, queued: 0, rendering: 0, blocked: 0, failed: 0 }, videos: [], status: 'partial' });
+  }
+});
+
+app.get('/api/dashboard/next-slot', async (_req, res) => {
+  try {
+    const nextSlot = await getNextSlot();
+    res.json(nextSlot);
+  } catch (err) {
+    logger.error(`Dashboard next-slot error: ${err.message}`);
+    res.status(500).json({ time: null, minutesUntil: null, candidateVideoId: null, isReady: false, error: err.message });
+  }
+});
+
+app.get('/api/dashboard/health', async (_req, res) => {
+  try {
+    const health = await getHealth();
+    res.json(health);
+  } catch (err) {
+    logger.error(`Dashboard health error: ${err.message}`);
+    res.status(500).json({ autoPublishEnabled: false, youtubeOAuth: 'unknown', error: err.message });
+  }
+});
+
+// ─────────────────────────────────────────────
+//  FRONTEND ESTÁTICO (build de producción) — DEBE SER AL FINAL
+// ─────────────────────────────────────────────
+
+const frontendDist = path.resolve(__dirname, '../../frontend/dist');
+if (fs.existsSync(frontendDist)) {
+  app.use(express.static(frontendDist));
+  // SPA fallback — cualquier ruta no-API sirve index.html
+  app.get('*', (req, res) => {
+    if (!req.path.startsWith('/api')) {
+      res.sendFile(path.join(frontendDist, 'index.html'));
+    }
+  });
+  logger.info(`Frontend serving from: ${frontendDist}`);
+}
 
 // ─────────────────────────────────────────────
 //  ARRANQUE

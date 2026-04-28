@@ -1,0 +1,21 @@
+{
+  "updatedAt": "2026-04-24T11:50:35.806Z",
+  "videoUseStyle": "viral_psychology_short",
+  "requestedVisualMode": "single_focus_pexels",
+  "fetchedClipCount": 3,
+  "clipPaths": [
+    "C:\\Users\\Erik\\Desktop\\Generador_videos\\backend\\assets\\stock-footage\\pexels_7846593.mp4",
+    "C:\\Users\\Erik\\Desktop\\Generador_videos\\backend\\assets\\stock-footage\\pexels_6100893.mp4",
+    "C:\\Users\\Erik\\Desktop\\Generador_videos\\backend\\assets\\stock-footage\\pexels_4769798.mp4"
+  ],
+  "renderMode": "video_use",
+  "usedGradientFallback": false,
+  "visibleVisuals": true,
+  "hasSubtitles": true,
+  "duration": 32.81,
+  "segmentsUsed": 14,
+  "overlayEvents": 4,
+  "subtitleSafeY": "h*0.69",
+  "assSubtitleY": 1320,
+  "renderWarnings": []
+}

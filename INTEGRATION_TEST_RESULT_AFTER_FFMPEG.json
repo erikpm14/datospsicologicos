@@ -1,0 +1,66 @@
+{
+  "timestamp": "2026-04-27T18:25:00Z",
+  "testType": "REAL_INTEGRATION_WITH_FFMPEG",
+  "ffmpegAvailable": true,
+  "ffmpegVersion": "8.1-full_build",
+  "ffprobeAvailable": true,
+  "ffmpegInstallation": "/c/Users/Erik/AppData/Local/Microsoft/WinGet/Packages/Gyan.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe/ffmpeg-8.1-full_build/bin",
+  "servicesRestarted": true,
+  "latestVideoId": "c1bce3a2-71ea-4c5a-b049-e887906a55fe",
+  "outputExists": true,
+  "outputPath": "/c/Users/Erik/Desktop/Generador_videos/output/c1bce3a2-71ea-4c5a-b049-e887906a55fe/output.mp4",
+  "outputSizeKB": 848,
+  "outputDurationSeconds": 25.133333,
+  "ffprobePass": true,
+  "ffprobeDetails": {
+    "videoStream": "h264 1080x1920",
+    "audioStream": "aac 44100Hz",
+    "duration": "25.13 seconds",
+    "status": "PASS - Video and audio streams detected"
+  },
+  "blackdetectPass": false,
+  "blackdetectDetails": {
+    "black_start": 0,
+    "black_end": 25.1,
+    "black_duration": 25.1,
+    "threshold": 0.5,
+    "result": "FAIL - Entire video is black (25.1s > 0.5s threshold)",
+    "status": "BLOCKED"
+  },
+  "framesExtracted": true,
+  "framesExtractedCount": 5,
+  "framesAt": [0, 5, 10, 15, 20],
+  "framesStatus": "5 frames extracted successfully from different timestamps",
+  "visualActuallyOk": false,
+  "visualAnalysis": "Video is completely black (100% of duration is black according to blackdetect filter)",
+  "audioStreamPresent": true,
+  "captionsDebugFound": true,
+  "captionsPath": "/c/Users/Erik/Desktop/Generador_videos/output/c1bce3a2-71ea-4c5a-b049-e887906a55fe/captions-debug.json",
+  "renderErrorReason": null,
+  "qcBehavior": {
+    "old_code": "WOULD_PASS_SILENTLY (ffprobe not in PATH, blackdetect not implemented) - BUG",
+    "new_code": "WILL_BLOCK with reason: BLACK_FRAMES_DETECTED (black_duration > 0.5s) - FIXED",
+    "expectedQcResult": "BLOCKED - Video contains 25.1 seconds of black frames"
+  },
+  "autoPublishRecommendation": false,
+  "autoPublishReason": "Video is 100% black - will be rejected by QC with reason BLACK_FRAMES_DETECTED",
+  "nextSteps": [
+    "QC will automatically block this video",
+    "Wait for a new video to be rendered with proper assets",
+    "When new video completes, validate it has:",
+    "  - Non-black video frames",
+    "  - Valid audio stream",
+    "  - Proper captions with good drift",
+    "Only then enable AUTO_PUBLISH"
+  ],
+  "summary": {
+    "ffmpegWorking": true,
+    "ffprobeWorking": true,
+    "servicesRunning": true,
+    "validVideoFile": true,
+    "videoIsBlack": true,
+    "fixIsWorking": true,
+    "qcWillBlock": true,
+    "ready_for_auto_publish": false
+  }
+}

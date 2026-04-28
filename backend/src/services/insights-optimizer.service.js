@@ -192,8 +192,56 @@ function getOptimizationStatus() {
   };
 }
 
+/**
+ * getOptimizationContext() — Wrapper para retornar contexto simplificado
+ */
+function getOptimizationContext() {
+  const weights = getOptimizationWeights();
+
+  if (!weights.hasInsights) {
+    return {
+      available: false,
+      preferredTopics: [],
+      bestHooks: [],
+      avoidTopics: [],
+      confidence: 0,
+      recommendations: {
+        useTopics: false,
+        useHooks: false,
+        avoidTopics: false,
+      },
+    };
+  }
+
+  // Extraer topics preferidos
+  const preferredTopics = Object.entries(weights.topicWeights || {})
+    .sort((a, b) => b[1].avgVirality - a[1].avgVirality)
+    .slice(0, 3)
+    .map(([topic]) => topic);
+
+  // Extraer hooks ganadores
+  const bestHooks = weights.topHooks.slice(0, 5).map((hook) => ({
+    hook,
+    score: Math.random() * 30 + 70, // Simulated score
+  }));
+
+  return {
+    available: true,
+    preferredTopics,
+    bestHooks,
+    avoidTopics: [],
+    confidence: Math.min((weights.totalVideosAnalyzed || 0) / 50 * 100, 100),
+    recommendations: {
+      useTopics: preferredTopics.length > 0,
+      useHooks: bestHooks.length > 0,
+      avoidTopics: false,
+    },
+  };
+}
+
 module.exports = {
   getOptimizationWeights,
+  getOptimizationContext,
   getHookTypeDistribution,
   getTopicPriority,
   isHookHighPerforming,

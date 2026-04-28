@@ -1,13 +1,15 @@
 import { useState } from 'react';
-import { BadgeEuro, Brain, CalendarDays, Film, Radio, TrendingUp } from 'lucide-react';
+import { BadgeEuro, Brain, CalendarDays, Film, Radio, TrendingUp, Activity } from 'lucide-react';
 import OperationsDashboard from './components/OperationsDashboard';
 import BusinessDashboard from './components/BusinessDashboard';
 import VideoStats from './components/VideoStats';
 import ContentCalendar from './components/ContentCalendar';
 import PerformanceAnalyticsDashboard from './components/PerformanceAnalyticsDashboard';
+import VideoStatusDashboard from './components/VideoStatusDashboard';
 
 const TABS = [
   { id: 'dashboard', label: 'Dashboard', icon: BadgeEuro },
+  { id: 'status', label: 'Estado', icon: Activity },
   { id: 'videos', label: 'Vídeos', icon: Film },
   { id: 'calendar', label: 'Calendario', icon: CalendarDays },
   { id: 'analytics', label: 'Analytics', icon: TrendingUp },
@@ -54,8 +56,9 @@ export default function App() {
         </div>
       </div>
 
-      <main className={`mx-auto px-5 py-6 pb-28 md:pb-10 ${tab === 'dashboard' || tab === 'videos' || tab === 'calendar' || tab === 'analytics' ? 'w-full max-w-[1480px]' : 'max-w-6xl'}`}>
+      <main className={`mx-auto px-5 py-6 pb-28 md:pb-10 ${tab === 'dashboard' || tab === 'status' || tab === 'videos' || tab === 'calendar' || tab === 'analytics' ? 'w-full max-w-[1480px]' : 'max-w-6xl'}`}>
         {tab === 'dashboard' && <BusinessDashboard />}
+        {tab === 'status' && <VideoStatusDashboard />}
         {tab === 'videos' && <VideoStats />}
         {tab === 'calendar' && <ContentCalendar />}
         {tab === 'analytics' && <PerformanceAnalyticsDashboard />}

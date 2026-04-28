@@ -1,0 +1,183 @@
+{
+  "id": "07d6862e-3582-47a7-a567-b8ac9b822f19",
+  "createdAt": "2026-04-22T21:24:00.509Z",
+  "status": "pending",
+  "progress": 100,
+  "data": {
+    "topic": "cognitive_biases",
+    "prefabScript": {
+      "title": "ilusion_control_decidieron_antes_v1",
+      "topic": "cognitive_biases",
+      "effectName": "ILUSION DE CONTROL",
+      "hook": "Crees que eliges, pero ya decidieron",
+      "open_loop": "Y casi nunca te das cuenta hasta que ya defendiste esa decision.",
+      "micro_value": "Se llama ILUSION DE CONTROL. Tu mente confunde influencia con poder real sobre la situacion.",
+      "escalation": "Te dan dos opciones cerradas. Sientes libertad. El contexto ya venia dise?ado. Los colores, el orden y la urgencia empujan tu respuesta. Tu cerebro rellena el resto automaticamente. Y luego lo llama eleccion personal sin dudarlo.",
+      "reengage": "Y aqui cambia todo lo que crees sobre decidir.",
+      "peak": "Lo hacen contigo en compras, formularios y conversaciones: eliges justo lo que querias evitar y sales convencido de que fue idea tuya desde el primer segundo.",
+      "open_ending": "Por eso sigues defendiendo decisiones que en realidad nunca empezaron en ti.",
+      "soft_cta": "Cuantas veces has caido en esto sin verlo?",
+      "psychologicalFact": "Ilusion de control: el cerebro sobreestima su agencia cuando el marco ya fue dise?ado.",
+      "viralTrigger": "utilidad",
+      "emotionalTrigger": "curiosity",
+      "keywords": [
+        "choice manipulation",
+        "shopping decision",
+        "person signing form"
+      ],
+      "hashtags": [
+        "#psicologia",
+        "#sesgos",
+        "#decision",
+        "#mente",
+        "#shorts"
+      ],
+      "claim": "Se llama ILUSION DE CONTROL. Tu mente confunde influencia con poder real sobre la situacion.",
+      "explanation": "Te dan dos opciones cerradas. Sientes libertad. El contexto ya venia dise?ado. Los colores, el orden y la urgencia empujan tu respuesta. Tu cerebro rellena el resto automaticamente. Y luego lo llama eleccion personal sin dudarlo. Y aqui cambia todo lo que crees sobre decidir. Lo hacen contigo en compras, formularios y conversaciones: eliges justo lo que querias evitar y sales convencido de que fue idea tuya desde el primer segundo.",
+      "cta": "Por eso sigues defendiendo decisiones que en realidad nunca empezaron en ti. Cuantas veces has caido en esto sin verlo?",
+      "structureVersion": "open_loop_escalation_v1",
+      "hasReengage": true,
+      "fullScript": "Crees que eliges, pero ya decidieron Y casi nunca te das cuenta hasta que ya defendiste esa decision. Se llama ILUSION DE CONTROL. Tu mente confunde influencia con poder real sobre la situacion. Te dan dos opciones cerradas. Sientes libertad. El contexto ya venia dise?ado. Los colores, el orden y la urgencia empujan tu respuesta. Tu cerebro rellena el resto automaticamente. Y luego lo llama eleccion personal sin dudarlo. Y aqui cambia todo lo que crees sobre decidir. Lo hacen contigo en compras, formularios y conversaciones: eliges justo lo que querias evitar y sales convencido de que fue idea tuya desde el primer segundo. Por eso sigues defendiendo decisiones que en realidad nunca empezaron en ti. Cuantas veces has caido en esto sin verlo?",
+      "videoInstructions": {
+        "singleFocus": true,
+        "visualStyle": [
+          "una sola escena principal por momento",
+          "cambio de plano cada 2-3 segundos",
+          "zoom progresivo",
+          "movimiento constante",
+          "sin pantalla dividida ni overlays complejos"
+        ],
+        "subtitleStyle": "subtitulos grandes, sincronizados y con palabras clave destacadas",
+        "audioStyle": {
+          "voice": "voz clara y con ritmo",
+          "pauses": [
+            "hook",
+            "reengage",
+            "peak"
+          ]
+        },
+        "scenes": [
+          {
+            "segment": "hook",
+            "timing": "0-2s",
+            "visual": "primer plano humano con gesto tenso",
+            "cut": "corte rapido"
+          },
+          {
+            "segment": "open_loop",
+            "timing": "2-5s",
+            "visual": "duda o distancia emocional real",
+            "cut": "zoom corto"
+          },
+          {
+            "segment": "micro_value",
+            "timing": "5-10s",
+            "visual": "detalle facial o situacion reconocible",
+            "cut": "cambio de plano"
+          },
+          {
+            "segment": "escalation",
+            "timing": "10-20s",
+            "visual": "interaccion social real con movimiento",
+            "cut": "cortes cada 2-3s"
+          },
+          {
+            "segment": "reengage",
+            "timing": "20-25s",
+            "visual": "cambio de plano fuerte con zoom mas agresivo y pausa breve",
+            "cut": "pausa + zoom agresivo"
+          },
+          {
+            "segment": "peak",
+            "timing": "25-40s",
+            "visual": "situacion cotidiana muy concreta",
+            "cut": "alternancia de planos"
+          },
+          {
+            "segment": "open_ending",
+            "timing": "40-50s",
+            "visual": "reaccion abierta o plano suspendido",
+            "cut": "desaceleracion ligera"
+          },
+          {
+            "segment": "soft_cta",
+            "timing": "50-60s",
+            "visual": "cierre directo y limpio",
+            "cut": "ultimo corte"
+          }
+        ],
+        "clipKeywords": [
+          "choice manipulation",
+          "shopping decision",
+          "person signing form",
+          "person close up",
+          "real conversation",
+          "human tension",
+          "phone checking"
+        ]
+      },
+      "estimatedWords": 124,
+      "durationSeconds": 58,
+      "approved": true,
+      "slotTracking": {
+        "batchId": "batch_1776787200359",
+        "slotId": "batch_1776787200359_slot_1",
+        "plannedOrder": 1,
+        "plannedRole": "reach",
+        "plannedCluster": "habits",
+        "plannedHookType": "unknown",
+        "plannedMicroAction": "PHYSICAL_GESTURE",
+        "recommendedCandidateId": "habits-2",
+        "recommendedCandidateTitle": "El vídeo más antes de dormir",
+        "businessMode": "ypp_views_priority",
+        "targetGoal": "ypp_views_priority",
+        "scheduleWindow": "3 días",
+        "recommendedPublishTime": "4 horas x slot 1",
+        "attributionType": "cluster_match",
+        "slotState": "assigned",
+        "assignmentConfidence": 0.12,
+        "traceConfidence": 0.12,
+        "exactTraceAvailable": true,
+        "abLinked": false
+      },
+      "contentVersion": "v2"
+    },
+    "growthContext": {
+      "nextTopic": "cognitive_biases",
+      "hookType": "manual_current_system",
+      "emotionalTrigger": "curiosity",
+      "angle": "Ilusion de control: el cerebro sobreestima su agencia cuando el marco ya fue dise?ado.",
+      "strategy": "manual_current_system",
+      "decisionAt": "2026-04-22T21:24:00.504Z"
+    },
+    "hookId": null,
+    "themeIndex": 1,
+    "slotTracking": {
+      "batchId": "batch_1776787200359",
+      "slotId": "batch_1776787200359_slot_1",
+      "plannedOrder": 1,
+      "plannedRole": "reach",
+      "plannedCluster": "habits",
+      "plannedHookType": "unknown",
+      "plannedMicroAction": "PHYSICAL_GESTURE",
+      "recommendedCandidateId": "habits-2",
+      "recommendedCandidateTitle": "El vídeo más antes de dormir",
+      "businessMode": "ypp_views_priority",
+      "targetGoal": "ypp_views_priority",
+      "scheduleWindow": "3 días",
+      "recommendedPublishTime": "4 horas x slot 1",
+      "attributionType": "cluster_match",
+      "slotState": "assigned",
+      "assignmentConfidence": 0.12,
+      "traceConfidence": 0.12,
+      "exactTraceAvailable": true,
+      "abLinked": false
+    }
+  },
+  "result": {
+    "videoId": "067ff018-df56-460c-ad2a-4b6fb09b84f8",
+    "deferred": true,
+    "readyAt": "2026-04-22T21:33:27.742Z"
+  },
+  "completedAt": "2026-04-22T21:33:27.742Z"
+}

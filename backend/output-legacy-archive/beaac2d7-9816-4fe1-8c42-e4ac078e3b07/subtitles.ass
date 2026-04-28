@@ -1,0 +1,52 @@
+[Script Info]
+ScriptType: v4.00+
+PlayResX: 1080
+PlayResY: 1920
+WrapStyle: 2
+
+[V4+ Styles]
+Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+Style: Default,Impact,100,&H00FFFFFF,&H00FFFFFF,&H00000000,&H90000000,-1,0,0,0,100,100,0,0,1,6,4,8,10,10,10,1
+
+[Events]
+Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
+Dialogue: 0,0:00:00.00,0:00:00.79,Default,,0,0,0,,{\c&H00FFF7F3\fs109\b-1\bord8\pos(540,1320)}TU sonrisa miente.
+Dialogue: 0,0:00:00.81,0:00:01.72,Default,,0,0,0,,{\c&H00FFF7F3\fs109\b0\bord6\pos(540,1320)}Tu cara no.
+Dialogue: 0,0:00:03.23,0:00:04.09,Default,,0,0,0,,{\c&H00FF7B4F\fs95\b0\bord6\pos(540,1320)}Hay un músculo que
+Dialogue: 0,0:00:04.11,0:00:04.97,Default,,0,0,0,,{\c&H00FF7B4F\fs95\b0\bord6\pos(540,1320)}no puedes controlar.
+Dialogue: 0,0:00:04.99,0:00:05.56,Default,,0,0,0,,{\c&H00FF7B4F\fs95\b0\bord6\pos(540,1320)}Uno solo.
+Dialogue: 0,0:00:05.58,0:00:05.84,Default,,0,0,0,,{\c&H00FFF7F3\fs94\b0\bord6\pos(540,1320)}Cuando tu jefe te
+Dialogue: 0,0:00:05.86,0:00:06.48,Default,,0,0,0,,{\c&H00FF7B4F\fs95\b0\bord6\pos(540,1320)}Y todos lo ven.
+Dialogue: 0,0:00:06.50,0:00:07.40,Default,,0,0,0,,{\c&H00FFF7F3\fs94\b0\bord6\pos(540,1320)}dice 'me encanta tu
+Dialogue: 0,0:00:07.42,0:00:08.32,Default,,0,0,0,,{\c&H00FFF7F3\fs94\b0\bord6\pos(540,1320)}idea' pero sus ojos
+Dialogue: 0,0:00:08.34,0:00:09.24,Default,,0,0,0,,{\c&H00FFF7F3\fs94\b0\bord6\pos(540,1320)}no se cierran al
+Dialogue: 0,0:00:09.26,0:00:10.16,Default,,0,0,0,,{\c&H00FFF7F3\fs100\b-1\bord8\pos(540,1320)}sonreír, su CEREBRO grita
+Dialogue: 0,0:00:10.18,0:00:11.08,Default,,0,0,0,,{\c&H00FFF7F3\fs94\b0\bord6\pos(540,1320)}'mentira'.
+Dialogue: 0,0:00:11.10,0:00:11.100,Default,,0,0,0,,{\c&H00FFF7F3\fs94\b0\bord6\pos(540,1320)}Tú lo sientes en
+Dialogue: 0,0:00:12.02,0:00:12.92,Default,,0,0,0,,{\c&H00FFF7F3\fs94\b0\bord6\pos(540,1320)}0,2 segundos.
+Dialogue: 0,0:00:12.94,0:00:13.84,Default,,0,0,0,,{\c&H00FFF7F3\fs94\b0\bord6\pos(540,1320)}Él no sabe que lo
+Dialogue: 0,0:00:13.86,0:00:14.88,Default,,0,0,0,,{\c&H00FFF7F3\fs94\b0\bord6\pos(540,1320)}sabes.
+Dialogue: 0,0:00:23.64,0:00:23.95,Default,,0,0,0,,{\c&H00303BFF\fs100\b0\bord6\pos(540,1320)}¿Cuánta gente te ha
+Dialogue: 0,0:00:23.97,0:00:24.82,Default,,0,0,0,,{\c&H00FF7B4F\fs97\b0\bord6\pos(540,1320)}Cuando alguien te sonríe
+Dialogue: 0,0:00:24.84,0:00:24.93,Default,,0,0,0,,{\c&H00FF7B4F\fs97\b0\bord6\pos(540,1320)}en el curro y
+Dialogue: 0,0:00:24.95,0:00:25.68,Default,,0,0,0,,{\c&H00303BFF\fs100\b0\bord6\pos(540,1320)}sonreído esta semana falsamente?
+Dialogue: 0,0:00:25.70,0:00:26.54,Default,,0,0,0,,{\c&H00FF7B4F\fs97\b0\bord6\pos(540,1320)}sus ojos no se
+Dialogue: 0,0:00:26.56,0:00:27.41,Default,,0,0,0,,{\c&H00FF7B4F\fs103\b-1\bord8\pos(540,1320)}arrugan, su CEREBRO está
+Dialogue: 0,0:00:27.43,0:00:28.27,Default,,0,0,0,,{\c&H00FF7B4F\fs97\b0\bord6\pos(540,1320)}mintiendo.
+Dialogue: 0,0:00:28.29,0:00:28.87,Default,,0,0,0,,{\c&H00FF7B4F\fs97\b0\bord6\pos(540,1320)}Tú lo sabes.
+Dialogue: 0,0:00:28.89,0:00:29.14,Default,,0,0,0,,{\c&H00303BFF\fs98\b0\bord6\pos(540,1320)}Las microexpresiones duran menos
+Dialogue: 0,0:00:29.16,0:00:29.100,Default,,0,0,0,,{\c&H00FF7B4F\fs97\b0\bord6\pos(540,1320)}Él no sabe que lo
+Dialogue: 0,0:00:30.02,0:00:30.02,Default,,0,0,0,,{\c&H00FF7B4F\fs97\b0\bord6\pos(540,1320)}sabes.
+Dialogue: 0,0:00:30.04,0:00:30.86,Default,,0,0,0,,{\c&H00303BFF\fs98\b0\bord6\pos(540,1320)}de un segundo.
+Dialogue: 0,0:00:30.88,0:00:31.16,Default,,0,0,0,,{\c&H00FF7B4F\fs97\b0\bord6\pos(540,1320)}Y eso es jodidamente
+Dialogue: 0,0:00:31.18,0:00:31.73,Default,,0,0,0,,{\c&H00303BFF\fs98\b0\bord6\pos(540,1320)}Tu instinto las capta
+Dialogue: 0,0:00:31.75,0:00:32.31,Default,,0,0,0,,{\c&H00FF7B4F\fs97\b0\bord6\pos(540,1320)}incómodo.
+Dialogue: 0,0:00:32.33,0:00:33.46,Default,,0,0,0,,{\c&H00303BFF\fs98\b0\bord6\pos(540,1320)}igual.
+Dialogue: 0,0:00:33.48,0:00:34.61,Default,,0,0,0,,{\c&H00303BFF\fs98\b0\bord6\pos(540,1320)}Por eso desconfías sin
+Dialogue: 0,0:00:34.63,0:00:35.61,Default,,0,0,0,,{\c&H00303BFF\fs98\b0\bord6\pos(540,1320)}saber por qué.
+Dialogue: 0,0:00:35.63,0:00:35.76,Default,,0,0,0,,{\c&H00FF7B4F\fs92\b0\bord6\pos(540,1320)}¿Quién te ha estado
+Dialogue: 0,0:00:35.78,0:00:36.88,Default,,0,0,0,,{\c&H00303BFF\fs98\b0\bord6\pos(540,1320)}Tu cuerpo sabe la verdad
+Dialogue: 0,0:00:36.90,0:00:36.91,Default,,0,0,0,,{\c&H00FF7B4F\fs92\b0\bord6\pos(540,1320)}engañando con una sonrisa?
+Dialogue: 0,0:00:36.93,0:00:38.18,Default,,0,0,0,,{\c&H00303BFF\fs98\b0\bord6\pos(540,1320)}antes que tu mente.
+Dialogue: 0,0:00:40.69,0:00:41.77,Default,,0,0,0,,{\c&H00FF7B4F\fs90\b0\bord6\pos(540,1320)}Mira los ojos.
+Dialogue: 0,0:00:41.79,0:00:42.99,Default,,0,0,0,,{\c&H00FF7B4F\fs96\b-1\bord8\pos(540,1320)}SIEMPRE mira los ojos.

@@ -17,6 +17,7 @@ const fs = require('fs');
 const logger = require('../utils/logger');
 const { validateForPublish, discardInvalidVideo } = require('./publish-validator.service');
 const { validateCaptionsForPublish } = require('./caption-pre-publish-validator');
+const { validatePrepublish } = require('./prepublish-visual-qc.service');
 const PUBLISH_RETRY_DELAY_MS = Math.max(1000, parseInt(process.env.PUBLISH_RETRY_DELAY_MS || '4000', 10) || 4000);
 const PUBLISH_MAX_RETRIES = Math.max(1, parseInt(process.env.PUBLISH_MAX_RETRIES || '3', 10) || 3);
 
@@ -356,6 +357,28 @@ async function publishAll(videoPath, script, videoUrl = null) {
   logger.info(
     `NEXT_SLOT_CAPTION_CHECK_PASS videoId=${videoId} source=${captionValidation.debugData?.source || 'unknown'} driftStatus=${captionValidation.debugData?.drift?.status || 'unknown'}`
   );
+
+  // ═══════════════════════════════════════════════════════════════
+  // GATE 0.5: VALIDACIÓN VISUAL PRE-PUBLISH (DETECTA VÍDEOS NEGROS)
+  // Impide publicar pantallas negras, sin stream de video, etc.
+  // ═══════════════════════════════════════════════════════════════
+  const outputDir = path.dirname(videoPath);
+  const visualQcResult = await validatePrepublish(videoPath, outputDir, videoId);
+  if (!visualQcResult.ok) {
+    logger.error(`PREPUBLISH_VISUAL_QC_BLOCKED videoId=${videoId} reasons=${visualQcResult.blockedReasons?.join(',') || 'unknown'}`, {
+      videoId,
+      blockedReasons: visualQcResult.blockedReasons,
+      checks: visualQcResult.checks,
+    });
+    return {
+      success: false,
+      error: 'PREPUBLISH_VISUAL_QC_BLOCKED',
+      reason: `Video failed visual QC: ${visualQcResult.blockedReasons?.join(', ') || 'unknown'}`,
+      details: visualQcResult.checks,
+      discarded: true,
+    };
+  }
+  logger.info(`PREPUBLISH_VISUAL_QC_PASS videoId=${videoId}`);
 
   // ═══════════════════════════════════════════════════════════════
   // GATE 1: VALIDACIÓN SCRIPT + QC HARD

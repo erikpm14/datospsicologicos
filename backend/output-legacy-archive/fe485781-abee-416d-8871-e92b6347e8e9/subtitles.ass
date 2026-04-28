@@ -1,0 +1,63 @@
+[Script Info]
+ScriptType: v4.00+
+PlayResX: 1080
+PlayResY: 1920
+WrapStyle: 2
+
+[V4+ Styles]
+Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+Style: Default,Impact,100,&H00FFFFFF,&H00FFFFFF,&H00000000,&H90000000,-1,0,0,0,100,100,0,0,1,6,4,8,10,10,10,1
+
+[Events]
+Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
+Dialogue: 0,0:00:00.00,0:00:00.68,Default,,0,0,0,,{\c&H00FFF7F3\fs109\b-1\bord8\pos(540,1320)}CREES que aprendiste
+Dialogue: 0,0:00:00.70,0:00:01.20,Default,,0,0,0,,{\c&H00FFF7F3\fs109\b0\bord6\pos(540,1320)}de tu ex,
+Dialogue: 0,0:00:01.28,0:00:01.72,Default,,0,0,0,,{\c&H00FFF7F3\fs119\b-1\bord8\pos(540,1320)}MENTIRA.
+Dialogue: 0,0:00:01.78,0:00:02.46,Default,,0,0,0,,{\c&H00FF7B4F\fs101\b-1\bord8\pos(540,1320)}Tu CEREBRO repite
+Dialogue: 0,0:00:02.48,0:00:03.30,Default,,0,0,0,,{\c&H00FF7B4F\fs95\b0\bord6\pos(540,1320)}exactamente el mismo
+Dialogue: 0,0:00:03.32,0:00:04.00,Default,,0,0,0,,{\c&H00FF7B4F\fs95\b0\bord6\pos(540,1320)}patrón sin que
+Dialogue: 0,0:00:04.02,0:00:04.58,Default,,0,0,0,,{\c&H00FF7B4F\fs95\b0\bord6\pos(540,1320)}lo notes.
+Dialogue: 0,0:00:04.60,0:00:04.94,Default,,0,0,0,,{\c&H00FF7B4F\fs95\b0\bord6\pos(540,1320)}¿Por qué?
+Dialogue: 0,0:00:04.96,0:00:05.66,Default,,0,0,0,,{\c&H00FFF7F3\fs94\b0\bord6\pos(540,1320)}Se llama compulsión
+Dialogue: 0,0:00:05.68,0:00:06.40,Default,,0,0,0,,{\c&H00FFF7F3\fs94\b0\bord6\pos(540,1320)}de repetición.
+Dialogue: 0,0:00:06.50,0:00:07.40,Default,,0,0,0,,{\c&H00FFF7F3\fs100\b-1\bord8\pos(540,1320)}Buscas INCONSCIENTEMENTE
+Dialogue: 0,0:00:07.42,0:00:08.34,Default,,0,0,0,,{\c&H00FFF7F3\fs94\b0\bord6\pos(540,1320)}parejas que reviven
+Dialogue: 0,0:00:08.36,0:00:09.10,Default,,0,0,0,,{\c&H00FFF7F3\fs94\b0\bord6\pos(540,1320)}el trauma original
+Dialogue: 0,0:00:09.12,0:00:10.16,Default,,0,0,0,,{\c&H00FFF7F3\fs94\b0\bord6\pos(540,1320)}para solucionarlo esta
+Dialogue: 0,0:00:10.18,0:00:10.48,Default,,0,0,0,,{\c&H00FFF7F3\fs103\b-1\bord8\pos(540,1320)}VEZ.
+Dialogue: 0,0:00:10.50,0:00:11.26,Default,,0,0,0,,{\c&H00FF7B4F\fs97\b0\bord6\pos(540,1320)}es mala suere,
+Dialogue: 0,0:00:11.65,0:00:12.65,Default,,0,0,0,,{\c&H00FF7B4F\fs97\b0\bord6\pos(540,1320)}no es coincidencia.
+Dialogue: 0,0:00:12.32,0:00:12.84,Default,,0,0,0,,{\c&H00FF7B4F\fs97\b0\bord6\pos(540,1320)}Tu nervio vago
+Dialogue: 0,0:00:12.86,0:00:13.62,Default,,0,0,0,,{\c&H00FF7B4F\fs97\b0\bord6\pos(540,1320)}reconoce el caos
+Dialogue: 0,0:00:13.64,0:00:14.36,Default,,0,0,0,,{\c&H00FF7B4F\fs97\b0\bord6\pos(540,1320)}emocional y lo
+Dialogue: 0,0:00:14.38,0:00:15.22,Default,,0,0,0,,{\c&H00FF7B4F\fs97\b0\bord6\pos(540,1320)}confunde con amor.
+Dialogue: 0,0:00:15.24,0:00:15.76,Default,,0,0,0,,{\c&H00FF7B4F\fs97\b0\bord6\pos(540,1320)}El mismo tono
+Dialogue: 0,0:00:15.78,0:00:16.22,Default,,0,0,0,,{\c&H00FF7B4F\fs97\b0\bord6\pos(540,1320)}de voz, la
+Dialogue: 0,0:00:16.24,0:00:17.52,Default,,0,0,0,,{\c&H00FF7B4F\fs97\b0\bord6\pos(540,1320)}misma ausencia emocional,
+Dialogue: 0,0:00:17.60,0:00:18.54,Default,,0,0,0,,{\c&H00FF7B4F\fs97\b0\bord6\pos(540,1320)}los mismos silencios
+Dialogue: 0,0:00:18.56,0:00:19.32,Default,,0,0,0,,{\c&H00FF7B4F\fs97\b0\bord6\pos(540,1320)}que hacían sentir
+Dialogue: 0,0:00:19.42,0:00:19.96,Default,,0,0,0,,{\c&H00FF7B4F\fs106\b-1\bord8\pos(540,1320)}INVISIBLES.
+Dialogue: 0,0:00:19.98,0:00:20.28,Default,,0,0,0,,{\c&H00FF7B4F\fs97\b0\bord6\pos(540,1320)}Y aquí está
+Dialogue: 0,0:00:20.30,0:00:20.80,Default,,0,0,0,,{\c&H00303BFF\fs100\b0\bord6\pos(540,1320)}la trampa.
+Dialogue: 0,0:00:20.92,0:00:21.32,Default,,0,0,0,,{\c&H00303BFF\fs100\b0\bord6\pos(540,1320)}Tu cuerpo se
+Dialogue: 0,0:00:21.34,0:00:21.98,Default,,0,0,0,,{\c&H00303BFF\fs100\b0\bord6\pos(540,1320)}siente en casa
+Dialogue: 0,0:00:22.00,0:00:22.82,Default,,0,0,0,,{\c&H00303BFF\fs100\b0\bord6\pos(540,1320)}en ese caos.
+Dialogue: 0,0:00:22.84,0:00:23.24,Default,,0,0,0,,{\c&H00303BFF\fs100\b0\bord6\pos(540,1320)}Un tipo que
+Dialogue: 0,0:00:23.26,0:00:23.94,Default,,0,0,0,,{\c&H00303BFF\fs98\b0\bord6\pos(540,1320)}te ignora igual
+Dialogue: 0,0:00:23.96,0:00:24.40,Default,,0,0,0,,{\c&H00303BFF\fs98\b0\bord6\pos(540,1320)}que tu padre
+Dialogue: 0,0:00:24.42,0:00:25.10,Default,,0,0,0,,{\c&H00303BFF\fs98\b0\bord6\pos(540,1320)}te hace sentir
+Dialogue: 0,0:00:25.52,0:00:25.94,Default,,0,0,0,,{\c&H00303BFF\fs108\b-1\bord8\pos(540,1320)}FAMILIAR.
+Dialogue: 0,0:00:25.64,0:00:26.48,Default,,0,0,0,,{\c&H00303BFF\fs98\b0\bord6\pos(540,1320)}Tu sistema nervioso
+Dialogue: 0,0:00:26.50,0:00:27.26,Default,,0,0,0,,{\c&H00303BFF\fs98\b0\bord6\pos(540,1320)}lo interpreta como
+Dialogue: 0,0:00:27.36,0:00:27.76,Default,,0,0,0,,{\c&H00303BFF\fs108\b-1\bord8\pos(540,1320)}SEGURIDAD.
+Dialogue: 0,0:00:27.78,0:00:28.66,Default,,0,0,0,,{\c&H00303BFF\fs98\b0\bord6\pos(540,1320)}Así que vuelves
+Dialogue: 0,0:00:28.68,0:00:29.26,Default,,0,0,0,,{\c&H00303BFF\fs98\b0\bord6\pos(540,1320)}a buscar lo
+Dialogue: 0,0:00:29.28,0:00:30.28,Default,,0,0,0,,{\c&H00303BFF\fs98\b0\bord6\pos(540,1320)}mismo, creyendo que
+Dialogue: 0,0:00:30.30,0:00:30.84,Default,,0,0,0,,{\c&H00303BFF\fs98\b0\bord6\pos(540,1320)}esta vez será
+Dialogue: 0,0:00:30.94,0:00:31.42,Default,,0,0,0,,{\c&H00303BFF\fs108\b-1\bord8\pos(540,1320)}DIFERENTE.
+Dialogue: 0,0:00:31.44,0:00:31.96,Default,,0,0,0,,{\c&H00303BFF\fs98\b0\bord6\pos(540,1320)}¿Qué conoces el
+Dialogue: 0,0:00:31.98,0:00:32.48,Default,,0,0,0,,{\c&H00FF7B4F\fs92\b0\bord6\pos(540,1320)}patrón en ti
+Dialogue: 0,0:00:32.50,0:00:33.26,Default,,0,0,0,,{\c&H00FF7B4F\fs92\b0\bord6\pos(540,1320)}mismo ahora?
+Dialogue: 0,0:00:33.34,0:00:33.84,Default,,0,0,0,,{\c&H00FF7B4F\fs92\b0\bord6\pos(540,1320)}¿O prefieres no
+Dialogue: 0,0:00:33.86,0:00:34.26,Default,,0,0,0,,{\c&H00FF7B4F\fs99\b-1\bord8\pos(540,1320)}VERLO?
+Dialogue: 0,0:00:34.28,0:00:34.94,Default,,0,0,0,,{\c&H00FF7B4F\fs90\b0\bord6\pos(540,1320)}Comenta abajo.

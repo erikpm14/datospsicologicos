@@ -1,0 +1,21 @@
+HOOK:
+¿Cuándo empezaste a sentir que algo estaba mal?
+
+TOPIC:
+relationships
+
+SCRIPT:
+¿Cuándo empezaste a sentir que algo estaba mal? No era grande. Eran cosas pequeñas. Un cambio que no sabías explicar. Tu intuición estaba detectando inconsistencias. Tu cuerpo lo sabía antes que tu mente. Cuando algo se siente raro, generalmente hay una razón real. No es paranoia. Es tu sistema nervioso trabajando. Aquí viene lo importante: empezar a confiar en esa sensación. Los que aprendieron a escuchar esa voz interna evitaron un montón de dolor. No es magia. Es intuición. ¿Qué pequeña cosa te está diciendo algo ahora? Escúchala.
+
+SCORE:
+Virality:     78/100
+Format:       0/100
+Emotional:    N/A
+
+METADATA:
+Duration:     25.1s
+Render:       video_use
+Subtitles:    word_timestamps
+Word Engine:  whisper
+QC Pass:      ✅ YES
+Created:      2026-04-27T14:51:45.476Z

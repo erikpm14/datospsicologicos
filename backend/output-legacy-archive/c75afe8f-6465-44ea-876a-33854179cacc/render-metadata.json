@@ -1,0 +1,15 @@
+{
+  "updatedAt": "2026-04-24T20:50:07.148Z",
+  "requestedVisualMode": "single_focus_pexels",
+  "fetchedClipCount": 3,
+  "clipPaths": [
+    "C:\\Users\\Erik\\Desktop\\Generador_videos\\backend\\assets\\stock-footage\\pexels_9668541.mp4",
+    "C:\\Users\\Erik\\Desktop\\Generador_videos\\backend\\assets\\stock-footage\\pexels_6904083.mp4",
+    "C:\\Users\\Erik\\Desktop\\Generador_videos\\backend\\assets\\stock-footage\\pexels_6570551.mp4"
+  ],
+  "subtitleSafeY": "h*0.69",
+  "assSubtitleY": 1320,
+  "subtitleTimingMode": "audio_detected",
+  "voiceSegmentsDetected": 1,
+  "renderWarnings": []
+}

@@ -1,0 +1,859 @@
+{
+  "title": "el_truco_que_repites_sin_saberlo_1777222763800",
+  "topic": "habits",
+  "hook": "Tu hábito no existe. Existe la recompensa.",
+  "open_loop": "Eso que haces cada día tiene un arquitecto invisible controlándolo todo.",
+  "micro_value": "Fumas después de trabajar (trigger) → Buscas relajación (recompensa). Si reemplazas el cigarro por 5 min de respiración profunda, obtienes la misma dopamina sin nicotina. Cambia la recompensa, se rompe el hábito.",
+  "escalation": "Miras el móvil sin motivo. Tu cerebro quiere dopamina de la notificación. Scrolleas videos. No es aburrimiento. Es validación. Te lo crees tuyo pero es un guión que escribió tu recompensa.",
+  "reengage": "Lo grave no es fumar. Es qué buscas cuando lo haces.",
+  "peak": "Cuando cambias la recompensa, el hábito colapsa. No es fuerza de voluntad. Es arquitectura. Dale dopamina limpia y el viejo hábito muere solo.",
+  "open_ending": "¿Qué recompensa buscas de verdad en lo que repites?",
+  "soft_cta": "¿Cuál es tu hábito? Cuéntamelo abajo.",
+  "psychologicalFact": "La recompensa inmediata es más fuerte que la intención futura.",
+  "viralTrigger": "identificacion",
+  "emotionalTrigger": "urgency",
+  "effectName": "Habit Loop Collapse",
+  "keywords": [
+    "loop del hábito",
+    "recompensa dopamina"
+  ],
+  "claim": "Loop es trigger, comportamiento, recompensa. Cambias uno, se rompe todo. Identifica tu palanca.",
+  "explanation": "Miras el móvil sin motivo. Tu cerebro quiere dopamina de la notificación. Scrolleas videos. No es aburrimiento. Es validación. Te lo crees tuyo pero es un guión que escribió tu recompensa. Lo grave no es fumar. Es qué buscas cuando lo haces. Cuando cambias la recompensa, el hábito colapsa. No es fuerza de voluntad. Es arquitectura. Dale dopamina limpia y el viejo hábito muere solo.",
+  "cta": "¿Qué recompensa buscas de verdad en lo que repites? ¿Cuál es tu hábito? Cuéntamelo abajo.",
+  "segments": [
+    {
+      "type": "HOOK",
+      "text": "Tu hábito no existe. Existe la recompensa.",
+      "visualIntent": "punch zoom, texto impactante, fondo oscuro",
+      "emotion": "tension"
+    },
+    {
+      "type": "OPEN_LOOP",
+      "text": "Eso que haces cada día tiene un arquitecto invisible controlándolo todo.",
+      "visualIntent": "zoom lento, rostro pensativo, tension",
+      "emotion": "curiosity"
+    },
+    {
+      "type": "MICRO_VALUE",
+      "text": "Loop es trigger, comportamiento, recompensa. Cambias uno, se rompe todo. Identifica tu palanca.",
+      "visualIntent": "zoom lento, rostro pensativo, tension",
+      "emotion": "curiosity"
+    },
+    {
+      "type": "ESCALATION",
+      "text": "Miras el móvil sin motivo. Tu cerebro quiere dopamina de la notificación. Scrolleas videos. No es aburrimiento. Es validación. Te lo crees tuyo pero es un guión que escribió tu recompensa.",
+      "visualIntent": "zoom lento, rostro pensativo, tension",
+      "emotion": "curiosity"
+    },
+    {
+      "type": "REENGAGE",
+      "text": "Lo grave no es fumar. Es qué buscas cuando lo haces.",
+      "visualIntent": "cambio brusco, tension, zoom corto",
+      "emotion": "curiosity"
+    },
+    {
+      "type": "PEAK",
+      "text": "Cuando cambias la recompensa, el hábito colapsa. No es fuerza de voluntad. Es arquitectura. Dale dopamina limpia y el viejo hábito muere solo.",
+      "visualIntent": "aislamiento, silueta, punch zoom",
+      "emotion": "impacto"
+    },
+    {
+      "type": "OPEN_ENDING",
+      "text": "¿Qué recompensa buscas de verdad en lo que repites?",
+      "visualIntent": "zoom lento, rostro pensativo, tension",
+      "emotion": "curiosity"
+    },
+    {
+      "type": "SOFT_CTA",
+      "text": "¿Cuál es tu hábito? Cuéntamelo abajo.",
+      "visualIntent": "zoom lento, rostro pensativo, tension",
+      "emotion": "cercania"
+    }
+  ],
+  "structureVersion": "open_loop_escalation_v1",
+  "hasReengage": true,
+  "segmentFeedback": [
+    {
+      "segment": "reengage",
+      "issue": "reengage poco agresivo"
+    }
+  ],
+  "segmentFeedbackSummary": [
+    "[reengage] reengage poco agresivo"
+  ],
+  "estimatedWords": 130,
+  "durationSeconds": 57,
+  "fullScript": "Tu hábito no existe. Existe la recompensa. Eso que haces cada día tiene un arquitecto invisible controlándolo todo. Loop es trigger, comportamiento, recompensa. Cambias uno, se rompe todo. Identifica tu palanca. Miras el móvil sin motivo. Tu cerebro quiere dopamina de la notificación. Scrolleas videos. No es aburrimiento. Es validación. Te lo crees tuyo pero es un guión que escribió tu recompensa. Lo grave no es fumar. Es qué buscas cuando lo haces. Cuando cambias la recompensa, el hábito colapsa. No es fuerza de voluntad. Es arquitectura. Dale dopamina limpia y el viejo hábito muere solo. ¿Qué recompensa buscas de verdad en lo que repites? ¿Cuál es tu hábito? Cuéntamelo abajo.",
+  "videoInstructions": {
+    "singleFocus": true,
+    "visualStyle": [
+      "estetica cinematografica oscura",
+      "fondo negro o casi negro",
+      "alto contraste con azul electrico dominante",
+      "acento rojo oscuro solo para tension",
+      "single focus constante sin overlays complejos",
+      "cambio de plano cada 2-3 segundos",
+      "zoom progresivo y movimiento suave"
+    ],
+    "subtitleStyle": "tipografia condensada bold, blanco frio con acentos azul electrico y rojo oscuro, subtitulos grandes y sincronizados",
+    "audioStyle": {
+      "voice": "voz clara y con ritmo",
+      "pauses": [
+        "hook",
+        "reengage",
+        "peak"
+      ]
+    },
+    "scenes": [
+      {
+        "segment": "hook",
+        "timing": "0-2.2s",
+        "visual": "primer plano de cerebro luminoso o rostro inquietante, relacionado con habits, fondo negro o muy oscuro, contraste alto, azul electrico y rojo oscuro como acentos, zoom lento, iluminacion dramatica, sensacion de misterio psicologico",
+        "cut": "corte rapido con push-in",
+        "startSeconds": 0,
+        "endSeconds": 2.2,
+        "durationSeconds": 2.2,
+        "shotType": "primer plano",
+        "framing": "primer plano",
+        "intensity": "alta",
+        "movement": "push-in rapido",
+        "transition": "hard cut",
+        "emphasis": "scroll-stop inmediato",
+        "syncCue": "movimiento continuo con remate en palabra fuerte"
+      },
+      {
+        "segment": "open_loop",
+        "timing": "2.2-5s",
+        "visual": "ojo humano extremo o gesto suspendido en sombra, relacionado con habits, fondo negro o muy oscuro, contraste alto, azul electrico y rojo oscuro como acentos, zoom lento, iluminacion dramatica, sensacion de misterio psicologico",
+        "cut": "zoom corto continuo",
+        "startSeconds": 2.2,
+        "endSeconds": 5,
+        "durationSeconds": 2.8,
+        "shotType": "plano detalle",
+        "framing": "plano detalle",
+        "intensity": "alta",
+        "movement": "zoom lento continuo",
+        "transition": "match cut",
+        "emphasis": "curiosidad sostenida",
+        "syncCue": "movimiento continuo con remate en palabra fuerte"
+      },
+      {
+        "segment": "micro_value",
+        "timing": "5-8.2s",
+        "visual": "detalle simbolico del mecanismo mental en glow azul, relacionado con habits, fondo negro o muy oscuro, contraste alto, azul electrico y rojo oscuro como acentos, zoom lento, iluminacion dramatica, sensacion de misterio psicologico",
+        "cut": "cambio de plano limpio",
+        "startSeconds": 5,
+        "endSeconds": 8.2,
+        "durationSeconds": 3.2,
+        "shotType": "plano medio",
+        "framing": "plano medio",
+        "intensity": "media",
+        "movement": "micro paneo lateral",
+        "transition": "cut limpio",
+        "emphasis": "primer pago de valor",
+        "syncCue": "movimiento continuo con remate en palabra fuerte"
+      },
+      {
+        "segment": "escalation",
+        "timing": "8.2-11.6s",
+        "visual": "silueta humana o tension social en contraluz, relacionado con habits, fondo negro o muy oscuro, contraste alto, azul electrico y rojo oscuro como acentos, zoom lento, iluminacion dramatica, sensacion de misterio psicologico",
+        "cut": "cortes cada 2-3s",
+        "startSeconds": 8.2,
+        "endSeconds": 11.6,
+        "durationSeconds": 3.4,
+        "shotType": "plano abierto",
+        "framing": "plano abierto",
+        "intensity": "media-alta",
+        "movement": "acercamiento progresivo",
+        "transition": "cut ritmico",
+        "emphasis": "tension creciente",
+        "syncCue": "movimiento continuo con remate en palabra fuerte"
+      },
+      {
+        "segment": "reengage",
+        "timing": "11.6-14.2s",
+        "visual": "cambio brusco a plano mas cercano con rojo alerta, relacionado con habits, fondo negro o muy oscuro, contraste alto, azul electrico y rojo oscuro como acentos, zoom lento, iluminacion dramatica, sensacion de misterio psicologico",
+        "cut": "cambio brusco + zoom agresivo",
+        "startSeconds": 11.6,
+        "endSeconds": 14.2,
+        "durationSeconds": 2.6,
+        "shotType": "primer plano",
+        "framing": "primer plano",
+        "intensity": "muy alta",
+        "movement": "zoom agresivo",
+        "transition": "whip cut",
+        "emphasis": "ruptura de patron",
+        "syncCue": "acercamiento en frase clave"
+      },
+      {
+        "segment": "peak",
+        "timing": "14.2-17.8s",
+        "visual": "escena humana real de conflicto, pareja o decision, relacionado con habits, fondo negro o muy oscuro, contraste alto, azul electrico y rojo oscuro como acentos, zoom lento, iluminacion dramatica, sensacion de misterio psicologico",
+        "cut": "alternancia de planos cerrados",
+        "startSeconds": 14.2,
+        "endSeconds": 17.8,
+        "durationSeconds": 3.6,
+        "shotType": "plano medio",
+        "framing": "plano medio",
+        "intensity": "maxima",
+        "movement": "push-in sostenido",
+        "transition": "impact cut",
+        "emphasis": "impacto emocional",
+        "syncCue": "acercamiento en frase clave"
+      },
+      {
+        "segment": "open_ending",
+        "timing": "17.8-20.9s",
+        "visual": "figura sola alejandose en oscuridad con particulas, relacionado con habits, fondo negro o muy oscuro, contraste alto, azul electrico y rojo oscuro como acentos, zoom lento, iluminacion dramatica, sensacion de misterio psicologico",
+        "cut": "desaceleracion ligera",
+        "startSeconds": 17.8,
+        "endSeconds": 20.9,
+        "durationSeconds": 3.1,
+        "shotType": "plano abierto",
+        "framing": "plano abierto",
+        "intensity": "media",
+        "movement": "zoom out suave",
+        "transition": "cut limpio",
+        "emphasis": "eco mental",
+        "syncCue": "movimiento continuo con remate en palabra fuerte"
+      },
+      {
+        "segment": "soft_cta",
+        "timing": "20.9-23.6s",
+        "visual": "rostro o silueta frontal con espacio negativo para cierre, relacionado con habits, fondo negro o muy oscuro, contraste alto, azul electrico y rojo oscuro como acentos, zoom lento, iluminacion dramatica, sensacion de misterio psicologico",
+        "cut": "ultimo corte limpio",
+        "startSeconds": 20.9,
+        "endSeconds": 23.6,
+        "durationSeconds": 2.7,
+        "shotType": "plano detalle",
+        "framing": "plano detalle",
+        "intensity": "media",
+        "movement": "micro acercamiento",
+        "transition": "hold corto",
+        "emphasis": "cierre abierto",
+        "syncCue": "movimiento continuo con remate en palabra fuerte"
+      }
+    ],
+    "style": {
+      "theme": "psicologia oscura / mente humana / comportamiento",
+      "colorPalette": "negro absoluto, azul electrico, azul neon frio, rojo oscuro, blanco frio",
+      "visualStyle": "cinematografico, minimalista, alto contraste, single focus",
+      "lighting": "oscura, dramatica, contraluz duro, glow electrico dirigido, sombras marcadas",
+      "cameraMotion": "zoom lento constante, push-in suave, micro paneo lateral, cambio de plano cada 2-3 segundos",
+      "effects": "glow ligero, particulas sutiles, neblina tenue, ruido cinematografico muy fino",
+      "composition": "single focus, sujeto dominante a la derecha o centrado, texto respirando a la izquierda, primeros planos y siluetas, profundidad negativa",
+      "emotionalTone": "misterio psicologico, obsesion, tension contenida, intriga oscura",
+      "consistencyRules": [
+        "una sola escena principal por segmento",
+        "fondo siempre oscuro o casi negro",
+        "usar azul electrico como color dominante y rojo solo para tension o reengage",
+        "priorizar cerebros, ojos, siluetas y escenas humanas reconocibles",
+        "evitar stock luminoso, lifestyle genérico o composiciones planas"
+      ],
+      "clipKeywords": [
+        "loop del hábito",
+        "recompensa dopamina",
+        "glowing brain dark background",
+        "blue eye close up dark",
+        "person silhouette red light",
+        "couple argument silhouette blue light",
+        "moody face close up shadow",
+        "dark cinematic person thinking"
+      ]
+    },
+    "clipKeywords": [
+      "loop del hábito",
+      "recompensa dopamina",
+      "glowing brain dark background",
+      "blue eye close up dark",
+      "person silhouette red light",
+      "couple argument silhouette blue light",
+      "moody face close up shadow",
+      "dark cinematic person thinking"
+    ],
+    "rhythmRule": "cambio visual cada 2-3 segundos, sin escenas estaticas ni repeticiones consecutivas de encuadre",
+    "timeline": [
+      {
+        "segment": "hook",
+        "timing": "0-2.2s",
+        "durationSeconds": 2.2,
+        "shotType": "primer plano",
+        "intensity": "alta",
+        "movement": "push-in rapido",
+        "transition": "hard cut"
+      },
+      {
+        "segment": "open_loop",
+        "timing": "2.2-5s",
+        "durationSeconds": 2.8,
+        "shotType": "plano detalle",
+        "intensity": "alta",
+        "movement": "zoom lento continuo",
+        "transition": "match cut"
+      },
+      {
+        "segment": "micro_value",
+        "timing": "5-8.2s",
+        "durationSeconds": 3.2,
+        "shotType": "plano medio",
+        "intensity": "media",
+        "movement": "micro paneo lateral",
+        "transition": "cut limpio"
+      },
+      {
+        "segment": "escalation",
+        "timing": "8.2-11.6s",
+        "durationSeconds": 3.4,
+        "shotType": "plano abierto",
+        "intensity": "media-alta",
+        "movement": "acercamiento progresivo",
+        "transition": "cut ritmico"
+      },
+      {
+        "segment": "reengage",
+        "timing": "11.6-14.2s",
+        "durationSeconds": 2.6,
+        "shotType": "primer plano",
+        "intensity": "muy alta",
+        "movement": "zoom agresivo",
+        "transition": "whip cut"
+      },
+      {
+        "segment": "peak",
+        "timing": "14.2-17.8s",
+        "durationSeconds": 3.6,
+        "shotType": "plano medio",
+        "intensity": "maxima",
+        "movement": "push-in sostenido",
+        "transition": "impact cut"
+      },
+      {
+        "segment": "open_ending",
+        "timing": "17.8-20.9s",
+        "durationSeconds": 3.1,
+        "shotType": "plano abierto",
+        "intensity": "media",
+        "movement": "zoom out suave",
+        "transition": "cut limpio"
+      },
+      {
+        "segment": "soft_cta",
+        "timing": "20.9-23.6s",
+        "durationSeconds": 2.7,
+        "shotType": "plano detalle",
+        "intensity": "media",
+        "movement": "micro acercamiento",
+        "transition": "hold corto"
+      }
+    ]
+  },
+  "growthContext": {
+    "nextTopic": "habits",
+    "hookType": "challenge",
+    "emotionalTrigger": "fear|urgency|validation",
+    "angle": "loop del hábito y recompensa",
+    "avoidTopics": [],
+    "avoidRecentHooks": [
+      "Repites la misma rutina sin decidir hacerlo nunca.",
+      "Tocarte la cara delata todo lo que intentas ocultar.",
+      "Tu tristeza no es tuya. Es del grupo.",
+      "Tu tristeza no es tuya. Es del grupo.",
+      "Crees que aprendiste de tu ex. Mentira.",
+      "Tu cerebro te controla sin que lo sepas",
+      "Crees que sabes psicología pero no tienes ni idea.",
+      "Llevas 17 minutos y ya perdiste el hilo."
+    ],
+    "reasoning": "Topic 'habits' por estrategia exploit_p80. Views promedio: 545, engagement: 0.84%. [PATRÓN P80 — score por encima del percentil 80, explotando variaciones]",
+    "confidence": 0.95,
+    "strategy": "exploit_p80",
+    "decisionAt": "2026-04-25T16:36:04.027Z",
+    "fallbackGenerator": "last-valid-script",
+    "fallbackReason": "no_valid_candidate_after_attempts"
+  },
+  "viralityScore": 32,
+  "viralityBreakdown": {
+    "hookStrength": 0,
+    "emotionalTrigger": 5,
+    "relatability": 10,
+    "loopPotential": 15,
+    "durationBonus": 2
+  },
+  "formatMatchScore": 72,
+  "formatMatchBreakdown": {
+    "hookFormat": 11,
+    "brevity": 12,
+    "clarity": 15,
+    "narrativeRhythm": 6,
+    "psychologicalImpact": 8,
+    "scrollStop": 3,
+    "infoDensity": 4,
+    "earlyRevelation": 3,
+    "singleIdea": 5,
+    "reengage": 5
+  },
+  "formatMatchSegmentGaps": [
+    "[reengage] reengage poco agresivo"
+  ],
+  "formatMatchGaps": [
+    "Hook demasiado suave — necesita impacto brutal en el segundo 0, sin intro",
+    "Hook no para el scroll — falta tensión, shock o reconocimiento inmediato",
+    "Baja densidad — más información útil en menos palabras",
+    "Revelación tardía — el claim debe ser breve y concreto, no llegar al segundo 8",
+    "[reengage] reengage poco agresivo"
+  ],
+  "emotionalImpactScore": 25,
+  "emotionalImpactBreakdown": {
+    "powerWords": 0,
+    "personalId": 20,
+    "surpriseFactor": 5,
+    "visceral": 0,
+    "tensionResolution": 0
+  },
+  "approved": true,
+  "rejectionReason": null,
+  "selectionPenalties": [
+    "virality_low:32",
+    "[reengage] reengage poco agresivo"
+  ],
+  "llmMetrics": {
+    "llm_total_calls": 4,
+    "llm_parse_fail": false,
+    "llm_recovery_used": false,
+    "llm_hard_fail": false,
+    "emergency_fallback_used": false,
+    "llm_schema_fail": false,
+    "llm_truncated_suspected": true
+  },
+  "usedRecovery": true,
+  "generationSource": "generateOptimizedScript",
+  "llmPath": [
+    "generateViralScript",
+    "generateOptimizedScript"
+  ],
+  "generationFallback": "last-valid-script",
+  "usedLastValid": false,
+  "usedEmergencyFallback": false,
+  "approvalBypassReason": null,
+  "final_generation_route": "generateViralScript -> generateOptimizedScript",
+  "total_llm_calls": 5,
+  "fallback_level_reached": 1,
+  "quickOptimizedSegment": "micro_value",
+  "quickOptimizedReason": "[micro_value] micro_value poco concreto",
+  "selectedQuality": "fallback",
+  "approvalBypass": "last-valid-script_fallback",
+  "bestAvailableScore": 45,
+  "selectionReasons": [
+    "virality_low:32",
+    "[micro_value] micro_value poco concreto",
+    "[reengage] reengage poco agresivo"
+  ],
+  "abVariantId": "v_a",
+  "slotTracking": {
+    "batchId": "batch_1777132801069",
+    "slotId": "batch_1777132801069_slot_1",
+    "plannedOrder": 1,
+    "plannedRole": "follow",
+    "plannedCluster": "relationships",
+    "plannedHookType": "challenge",
+    "plannedMicroAction": "REPEAT_CHECK",
+    "recommendedCandidateId": "relationships-2",
+    "recommendedCandidateTitle": "Cuando te responden tarde pero miras la hora exacta",
+    "businessMode": "monetization_priority",
+    "targetGoal": "monetization_priority",
+    "scheduleWindow": "4 días",
+    "recommendedPublishTime": "6 horas x slot 1",
+    "attributionType": "ab_linked",
+    "slotState": "assigned",
+    "assignmentConfidence": 0.12,
+    "traceConfidence": 0.12,
+    "exactTraceAvailable": true,
+    "abLinked": true
+  },
+  "reusedLastValidScript": true,
+  "reusedAt": "2026-04-26T16:59:23.800Z",
+  "lastValidMetadata": {
+    "id": "el_truco_que_repites_sin_saberlo",
+    "topic": "habits",
+    "angle": "loop del hábito y recompensa",
+    "hookType": "challenge",
+    "emotionalTrigger": "fear|urgency|validation",
+    "generationSource": "generateOptimizedScript",
+    "createdAt": "2026-04-25T16:36:36.170Z"
+  },
+  "contentVersion": "v2",
+  "narrationPlan": {
+    "mode": "natural_short_v1",
+    "segments": {
+      "hook": {
+        "key": "hook",
+        "text": "Tu hábito no existe. Existe la recompensa.",
+        "deliveryStyle": "directo",
+        "narrationEnergy": "alta",
+        "pauseStrength": "fuerte",
+        "emphasisWords": [
+          "existe",
+          "recompensa"
+        ],
+        "pacing": "corto",
+        "pauseBefore": 0,
+        "pauseAfter": 0.46,
+        "joiner": "...",
+        "ssmlRate": "-8%",
+        "ssmlPitch": "+2%",
+        "ssmlVolume": "0%"
+      },
+      "open_loop": {
+        "key": "open_loop",
+        "text": "Eso que haces cada día tiene un arquitecto invisible controlándolo todo.",
+        "deliveryStyle": "susurrado-tenso",
+        "narrationEnergy": "media-alta",
+        "pauseStrength": "media",
+        "emphasisWords": [
+          "invisible",
+          "controlandolo"
+        ],
+        "pacing": "tenso",
+        "pauseBefore": 0.06,
+        "pauseAfter": 0.12,
+        "joiner": ".",
+        "ssmlRate": "-7%",
+        "ssmlPitch": "0%",
+        "ssmlVolume": "0%"
+      },
+      "micro_value": {
+        "key": "micro_value",
+        "text": "Fumas después de trabajar (trigger) → Buscas relajación (recompensa). Si reemplazas el cigarro por 5 min de respiración profunda, obtienes la misma dopamina sin nicotina. Cambia la recompensa, se rompe el hábito.",
+        "deliveryStyle": "claro",
+        "narrationEnergy": "media",
+        "pauseStrength": "corta",
+        "emphasisWords": [
+          "rompe",
+          "habito"
+        ],
+        "pacing": "estable",
+        "pauseBefore": 0.04,
+        "pauseAfter": 0.08,
+        "joiner": ".",
+        "ssmlRate": "-8%",
+        "ssmlPitch": "0%",
+        "ssmlVolume": "0%"
+      },
+      "escalation": {
+        "key": "escalation",
+        "text": "Miras el móvil sin motivo. Tu cerebro quiere dopamina de la notificación. Scrolleas videos. No es aburrimiento. Es validación. Te lo crees tuyo pero es un guión que escribió tu recompensa.",
+        "deliveryStyle": "creciente",
+        "narrationEnergy": "media-alta",
+        "pauseStrength": "corta",
+        "emphasisWords": [
+          "escribio",
+          "recompensa"
+        ],
+        "pacing": "agil",
+        "pauseBefore": 0.04,
+        "pauseAfter": 0.18,
+        "joiner": ".",
+        "ssmlRate": "-6%",
+        "ssmlPitch": "0%",
+        "ssmlVolume": "0%"
+      },
+      "reengage": {
+        "key": "reengage",
+        "text": "Lo grave no es fumar. Es qué buscas cuando lo haces.",
+        "deliveryStyle": "remate",
+        "narrationEnergy": "alta",
+        "pauseStrength": "fuerte",
+        "emphasisWords": [
+          "buscas",
+          "haces"
+        ],
+        "pacing": "marcado",
+        "pauseBefore": 0.26,
+        "pauseAfter": 0.12,
+        "joiner": "...",
+        "ssmlRate": "-8%",
+        "ssmlPitch": "0%",
+        "ssmlVolume": "0%"
+      },
+      "peak": {
+        "key": "peak",
+        "text": "Cuando cambias la recompensa, el hábito colapsa. No es fuerza de voluntad. Es arquitectura. Dale dopamina limpia y el viejo hábito muere solo.",
+        "deliveryStyle": "impacto",
+        "narrationEnergy": "muy alta",
+        "pauseStrength": "media",
+        "emphasisWords": [
+          "habito",
+          "muere"
+        ],
+        "pacing": "enfatico",
+        "pauseBefore": 0.18,
+        "pauseAfter": 0.16,
+        "joiner": ".",
+        "ssmlRate": "-7%",
+        "ssmlPitch": "0%",
+        "ssmlVolume": "0%"
+      },
+      "open_ending": {
+        "key": "open_ending",
+        "text": "¿Qué recompensa buscas, de verdad en lo que repites?",
+        "deliveryStyle": "eco",
+        "narrationEnergy": "media",
+        "pauseStrength": "corta",
+        "emphasisWords": [
+          "verdad",
+          "repites"
+        ],
+        "pacing": "controlado",
+        "pauseBefore": 0.08,
+        "pauseAfter": 0.06,
+        "joiner": ".",
+        "ssmlRate": "-7%",
+        "ssmlPitch": "0%",
+        "ssmlVolume": "0%"
+      },
+      "soft_cta": {
+        "key": "soft_cta",
+        "text": "¿Cuál es tu hábito? Cuéntamelo abajo.",
+        "deliveryStyle": "conversacional",
+        "narrationEnergy": "media",
+        "pauseStrength": "ninguna",
+        "emphasisWords": [
+          "cuentamelo",
+          "abajo"
+        ],
+        "pacing": "natural",
+        "pauseBefore": 0.05,
+        "pauseAfter": 0,
+        "joiner": "",
+        "ssmlRate": "-8%",
+        "ssmlPitch": "0%",
+        "ssmlVolume": "0%"
+      }
+    },
+    "blocks": [
+      {
+        "key": "block_1",
+        "pauseAfter": 0.46,
+        "blockPacing": "controlado con gancho",
+        "parts": [
+          {
+            "key": "hook",
+            "text": "Tu hábito no existe. Existe la recompensa.",
+            "joiner": "...",
+            "pauseBefore": 0,
+            "profile": {
+              "key": "hook",
+              "text": "Tu hábito no existe. Existe la recompensa.",
+              "deliveryStyle": "directo",
+              "narrationEnergy": "alta",
+              "pauseStrength": "fuerte",
+              "emphasisWords": [
+                "existe",
+                "recompensa"
+              ],
+              "pacing": "corto",
+              "pauseBefore": 0,
+              "pauseAfter": 0.46,
+              "joiner": "...",
+              "ssmlRate": "-8%",
+              "ssmlPitch": "+2%",
+              "ssmlVolume": "0%"
+            }
+          },
+          {
+            "key": "open_loop",
+            "text": "Eso que haces cada día tiene un arquitecto invisible controlándolo todo.",
+            "joiner": ".",
+            "pauseBefore": 0.06,
+            "profile": {
+              "key": "open_loop",
+              "text": "Eso que haces cada día tiene un arquitecto invisible controlándolo todo.",
+              "deliveryStyle": "susurrado-tenso",
+              "narrationEnergy": "media-alta",
+              "pauseStrength": "media",
+              "emphasisWords": [
+                "invisible",
+                "controlandolo"
+              ],
+              "pacing": "tenso",
+              "pauseBefore": 0.06,
+              "pauseAfter": 0.12,
+              "joiner": ".",
+              "ssmlRate": "-7%",
+              "ssmlPitch": "0%",
+              "ssmlVolume": "0%"
+            }
+          }
+        ],
+        "text": "Tu hábito no existe. Existe la recompensa... Eso que haces cada día tiene un arquitecto invisible controlándolo todo."
+      },
+      {
+        "key": "block_2",
+        "pauseAfter": 0.22,
+        "blockPacing": "creciente",
+        "parts": [
+          {
+            "key": "micro_value",
+            "text": "Fumas después de trabajar (trigger) → Buscas relajación (recompensa). Si reemplazas el cigarro por 5 min de respiración profunda, obtienes la misma dopamina sin nicotina. Cambia la recompensa, se rompe el hábito.",
+            "joiner": ".",
+            "pauseBefore": 0.04,
+            "profile": {
+              "key": "micro_value",
+              "text": "Fumas después de trabajar (trigger) → Buscas relajación (recompensa). Si reemplazas el cigarro por 5 min de respiración profunda, obtienes la misma dopamina sin nicotina. Cambia la recompensa, se rompe el hábito.",
+              "deliveryStyle": "claro",
+              "narrationEnergy": "media",
+              "pauseStrength": "corta",
+              "emphasisWords": [
+                "rompe",
+                "habito"
+              ],
+              "pacing": "estable",
+              "pauseBefore": 0.04,
+              "pauseAfter": 0.08,
+              "joiner": ".",
+              "ssmlRate": "-8%",
+              "ssmlPitch": "0%",
+              "ssmlVolume": "0%"
+            }
+          },
+          {
+            "key": "escalation",
+            "text": "Miras el móvil sin motivo. Tu cerebro quiere dopamina de la notificación. Scrolleas videos. No es aburrimiento. Es validación. Te lo crees tuyo pero es un guión que escribió tu recompensa.",
+            "joiner": ".",
+            "pauseBefore": 0.04,
+            "profile": {
+              "key": "escalation",
+              "text": "Miras el móvil sin motivo. Tu cerebro quiere dopamina de la notificación. Scrolleas videos. No es aburrimiento. Es validación. Te lo crees tuyo pero es un guión que escribió tu recompensa.",
+              "deliveryStyle": "creciente",
+              "narrationEnergy": "media-alta",
+              "pauseStrength": "corta",
+              "emphasisWords": [
+                "escribio",
+                "recompensa"
+              ],
+              "pacing": "agil",
+              "pauseBefore": 0.04,
+              "pauseAfter": 0.18,
+              "joiner": ".",
+              "ssmlRate": "-6%",
+              "ssmlPitch": "0%",
+              "ssmlVolume": "0%"
+            }
+          }
+        ],
+        "text": "Fumas después de trabajar (trigger) → Buscas relajación (recompensa). Si reemplazas el cigarro por 5 min de respiración profunda, obtienes la misma dopamina sin nicotina. Cambia la recompensa, se rompe el hábito. Miras el móvil sin motivo. Tu cerebro quiere dopamina de la notificación. Scrolleas videos. No es aburrimiento. Es validación. Te lo crees tuyo pero es un guión que escribió tu recompensa."
+      },
+      {
+        "key": "block_3",
+        "pauseAfter": 0.18,
+        "blockPacing": "impacto",
+        "parts": [
+          {
+            "key": "reengage",
+            "text": "Lo grave no es fumar. Es qué buscas cuando lo haces.",
+            "joiner": "...",
+            "pauseBefore": 0.26,
+            "profile": {
+              "key": "reengage",
+              "text": "Lo grave no es fumar. Es qué buscas cuando lo haces.",
+              "deliveryStyle": "remate",
+              "narrationEnergy": "alta",
+              "pauseStrength": "fuerte",
+              "emphasisWords": [
+                "buscas",
+                "haces"
+              ],
+              "pacing": "marcado",
+              "pauseBefore": 0.26,
+              "pauseAfter": 0.12,
+              "joiner": "...",
+              "ssmlRate": "-8%",
+              "ssmlPitch": "0%",
+              "ssmlVolume": "0%"
+            }
+          },
+          {
+            "key": "peak",
+            "text": "Cuando cambias la recompensa, el hábito colapsa. No es fuerza de voluntad. Es arquitectura. Dale dopamina limpia y el viejo hábito muere solo.",
+            "joiner": ".",
+            "pauseBefore": 0.18,
+            "profile": {
+              "key": "peak",
+              "text": "Cuando cambias la recompensa, el hábito colapsa. No es fuerza de voluntad. Es arquitectura. Dale dopamina limpia y el viejo hábito muere solo.",
+              "deliveryStyle": "impacto",
+              "narrationEnergy": "muy alta",
+              "pauseStrength": "media",
+              "emphasisWords": [
+                "habito",
+                "muere"
+              ],
+              "pacing": "enfatico",
+              "pauseBefore": 0.18,
+              "pauseAfter": 0.16,
+              "joiner": ".",
+              "ssmlRate": "-7%",
+              "ssmlPitch": "0%",
+              "ssmlVolume": "0%"
+            }
+          }
+        ],
+        "text": "Lo grave no es fumar. Es qué buscas cuando lo haces... Cuando cambias la recompensa, el hábito colapsa. No es fuerza de voluntad. Es arquitectura. Dale dopamina limpia y el viejo hábito muere solo."
+      },
+      {
+        "key": "block_4",
+        "pauseAfter": 0,
+        "blockPacing": "cierre conversacional",
+        "parts": [
+          {
+            "key": "open_ending",
+            "text": "¿Qué recompensa buscas, de verdad en lo que repites?",
+            "joiner": ".",
+            "pauseBefore": 0.08,
+            "profile": {
+              "key": "open_ending",
+              "text": "¿Qué recompensa buscas, de verdad en lo que repites?",
+              "deliveryStyle": "eco",
+              "narrationEnergy": "media",
+              "pauseStrength": "corta",
+              "emphasisWords": [
+                "verdad",
+                "repites"
+              ],
+              "pacing": "controlado",
+              "pauseBefore": 0.08,
+              "pauseAfter": 0.06,
+              "joiner": ".",
+              "ssmlRate": "-7%",
+              "ssmlPitch": "0%",
+              "ssmlVolume": "0%"
+            }
+          },
+          {
+            "key": "soft_cta",
+            "text": "¿Cuál es tu hábito? Cuéntamelo abajo.",
+            "joiner": "",
+            "pauseBefore": 0.05,
+            "profile": {
+              "key": "soft_cta",
+              "text": "¿Cuál es tu hábito? Cuéntamelo abajo.",
+              "deliveryStyle": "conversacional",
+              "narrationEnergy": "media",
+              "pauseStrength": "ninguna",
+              "emphasisWords": [
+                "cuentamelo",
+                "abajo"
+              ],
+              "pacing": "natural",
+              "pauseBefore": 0.05,
+              "pauseAfter": 0,
+              "joiner": "",
+              "ssmlRate": "-8%",
+              "ssmlPitch": "0%",
+              "ssmlVolume": "0%"
+            }
+          }
+        ],
+        "text": "¿Qué recompensa buscas, de verdad en lo que repites. ¿Cuál es tu hábito? Cuéntamelo abajo."
+      }
+    ]
+  }
+}

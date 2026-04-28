@@ -1,0 +1,58 @@
+{
+  "label": "video-pipeline",
+  "startedAt": "2026-04-24T11:43:10.084Z",
+  "totalMs": 45224,
+  "phases": [
+    {
+      "name": "script_generation",
+      "startedAt": "2026-04-24T11:43:10.087Z",
+      "status": "completed",
+      "endedAt": "2026-04-24T11:43:10.094Z",
+      "durationMs": 7,
+      "source": "prefab",
+      "estimatedWords": 128,
+      "durationSeconds": 56
+    },
+    {
+      "name": "tts",
+      "startedAt": "2026-04-24T11:43:10.096Z",
+      "status": "completed",
+      "endedAt": "2026-04-24T11:43:38.436Z",
+      "durationMs": 28340,
+      "provider": "kokoro",
+      "estimatedDuration": 42.73733300000001,
+      "wordBoundaries": 0
+    },
+    {
+      "name": "audio_postprocess",
+      "startedAt": "2026-04-24T11:43:38.437Z",
+      "status": "completed",
+      "endedAt": "2026-04-24T11:43:39.776Z",
+      "durationMs": 1339,
+      "outputPath": "C:\\Users\\Erik\\Desktop\\Generador_videos\\output\\57267b5a-f2a0-4b82-8222-05a776cc7f0e\\voice_proc.mp3"
+    },
+    {
+      "name": "render",
+      "startedAt": "2026-04-24T11:43:39.777Z",
+      "status": "completed",
+      "endedAt": "2026-04-24T11:43:55.216Z",
+      "durationMs": 15439,
+      "outputPath": "C:\\Users\\Erik\\Desktop\\Generador_videos\\output\\57267b5a-f2a0-4b82-8222-05a776cc7f0e\\output.mp4"
+    },
+    {
+      "name": "quality_check",
+      "startedAt": "2026-04-24T11:43:55.222Z",
+      "status": "completed",
+      "endedAt": "2026-04-24T11:43:55.306Z",
+      "durationMs": 84,
+      "passed": true,
+      "score": 95,
+      "threshold": 70
+    }
+  ],
+  "activePhase": null,
+  "jobId": "41ee0a8b-ef3c-4cb3-a97f-37d1287c128c",
+  "videoId": "57267b5a-f2a0-4b82-8222-05a776cc7f0e",
+  "topic": "dopamine",
+  "result": "deferred"
+}

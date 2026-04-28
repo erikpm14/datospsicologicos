@@ -21,6 +21,15 @@ function canConsumeSlot(slotTracking = {}, candidate = {}, options = {}) {
 
   const slot = (getLatestPlannedSlots().slots || []).find((item) => item.slotId === slotId);
   if (!slot) {
+    const latestSlots = getLatestPlannedSlots().slots || [];
+    if (latestSlots.length === 0) {
+      return {
+        allowed: true,
+        reason: 'slot_tracking_orphaned',
+        slotState: null,
+        assignmentConfidence: slotTracking.assignmentConfidence || slotTracking.traceConfidence || 0
+      };
+    }
     _registerConflict('invalidTrackingCases', {
       slotId,
       reason: 'slot_not_found',

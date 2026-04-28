@@ -55,8 +55,9 @@ function validateCaptionsForPublish(videoId, debugJsonPath = null, options = {})
   const checks = [];
 
   // 2. Caption count > 0
-  if (!debugData.captionsCount || debugData.captionsCount <= 0) {
-    checks.push('ZERO_CAPTIONS | captionCount=' + (debugData.captionsCount || 0));
+  const captionCount = debugData.captionsCount || debugData.captionCount || 0;
+  if (captionCount <= 0) {
+    checks.push('ZERO_CAPTIONS | captionCount=' + captionCount);
   }
 
   // 3. Drift status: en emergencia, permitir drift mayor
@@ -69,11 +70,10 @@ function validateCaptionsForPublish(videoId, debugJsonPath = null, options = {})
 
   // 4. Caption source: bloquear fallback EXCEPTO en emergencia
   const source = debugData.source || debugData.captionSource || 'unknown';
-  if (source === 'caption_sync_fallback') {
+  if (source === 'caption_sync_fallback' || source === 'fallback-estimated') {
     if (!allowFallbackForEmergency) {
       checks.push(`CAPTION_SOURCE_FALLBACK | usar fallback no es óptimo para este slot`);
     } else {
-      // Permitir en emergencia pero con advertencia
       checks.push(`CAPTION_SOURCE_FALLBACK_EMERGENCY | captions VÁLIDOS pero DEGRADADOS`);
     }
   }
@@ -85,6 +85,8 @@ function validateCaptionsForPublish(videoId, debugJsonPath = null, options = {})
     if (end > audioDuration + 0.05) {
       checks.push(`CAPTION_OVERFLOW | lastCaption.end=${end.toFixed(3)}s > duration=${audioDuration.toFixed(3)}s`);
     }
+  } else {
+    checks.push('LAST_CAPTION_MISSING');
   }
 
   // En emergencia: permitir fallback pero devolver "ok" con advertencia
@@ -113,7 +115,7 @@ function validateCaptionsForPublish(videoId, debugJsonPath = null, options = {})
   // ✅ VÁLIDO
   return {
     ok: true,
-    reason: `CAPTIONS_VALID | source=${source} | drift=${debugData.drift?.status || 'unknown'} | count=${debugData.captionsCount}`,
+    reason: `CAPTIONS_VALID | source=${source} | drift=${debugData.drift?.status || 'unknown'} | count=${captionCount}`,
     debugData,
   };
 }
@@ -142,7 +144,7 @@ function logCaptionValidation(videoId, validation, action = 'CHECK') {
   const drift = validation.debugData?.drift?.status || 'unknown';
 
   logger.info(
-    `NEXT_SLOT_CAPTION_${action}_${status} | videoId=${videoId} | source=${source} | drift=${drift} | ${validation.reason}`
+    `NEXT_SLOT_CAPTION_${action}_${status} | videoId=${videoId} | source=${source} | driftStatus=${drift} | ${validation.reason}`
   );
 
   return {
@@ -150,6 +152,7 @@ function logCaptionValidation(videoId, validation, action = 'CHECK') {
     status,
     source,
     drift,
+    driftStatus: drift,
     reason: validation.reason,
   };
 }

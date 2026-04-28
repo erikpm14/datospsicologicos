@@ -29,6 +29,7 @@ const KOKORO_SPEED       = process.env.KOKORO_SPEED      || '1.05';
 const KOKORO_ENABLED     = process.env.KOKORO_ENABLED    !== 'false'; // activo por defecto
 const KOKORO_SCRIPT      = path.resolve(__dirname, '../utils/kokoro_tts.py');
 const PYTHON_BIN         = process.env.PYTHON_BIN        || 'python3';
+const TTS_TIMEOUT_MS     = 120000; // 2 minutos — evita colgadas indefinidas
 const SEGMENT_KEYS       = ['hook', 'open_loop', 'micro_value', 'escalation', 'reengage', 'peak', 'open_ending', 'soft_cta'];
 const STOPWORDS = new Set(['que', 'como', 'esto', 'esta', 'este', 'para', 'pero', 'porque', 'aunque', 'donde', 'cuando', 'quien', 'quienes', 'sobre', 'desde', 'hasta', 'entre', 'algo', 'alguien', 'nada', 'todo', 'siempre', 'nunca', 'solo', 'solo', 'mas', 'muy', 'con', 'sin', 'por', 'del', 'las', 'los', 'una', 'uno', 'unos', 'unas', 'esa', 'ese', 'eso', 'aqui', 'ahi', 'alli', 'tambien', 'mismo', 'misma', 'mismas', 'mismos', 'cada', 'justo', 'casi', 'tu', 'tus', 'te', 'ya']);
 
@@ -762,39 +763,64 @@ async function synthesizeWithKokoro(script, outputPath) {
  * @returns {{ audioPath, estimatedDuration, wordCount, wordBoundaries, provider }}
  */
 async function synthesizeVoice(script, outputPath) {
-  const normalizedScript = ensureLegacyFields(script);
-  const narrationPlan = prepareNarrationForTTS(normalizedScript);
-  normalizedScript.narrationPlan = narrationPlan;
-  const requiredFields = ['hook', 'claim', 'explanation', 'cta'];
-  const missing = requiredFields.filter(f => !normalizedScript[f] || String(normalizedScript[f]).trim().length < 3);
-  if (missing.length > 0) {
-    throw new Error(`TTS: campos de script vacíos o inválidos: ${missing.join(', ')}`);
-  }
+  const videoId = script?.videoId || 'unknown';
 
-  const text = buildText(normalizedScript);
-  if (!text || text.trim().length < 10) {
-    throw new Error('TTS: texto combinado demasiado corto para sintetizar');
-  }
-
-  const wordCount = text.split(/\s+/).length;
-
-  // ── Intento 1: Kokoro (segmentado — duración real por sección) ───────────
-  if (KOKORO_ENABLED) {
-    try {
-      const result = await synthesizeWithKokoro(normalizedScript, outputPath);
-      return { ...result, wordCount, provider: 'kokoro', narrationPlan };
-    } catch (kokoroErr) {
-      logger.warn(`Kokoro TTS failed: ${kokoroErr.message.slice(0, 300)} — falling back to Edge TTS`);
+  // Envolver síntesis en Promise.race para timeout global (120s)
+  const synthesisPromise = (async () => {
+    const normalizedScript = ensureLegacyFields(script);
+    const narrationPlan = prepareNarrationForTTS(normalizedScript);
+    normalizedScript.narrationPlan = narrationPlan;
+    const requiredFields = ['hook', 'claim', 'explanation', 'cta'];
+    const missing = requiredFields.filter(f => !normalizedScript[f] || String(normalizedScript[f]).trim().length < 3);
+    if (missing.length > 0) {
+      throw new Error(`TTS: campos de script vacíos o inválidos: ${missing.join(', ')}`);
     }
-  }
 
-  // ── Intento 2: Edge TTS (word boundaries → sync exacto) ──────────────────
+    const text = buildText(normalizedScript);
+    if (!text || text.trim().length < 10) {
+      throw new Error('TTS: texto combinado demasiado corto para sintetizar');
+    }
+
+    const wordCount = text.split(/\s+/).length;
+
+    // ── Intento 1: Kokoro (segmentado — duración real por sección) ───────────
+    if (KOKORO_ENABLED) {
+      try {
+        const result = await synthesizeWithKokoro(normalizedScript, outputPath);
+        return { ...result, wordCount, provider: 'kokoro', narrationPlan };
+      } catch (kokoroErr) {
+        logger.warn(`Kokoro TTS failed: ${kokoroErr.message.slice(0, 300)} — falling back to Edge TTS`, { videoId });
+      }
+    }
+
+    // ── Intento 2: Edge TTS (word boundaries → sync exacto) ──────────────────
+    try {
+      const result = await synthesizeWithEdgeTTS(normalizedScript, text, outputPath);
+      // Edge TTS tiene word boundaries → sectionDurations no es necesario
+      return { ...result, wordCount, provider: 'edge', sectionDurations: null, narrationPlan };
+    } catch (edgeErr) {
+      throw new Error(`TTS: ambos proveedores fallaron. Edge error: ${edgeErr.message}`);
+    }
+  })();
+
+  // Crear timeout promise que rechaza después de TTS_TIMEOUT_MS
+  const timeoutPromise = new Promise((_, reject) => {
+    setTimeout(() => {
+      const err = new Error('TTS_TIMEOUT');
+      err.code = 'TTS_TIMEOUT';
+      reject(err);
+    }, TTS_TIMEOUT_MS);
+  });
+
+  // Race: el primero en resolver gana (síntesis exitosa o timeout)
   try {
-    const result = await synthesizeWithEdgeTTS(normalizedScript, text, outputPath);
-    // Edge TTS tiene word boundaries → sectionDurations no es necesario
-    return { ...result, wordCount, provider: 'edge', sectionDurations: null, narrationPlan };
-  } catch (edgeErr) {
-    throw new Error(`TTS: ambos proveedores fallaron. Edge error: ${edgeErr.message}`);
+    return await Promise.race([synthesisPromise, timeoutPromise]);
+  } catch (err) {
+    if (err.code === 'TTS_TIMEOUT') {
+      logger.error('TTS_TIMEOUT | 120s limit exceeded', { videoId, timeoutMs: TTS_TIMEOUT_MS });
+      throw new Error(`TTS_TIMEOUT: síntesis de voz tardó más de ${TTS_TIMEOUT_MS / 1000}s`);
+    }
+    throw err;
   }
 }
 

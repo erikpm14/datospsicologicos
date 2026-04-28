@@ -1,0 +1,874 @@
+{
+  "title": "procrastination_1777030122192_1777030137607",
+  "topic": "procrastination",
+  "hook": "Sabes que tienes que hacerlo pero tu cuerpo dice que no.",
+  "open_loop": "¿Por qué esa sensación gana siempre en los primeros cinco minutos?",
+  "micro_value": "Tu cerebro elige dolor ahora si promete placer en treinta segundos. Eso es todo.",
+  "escalation": "Mientras tú planeas estudiar, tu sistema de recompensa está buscando dopamina fácil. El móvil, Netflix, scrollear. Aunque sabes que en dos horas te odiarás, en este momento gana lo rápido.",
+  "reengage": "Y lo peor: tu cerebro sabe que es una trampa pero lo hace igual.",
+  "peak": "El ejercicio que aplazas duele ahora. El móvil te recompensa ahora. El futuro no recompensa, solo castig. Por eso postergamos aunque nos arrepintamos siempre.",
+  "open_ending": "¿Qué pasa si cambias dónde está la recompensa inmediata?",
+  "soft_cta": "Cuéntame en comentarios cómo lo hacés vos.",
+  "claim": "Tu cerebro elige dolor ahora si promete placer en treinta segundos. Eso es todo.",
+  "explanation": "Mientras tú planeas estudiar, tu sistema de recompensa está buscando dopamina fácil. El móvil, Netflix, scrollear. Aunque sabes que en dos horas te odiarás, en este momento gana lo rápido. Y lo peor: tu cerebro sabe que es una trampa pero lo hace igual. El ejercicio que aplazas duele ahora. El móvil te recompensa ahora. El futuro no recompensa, solo castig. Por eso postergamos aunque nos arrepintamos siempre.",
+  "cta": "¿Qué pasa si cambias dónde está la recompensa inmediata? Cuéntame en comentarios cómo lo hacés vos.",
+  "psychologicalFact": "Temporal discounting: el cerebro sobrevalore lo inmediato frente a futuro lejano.",
+  "viralTrigger": "identificacion",
+  "emotionalTrigger": "relatability",
+  "durationSeconds": 52,
+  "keywords": [
+    "dopamina",
+    "recompensa_inmediata"
+  ],
+  "hashtags": [
+    "#psicologia",
+    "#mente",
+    "#cerebro"
+  ],
+  "allHooks": null,
+  "selectedHookType": "challenge",
+  "hookSelectionReason": "Identifica contradicción incómoda entre deseo y acción, frena scroll por reconocimiento inmediato",
+  "optimizationNotes": {
+    "patronUsado": "Contraste reward_inmediato vs future_cost"
+  },
+  "learningSignals": {},
+  "autoevaluacion": {},
+  "segments": [
+    {
+      "type": "HOOK",
+      "text": "Sabes que tienes que hacerlo pero tu cuerpo dice que no.",
+      "visualIntent": "punch zoom, texto impactante, fondo oscuro",
+      "emotion": "tension"
+    },
+    {
+      "type": "OPEN_LOOP",
+      "text": "¿Por qué esa sensación gana siempre en los primeros cinco minutos?",
+      "visualIntent": "zoom lento, rostro pensativo, tension",
+      "emotion": "curiosity"
+    },
+    {
+      "type": "MICRO_VALUE",
+      "text": "Tu cerebro elige dolor ahora si promete placer en treinta segundos. Eso es todo.",
+      "visualIntent": "zoom lento, rostro pensativo, tension",
+      "emotion": "curiosity"
+    },
+    {
+      "type": "ESCALATION",
+      "text": "Mientras tú planeas estudiar, tu sistema de recompensa está buscando dopamina fácil. El móvil, Netflix, scrollear. Aunque sabes que en dos horas te odiarás, en este momento gana lo rápido.",
+      "visualIntent": "zoom lento, rostro pensativo, tension",
+      "emotion": "curiosity"
+    },
+    {
+      "type": "REENGAGE",
+      "text": "Y lo peor: tu cerebro sabe que es una trampa pero lo hace igual.",
+      "visualIntent": "cambio brusco, tension, zoom corto",
+      "emotion": "curiosity"
+    },
+    {
+      "type": "PEAK",
+      "text": "El ejercicio que aplazas duele ahora. El móvil te recompensa ahora. El futuro no recompensa, solo castig. Por eso postergamos aunque nos arrepintamos siempre.",
+      "visualIntent": "aislamiento, silueta, punch zoom",
+      "emotion": "impacto"
+    },
+    {
+      "type": "OPEN_ENDING",
+      "text": "¿Qué pasa si cambias dónde está la recompensa inmediata?",
+      "visualIntent": "zoom lento, rostro pensativo, tension",
+      "emotion": "curiosity"
+    },
+    {
+      "type": "SOFT_CTA",
+      "text": "Cuéntame en comentarios cómo lo hacés vos.",
+      "visualIntent": "zoom lento, rostro pensativo, tension",
+      "emotion": "cercania"
+    }
+  ],
+  "structureVersion": "open_loop_escalation_v1",
+  "hasReengage": true,
+  "segmentFeedback": [
+    {
+      "segment": "micro_value",
+      "issue": "micro_value poco concreto"
+    },
+    {
+      "segment": "soft_cta",
+      "issue": "soft_cta poco conversacional"
+    }
+  ],
+  "segmentFeedbackSummary": [
+    "[micro_value] micro_value poco concreto",
+    "[soft_cta] soft_cta poco conversacional"
+  ],
+  "estimatedWords": 120,
+  "fullScript": "Sabes que tienes que hacerlo pero tu cuerpo dice que no. ¿Por qué esa sensación gana siempre en los primeros cinco minutos? Tu cerebro elige dolor ahora si promete placer en treinta segundos. Eso es todo. Mientras tú planeas estudiar, tu sistema de recompensa está buscando dopamina fácil. El móvil, Netflix, scrollear. Aunque sabes que en dos horas te odiarás, en este momento gana lo rápido. Y lo peor: tu cerebro sabe que es una trampa pero lo hace igual. El ejercicio que aplazas duele ahora. El móvil te recompensa ahora. El futuro no recompensa, solo castig. Por eso postergamos aunque nos arrepintamos siempre. ¿Qué pasa si cambias dónde está la recompensa inmediata? Cuéntame en comentarios cómo lo hacés vos.",
+  "videoInstructions": {
+    "singleFocus": true,
+    "visualStyle": [
+      "estetica cinematografica oscura",
+      "fondo negro o casi negro",
+      "alto contraste con azul electrico dominante",
+      "acento rojo oscuro solo para tension",
+      "single focus constante sin overlays complejos",
+      "cambio de plano cada 2-3 segundos",
+      "zoom progresivo y movimiento suave"
+    ],
+    "subtitleStyle": "tipografia condensada bold, blanco frio con acentos azul electrico y rojo oscuro, subtitulos grandes y sincronizados",
+    "audioStyle": {
+      "voice": "voz clara y con ritmo",
+      "pauses": [
+        "hook",
+        "reengage",
+        "peak"
+      ]
+    },
+    "scenes": [
+      {
+        "segment": "hook",
+        "timing": "0-2.2s",
+        "visual": "primer plano de cerebro luminoso o rostro inquietante, relacionado con procrastination, fondo negro o muy oscuro, contraste alto, azul electrico y rojo oscuro como acentos, zoom lento, iluminacion dramatica, sensacion de misterio psicologico",
+        "cut": "corte rapido con push-in",
+        "startSeconds": 0,
+        "endSeconds": 2.2,
+        "durationSeconds": 2.2,
+        "shotType": "primer plano",
+        "framing": "primer plano",
+        "intensity": "alta",
+        "movement": "push-in rapido",
+        "transition": "hard cut",
+        "emphasis": "scroll-stop inmediato",
+        "syncCue": "movimiento continuo con remate en palabra fuerte"
+      },
+      {
+        "segment": "open_loop",
+        "timing": "2.2-5s",
+        "visual": "ojo humano extremo o gesto suspendido en sombra, relacionado con procrastination, fondo negro o muy oscuro, contraste alto, azul electrico y rojo oscuro como acentos, zoom lento, iluminacion dramatica, sensacion de misterio psicologico",
+        "cut": "zoom corto continuo",
+        "startSeconds": 2.2,
+        "endSeconds": 5,
+        "durationSeconds": 2.8,
+        "shotType": "plano detalle",
+        "framing": "plano detalle",
+        "intensity": "alta",
+        "movement": "zoom lento continuo",
+        "transition": "match cut",
+        "emphasis": "curiosidad sostenida",
+        "syncCue": "movimiento continuo con remate en palabra fuerte"
+      },
+      {
+        "segment": "micro_value",
+        "timing": "5-8.2s",
+        "visual": "detalle simbolico del mecanismo mental en glow azul, relacionado con procrastination, fondo negro o muy oscuro, contraste alto, azul electrico y rojo oscuro como acentos, zoom lento, iluminacion dramatica, sensacion de misterio psicologico",
+        "cut": "cambio de plano limpio",
+        "startSeconds": 5,
+        "endSeconds": 8.2,
+        "durationSeconds": 3.2,
+        "shotType": "plano medio",
+        "framing": "plano medio",
+        "intensity": "media",
+        "movement": "micro paneo lateral",
+        "transition": "cut limpio",
+        "emphasis": "primer pago de valor",
+        "syncCue": "movimiento continuo con remate en palabra fuerte"
+      },
+      {
+        "segment": "escalation",
+        "timing": "8.2-11.6s",
+        "visual": "silueta humana o tension social en contraluz, relacionado con procrastination, fondo negro o muy oscuro, contraste alto, azul electrico y rojo oscuro como acentos, zoom lento, iluminacion dramatica, sensacion de misterio psicologico",
+        "cut": "cortes cada 2-3s",
+        "startSeconds": 8.2,
+        "endSeconds": 11.6,
+        "durationSeconds": 3.4,
+        "shotType": "plano abierto",
+        "framing": "plano abierto",
+        "intensity": "media-alta",
+        "movement": "acercamiento progresivo",
+        "transition": "cut ritmico",
+        "emphasis": "tension creciente",
+        "syncCue": "movimiento continuo con remate en palabra fuerte"
+      },
+      {
+        "segment": "reengage",
+        "timing": "11.6-14.2s",
+        "visual": "cambio brusco a plano mas cercano con rojo alerta, relacionado con procrastination, fondo negro o muy oscuro, contraste alto, azul electrico y rojo oscuro como acentos, zoom lento, iluminacion dramatica, sensacion de misterio psicologico",
+        "cut": "cambio brusco + zoom agresivo",
+        "startSeconds": 11.6,
+        "endSeconds": 14.2,
+        "durationSeconds": 2.6,
+        "shotType": "primer plano",
+        "framing": "primer plano",
+        "intensity": "muy alta",
+        "movement": "zoom agresivo",
+        "transition": "whip cut",
+        "emphasis": "ruptura de patron",
+        "syncCue": "acercamiento en frase clave"
+      },
+      {
+        "segment": "peak",
+        "timing": "14.2-17.8s",
+        "visual": "escena humana real de conflicto, pareja o decision, relacionado con procrastination, fondo negro o muy oscuro, contraste alto, azul electrico y rojo oscuro como acentos, zoom lento, iluminacion dramatica, sensacion de misterio psicologico",
+        "cut": "alternancia de planos cerrados",
+        "startSeconds": 14.2,
+        "endSeconds": 17.8,
+        "durationSeconds": 3.6,
+        "shotType": "plano medio",
+        "framing": "plano medio",
+        "intensity": "maxima",
+        "movement": "push-in sostenido",
+        "transition": "impact cut",
+        "emphasis": "impacto emocional",
+        "syncCue": "acercamiento en frase clave"
+      },
+      {
+        "segment": "open_ending",
+        "timing": "17.8-20.9s",
+        "visual": "figura sola alejandose en oscuridad con particulas, relacionado con procrastination, fondo negro o muy oscuro, contraste alto, azul electrico y rojo oscuro como acentos, zoom lento, iluminacion dramatica, sensacion de misterio psicologico",
+        "cut": "desaceleracion ligera",
+        "startSeconds": 17.8,
+        "endSeconds": 20.9,
+        "durationSeconds": 3.1,
+        "shotType": "plano abierto",
+        "framing": "plano abierto",
+        "intensity": "media",
+        "movement": "zoom out suave",
+        "transition": "cut limpio",
+        "emphasis": "eco mental",
+        "syncCue": "movimiento continuo con remate en palabra fuerte"
+      },
+      {
+        "segment": "soft_cta",
+        "timing": "20.9-23.6s",
+        "visual": "rostro o silueta frontal con espacio negativo para cierre, relacionado con procrastination, fondo negro o muy oscuro, contraste alto, azul electrico y rojo oscuro como acentos, zoom lento, iluminacion dramatica, sensacion de misterio psicologico",
+        "cut": "ultimo corte limpio",
+        "startSeconds": 20.9,
+        "endSeconds": 23.6,
+        "durationSeconds": 2.7,
+        "shotType": "plano detalle",
+        "framing": "plano detalle",
+        "intensity": "media",
+        "movement": "micro acercamiento",
+        "transition": "hold corto",
+        "emphasis": "cierre abierto",
+        "syncCue": "movimiento continuo con remate en palabra fuerte"
+      }
+    ],
+    "style": {
+      "theme": "psicologia oscura / mente humana / comportamiento",
+      "colorPalette": "negro absoluto, azul electrico, azul neon frio, rojo oscuro, blanco frio",
+      "visualStyle": "cinematografico, minimalista, alto contraste, single focus",
+      "lighting": "oscura, dramatica, contraluz duro, glow electrico dirigido, sombras marcadas",
+      "cameraMotion": "zoom lento constante, push-in suave, micro paneo lateral, cambio de plano cada 2-3 segundos",
+      "effects": "glow ligero, particulas sutiles, neblina tenue, ruido cinematografico muy fino",
+      "composition": "single focus, sujeto dominante a la derecha o centrado, texto respirando a la izquierda, primeros planos y siluetas, profundidad negativa",
+      "emotionalTone": "misterio psicologico, obsesion, tension contenida, intriga oscura",
+      "consistencyRules": [
+        "una sola escena principal por segmento",
+        "fondo siempre oscuro o casi negro",
+        "usar azul electrico como color dominante y rojo solo para tension o reengage",
+        "priorizar cerebros, ojos, siluetas y escenas humanas reconocibles",
+        "evitar stock luminoso, lifestyle genérico o composiciones planas"
+      ],
+      "clipKeywords": [
+        "dopamina",
+        "recompensa_inmediata",
+        "glowing brain dark background",
+        "blue eye close up dark",
+        "person silhouette red light",
+        "couple argument silhouette blue light",
+        "moody face close up shadow",
+        "dark cinematic person thinking"
+      ]
+    },
+    "clipKeywords": [
+      "dopamina",
+      "recompensa_inmediata",
+      "glowing brain dark background",
+      "blue eye close up dark",
+      "person silhouette red light",
+      "couple argument silhouette blue light",
+      "moody face close up shadow",
+      "dark cinematic person thinking"
+    ],
+    "rhythmRule": "cambio visual cada 2-3 segundos, sin escenas estaticas ni repeticiones consecutivas de encuadre",
+    "timeline": [
+      {
+        "segment": "hook",
+        "timing": "0-2.2s",
+        "durationSeconds": 2.2,
+        "shotType": "primer plano",
+        "intensity": "alta",
+        "movement": "push-in rapido",
+        "transition": "hard cut"
+      },
+      {
+        "segment": "open_loop",
+        "timing": "2.2-5s",
+        "durationSeconds": 2.8,
+        "shotType": "plano detalle",
+        "intensity": "alta",
+        "movement": "zoom lento continuo",
+        "transition": "match cut"
+      },
+      {
+        "segment": "micro_value",
+        "timing": "5-8.2s",
+        "durationSeconds": 3.2,
+        "shotType": "plano medio",
+        "intensity": "media",
+        "movement": "micro paneo lateral",
+        "transition": "cut limpio"
+      },
+      {
+        "segment": "escalation",
+        "timing": "8.2-11.6s",
+        "durationSeconds": 3.4,
+        "shotType": "plano abierto",
+        "intensity": "media-alta",
+        "movement": "acercamiento progresivo",
+        "transition": "cut ritmico"
+      },
+      {
+        "segment": "reengage",
+        "timing": "11.6-14.2s",
+        "durationSeconds": 2.6,
+        "shotType": "primer plano",
+        "intensity": "muy alta",
+        "movement": "zoom agresivo",
+        "transition": "whip cut"
+      },
+      {
+        "segment": "peak",
+        "timing": "14.2-17.8s",
+        "durationSeconds": 3.6,
+        "shotType": "plano medio",
+        "intensity": "maxima",
+        "movement": "push-in sostenido",
+        "transition": "impact cut"
+      },
+      {
+        "segment": "open_ending",
+        "timing": "17.8-20.9s",
+        "durationSeconds": 3.1,
+        "shotType": "plano abierto",
+        "intensity": "media",
+        "movement": "zoom out suave",
+        "transition": "cut limpio"
+      },
+      {
+        "segment": "soft_cta",
+        "timing": "20.9-23.6s",
+        "durationSeconds": 2.7,
+        "shotType": "plano detalle",
+        "intensity": "media",
+        "movement": "micro acercamiento",
+        "transition": "hold corto"
+      }
+    ]
+  },
+  "growthContext": {
+    "nextTopic": "procrastination",
+    "hookType": "challenge",
+    "emotionalTrigger": "relatability",
+    "angle": "sistema de recompensa inmediata vs futura",
+    "avoidTopics": [
+      "cognitive_biases",
+      "relationships",
+      "decision_making",
+      "emotional_patterns",
+      "habits",
+      "attention",
+      "dopamine",
+      "body_language",
+      "emotions"
+    ],
+    "avoidRecentHooks": [
+      "Tu cerebro pide dopamina cada treinta segundos sin notarlo.",
+      "Tu sonrisa miente. Tu cara no.",
+      "Tu cerebro no puede hacer dos cosas. Elige una.",
+      "El 73% elige mal cuando tiene demasiadas opciones",
+      "El 73% elige mal cuando tiene demasiadas opciones",
+      "Tu cerebro ve peligro donde no hay",
+      "Tu cerebro necesita aburrimiento para funcionar",
+      "Cuando dudas, te manipulan mas facil"
+    ],
+    "reasoning": "Topic 'procrastination' por estrategia explore. Saturados evitados: cognitive_biases, relationships, decision_making, emotional_patterns, habits, attention, dopamine, body_language, emotions.",
+    "confidence": 0.5,
+    "strategy": "explore",
+    "decisionAt": "2026-04-24T11:28:28.955Z",
+    "topic": "procrastination",
+    "fallbackGenerator": "last-valid-script",
+    "fallbackReason": "no_valid_candidate_after_attempts"
+  },
+  "viralityScore": 61,
+  "viralityBreakdown": {
+    "hookStrength": 23,
+    "emotionalTrigger": 8,
+    "relatability": 13,
+    "loopPotential": 15,
+    "durationBonus": 2
+  },
+  "formatMatchScore": 75,
+  "formatMatchBreakdown": {
+    "hookFormat": 16,
+    "brevity": 12,
+    "clarity": 15,
+    "narrativeRhythm": 6,
+    "psychologicalImpact": 8,
+    "scrollStop": 3,
+    "infoDensity": 4,
+    "earlyRevelation": 3,
+    "singleIdea": 3,
+    "reengage": 5
+  },
+  "formatMatchSegmentGaps": [
+    "[micro_value] micro_value poco concreto",
+    "[soft_cta] soft_cta poco conversacional"
+  ],
+  "formatMatchGaps": [
+    "Hook no para el scroll — falta tensión, shock o reconocimiento inmediato",
+    "Baja densidad — más información útil en menos palabras",
+    "Revelación tardía — el claim debe ser breve y concreto, no llegar al segundo 8",
+    "[micro_value] micro_value poco concreto",
+    "[soft_cta] soft_cta poco conversacional"
+  ],
+  "emotionalImpactScore": 46,
+  "emotionalImpactBreakdown": {
+    "powerWords": 6,
+    "personalId": 20,
+    "surpriseFactor": 5,
+    "visceral": 5,
+    "tensionResolution": 10
+  },
+  "approved": true,
+  "rejectionReason": null,
+  "selectionPenalties": [
+    "virality_low:61",
+    "[micro_value] micro_value poco concreto",
+    "[soft_cta] soft_cta poco conversacional"
+  ],
+  "llmMetrics": {
+    "llm_total_calls": 4,
+    "llm_parse_fail": false,
+    "llm_recovery_used": false,
+    "llm_hard_fail": false,
+    "emergency_fallback_used": false,
+    "llm_schema_fail": false,
+    "llm_truncated_suspected": true
+  },
+  "usedRecovery": false,
+  "generationSource": "generateViralScript",
+  "llmPath": [
+    "generateViralScript"
+  ],
+  "reusedLastValidScript": true,
+  "reusedAt": "2026-04-24T11:28:57.607Z",
+  "lastValidMetadata": {
+    "id": "procrastination_1777030122192",
+    "topic": "procrastination",
+    "angle": "sistema de recompensa inmediata vs futura",
+    "hookType": "challenge",
+    "emotionalTrigger": "relatability",
+    "generationSource": "generateViralScript",
+    "createdAt": "2026-04-24T11:28:42.197Z"
+  },
+  "generationFallback": "last-valid-script",
+  "approvalBypass": "last-valid-script_fallback",
+  "selectedQuality": "fallback",
+  "abVariantId": "v_a",
+  "slotTracking": {
+    "batchId": "batch_1777029791310",
+    "slotId": "batch_1777029791310_slot_1",
+    "plannedOrder": 1,
+    "plannedRole": "follow",
+    "plannedCluster": "relationships",
+    "plannedHookType": "challenge",
+    "plannedMicroAction": "REPEAT_CHECK",
+    "recommendedCandidateId": "relationships-3",
+    "recommendedCandidateTitle": "El gesto pequeño que te cambia el día",
+    "businessMode": "monetization_priority",
+    "targetGoal": "monetization_priority",
+    "scheduleWindow": "4 días",
+    "recommendedPublishTime": "6 horas x slot 1",
+    "attributionType": "ab_linked",
+    "slotState": "assigned",
+    "assignmentConfidence": 0.12,
+    "traceConfidence": 0.12,
+    "exactTraceAvailable": true,
+    "abLinked": true
+  },
+  "contentVersion": "v2",
+  "narrationPlan": {
+    "mode": "natural_short_v1",
+    "segments": {
+      "hook": {
+        "key": "hook",
+        "text": "Sabes que tienes que hacerlo pero tu cuerpo dice que no.",
+        "deliveryStyle": "directo",
+        "narrationEnergy": "alta",
+        "pauseStrength": "fuerte",
+        "emphasisWords": [
+          "cuerpo",
+          "dice"
+        ],
+        "pacing": "corto",
+        "pauseBefore": 0,
+        "pauseAfter": 0.46,
+        "joiner": "...",
+        "ssmlRate": "-10%",
+        "ssmlPitch": "+6%",
+        "ssmlVolume": "+2%"
+      },
+      "open_loop": {
+        "key": "open_loop",
+        "text": "¿Por qué esa sensación gana siempre en los primeros cinco minutos?",
+        "deliveryStyle": "susurrado-tenso",
+        "narrationEnergy": "media-alta",
+        "pauseStrength": "media",
+        "emphasisWords": [
+          "cinco",
+          "minutos"
+        ],
+        "pacing": "tenso",
+        "pauseBefore": 0.06,
+        "pauseAfter": 0.12,
+        "joiner": ".",
+        "ssmlRate": "-6%",
+        "ssmlPitch": "+3%",
+        "ssmlVolume": "+1%"
+      },
+      "micro_value": {
+        "key": "micro_value",
+        "text": "Tu cerebro elige dolor ahora si promete placer en treinta segundos. Eso es todo.",
+        "deliveryStyle": "claro",
+        "narrationEnergy": "media",
+        "pauseStrength": "corta",
+        "emphasisWords": [
+          "treinta",
+          "segundos"
+        ],
+        "pacing": "estable",
+        "pauseBefore": 0.04,
+        "pauseAfter": 0.08,
+        "joiner": ".",
+        "ssmlRate": "-2%",
+        "ssmlPitch": "0%",
+        "ssmlVolume": "0%"
+      },
+      "escalation": {
+        "key": "escalation",
+        "text": "Mientras tú planeas estudiar, tu sistema de recompensa está buscando dopamina fácil. El móvil, Netflix, scrollear., aunque sabes que en dos horas te odiarás, en este momento gana lo rápido.",
+        "deliveryStyle": "creciente",
+        "narrationEnergy": "media-alta",
+        "pauseStrength": "corta",
+        "emphasisWords": [
+          "gana",
+          "rapido"
+        ],
+        "pacing": "agil",
+        "pauseBefore": 0.04,
+        "pauseAfter": 0.18,
+        "joiner": ".",
+        "ssmlRate": "+3%",
+        "ssmlPitch": "+1%",
+        "ssmlVolume": "+1%"
+      },
+      "reengage": {
+        "key": "reengage",
+        "text": "Y lo peor: tu cerebro sabe que es una trampa pero lo hace igual.",
+        "deliveryStyle": "remate",
+        "narrationEnergy": "alta",
+        "pauseStrength": "fuerte",
+        "emphasisWords": [
+          "hace",
+          "igual"
+        ],
+        "pacing": "marcado",
+        "pauseBefore": 0.26,
+        "pauseAfter": 0.12,
+        "joiner": "...",
+        "ssmlRate": "-4%",
+        "ssmlPitch": "+6%",
+        "ssmlVolume": "+3%"
+      },
+      "peak": {
+        "key": "peak",
+        "text": "El ejercicio que aplazas duele ahora. El móvil te recompensa ahora. El futuro no recompensa, solo castig. Por eso postergamos, aunque nos arrepintamos siempre.",
+        "deliveryStyle": "impacto",
+        "narrationEnergy": "muy alta",
+        "pauseStrength": "media",
+        "emphasisWords": [
+          "postergamos",
+          "arrepintamos"
+        ],
+        "pacing": "enfatico",
+        "pauseBefore": 0.18,
+        "pauseAfter": 0.16,
+        "joiner": ".",
+        "ssmlRate": "-3%",
+        "ssmlPitch": "+4%",
+        "ssmlVolume": "+4%"
+      },
+      "open_ending": {
+        "key": "open_ending",
+        "text": "¿Qué pasa si cambias dónde está la recompensa inmediata?",
+        "deliveryStyle": "eco",
+        "narrationEnergy": "media",
+        "pauseStrength": "corta",
+        "emphasisWords": [
+          "recompensa",
+          "inmediata"
+        ],
+        "pacing": "controlado",
+        "pauseBefore": 0.08,
+        "pauseAfter": 0.06,
+        "joiner": ".",
+        "ssmlRate": "-5%",
+        "ssmlPitch": "-1%",
+        "ssmlVolume": "0%"
+      },
+      "soft_cta": {
+        "key": "soft_cta",
+        "text": "Cuéntame en comentarios cómo lo hacés vos.",
+        "deliveryStyle": "conversacional",
+        "narrationEnergy": "media",
+        "pauseStrength": "ninguna",
+        "emphasisWords": [
+          "comentarios",
+          "haces"
+        ],
+        "pacing": "natural",
+        "pauseBefore": 0.05,
+        "pauseAfter": 0,
+        "joiner": "",
+        "ssmlRate": "-7%",
+        "ssmlPitch": "+2%",
+        "ssmlVolume": "0%"
+      }
+    },
+    "blocks": [
+      {
+        "key": "block_1",
+        "pauseAfter": 0.46,
+        "blockPacing": "controlado con gancho",
+        "parts": [
+          {
+            "key": "hook",
+            "text": "Sabes que tienes que hacerlo pero tu cuerpo dice que no.",
+            "joiner": "...",
+            "pauseBefore": 0,
+            "profile": {
+              "key": "hook",
+              "text": "Sabes que tienes que hacerlo pero tu cuerpo dice que no.",
+              "deliveryStyle": "directo",
+              "narrationEnergy": "alta",
+              "pauseStrength": "fuerte",
+              "emphasisWords": [
+                "cuerpo",
+                "dice"
+              ],
+              "pacing": "corto",
+              "pauseBefore": 0,
+              "pauseAfter": 0.46,
+              "joiner": "...",
+              "ssmlRate": "-10%",
+              "ssmlPitch": "+6%",
+              "ssmlVolume": "+2%"
+            }
+          },
+          {
+            "key": "open_loop",
+            "text": "¿Por qué esa sensación gana siempre en los primeros cinco minutos?",
+            "joiner": ".",
+            "pauseBefore": 0.06,
+            "profile": {
+              "key": "open_loop",
+              "text": "¿Por qué esa sensación gana siempre en los primeros cinco minutos?",
+              "deliveryStyle": "susurrado-tenso",
+              "narrationEnergy": "media-alta",
+              "pauseStrength": "media",
+              "emphasisWords": [
+                "cinco",
+                "minutos"
+              ],
+              "pacing": "tenso",
+              "pauseBefore": 0.06,
+              "pauseAfter": 0.12,
+              "joiner": ".",
+              "ssmlRate": "-6%",
+              "ssmlPitch": "+3%",
+              "ssmlVolume": "+1%"
+            }
+          }
+        ],
+        "text": "Sabes que tienes que hacerlo pero tu cuerpo dice que no... ¿Por qué esa sensación gana siempre en los primeros cinco minutos?"
+      },
+      {
+        "key": "block_2",
+        "pauseAfter": 0.22,
+        "blockPacing": "creciente",
+        "parts": [
+          {
+            "key": "micro_value",
+            "text": "Tu cerebro elige dolor ahora si promete placer en treinta segundos. Eso es todo.",
+            "joiner": ".",
+            "pauseBefore": 0.04,
+            "profile": {
+              "key": "micro_value",
+              "text": "Tu cerebro elige dolor ahora si promete placer en treinta segundos. Eso es todo.",
+              "deliveryStyle": "claro",
+              "narrationEnergy": "media",
+              "pauseStrength": "corta",
+              "emphasisWords": [
+                "treinta",
+                "segundos"
+              ],
+              "pacing": "estable",
+              "pauseBefore": 0.04,
+              "pauseAfter": 0.08,
+              "joiner": ".",
+              "ssmlRate": "-2%",
+              "ssmlPitch": "0%",
+              "ssmlVolume": "0%"
+            }
+          },
+          {
+            "key": "escalation",
+            "text": "Mientras tú planeas estudiar, tu sistema de recompensa está buscando dopamina fácil. El móvil, Netflix, scrollear., aunque sabes que en dos horas te odiarás, en este momento gana lo rápido.",
+            "joiner": ".",
+            "pauseBefore": 0.04,
+            "profile": {
+              "key": "escalation",
+              "text": "Mientras tú planeas estudiar, tu sistema de recompensa está buscando dopamina fácil. El móvil, Netflix, scrollear., aunque sabes que en dos horas te odiarás, en este momento gana lo rápido.",
+              "deliveryStyle": "creciente",
+              "narrationEnergy": "media-alta",
+              "pauseStrength": "corta",
+              "emphasisWords": [
+                "gana",
+                "rapido"
+              ],
+              "pacing": "agil",
+              "pauseBefore": 0.04,
+              "pauseAfter": 0.18,
+              "joiner": ".",
+              "ssmlRate": "+3%",
+              "ssmlPitch": "+1%",
+              "ssmlVolume": "+1%"
+            }
+          }
+        ],
+        "text": "Tu cerebro elige dolor ahora si promete placer en treinta segundos. Eso es todo. Mientras tú planeas estudiar, tu sistema de recompensa está buscando dopamina fácil. El móvil, Netflix, scrollear., aunque sabes que en dos horas te odiarás, en este momento gana lo rápido."
+      },
+      {
+        "key": "block_3",
+        "pauseAfter": 0.18,
+        "blockPacing": "impacto",
+        "parts": [
+          {
+            "key": "reengage",
+            "text": "Y lo peor: tu cerebro sabe que es una trampa pero lo hace igual.",
+            "joiner": "...",
+            "pauseBefore": 0.26,
+            "profile": {
+              "key": "reengage",
+              "text": "Y lo peor: tu cerebro sabe que es una trampa pero lo hace igual.",
+              "deliveryStyle": "remate",
+              "narrationEnergy": "alta",
+              "pauseStrength": "fuerte",
+              "emphasisWords": [
+                "hace",
+                "igual"
+              ],
+              "pacing": "marcado",
+              "pauseBefore": 0.26,
+              "pauseAfter": 0.12,
+              "joiner": "...",
+              "ssmlRate": "-4%",
+              "ssmlPitch": "+6%",
+              "ssmlVolume": "+3%"
+            }
+          },
+          {
+            "key": "peak",
+            "text": "El ejercicio que aplazas duele ahora. El móvil te recompensa ahora. El futuro no recompensa, solo castig. Por eso postergamos, aunque nos arrepintamos siempre.",
+            "joiner": ".",
+            "pauseBefore": 0.18,
+            "profile": {
+              "key": "peak",
+              "text": "El ejercicio que aplazas duele ahora. El móvil te recompensa ahora. El futuro no recompensa, solo castig. Por eso postergamos, aunque nos arrepintamos siempre.",
+              "deliveryStyle": "impacto",
+              "narrationEnergy": "muy alta",
+              "pauseStrength": "media",
+              "emphasisWords": [
+                "postergamos",
+                "arrepintamos"
+              ],
+              "pacing": "enfatico",
+              "pauseBefore": 0.18,
+              "pauseAfter": 0.16,
+              "joiner": ".",
+              "ssmlRate": "-3%",
+              "ssmlPitch": "+4%",
+              "ssmlVolume": "+4%"
+            }
+          }
+        ],
+        "text": "Y lo peor: tu cerebro sabe que es una trampa pero lo hace igual... El ejercicio que aplazas duele ahora. El móvil te recompensa ahora. El futuro no recompensa, solo castig. Por eso postergamos, aunque nos arrepintamos siempre."
+      },
+      {
+        "key": "block_4",
+        "pauseAfter": 0,
+        "blockPacing": "cierre conversacional",
+        "parts": [
+          {
+            "key": "open_ending",
+            "text": "¿Qué pasa si cambias dónde está la recompensa inmediata?",
+            "joiner": ".",
+            "pauseBefore": 0.08,
+            "profile": {
+              "key": "open_ending",
+              "text": "¿Qué pasa si cambias dónde está la recompensa inmediata?",
+              "deliveryStyle": "eco",
+              "narrationEnergy": "media",
+              "pauseStrength": "corta",
+              "emphasisWords": [
+                "recompensa",
+                "inmediata"
+              ],
+              "pacing": "controlado",
+              "pauseBefore": 0.08,
+              "pauseAfter": 0.06,
+              "joiner": ".",
+              "ssmlRate": "-5%",
+              "ssmlPitch": "-1%",
+              "ssmlVolume": "0%"
+            }
+          },
+          {
+            "key": "soft_cta",
+            "text": "Cuéntame en comentarios cómo lo hacés vos.",
+            "joiner": "",
+            "pauseBefore": 0.05,
+            "profile": {
+              "key": "soft_cta",
+              "text": "Cuéntame en comentarios cómo lo hacés vos.",
+              "deliveryStyle": "conversacional",
+              "narrationEnergy": "media",
+              "pauseStrength": "ninguna",
+              "emphasisWords": [
+                "comentarios",
+                "haces"
+              ],
+              "pacing": "natural",
+              "pauseBefore": 0.05,
+              "pauseAfter": 0,
+              "joiner": "",
+              "ssmlRate": "-7%",
+              "ssmlPitch": "+2%",
+              "ssmlVolume": "0%"
+            }
+          }
+        ],
+        "text": "¿Qué pasa si cambias dónde está la recompensa inmediata. Cuéntame en comentarios cómo lo hacés vos."
+      }
+    ]
+  }
+}

@@ -40,6 +40,7 @@ const { touchPipelineState, getOperationalThresholds } = require('../services/op
 const themes = require('../templates/visual-themes.json');
 const logger = require('../utils/logger');
 const { createPerfTracker, formatDurationMs } = require('../utils/perf-tracker');
+const { validateVideoV4 } = require('../contracts/video-v4.contract');
 
 // ─────────────────────────────────────────────
 //  PATHS DE LA COLA
@@ -246,6 +247,35 @@ async function processPipeline(job) {
   logger.info(`[Job ${job.id}] audio_postprocess done in ${formatDurationMs(postPhase.durationMs)}`);
   job.performance = perf.snapshot();
   updateJobProgress(job, 50, 'audio_postprocessed', { videoId });
+
+  // ═══════════════════════════════════════════════════════════════
+  // V4.1 CONTRACT VALIDATION (FAIL-FAST PRE-RENDER)
+  // ═══════════════════════════════════════════════════════════════
+  const v4ValidationMode = process.env.V4_VALIDATION_MODE || 'strict';
+  const v4Validation = validateVideoV4(script);
+  if (!v4Validation.valid) {
+    const v4Message = `V4 contract violation: ${v4Validation.errors.join(' | ')}`;
+
+    if (v4ValidationMode === 'soft') {
+      // Temporary mode: log warning but continue rendering
+      logger.warn('V4_WARNING | processor (soft mode enabled)', {
+        videoId,
+        jobId: job.id,
+        scores: v4Validation.scores,
+        errors: v4Validation.errors,
+      });
+    } else {
+      // Strict mode: block immediately
+      logger.error('V4_FAIL | processor', {
+        videoId,
+        jobId: job.id,
+        errors: v4Validation.errors,
+      });
+      throw new Error(`V4 contract violation at render: ${v4Message}`);
+    }
+  } else {
+    logger.info(`V4_PASS | processor | videoId=${videoId}`);
+  }
 
   // 3. Renderizado FFmpeg
   logger.info(`[Job ${job.id}] 3/5 Rendering video...`);

@@ -1,0 +1,71 @@
+{
+  "score": 80,
+  "passed": true,
+  "threshold": 70,
+  "checks": {
+    "audioExists": {
+      "ok": true,
+      "path": "C:\\Users\\Erik\\Desktop\\Generador_videos\\output\\a1bf333b-172f-4542-b516-3c5da810e6cb\\voice_proc.mp3",
+      "sizeKB": 868,
+      "reason": null
+    },
+    "audioDuration": {
+      "ok": true,
+      "duration": 37,
+      "reason": null
+    },
+    "videoExists": {
+      "ok": true,
+      "sizeKB": 11686,
+      "reason": null
+    },
+    "renderMode": {
+      "ok": true,
+      "mode": "video_use",
+      "reason": null
+    },
+    "renderVisuals": {
+      "ok": true,
+      "reason": null,
+      "renderMode": "video_use"
+    },
+    "scriptComplete": {
+      "ok": true,
+      "missing": [],
+      "reason": null
+    },
+    "viralityScore": {
+      "ok": false,
+      "score": 50,
+      "min": 65,
+      "reason": "virality 50 < 65"
+    },
+    "formatScore": {
+      "ok": false,
+      "score": 74,
+      "min": 75,
+      "reason": "format 74 < 75"
+    },
+    "hasTheme": {
+      "ok": true,
+      "reason": null
+    },
+    "contentVersion": {
+      "ok": true,
+      "actual": "v2",
+      "required": "v2",
+      "reason": null
+    },
+    "publishableFile": {
+      "ok": true,
+      "duration": 37,
+      "hasVideoStream": true,
+      "reason": null
+    }
+  },
+  "reasons": [
+    "virality 50 < 65",
+    "format 74 < 75"
+  ],
+  "checkedAt": "2026-04-24T11:16:50.617Z"
+}

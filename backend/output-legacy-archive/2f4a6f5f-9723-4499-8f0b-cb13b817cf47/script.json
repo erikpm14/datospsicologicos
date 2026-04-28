@@ -1,0 +1,847 @@
+{
+  "title": "emotional_patterns_1777228972149",
+  "topic": "emotional_patterns",
+  "hook": "Tu tristeza es contagiosa sin que lo sepas.",
+  "open_loop": "Hay un mecanismo neuronal que propaga tu estado emocional a otros automáticamente.",
+  "micro_value": "Se llama espejo emocional. Tu expresión facial activa las mismas neuronas en quien te ve.",
+  "escalation": "Por eso tu mal día arruina el de tu pareja, tu amigo, tu familia. Ellos no eligen sentir lo que tú sientes. Sus cuerpos lo hacen por instinto evolutivo de supervivencia.",
+  "reengage": "Pero espera, hay un giro oscuro aquí.",
+  "peak": "Tú también estás siendo contagiado ahora mismo sin saberlo. El miedo de otros entra en ti, la alegría ajena te sube, la ansiedad del grupo te paraliza. Eres un receptor de emociones ajenas constantemente.",
+  "open_ending": "¿Cuántas de tus emociones hoy son realmente tuyas?",
+  "soft_cta": "¿Me equivoco o tú también lo has sentido?",
+  "claim": "Se llama espejo emocional. Tu expresión facial activa las mismas neuronas en quien te ve.",
+  "explanation": "Por eso tu mal día arruina el de tu pareja, tu amigo, tu familia. Ellos no eligen sentir lo que tú sientes. Sus cuerpos lo hacen por instinto evolutivo de supervivencia. Pero espera, hay un giro oscuro aquí. Tú también estás siendo contagiado ahora mismo sin saberlo. El miedo de otros entra en ti, la alegría ajena te sube, la ansiedad del grupo te paraliza. Eres un receptor de emociones ajenas constantemente.",
+  "cta": "¿Cuántas de tus emociones hoy son realmente tuyas? ¿Me equivoco o tú también lo has sentido?",
+  "psychologicalFact": "El espejo emocional o emotional contagion es un mecanismo neurobiológico documentado que propaga estados emocionales entre individuos sin mediación consciente.",
+  "viralTrigger": "identificacion",
+  "emotionalTrigger": "awe",
+  "durationSeconds": 53,
+  "keywords": [
+    "contagio emocional",
+    "espejo neuronal"
+  ],
+  "hashtags": [
+    "#psicologia",
+    "#mente",
+    "#cerebro"
+  ],
+  "allHooks": null,
+  "selectedHookType": "challenge",
+  "hookSelectionReason": "Identificación incómoda + reconocimiento inmediato sin explicación previa",
+  "optimizationNotes": {
+    "patronUsado": "contagio emocional inconsciente como mecanismo invisible"
+  },
+  "learningSignals": {},
+  "autoevaluacion": {},
+  "segments": [
+    {
+      "type": "HOOK",
+      "text": "Tu tristeza es contagiosa sin que lo sepas.",
+      "visualIntent": "punch zoom, texto impactante, fondo oscuro",
+      "emotion": "tension"
+    },
+    {
+      "type": "OPEN_LOOP",
+      "text": "Hay un mecanismo neuronal que propaga tu estado emocional a otros automáticamente.",
+      "visualIntent": "zoom lento, rostro pensativo, tension",
+      "emotion": "curiosity"
+    },
+    {
+      "type": "MICRO_VALUE",
+      "text": "Se llama espejo emocional. Tu expresión facial activa las mismas neuronas en quien te ve.",
+      "visualIntent": "zoom lento, rostro pensativo, tension",
+      "emotion": "curiosity"
+    },
+    {
+      "type": "ESCALATION",
+      "text": "Por eso tu mal día arruina el de tu pareja, tu amigo, tu familia. Ellos no eligen sentir lo que tú sientes. Sus cuerpos lo hacen por instinto evolutivo de supervivencia.",
+      "visualIntent": "zoom lento, rostro pensativo, tension",
+      "emotion": "curiosity"
+    },
+    {
+      "type": "REENGAGE",
+      "text": "Pero espera, hay un giro oscuro aquí.",
+      "visualIntent": "cambio brusco, tension, zoom corto",
+      "emotion": "curiosity"
+    },
+    {
+      "type": "PEAK",
+      "text": "Tú también estás siendo contagiado ahora mismo sin saberlo. El miedo de otros entra en ti, la alegría ajena te sube, la ansiedad del grupo te paraliza. Eres un receptor de emociones ajenas constantemente.",
+      "visualIntent": "aislamiento, silueta, punch zoom",
+      "emotion": "impacto"
+    },
+    {
+      "type": "OPEN_ENDING",
+      "text": "¿Cuántas de tus emociones hoy son realmente tuyas?",
+      "visualIntent": "zoom lento, rostro pensativo, tension",
+      "emotion": "curiosity"
+    },
+    {
+      "type": "SOFT_CTA",
+      "text": "¿Me equivoco o tú también lo has sentido?",
+      "visualIntent": "zoom lento, rostro pensativo, tension",
+      "emotion": "cercania"
+    }
+  ],
+  "structureVersion": "open_loop_escalation_v1",
+  "hasReengage": true,
+  "segmentFeedback": [],
+  "segmentFeedbackSummary": [],
+  "estimatedWords": 123,
+  "fullScript": "Tu tristeza es contagiosa sin que lo sepas. Hay un mecanismo neuronal que propaga tu estado emocional a otros automáticamente. Se llama espejo emocional. Tu expresión facial activa las mismas neuronas en quien te ve. Por eso tu mal día arruina el de tu pareja, tu amigo, tu familia. Ellos no eligen sentir lo que tú sientes. Sus cuerpos lo hacen por instinto evolutivo de supervivencia. Pero espera, hay un giro oscuro aquí. Tú también estás siendo contagiado ahora mismo sin saberlo. El miedo de otros entra en ti, la alegría ajena te sube, la ansiedad del grupo te paraliza. Eres un receptor de emociones ajenas constantemente. ¿Cuántas de tus emociones hoy son realmente tuyas? ¿Me equivoco o tú también lo has sentido?",
+  "videoInstructions": {
+    "singleFocus": true,
+    "visualStyle": [
+      "estetica cinematografica oscura",
+      "fondo negro o casi negro",
+      "alto contraste con azul electrico dominante",
+      "acento rojo oscuro solo para tension",
+      "single focus constante sin overlays complejos",
+      "cambio de plano cada 2-3 segundos",
+      "zoom progresivo y movimiento suave"
+    ],
+    "subtitleStyle": "tipografia condensada bold, blanco frio con acentos azul electrico y rojo oscuro, subtitulos grandes y sincronizados",
+    "audioStyle": {
+      "voice": "voz clara y con ritmo",
+      "pauses": [
+        "hook",
+        "reengage",
+        "peak"
+      ]
+    },
+    "scenes": [
+      {
+        "segment": "hook",
+        "timing": "0-2.2s",
+        "visual": "primer plano de cerebro luminoso o rostro inquietante, relacionado con emotional_patterns, fondo negro o muy oscuro, contraste alto, azul electrico y rojo oscuro como acentos, zoom lento, iluminacion dramatica, sensacion de misterio psicologico",
+        "cut": "corte rapido con push-in",
+        "startSeconds": 0,
+        "endSeconds": 2.2,
+        "durationSeconds": 2.2,
+        "shotType": "primer plano",
+        "framing": "primer plano",
+        "intensity": "alta",
+        "movement": "push-in rapido",
+        "transition": "hard cut",
+        "emphasis": "scroll-stop inmediato",
+        "syncCue": "movimiento continuo con remate en palabra fuerte"
+      },
+      {
+        "segment": "open_loop",
+        "timing": "2.2-5s",
+        "visual": "ojo humano extremo o gesto suspendido en sombra, relacionado con emotional_patterns, fondo negro o muy oscuro, contraste alto, azul electrico y rojo oscuro como acentos, zoom lento, iluminacion dramatica, sensacion de misterio psicologico",
+        "cut": "zoom corto continuo",
+        "startSeconds": 2.2,
+        "endSeconds": 5,
+        "durationSeconds": 2.8,
+        "shotType": "plano detalle",
+        "framing": "plano detalle",
+        "intensity": "alta",
+        "movement": "zoom lento continuo",
+        "transition": "match cut",
+        "emphasis": "curiosidad sostenida",
+        "syncCue": "movimiento continuo con remate en palabra fuerte"
+      },
+      {
+        "segment": "micro_value",
+        "timing": "5-8.2s",
+        "visual": "detalle simbolico del mecanismo mental en glow azul, relacionado con emotional_patterns, fondo negro o muy oscuro, contraste alto, azul electrico y rojo oscuro como acentos, zoom lento, iluminacion dramatica, sensacion de misterio psicologico",
+        "cut": "cambio de plano limpio",
+        "startSeconds": 5,
+        "endSeconds": 8.2,
+        "durationSeconds": 3.2,
+        "shotType": "plano medio",
+        "framing": "plano medio",
+        "intensity": "media",
+        "movement": "micro paneo lateral",
+        "transition": "cut limpio",
+        "emphasis": "primer pago de valor",
+        "syncCue": "movimiento continuo con remate en palabra fuerte"
+      },
+      {
+        "segment": "escalation",
+        "timing": "8.2-11.6s",
+        "visual": "silueta humana o tension social en contraluz, relacionado con emotional_patterns, fondo negro o muy oscuro, contraste alto, azul electrico y rojo oscuro como acentos, zoom lento, iluminacion dramatica, sensacion de misterio psicologico",
+        "cut": "cortes cada 2-3s",
+        "startSeconds": 8.2,
+        "endSeconds": 11.6,
+        "durationSeconds": 3.4,
+        "shotType": "plano abierto",
+        "framing": "plano abierto",
+        "intensity": "media-alta",
+        "movement": "acercamiento progresivo",
+        "transition": "cut ritmico",
+        "emphasis": "tension creciente",
+        "syncCue": "movimiento continuo con remate en palabra fuerte"
+      },
+      {
+        "segment": "reengage",
+        "timing": "11.6-14.2s",
+        "visual": "cambio brusco a plano mas cercano con rojo alerta, relacionado con emotional_patterns, fondo negro o muy oscuro, contraste alto, azul electrico y rojo oscuro como acentos, zoom lento, iluminacion dramatica, sensacion de misterio psicologico",
+        "cut": "cambio brusco + zoom agresivo",
+        "startSeconds": 11.6,
+        "endSeconds": 14.2,
+        "durationSeconds": 2.6,
+        "shotType": "primer plano",
+        "framing": "primer plano",
+        "intensity": "muy alta",
+        "movement": "zoom agresivo",
+        "transition": "whip cut",
+        "emphasis": "ruptura de patron",
+        "syncCue": "acercamiento en frase clave"
+      },
+      {
+        "segment": "peak",
+        "timing": "14.2-17.8s",
+        "visual": "escena humana real de conflicto, pareja o decision, relacionado con emotional_patterns, fondo negro o muy oscuro, contraste alto, azul electrico y rojo oscuro como acentos, zoom lento, iluminacion dramatica, sensacion de misterio psicologico",
+        "cut": "alternancia de planos cerrados",
+        "startSeconds": 14.2,
+        "endSeconds": 17.8,
+        "durationSeconds": 3.6,
+        "shotType": "plano medio",
+        "framing": "plano medio",
+        "intensity": "maxima",
+        "movement": "push-in sostenido",
+        "transition": "impact cut",
+        "emphasis": "impacto emocional",
+        "syncCue": "acercamiento en frase clave"
+      },
+      {
+        "segment": "open_ending",
+        "timing": "17.8-20.9s",
+        "visual": "figura sola alejandose en oscuridad con particulas, relacionado con emotional_patterns, fondo negro o muy oscuro, contraste alto, azul electrico y rojo oscuro como acentos, zoom lento, iluminacion dramatica, sensacion de misterio psicologico",
+        "cut": "desaceleracion ligera",
+        "startSeconds": 17.8,
+        "endSeconds": 20.9,
+        "durationSeconds": 3.1,
+        "shotType": "plano abierto",
+        "framing": "plano abierto",
+        "intensity": "media",
+        "movement": "zoom out suave",
+        "transition": "cut limpio",
+        "emphasis": "eco mental",
+        "syncCue": "movimiento continuo con remate en palabra fuerte"
+      },
+      {
+        "segment": "soft_cta",
+        "timing": "20.9-23.6s",
+        "visual": "rostro o silueta frontal con espacio negativo para cierre, relacionado con emotional_patterns, fondo negro o muy oscuro, contraste alto, azul electrico y rojo oscuro como acentos, zoom lento, iluminacion dramatica, sensacion de misterio psicologico",
+        "cut": "ultimo corte limpio",
+        "startSeconds": 20.9,
+        "endSeconds": 23.6,
+        "durationSeconds": 2.7,
+        "shotType": "plano detalle",
+        "framing": "plano detalle",
+        "intensity": "media",
+        "movement": "micro acercamiento",
+        "transition": "hold corto",
+        "emphasis": "cierre abierto",
+        "syncCue": "movimiento continuo con remate en palabra fuerte"
+      }
+    ],
+    "style": {
+      "theme": "psicologia oscura / mente humana / comportamiento",
+      "colorPalette": "negro absoluto, azul electrico, azul neon frio, rojo oscuro, blanco frio",
+      "visualStyle": "cinematografico, minimalista, alto contraste, single focus",
+      "lighting": "oscura, dramatica, contraluz duro, glow electrico dirigido, sombras marcadas",
+      "cameraMotion": "zoom lento constante, push-in suave, micro paneo lateral, cambio de plano cada 2-3 segundos",
+      "effects": "glow ligero, particulas sutiles, neblina tenue, ruido cinematografico muy fino",
+      "composition": "single focus, sujeto dominante a la derecha o centrado, texto respirando a la izquierda, primeros planos y siluetas, profundidad negativa",
+      "emotionalTone": "misterio psicologico, obsesion, tension contenida, intriga oscura",
+      "consistencyRules": [
+        "una sola escena principal por segmento",
+        "fondo siempre oscuro o casi negro",
+        "usar azul electrico como color dominante y rojo solo para tension o reengage",
+        "priorizar cerebros, ojos, siluetas y escenas humanas reconocibles",
+        "evitar stock luminoso, lifestyle genérico o composiciones planas"
+      ],
+      "clipKeywords": [
+        "contagio emocional",
+        "espejo neuronal",
+        "glowing brain dark background",
+        "blue eye close up dark",
+        "person silhouette red light",
+        "couple argument silhouette blue light",
+        "moody face close up shadow",
+        "dark cinematic person thinking"
+      ]
+    },
+    "clipKeywords": [
+      "contagio emocional",
+      "espejo neuronal",
+      "glowing brain dark background",
+      "blue eye close up dark",
+      "person silhouette red light",
+      "couple argument silhouette blue light",
+      "moody face close up shadow",
+      "dark cinematic person thinking"
+    ],
+    "rhythmRule": "cambio visual cada 2-3 segundos, sin escenas estaticas ni repeticiones consecutivas de encuadre",
+    "timeline": [
+      {
+        "segment": "hook",
+        "timing": "0-2.2s",
+        "durationSeconds": 2.2,
+        "shotType": "primer plano",
+        "intensity": "alta",
+        "movement": "push-in rapido",
+        "transition": "hard cut"
+      },
+      {
+        "segment": "open_loop",
+        "timing": "2.2-5s",
+        "durationSeconds": 2.8,
+        "shotType": "plano detalle",
+        "intensity": "alta",
+        "movement": "zoom lento continuo",
+        "transition": "match cut"
+      },
+      {
+        "segment": "micro_value",
+        "timing": "5-8.2s",
+        "durationSeconds": 3.2,
+        "shotType": "plano medio",
+        "intensity": "media",
+        "movement": "micro paneo lateral",
+        "transition": "cut limpio"
+      },
+      {
+        "segment": "escalation",
+        "timing": "8.2-11.6s",
+        "durationSeconds": 3.4,
+        "shotType": "plano abierto",
+        "intensity": "media-alta",
+        "movement": "acercamiento progresivo",
+        "transition": "cut ritmico"
+      },
+      {
+        "segment": "reengage",
+        "timing": "11.6-14.2s",
+        "durationSeconds": 2.6,
+        "shotType": "primer plano",
+        "intensity": "muy alta",
+        "movement": "zoom agresivo",
+        "transition": "whip cut"
+      },
+      {
+        "segment": "peak",
+        "timing": "14.2-17.8s",
+        "durationSeconds": 3.6,
+        "shotType": "plano medio",
+        "intensity": "maxima",
+        "movement": "push-in sostenido",
+        "transition": "impact cut"
+      },
+      {
+        "segment": "open_ending",
+        "timing": "17.8-20.9s",
+        "durationSeconds": 3.1,
+        "shotType": "plano abierto",
+        "intensity": "media",
+        "movement": "zoom out suave",
+        "transition": "cut limpio"
+      },
+      {
+        "segment": "soft_cta",
+        "timing": "20.9-23.6s",
+        "durationSeconds": 2.7,
+        "shotType": "plano detalle",
+        "intensity": "media",
+        "movement": "micro acercamiento",
+        "transition": "hold corto"
+      }
+    ]
+  },
+  "growthContext": {
+    "nextTopic": "emotional_patterns",
+    "hookType": "challenge",
+    "emotionalTrigger": "awe",
+    "angle": "contagio emocional inconsciente",
+    "avoidTopics": [
+      "habits",
+      "relationships"
+    ],
+    "avoidRecentHooks": [
+      "El 81% tiene un gatillo que no ve venir.",
+      "Tu hábito no existe. Existe la recompensa.",
+      "Tu hábito no existe. Existe la recompensa.",
+      "Repites la misma rutina sin decidir hacerlo nunca.",
+      "Tocarte la cara delata todo lo que intentas ocultar.",
+      "Tu tristeza no es tuya. Es del grupo.",
+      "Tu tristeza no es tuya. Es del grupo.",
+      "Crees que aprendiste de tu ex. Mentira."
+    ],
+    "reasoning": "Topic 'emotional_patterns' por estrategia exploit_p80. Views promedio: 434, engagement: 0.95%. [PATRÓN P80 — score por encima del percentil 80, explotando variaciones] Saturados evitados: habits, relationships.",
+    "confidence": 0.95,
+    "strategy": "exploit_p80",
+    "decisionAt": "2026-04-26T18:42:39.200Z",
+    "topic": "emotional_patterns",
+    "fallbackGenerator": "best-available",
+    "fallbackReason": "virality 53/60"
+  },
+  "viralityScore": 53,
+  "viralityBreakdown": {
+    "hookStrength": 20,
+    "emotionalTrigger": 8,
+    "relatability": 10,
+    "loopPotential": 13,
+    "durationBonus": 2
+  },
+  "formatMatchScore": 75,
+  "formatMatchBreakdown": {
+    "hookFormat": 18,
+    "brevity": 12,
+    "clarity": 10,
+    "narrativeRhythm": 4,
+    "psychologicalImpact": 6,
+    "scrollStop": 6,
+    "infoDensity": 0,
+    "earlyRevelation": 8,
+    "singleIdea": 3,
+    "reengage": 8
+  },
+  "formatMatchSegmentGaps": [],
+  "formatMatchGaps": [
+    "Hay relleno o rodeos — elimina intro, empieza con el dato",
+    "Revelación psicológica débil — añade nombre de efecto o cifra concreta",
+    "Baja densidad — más información útil en menos palabras"
+  ],
+  "emotionalImpactScore": 56,
+  "emotionalImpactBreakdown": {
+    "powerWords": 6,
+    "personalId": 20,
+    "surpriseFactor": 5,
+    "visceral": 5,
+    "tensionResolution": 20
+  },
+  "approved": true,
+  "rejectionReason": null,
+  "selectionPenalties": [
+    "virality_low:53"
+  ],
+  "llmMetrics": {
+    "llm_total_calls": 5,
+    "llm_parse_fail": true,
+    "llm_recovery_used": true,
+    "llm_hard_fail": false,
+    "emergency_fallback_used": false,
+    "llm_schema_fail": false,
+    "llm_truncated_suspected": true
+  },
+  "usedRecovery": false,
+  "generationSource": "generateViralScript",
+  "llmPath": [
+    "generateViralScript"
+  ],
+  "generationFallback": "best-available",
+  "usedLastValid": false,
+  "usedEmergencyFallback": false,
+  "approvalBypassReason": null,
+  "final_generation_route": "generateViralScript",
+  "total_llm_calls": 2,
+  "fallback_level_reached": 0,
+  "selectedQuality": "acceptable",
+  "approvalBypass": "best_available_after_3_attempts",
+  "bestAvailableScore": 61,
+  "selectionReasons": [
+    "virality_low:53"
+  ],
+  "abVariantId": "v_a",
+  "slotTracking": {
+    "batchId": "batch_1777219200434",
+    "slotId": "batch_1777219200434_slot_2",
+    "plannedOrder": 2,
+    "plannedRole": "monetization",
+    "plannedCluster": "habitos de distraccion movil",
+    "plannedHookType": "challenge",
+    "plannedMicroAction": "SCREEN_ACTION",
+    "recommendedCandidateId": "mobile-2",
+    "recommendedCandidateTitle": "La notificación que no abres",
+    "businessMode": "monetization_priority",
+    "targetGoal": "monetization_priority",
+    "scheduleWindow": "4 días",
+    "recommendedPublishTime": "6 horas x slot 2",
+    "attributionType": "ab_linked",
+    "slotState": "assigned",
+    "assignmentConfidence": 0.12,
+    "traceConfidence": 0.12,
+    "exactTraceAvailable": true,
+    "abLinked": true
+  },
+  "contentVersion": "v2",
+  "narrationPlan": {
+    "mode": "natural_short_v1",
+    "segments": {
+      "hook": {
+        "key": "hook",
+        "text": "Tu tristeza es contagiosa sin que lo sepas.",
+        "deliveryStyle": "directo",
+        "narrationEnergy": "alta",
+        "pauseStrength": "fuerte",
+        "emphasisWords": [
+          "contagiosa",
+          "sepas"
+        ],
+        "pacing": "corto",
+        "pauseBefore": 0,
+        "pauseAfter": 0.46,
+        "joiner": "...",
+        "ssmlRate": "-8%",
+        "ssmlPitch": "+2%",
+        "ssmlVolume": "0%"
+      },
+      "open_loop": {
+        "key": "open_loop",
+        "text": "Hay un mecanismo neuronal que propaga tu estado emocional a otros automáticamente.",
+        "deliveryStyle": "susurrado-tenso",
+        "narrationEnergy": "media-alta",
+        "pauseStrength": "media",
+        "emphasisWords": [
+          "otros",
+          "automaticamente"
+        ],
+        "pacing": "tenso",
+        "pauseBefore": 0.06,
+        "pauseAfter": 0.12,
+        "joiner": ".",
+        "ssmlRate": "-7%",
+        "ssmlPitch": "0%",
+        "ssmlVolume": "0%"
+      },
+      "micro_value": {
+        "key": "micro_value",
+        "text": "Se llama espejo emocional. Tu expresión facial activa las mismas neuronas en quien te ve.",
+        "deliveryStyle": "claro",
+        "narrationEnergy": "media",
+        "pauseStrength": "corta",
+        "emphasisWords": [
+          "activa",
+          "neuronas"
+        ],
+        "pacing": "estable",
+        "pauseBefore": 0.04,
+        "pauseAfter": 0.08,
+        "joiner": ".",
+        "ssmlRate": "-8%",
+        "ssmlPitch": "0%",
+        "ssmlVolume": "0%"
+      },
+      "escalation": {
+        "key": "escalation",
+        "text": "Por eso tu mal día arruina el de tu pareja, tu amigo, tu familia. Ellos no eligen sentir lo que tú sientes. Sus cuerpos lo hacen por instinto evolutivo de supervivencia.",
+        "deliveryStyle": "creciente",
+        "narrationEnergy": "media-alta",
+        "pauseStrength": "corta",
+        "emphasisWords": [
+          "evolutivo",
+          "supervivencia"
+        ],
+        "pacing": "agil",
+        "pauseBefore": 0.04,
+        "pauseAfter": 0.18,
+        "joiner": ".",
+        "ssmlRate": "-6%",
+        "ssmlPitch": "0%",
+        "ssmlVolume": "0%"
+      },
+      "reengage": {
+        "key": "reengage",
+        "text": "Pero espera, hay un giro oscuro aquí.",
+        "deliveryStyle": "remate",
+        "narrationEnergy": "alta",
+        "pauseStrength": "fuerte",
+        "emphasisWords": [
+          "giro",
+          "oscuro"
+        ],
+        "pacing": "marcado",
+        "pauseBefore": 0.26,
+        "pauseAfter": 0.12,
+        "joiner": "...",
+        "ssmlRate": "-8%",
+        "ssmlPitch": "0%",
+        "ssmlVolume": "0%"
+      },
+      "peak": {
+        "key": "peak",
+        "text": "Tú también estás siendo contagiado ahora mismo sin saberlo. El miedo de otros entra en ti, la alegría ajena te sube, la ansiedad del grupo te paraliza. Eres un receptor de emociones ajenas constantemente.",
+        "deliveryStyle": "impacto",
+        "narrationEnergy": "muy alta",
+        "pauseStrength": "media",
+        "emphasisWords": [
+          "ajenas",
+          "constantemente"
+        ],
+        "pacing": "enfatico",
+        "pauseBefore": 0.18,
+        "pauseAfter": 0.16,
+        "joiner": ".",
+        "ssmlRate": "-7%",
+        "ssmlPitch": "0%",
+        "ssmlVolume": "0%"
+      },
+      "open_ending": {
+        "key": "open_ending",
+        "text": "¿Cuántas de tus emociones hoy son realmente tuyas?",
+        "deliveryStyle": "eco",
+        "narrationEnergy": "media",
+        "pauseStrength": "corta",
+        "emphasisWords": [
+          "realmente",
+          "tuyas"
+        ],
+        "pacing": "controlado",
+        "pauseBefore": 0.08,
+        "pauseAfter": 0.06,
+        "joiner": ".",
+        "ssmlRate": "-7%",
+        "ssmlPitch": "0%",
+        "ssmlVolume": "0%"
+      },
+      "soft_cta": {
+        "key": "soft_cta",
+        "text": "¿Me equivoco o tú también lo has sentido?",
+        "deliveryStyle": "conversacional",
+        "narrationEnergy": "media",
+        "pauseStrength": "ninguna",
+        "emphasisWords": [
+          "equivoco",
+          "sentido"
+        ],
+        "pacing": "natural",
+        "pauseBefore": 0.05,
+        "pauseAfter": 0,
+        "joiner": "",
+        "ssmlRate": "-8%",
+        "ssmlPitch": "0%",
+        "ssmlVolume": "0%"
+      }
+    },
+    "blocks": [
+      {
+        "key": "block_1",
+        "pauseAfter": 0.46,
+        "blockPacing": "controlado con gancho",
+        "parts": [
+          {
+            "key": "hook",
+            "text": "Tu tristeza es contagiosa sin que lo sepas.",
+            "joiner": "...",
+            "pauseBefore": 0,
+            "profile": {
+              "key": "hook",
+              "text": "Tu tristeza es contagiosa sin que lo sepas.",
+              "deliveryStyle": "directo",
+              "narrationEnergy": "alta",
+              "pauseStrength": "fuerte",
+              "emphasisWords": [
+                "contagiosa",
+                "sepas"
+              ],
+              "pacing": "corto",
+              "pauseBefore": 0,
+              "pauseAfter": 0.46,
+              "joiner": "...",
+              "ssmlRate": "-8%",
+              "ssmlPitch": "+2%",
+              "ssmlVolume": "0%"
+            }
+          },
+          {
+            "key": "open_loop",
+            "text": "Hay un mecanismo neuronal que propaga tu estado emocional a otros automáticamente.",
+            "joiner": ".",
+            "pauseBefore": 0.06,
+            "profile": {
+              "key": "open_loop",
+              "text": "Hay un mecanismo neuronal que propaga tu estado emocional a otros automáticamente.",
+              "deliveryStyle": "susurrado-tenso",
+              "narrationEnergy": "media-alta",
+              "pauseStrength": "media",
+              "emphasisWords": [
+                "otros",
+                "automaticamente"
+              ],
+              "pacing": "tenso",
+              "pauseBefore": 0.06,
+              "pauseAfter": 0.12,
+              "joiner": ".",
+              "ssmlRate": "-7%",
+              "ssmlPitch": "0%",
+              "ssmlVolume": "0%"
+            }
+          }
+        ],
+        "text": "Tu tristeza es contagiosa sin que lo sepas... Hay un mecanismo neuronal que propaga tu estado emocional a otros automáticamente."
+      },
+      {
+        "key": "block_2",
+        "pauseAfter": 0.22,
+        "blockPacing": "creciente",
+        "parts": [
+          {
+            "key": "micro_value",
+            "text": "Se llama espejo emocional. Tu expresión facial activa las mismas neuronas en quien te ve.",
+            "joiner": ".",
+            "pauseBefore": 0.04,
+            "profile": {
+              "key": "micro_value",
+              "text": "Se llama espejo emocional. Tu expresión facial activa las mismas neuronas en quien te ve.",
+              "deliveryStyle": "claro",
+              "narrationEnergy": "media",
+              "pauseStrength": "corta",
+              "emphasisWords": [
+                "activa",
+                "neuronas"
+              ],
+              "pacing": "estable",
+              "pauseBefore": 0.04,
+              "pauseAfter": 0.08,
+              "joiner": ".",
+              "ssmlRate": "-8%",
+              "ssmlPitch": "0%",
+              "ssmlVolume": "0%"
+            }
+          },
+          {
+            "key": "escalation",
+            "text": "Por eso tu mal día arruina el de tu pareja, tu amigo, tu familia. Ellos no eligen sentir lo que tú sientes. Sus cuerpos lo hacen por instinto evolutivo de supervivencia.",
+            "joiner": ".",
+            "pauseBefore": 0.04,
+            "profile": {
+              "key": "escalation",
+              "text": "Por eso tu mal día arruina el de tu pareja, tu amigo, tu familia. Ellos no eligen sentir lo que tú sientes. Sus cuerpos lo hacen por instinto evolutivo de supervivencia.",
+              "deliveryStyle": "creciente",
+              "narrationEnergy": "media-alta",
+              "pauseStrength": "corta",
+              "emphasisWords": [
+                "evolutivo",
+                "supervivencia"
+              ],
+              "pacing": "agil",
+              "pauseBefore": 0.04,
+              "pauseAfter": 0.18,
+              "joiner": ".",
+              "ssmlRate": "-6%",
+              "ssmlPitch": "0%",
+              "ssmlVolume": "0%"
+            }
+          }
+        ],
+        "text": "Se llama espejo emocional. Tu expresión facial activa las mismas neuronas en quien te ve. Por eso tu mal día arruina el de tu pareja, tu amigo, tu familia. Ellos no eligen sentir lo que tú sientes. Sus cuerpos lo hacen por instinto evolutivo de supervivencia."
+      },
+      {
+        "key": "block_3",
+        "pauseAfter": 0.18,
+        "blockPacing": "impacto",
+        "parts": [
+          {
+            "key": "reengage",
+            "text": "Pero espera, hay un giro oscuro aquí.",
+            "joiner": "...",
+            "pauseBefore": 0.26,
+            "profile": {
+              "key": "reengage",
+              "text": "Pero espera, hay un giro oscuro aquí.",
+              "deliveryStyle": "remate",
+              "narrationEnergy": "alta",
+              "pauseStrength": "fuerte",
+              "emphasisWords": [
+                "giro",
+                "oscuro"
+              ],
+              "pacing": "marcado",
+              "pauseBefore": 0.26,
+              "pauseAfter": 0.12,
+              "joiner": "...",
+              "ssmlRate": "-8%",
+              "ssmlPitch": "0%",
+              "ssmlVolume": "0%"
+            }
+          },
+          {
+            "key": "peak",
+            "text": "Tú también estás siendo contagiado ahora mismo sin saberlo. El miedo de otros entra en ti, la alegría ajena te sube, la ansiedad del grupo te paraliza. Eres un receptor de emociones ajenas constantemente.",
+            "joiner": ".",
+            "pauseBefore": 0.18,
+            "profile": {
+              "key": "peak",
+              "text": "Tú también estás siendo contagiado ahora mismo sin saberlo. El miedo de otros entra en ti, la alegría ajena te sube, la ansiedad del grupo te paraliza. Eres un receptor de emociones ajenas constantemente.",
+              "deliveryStyle": "impacto",
+              "narrationEnergy": "muy alta",
+              "pauseStrength": "media",
+              "emphasisWords": [
+                "ajenas",
+                "constantemente"
+              ],
+              "pacing": "enfatico",
+              "pauseBefore": 0.18,
+              "pauseAfter": 0.16,
+              "joiner": ".",
+              "ssmlRate": "-7%",
+              "ssmlPitch": "0%",
+              "ssmlVolume": "0%"
+            }
+          }
+        ],
+        "text": "Pero espera, hay un giro oscuro aquí... Tú también estás siendo contagiado ahora mismo sin saberlo. El miedo de otros entra en ti, la alegría ajena te sube, la ansiedad del grupo te paraliza. Eres un receptor de emociones ajenas constantemente."
+      },
+      {
+        "key": "block_4",
+        "pauseAfter": 0,
+        "blockPacing": "cierre conversacional",
+        "parts": [
+          {
+            "key": "open_ending",
+            "text": "¿Cuántas de tus emociones hoy son realmente tuyas?",
+            "joiner": ".",
+            "pauseBefore": 0.08,
+            "profile": {
+              "key": "open_ending",
+              "text": "¿Cuántas de tus emociones hoy son realmente tuyas?",
+              "deliveryStyle": "eco",
+              "narrationEnergy": "media",
+              "pauseStrength": "corta",
+              "emphasisWords": [
+                "realmente",
+                "tuyas"
+              ],
+              "pacing": "controlado",
+              "pauseBefore": 0.08,
+              "pauseAfter": 0.06,
+              "joiner": ".",
+              "ssmlRate": "-7%",
+              "ssmlPitch": "0%",
+              "ssmlVolume": "0%"
+            }
+          },
+          {
+            "key": "soft_cta",
+            "text": "¿Me equivoco o tú también lo has sentido?",
+            "joiner": "",
+            "pauseBefore": 0.05,
+            "profile": {
+              "key": "soft_cta",
+              "text": "¿Me equivoco o tú también lo has sentido?",
+              "deliveryStyle": "conversacional",
+              "narrationEnergy": "media",
+              "pauseStrength": "ninguna",
+              "emphasisWords": [
+                "equivoco",
+                "sentido"
+              ],
+              "pacing": "natural",
+              "pauseBefore": 0.05,
+              "pauseAfter": 0,
+              "joiner": "",
+              "ssmlRate": "-8%",
+              "ssmlPitch": "0%",
+              "ssmlVolume": "0%"
+            }
+          }
+        ],
+        "text": "¿Cuántas de tus emociones hoy son realmente tuyas. ¿Me equivoco o tú también lo has sentido?"
+      }
+    ]
+  }
+}

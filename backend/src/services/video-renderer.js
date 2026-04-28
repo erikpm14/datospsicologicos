@@ -23,6 +23,7 @@ const { mapSubtitlesToVoiceSegments } = require('./audio-subtitle-mapper');
 const { alignWordTimestamps } = require('./word-timestamp-aligner');
 const { exportVideo } = require('./export-manager');
 const VIDEO_USE_SKILL = require('../../../integrations/video-use/skill-config');
+const { validateAndFixAssets } = require('./asset-validator.service');
 
 ffmpeg.setFfmpegPath(ffmpegInstaller.path);
 ffmpeg.setFfprobePath(ffprobeInstaller.path);
@@ -663,6 +664,16 @@ function writeRenderMetadata(outputDir, data = {}) {
   } catch {}
 }
 
+function readRenderMetadata(outputDir) {
+  try {
+    const metadataPath = path.join(outputDir, 'render-metadata.json');
+    if (!fs.existsSync(metadataPath)) return null;
+    return JSON.parse(fs.readFileSync(metadataPath, 'utf8'));
+  } catch {
+    return null;
+  }
+}
+
 function formatOverlayToken(value = '') {
   return String(value || '')
     .replace(/[_-]+/g, ' ')
@@ -787,7 +798,7 @@ function buildRenderSegments(realDuration, blocks = [], sectionDurations = null)
   });
 }
 
-async function renderVideo({ script, audioPath, audioDuration, outputPath, themeId, wordBoundaries, sectionDurations, bgStyle }) {
+async function renderVideo({ script, audioPath, audioDuration, outputPath, themeId, wordBoundaries, sectionDurations, bgStyle, forceCaptionSync = false }) {
   const theme = themes.themes.find((t) => t.id === themeId) || themes.themes[0];
   const outputDir = path.dirname(outputPath);
   if (!fs.existsSync(outputDir)) fs.mkdirSync(outputDir, { recursive: true });
@@ -830,7 +841,15 @@ async function renderVideo({ script, audioPath, audioDuration, outputPath, theme
 
   // 2. Descarga clips en paralelo: single-focus, sin split-screen
   perf.start('background_fetch');
-  const bgVideos = await getPexelsVideos(script, bgStyle);
+  let bgVideos = await getPexelsVideos(script, bgStyle);
+  if (bgVideos.length === 0) {
+    const previousRender = readRenderMetadata(outputDir);
+    const reusableClipPaths = (previousRender?.clipPaths || []).filter((clipPath) => fs.existsSync(clipPath));
+    if (reusableClipPaths.length > 0) {
+      bgVideos = [...new Set(reusableClipPaths)];
+      logger.info(`Render: reusing ${bgVideos.length} previous clipPaths from render-metadata.json`);
+    }
+  }
   const bgPhase = perf.end({ clipCount: bgVideos.length });
   logger.info(`Render phase background_fetch done in ${formatDurationMs(bgPhase.durationMs)} | clips=${bgVideos.length}`);
   writeRenderMetadata(outputDir, {
@@ -888,30 +907,37 @@ async function renderVideo({ script, audioPath, audioDuration, outputPath, theme
   // Construye captions basados en audio final real (voice_proc.mp3)
   // ═════════════════════════════════════════════════════════════
   let syncedCaptions = null;
-  const whisperActive = wordTimestamps.length >= 10;
+  const whisperActive = !forceCaptionSync && wordTimestamps.length >= 10;
 
-  if (!whisperActive) {
+  try {
+    perf.start('caption_sync');
+    const { buildCaptionsFromFinalAudio } = require('../utils/caption-sync');
+    const { getScriptSections } = require('../utils/script-segments');
+
+    syncedCaptions = await buildCaptionsFromFinalAudio({
+      finalAudioPath: audioPath,
+      scriptSegments: getScriptSections(script),
+      videoId: script.videoId || script.id || path.basename(outputDir),
+      outputDir,
+    });
+
+    perf.end({
+      captionCount: syncedCaptions.length,
+      source: syncedCaptions[0]?.source || 'unknown',
+      forced: forceCaptionSync,
+    });
+
+    logger.info(`CaptionSync: ${syncedCaptions.length} captions generated | source=${syncedCaptions[0]?.source}${forceCaptionSync ? ' | forced=true' : ''}`);
+  } catch (err) {
+    logger.warn(`CaptionSync: ${err.message} — fallback to existing subtitle system`);
+    syncedCaptions = null;
+  }
+
+  if (!whisperActive && !syncedCaptions) {
     try {
-      perf.start('caption_sync');
-      const { buildCaptionsFromFinalAudio } = require('../utils/caption-sync');
-      const { getScriptSections } = require('../utils/script-segments');
-
-      syncedCaptions = await buildCaptionsFromFinalAudio({
-        finalAudioPath: audioPath, // voice_proc.mp3 — audio que se renderiza
-        scriptSegments: getScriptSections(script),
-        videoId: script.videoId || 'unknown',
-        outputDir,
-      });
-
-      perf.end({
-        captionCount: syncedCaptions.length,
-        source: syncedCaptions[0]?.source || 'unknown',
-      });
-
-      logger.info(`CaptionSync: ${syncedCaptions.length} captions generated | source=${syncedCaptions[0]?.source}`);
+      fs.unlinkSync(path.join(outputDir, 'captions-debug.json'));
     } catch (err) {
-      logger.warn(`CaptionSync: ${err.message} — fallback to existing subtitle system`);
-      syncedCaptions = null;
+      void err;
     }
   }
 
@@ -985,6 +1011,25 @@ async function renderVideo({ script, audioPath, audioDuration, outputPath, theme
   const clipInfo = bgVideos.length > 0 ? `${bgVideos.length} clips single-focus` : 'gradient';
   logger.info(`Rendering | Theme: ${theme.name} | Background: ${clipInfo} | Subtitles: ${subtitleMode} | VisualStyle=${REFERENCE_VISUAL_STYLE.emotion}`);
 
+  // ═══════════════════════════════════════════════════════════════
+  // ASSET VALIDATION — ANTES DE FFMPEG
+  // Valida que TODOS los clips existen. Si falta alguno:
+  // 1. Intenta redownloadear
+  // 2. Si no va, reemplaza con asset local válido
+  // 3. Si no hay válido, BLOQUEA render (no permite color=black)
+  // ═══════════════════════════════════════════════════════════════
+  if (bgVideos.length > 0) {
+    const validatedClips = await validateAndFixAssets(bgVideos, script, outputDir, script.videoId);
+    if (!validatedClips || validatedClips.length === 0) {
+      logger.error(`RENDER_BLOCKED_MISSING_VISUAL_ASSET videoId=${script.videoId} | No valid visual assets available. Cannot render Pexels video.`);
+      throw new Error('RENDER_BLOCKED_MISSING_VISUAL_ASSET');
+    }
+    if (validatedClips.length !== bgVideos.length) {
+      logger.warn(`ASSET_COUNT_CHANGED original=${bgVideos.length} validated=${validatedClips.length}`);
+    }
+    bgVideos = validatedClips;
+  }
+
   if (bgVideos.length > 0) {
     try {
       perf.start('ffmpeg_render');
@@ -1015,6 +1060,12 @@ async function renderVideo({ script, audioPath, audioDuration, outputPath, theme
       logger.info(`Render phase ffmpeg_render done in ${formatDurationMs(renderPhase.durationMs)} | total=${formatDurationMs(perf.snapshot().totalMs)}`);
       return result;
     } catch (pexelsErr) {
+      // CRÍTICO: Si assets están bloqueados, no permitir fallback a gradient
+      if (pexelsErr.message?.includes('RENDER_BLOCKED_MISSING_VISUAL_ASSET')) {
+        logger.error(`RENDER_BLOCKED_MISSING_VISUAL_ASSET videoId=${script.videoId} — No fallback allowed. Assets are required but missing and unreplaceable.`);
+        throw new Error('RENDER_BLOCKED_MISSING_VISUAL_ASSET');
+      }
+
       perf.fail(pexelsErr, { mode: 'pexels' });
       logger.warn(`Pexels render failed (${pexelsErr.message.slice(0, 80)}) — falling back to gradient`);
       writeRenderMetadata(outputDir, {
@@ -1098,6 +1149,11 @@ async function renderVideo({ script, audioPath, audioDuration, outputPath, theme
     logger.error(`Export: failed to export video - ${exportErr.message}`);
   }
 
+  // 🎬 RENDER COMPLETE — Abrir carpeta automáticamente
+  if (result && fs.existsSync(outputPath)) {
+    await _openOutputFolder(outputPath);
+  }
+
   return result;
 }
 
@@ -1122,19 +1178,20 @@ function renderWithPexelsBg({ bgVideos, audioPath, musicPath, realDuration, rend
         : buildRenderSegments(realDuration, [], null);
 
       // For segments > 1 with complex filters, Windows often hits the 32KB limit.
-      // Instead of trying to work around it, fall back to gradient which has
-      // a much simpler filtergraph and can complete successfully.
+      // Solution: use most impactful segment (isPunchZoom > isHookSegment > first)
+      let selectedSegment = segments[0];
       if (segments.length > 1) {
-        logger.info(`Pexels render skipped: multiple segments (${segments.length}) would exceed Windows command limits. Using gradient fallback.`);
-        // Fall through to gradient at the bottom of renderVideo
-        throw new Error('MULTI_SEGMENT_FALLBACK');
+        const punchZoomSegment = segments.find(s => s.isPunchZoom);
+        const hookSegment = segments.find(s => s.isHookSegment);
+        selectedSegment = punchZoomSegment || hookSegment || segments[0];
+        logger.info(`Pexels multi-segment: ${segments.length} segments → using selected (isPunch=${selectedSegment.isPunchZoom}, isHook=${selectedSegment.isHookSegment})`);
       }
 
-      // Single segment case - can proceed
+      // Single effective segment - can proceed
       let cmd = ffmpeg();
       const clipPath = bgVideos[0];
-      const clipOffset = Math.max(0, segments[0].clipOffset || 0);
-      cmd = cmd.input(clipPath).inputOptions(['-stream_loop -1', `-t ${Math.max(segments[0].duration + clipOffset + 0.4, 1.4)}`, '-vsync cfr']);
+      const clipOffset = Math.max(0, selectedSegment.clipOffset || 0);
+      cmd = cmd.input(clipPath).inputOptions(['-stream_loop -1', `-t ${Math.max(selectedSegment.duration + clipOffset + 0.4, 1.4)}`, '-vsync cfr']);
 
       cmd = cmd.input(audioPath);
       const hasMusic = musicPath && fs.existsSync(musicPath);
@@ -1144,7 +1201,7 @@ function renderWithPexelsBg({ bgVideos, audioPath, musicPath, realDuration, rend
       const musicIdx = 2;
       const audioIdx = 1;
 
-      const segment = segments[0];
+      const segment = selectedSegment;
       const segDur = segment.duration;
       const segStart = segment.start;
       const hitsReengage = segStart <= REENGAGE_TARGET_SECOND && (segStart + segDur) >= REENGAGE_TARGET_SECOND;
@@ -1300,7 +1357,9 @@ function renderWithSplitScreen({ topClip, botClip, audioPath, musicPath, realDur
 
 function renderWithGradientBg({ audioPath, musicPath, realDuration, subtitleFilter, outputPath, theme, logoPath }) {
   return new Promise((resolve, reject) => {
-    const c1 = hexToRgb(theme.background.colors[0]);
+    // CRITICAL: Ensure theme is safe (never null, never dark colors)
+    const safeTheme = getSafeTheme(theme);
+    const c1 = hexToRgb(safeTheme.background.colors[0]);
     const bgColor = `#${c1.r.toString(16).padStart(2, '0')}${c1.g.toString(16).padStart(2, '0')}${c1.b.toString(16).padStart(2, '0')}`;
 
     const hasMusic = musicPath && fs.existsSync(musicPath);
@@ -1362,9 +1421,80 @@ function renderWithGradientBg({ audioPath, musicPath, realDuration, subtitleFilt
   });
 }
 
+function calculateLuminance(hex) {
+  const color = hexToRgb(hex);
+  // Relative luminance formula (WCAG)
+  const [r, g, b] = [color.r, color.g, color.b].map(c => {
+    c = c / 255;
+    return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
+  });
+  return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+}
+
+function getSafeTheme(theme) {
+  // Si theme es null/undefined o background está vacío, crear tema seguro
+  if (!theme || !theme.background || !theme.background.colors || theme.background.colors.length === 0) {
+    logger.info('RENDER_GRADIENT_SAFE_THEME_USED=true | reason=theme_missing');
+    return {
+      name: 'fallback_safe',
+      background: {
+        colors: ['#1a3a4a'], // visible dark blue-gray
+      },
+    };
+  }
+
+  const originalColor = theme.background.colors[0];
+  const luminance = calculateLuminance(originalColor);
+
+  // Si color es muy oscuro (< 0.25 luminancia), reemplazar
+  if (luminance < 0.25) {
+    logger.warn(`DARK_FALLBACK_COLOR_REPLACED oldColor=${originalColor} newColor=#1a3a4a | luminance=${luminance.toFixed(3)}`);
+    return {
+      ...theme,
+      background: {
+        ...theme.background,
+        colors: ['#1a3a4a'],
+      },
+    };
+  }
+
+  return theme;
+}
+
 function hexToRgb(hex) {
-  const n = parseInt((hex || '#0a0a1a').replace('#', ''), 16);
+  const n = parseInt((hex || '#1a3a4a').replace('#', ''), 16);
   return { r: (n >> 16) & 255, g: (n >> 8) & 255, b: n & 255 };
+}
+
+async function _openOutputFolder(outputPath) {
+  /**
+   * Abre la carpeta del vídeo en el explorador.
+   * Windows: start explorer <folder>
+   * macOS: open <folder>
+   * Linux: xdg-open <folder>
+   */
+  try {
+    const { execSync } = require('child_process');
+    const folderPath = path.dirname(outputPath);
+
+    if (!fs.existsSync(folderPath)) {
+      logger.warn(`Output folder not found: ${folderPath}`);
+      return;
+    }
+
+    const platform = process.platform;
+    if (platform === 'win32') {
+      execSync(`start explorer "${folderPath}"`, { stdio: 'ignore' });
+    } else if (platform === 'darwin') {
+      execSync(`open "${folderPath}"`, { stdio: 'ignore' });
+    } else {
+      execSync(`xdg-open "${folderPath}"`, { stdio: 'ignore' });
+    }
+
+    logger.info(`RENDER_COMPLETE_FOLDER_OPENED videoId=${path.basename(folderPath)}`);
+  } catch (err) {
+    logger.warn(`Failed to open output folder: ${err.message}`);
+  }
 }
 
 module.exports = { renderVideo, getRealAudioDuration };

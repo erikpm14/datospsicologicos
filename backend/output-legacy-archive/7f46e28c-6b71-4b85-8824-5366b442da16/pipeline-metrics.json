@@ -1,0 +1,58 @@
+{
+  "label": "video-pipeline",
+  "startedAt": "2026-04-24T11:36:13.612Z",
+  "totalMs": 8956,
+  "phases": [
+    {
+      "name": "script_generation",
+      "startedAt": "2026-04-24T11:36:13.614Z",
+      "status": "completed",
+      "endedAt": "2026-04-24T11:36:13.815Z",
+      "durationMs": 201,
+      "source": "llm",
+      "estimatedWords": null,
+      "durationSeconds": null
+    },
+    {
+      "name": "tts",
+      "startedAt": "2026-04-24T11:36:13.817Z",
+      "status": "completed",
+      "endedAt": "2026-04-24T11:36:20.026Z",
+      "durationMs": 6209,
+      "provider": "kokoro",
+      "estimatedDuration": 3.2119999999999997,
+      "wordBoundaries": 0
+    },
+    {
+      "name": "audio_postprocess",
+      "startedAt": "2026-04-24T11:36:20.027Z",
+      "status": "completed",
+      "endedAt": "2026-04-24T11:36:20.238Z",
+      "durationMs": 211,
+      "outputPath": "C:\\Users\\Erik\\Desktop\\Generador_videos\\output\\7f46e28c-6b71-4b85-8824-5366b442da16\\voice_proc.mp3"
+    },
+    {
+      "name": "render",
+      "startedAt": "2026-04-24T11:36:20.240Z",
+      "status": "completed",
+      "endedAt": "2026-04-24T11:36:22.267Z",
+      "durationMs": 2027,
+      "outputPath": "C:\\Users\\Erik\\Desktop\\Generador_videos\\output\\7f46e28c-6b71-4b85-8824-5366b442da16\\output.mp4"
+    },
+    {
+      "name": "quality_check",
+      "startedAt": "2026-04-24T11:36:22.271Z",
+      "status": "completed",
+      "endedAt": "2026-04-24T11:36:22.567Z",
+      "durationMs": 296,
+      "passed": false,
+      "score": 90,
+      "threshold": 70
+    }
+  ],
+  "activePhase": null,
+  "jobId": "cf404c93-400c-42fc-b488-eaafc39571b3",
+  "videoId": "7f46e28c-6b71-4b85-8824-5366b442da16",
+  "topic": null,
+  "result": "qc_failed"
+}

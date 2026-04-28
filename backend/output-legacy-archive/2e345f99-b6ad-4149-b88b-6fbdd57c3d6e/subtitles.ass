@@ -1,0 +1,62 @@
+[Script Info]
+ScriptType: v4.00+
+PlayResX: 1080
+PlayResY: 1920
+WrapStyle: 2
+
+[V4+ Styles]
+Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+Style: Default,Impact,100,&H00FFFFFF,&H00FFFFFF,&H00000000,&H90000000,-1,0,0,0,100,100,0,0,1,6,4,8,10,10,10,1
+
+[Events]
+Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
+Dialogue: 0,0:00:00.00,0:00:01.19,Default,,0,0,0,,{\c&H00FFF7F3\fs109\b-1\bord8\pos(540,1320)}LA motivación que te
+Dialogue: 0,0:00:01.21,0:00:02.40,Default,,0,0,0,,{\c&H00FFF7F3\fs109\b0\bord6\pos(540,1320)}dura tres días tiene
+Dialogue: 0,0:00:02.42,0:00:03.73,Default,,0,0,0,,{\c&H00FFF7F3\fs109\b0\bord6\pos(540,1320)}una fecha de caducidad.
+Dialogue: 0,0:00:07.27,0:00:08.31,Default,,0,0,0,,{\c&H00FF7B4F\fs95\b0\bord6\pos(540,1320)}Y hay una razón
+Dialogue: 0,0:00:08.33,0:00:08.31,Default,,0,0,0,,{\c&H00FF7B4F\fs95\b0\bord6\pos(540,1320)}biológica por la que
+Dialogue: 0,0:00:08.33,0:00:09.32,Default,,0,0,0,,{\c&H00FFF7F3\fs100\b-1\bord8\pos(540,1320)}Tu cuerpo produce DOPAMINA
+Dialogue: 0,0:00:09.34,0:00:09.37,Default,,0,0,0,,{\c&H00FFF7F3\fs94\b0\bord6\pos(540,1320)}en picos,
+Dialogue: 0,0:00:09.39,0:00:10.33,Default,,0,0,0,,{\c&H00FF7B4F\fs95\b0\bord6\pos(540,1320)}colapsa justo cuando la
+Dialogue: 0,0:00:10.35,0:00:10.43,Default,,0,0,0,,{\c&H00FFF7F3\fs94\b0\bord6\pos(540,1320)}no en línea recta.
+Dialogue: 0,0:00:10.45,0:00:11.34,Default,,0,0,0,,{\c&H00FF7B4F\fs95\b0\bord6\pos(540,1320)}necesitas más.
+Dialogue: 0,0:00:11.36,0:00:12.35,Default,,0,0,0,,{\c&H00FFF7F3\fs94\b0\bord6\pos(540,1320)}Esos picos bajan,
+Dialogue: 0,0:00:12.37,0:00:13.35,Default,,0,0,0,,{\c&H00FFF7F3\fs94\b0\bord6\pos(540,1320)}y ahí muere la
+Dialogue: 0,0:00:13.37,0:00:14.48,Default,,0,0,0,,{\c&H00FFF7F3\fs94\b0\bord6\pos(540,1320)}motivación.
+Dialogue: 0,0:00:20.43,0:00:21.48,Default,,0,0,0,,{\c&H00FF7B4F\fs97\b0\bord6\pos(540,1320)}Cuando empiezas algo nuevo
+Dialogue: 0,0:00:21.50,0:00:22.55,Default,,0,0,0,,{\c&H00FF7B4F\fs97\b0\bord6\pos(540,1320)}—gimnasio, proyecto,
+Dialogue: 0,0:00:22.57,0:00:23.62,Default,,0,0,0,,{\c&H00FF7B4F\fs97\b0\bord6\pos(540,1320)}dieta— ese pico es
+Dialogue: 0,0:00:23.64,0:00:24.69,Default,,0,0,0,,{\c&H00FF7B4F\fs97\b0\bord6\pos(540,1320)}alto.
+Dialogue: 0,0:00:24.71,0:00:25.76,Default,,0,0,0,,{\c&H00FF7B4F\fs97\b0\bord6\pos(540,1320)}Pero al séptimo día,
+Dialogue: 0,0:00:25.78,0:00:26.34,Default,,0,0,0,,{\c&H00FF7B4F\fs97\b0\bord6\pos(540,1320)}tu cuerpo se acostumbra.
+Dialogue: 0,0:00:26.36,0:00:26.83,Default,,0,0,0,,{\c&H00303BFF\fs100\b0\bord6\pos(540,1320)}Pero espera —ahora es
+Dialogue: 0,0:00:26.85,0:00:27.40,Default,,0,0,0,,{\c&H00FF7B4F\fs103\b-1\bord8\pos(540,1320)}La DOPAMINA no sube
+Dialogue: 0,0:00:27.42,0:00:27.90,Default,,0,0,0,,{\c&H00303BFF\fs100\b0\bord6\pos(540,1320)}cuando la mayoría se
+Dialogue: 0,0:00:27.92,0:00:28.46,Default,,0,0,0,,{\c&H00FF7B4F\fs97\b0\bord6\pos(540,1320)}igual.
+Dialogue: 0,0:00:28.48,0:00:28.97,Default,,0,0,0,,{\c&H00303BFF\fs100\b0\bord6\pos(540,1320)}rinde.
+Dialogue: 0,0:00:28.99,0:00:29.51,Default,,0,0,0,,{\c&H00FF7B4F\fs103\b-1\bord8\pos(540,1320)}Y tu CEREBRO interpreta
+Dialogue: 0,0:00:29.53,0:00:30.04,Default,,0,0,0,,{\c&H00303BFF\fs100\b0\bord6\pos(540,1320)}Aquí es donde se
+Dialogue: 0,0:00:30.06,0:00:30.57,Default,,0,0,0,,{\c&H00FF7B4F\fs97\b0\bord6\pos(540,1320)}eso como aburrimiento,
+Dialogue: 0,0:00:30.59,0:00:31.11,Default,,0,0,0,,{\c&H00303BFF\fs100\b0\bord6\pos(540,1320)}define quién continúa y
+Dialogue: 0,0:00:31.13,0:00:31.63,Default,,0,0,0,,{\c&H00FF7B4F\fs97\b0\bord6\pos(540,1320)}no como adaptación normal.
+Dialogue: 0,0:00:31.65,0:00:32.68,Default,,0,0,0,,{\c&H00303BFF\fs100\b0\bord6\pos(540,1320)}quién no.
+Dialogue: 0,0:00:32.70,0:00:33.74,Default,,0,0,0,,{\c&H00303BFF\fs100\b0\bord6\pos(540,1320)}Porque hay un truco
+Dialogue: 0,0:00:33.76,0:00:34.80,Default,,0,0,0,,{\c&H00303BFF\fs100\b0\bord6\pos(540,1320)}que cambia todo antes
+Dialogue: 0,0:00:34.81,0:00:35.85,Default,,0,0,0,,{\c&H00303BFF\fs106\b-1\bord8\pos(540,1320)}de que tu CEREBRO
+Dialogue: 0,0:00:35.87,0:00:37.03,Default,,0,0,0,,{\c&H00303BFF\fs100\b0\bord6\pos(540,1320)}se aburra completamente.
+Dialogue: 0,0:00:47.49,0:00:48.43,Default,,0,0,0,,{\c&H00303BFF\fs98\b0\bord6\pos(540,1320)}Si introduces variación pequeña
+Dialogue: 0,0:00:48.45,0:00:48.58,Default,,0,0,0,,{\c&H00303BFF\fs98\b0\bord6\pos(540,1320)}—cambias la hora,
+Dialogue: 0,0:00:48.60,0:00:49.39,Default,,0,0,0,,{\c&H00FF7B4F\fs92\b0\bord6\pos(540,1320)}¿Cuántas veces abandonaste sin
+Dialogue: 0,0:00:49.41,0:00:49.91,Default,,0,0,0,,{\c&H00303BFF\fs98\b0\bord6\pos(540,1320)}el lugar,
+Dialogue: 0,0:00:49.92,0:00:50.35,Default,,0,0,0,,{\c&H00FF7B4F\fs92\b0\bord6\pos(540,1320)}saber este truco?
+Dialogue: 0,0:00:50.37,0:00:51.30,Default,,0,0,0,,{\c&H00303BFF\fs98\b0\bord6\pos(540,1320)}añades una meta semanal—
+Dialogue: 0,0:00:51.32,0:00:52.26,Default,,0,0,0,,{\c&H00303BFF\fs98\b0\bord6\pos(540,1320)}interrumpes la adaptación.
+Dialogue: 0,0:00:52.28,0:00:53.22,Default,,0,0,0,,{\c&H00303BFF\fs105\b-1\bord8\pos(540,1320)}La DOPAMINA vuelve a
+Dialogue: 0,0:00:53.24,0:00:53.87,Default,,0,0,0,,{\c&H00303BFF\fs98\b0\bord6\pos(540,1320)}subir.
+Dialogue: 0,0:00:53.89,0:00:54.18,Default,,0,0,0,,{\c&H00FF7B4F\fs90\b0\bord6\pos(540,1320)}Cuéntame: ¿a qué día
+Dialogue: 0,0:00:54.20,0:00:55.00,Default,,0,0,0,,{\c&H00303BFF\fs98\b0\bord6\pos(540,1320)}No es motivación,
+Dialogue: 0,0:00:55.02,0:00:55.14,Default,,0,0,0,,{\c&H00FF7B4F\fs96\b-1\bord8\pos(540,1320)}abandonas SIEMPRE.
+Dialogue: 0,0:00:55.16,0:00:56.09,Default,,0,0,0,,{\c&H00303BFF\fs98\b0\bord6\pos(540,1320)}es ingeniería neurológica.
+Dialogue: 0,0:00:56.11,0:00:57.05,Default,,0,0,0,,{\c&H00303BFF\fs98\b0\bord6\pos(540,1320)}Los que duran años
+Dialogue: 0,0:00:57.07,0:00:58.01,Default,,0,0,0,,{\c&H00303BFF\fs98\b0\bord6\pos(540,1320)}no tienen más voluntad;
+Dialogue: 0,0:00:58.03,0:00:59.09,Default,,0,0,0,,{\c&H00303BFF\fs98\b0\bord6\pos(540,1320)}tienen ciclos.

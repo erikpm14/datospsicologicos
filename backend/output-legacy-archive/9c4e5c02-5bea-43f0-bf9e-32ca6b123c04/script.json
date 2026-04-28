@@ -1,0 +1,767 @@
+{
+  "title": "cuando_algo_pequeno_te_cambia_el_cuerpo",
+  "topic": "relationships",
+  "hook": "Mira esto cuando algo pequeño te cambie el cuerpo.",
+  "open_loop": "Tu pareja dice algo sin intención y de repente sientes el pecho apretado.",
+  "micro_value": "Cómo los detalles mínimos disparan respuestas físicas enormes en la relación.",
+  "escalation": "Un tono diferente en un 'hola'. Un like que no llegó. El móvil boca abajo en la mesa. Tu cuerpo lo siente antes que tu mente.",
+  "reengage": "No estás siendo dramático. Tu cuerpo está detectando algo real.",
+  "peak": "Esos cambios pequeños son señales. Tu sistema nervioso está leyendo el ambiente de la relación constantemente. Por eso te duele tanto algo que 'debería ser insignificante'.",
+  "open_ending": "Pero ese dolor pequeño... a veces es el único aviso que tienes.",
+  "soft_cta": "¿Te ha pasado esto? Cuéntame en comentarios.",
+  "effectName": "Detección de Microseñales Relacionales",
+  "psychologicalFact": "El cuerpo percibe cambios en el tono emocional antes de que la mente los procese conscientemente.",
+  "viralTrigger": "identificacion",
+  "emotionalTrigger": "validation",
+  "keywords": [
+    "relaciones",
+    "pareja",
+    "ansiedad relacional",
+    "microcomportamientos",
+    "validacion emocional"
+  ],
+  "claim": "Cómo los detalles mínimos disparan respuestas físicas enormes en la relación.",
+  "explanation": "Un tono diferente en un 'hola'. Un like que no llegó. El móvil boca abajo en la mesa. Tu cuerpo lo siente antes que tu mente. No estás siendo dramático. Tu cuerpo está detectando algo real. Esos cambios pequeños son señales. Tu sistema nervioso está leyendo el ambiente de la relación constantemente. Por eso te duele tanto algo que 'debería ser insignificante'.",
+  "cta": "Pero ese dolor pequeño... a veces es el único aviso que tienes. ¿Te ha pasado esto? Cuéntame en comentarios.",
+  "segments": [
+    {
+      "type": "HOOK",
+      "text": "Mira esto cuando algo pequeño te cambie el cuerpo.",
+      "visualIntent": "punch zoom, texto impactante, fondo oscuro",
+      "emotion": "tension"
+    },
+    {
+      "type": "OPEN_LOOP",
+      "text": "Tu pareja dice algo sin intención y de repente sientes el pecho apretado.",
+      "visualIntent": "zoom lento, rostro pensativo, tension",
+      "emotion": "curiosity"
+    },
+    {
+      "type": "MICRO_VALUE",
+      "text": "Cómo los detalles mínimos disparan respuestas físicas enormes en la relación.",
+      "visualIntent": "zoom lento, rostro pensativo, tension",
+      "emotion": "curiosity"
+    },
+    {
+      "type": "ESCALATION",
+      "text": "Un tono diferente en un 'hola'. Un like que no llegó. El móvil boca abajo en la mesa. Tu cuerpo lo siente antes que tu mente.",
+      "visualIntent": "zoom lento, rostro pensativo, tension",
+      "emotion": "curiosity"
+    },
+    {
+      "type": "REENGAGE",
+      "text": "No estás siendo dramático. Tu cuerpo está detectando algo real.",
+      "visualIntent": "cambio brusco, tension, zoom corto",
+      "emotion": "curiosity"
+    },
+    {
+      "type": "PEAK",
+      "text": "Esos cambios pequeños son señales. Tu sistema nervioso está leyendo el ambiente de la relación constantemente. Por eso te duele tanto algo que 'debería ser insignificante'.",
+      "visualIntent": "aislamiento, silueta, punch zoom",
+      "emotion": "impacto"
+    },
+    {
+      "type": "OPEN_ENDING",
+      "text": "Pero ese dolor pequeño... a veces es el único aviso que tienes.",
+      "visualIntent": "zoom lento, rostro pensativo, tension",
+      "emotion": "curiosity"
+    },
+    {
+      "type": "SOFT_CTA",
+      "text": "¿Te ha pasado esto? Cuéntame en comentarios.",
+      "visualIntent": "zoom lento, rostro pensativo, tension",
+      "emotion": "cercania"
+    }
+  ],
+  "structureVersion": "open_loop_escalation_v1",
+  "hasReengage": true,
+  "fullScript": "Mira esto cuando algo pequeño te cambie el cuerpo. Tu pareja dice algo sin intención y de repente sientes el pecho apretado. Cómo los detalles mínimos disparan respuestas físicas enormes en la relación. Un tono diferente en un 'hola'. Un like que no llegó. El móvil boca abajo en la mesa. Tu cuerpo lo siente antes que tu mente. No estás siendo dramático. Tu cuerpo está detectando algo real. Esos cambios pequeños son señales. Tu sistema nervioso está leyendo el ambiente de la relación constantemente. Por eso te duele tanto algo que 'debería ser insignificante'. Pero ese dolor pequeño... a veces es el único aviso que tienes. ¿Te ha pasado esto? Cuéntame en comentarios.",
+  "videoInstructions": {
+    "singleFocus": true,
+    "visualStyle": [
+      "estetica cinematografica oscura",
+      "fondo negro o casi negro",
+      "alto contraste con azul electrico dominante",
+      "acento rojo oscuro solo para tension",
+      "single focus constante sin overlays complejos",
+      "cambio de plano cada 2-3 segundos",
+      "zoom progresivo y movimiento suave"
+    ],
+    "subtitleStyle": "tipografia condensada bold, blanco frio con acentos azul electrico y rojo oscuro, subtitulos grandes y sincronizados",
+    "audioStyle": {
+      "voice": "voz clara y con ritmo",
+      "pauses": [
+        "hook",
+        "reengage",
+        "peak"
+      ]
+    },
+    "scenes": [
+      {
+        "segment": "hook",
+        "timing": "0-2.2s",
+        "visual": "primer plano de cerebro luminoso o rostro inquietante, relacionado con relationships, fondo negro o muy oscuro, contraste alto, azul electrico y rojo oscuro como acentos, zoom lento, iluminacion dramatica, sensacion de misterio psicologico",
+        "cut": "corte rapido con push-in",
+        "startSeconds": 0,
+        "endSeconds": 2.2,
+        "durationSeconds": 2.2,
+        "shotType": "primer plano",
+        "framing": "primer plano",
+        "intensity": "alta",
+        "movement": "push-in rapido",
+        "transition": "hard cut",
+        "emphasis": "scroll-stop inmediato",
+        "syncCue": "movimiento continuo con remate en palabra fuerte"
+      },
+      {
+        "segment": "open_loop",
+        "timing": "2.2-5s",
+        "visual": "ojo humano extremo o gesto suspendido en sombra, relacionado con relationships, fondo negro o muy oscuro, contraste alto, azul electrico y rojo oscuro como acentos, zoom lento, iluminacion dramatica, sensacion de misterio psicologico",
+        "cut": "zoom corto continuo",
+        "startSeconds": 2.2,
+        "endSeconds": 5,
+        "durationSeconds": 2.8,
+        "shotType": "plano detalle",
+        "framing": "plano detalle",
+        "intensity": "alta",
+        "movement": "zoom lento continuo",
+        "transition": "match cut",
+        "emphasis": "curiosidad sostenida",
+        "syncCue": "movimiento continuo con remate en palabra fuerte"
+      },
+      {
+        "segment": "micro_value",
+        "timing": "5-8.2s",
+        "visual": "detalle simbolico del mecanismo mental en glow azul, relacionado con relationships, fondo negro o muy oscuro, contraste alto, azul electrico y rojo oscuro como acentos, zoom lento, iluminacion dramatica, sensacion de misterio psicologico",
+        "cut": "cambio de plano limpio",
+        "startSeconds": 5,
+        "endSeconds": 8.2,
+        "durationSeconds": 3.2,
+        "shotType": "plano medio",
+        "framing": "plano medio",
+        "intensity": "media",
+        "movement": "micro paneo lateral",
+        "transition": "cut limpio",
+        "emphasis": "primer pago de valor",
+        "syncCue": "movimiento continuo con remate en palabra fuerte"
+      },
+      {
+        "segment": "escalation",
+        "timing": "8.2-11.6s",
+        "visual": "silueta humana o tension social en contraluz, relacionado con relationships, fondo negro o muy oscuro, contraste alto, azul electrico y rojo oscuro como acentos, zoom lento, iluminacion dramatica, sensacion de misterio psicologico",
+        "cut": "cortes cada 2-3s",
+        "startSeconds": 8.2,
+        "endSeconds": 11.6,
+        "durationSeconds": 3.4,
+        "shotType": "plano abierto",
+        "framing": "plano abierto",
+        "intensity": "media-alta",
+        "movement": "acercamiento progresivo",
+        "transition": "cut ritmico",
+        "emphasis": "tension creciente",
+        "syncCue": "movimiento continuo con remate en palabra fuerte"
+      },
+      {
+        "segment": "reengage",
+        "timing": "11.6-14.2s",
+        "visual": "cambio brusco a plano mas cercano con rojo alerta, relacionado con relationships, fondo negro o muy oscuro, contraste alto, azul electrico y rojo oscuro como acentos, zoom lento, iluminacion dramatica, sensacion de misterio psicologico",
+        "cut": "cambio brusco + zoom agresivo",
+        "startSeconds": 11.6,
+        "endSeconds": 14.2,
+        "durationSeconds": 2.6,
+        "shotType": "primer plano",
+        "framing": "primer plano",
+        "intensity": "muy alta",
+        "movement": "zoom agresivo",
+        "transition": "whip cut",
+        "emphasis": "ruptura de patron",
+        "syncCue": "acercamiento en frase clave"
+      },
+      {
+        "segment": "peak",
+        "timing": "14.2-17.8s",
+        "visual": "escena humana real de conflicto, pareja o decision, relacionado con relationships, fondo negro o muy oscuro, contraste alto, azul electrico y rojo oscuro como acentos, zoom lento, iluminacion dramatica, sensacion de misterio psicologico",
+        "cut": "alternancia de planos cerrados",
+        "startSeconds": 14.2,
+        "endSeconds": 17.8,
+        "durationSeconds": 3.6,
+        "shotType": "plano medio",
+        "framing": "plano medio",
+        "intensity": "maxima",
+        "movement": "push-in sostenido",
+        "transition": "impact cut",
+        "emphasis": "impacto emocional",
+        "syncCue": "acercamiento en frase clave"
+      },
+      {
+        "segment": "open_ending",
+        "timing": "17.8-20.9s",
+        "visual": "figura sola alejandose en oscuridad con particulas, relacionado con relationships, fondo negro o muy oscuro, contraste alto, azul electrico y rojo oscuro como acentos, zoom lento, iluminacion dramatica, sensacion de misterio psicologico",
+        "cut": "desaceleracion ligera",
+        "startSeconds": 17.8,
+        "endSeconds": 20.9,
+        "durationSeconds": 3.1,
+        "shotType": "plano abierto",
+        "framing": "plano abierto",
+        "intensity": "media",
+        "movement": "zoom out suave",
+        "transition": "cut limpio",
+        "emphasis": "eco mental",
+        "syncCue": "movimiento continuo con remate en palabra fuerte"
+      },
+      {
+        "segment": "soft_cta",
+        "timing": "20.9-23.6s",
+        "visual": "rostro o silueta frontal con espacio negativo para cierre, relacionado con relationships, fondo negro o muy oscuro, contraste alto, azul electrico y rojo oscuro como acentos, zoom lento, iluminacion dramatica, sensacion de misterio psicologico",
+        "cut": "ultimo corte limpio",
+        "startSeconds": 20.9,
+        "endSeconds": 23.6,
+        "durationSeconds": 2.7,
+        "shotType": "plano detalle",
+        "framing": "plano detalle",
+        "intensity": "media",
+        "movement": "micro acercamiento",
+        "transition": "hold corto",
+        "emphasis": "cierre abierto",
+        "syncCue": "movimiento continuo con remate en palabra fuerte"
+      }
+    ],
+    "style": {
+      "theme": "psicologia oscura / mente humana / comportamiento",
+      "colorPalette": "negro absoluto, azul electrico, azul neon frio, rojo oscuro, blanco frio",
+      "visualStyle": "cinematografico, minimalista, alto contraste, single focus",
+      "lighting": "oscura, dramatica, contraluz duro, glow electrico dirigido, sombras marcadas",
+      "cameraMotion": "zoom lento constante, push-in suave, micro paneo lateral, cambio de plano cada 2-3 segundos",
+      "effects": "glow ligero, particulas sutiles, neblina tenue, ruido cinematografico muy fino",
+      "composition": "single focus, sujeto dominante a la derecha o centrado, texto respirando a la izquierda, primeros planos y siluetas, profundidad negativa",
+      "emotionalTone": "misterio psicologico, obsesion, tension contenida, intriga oscura",
+      "consistencyRules": [
+        "una sola escena principal por segmento",
+        "fondo siempre oscuro o casi negro",
+        "usar azul electrico como color dominante y rojo solo para tension o reengage",
+        "priorizar cerebros, ojos, siluetas y escenas humanas reconocibles",
+        "evitar stock luminoso, lifestyle genérico o composiciones planas"
+      ],
+      "clipKeywords": [
+        "relaciones",
+        "pareja",
+        "ansiedad relacional",
+        "microcomportamientos",
+        "validacion emocional",
+        "glowing brain dark background",
+        "blue eye close up dark",
+        "person silhouette red light"
+      ]
+    },
+    "clipKeywords": [
+      "relaciones",
+      "pareja",
+      "ansiedad relacional",
+      "microcomportamientos",
+      "validacion emocional",
+      "glowing brain dark background",
+      "blue eye close up dark",
+      "person silhouette red light",
+      "couple argument silhouette blue light",
+      "moody face close up shadow"
+    ],
+    "rhythmRule": "cambio visual cada 2-3 segundos, sin escenas estaticas ni repeticiones consecutivas de encuadre",
+    "timeline": [
+      {
+        "segment": "hook",
+        "timing": "0-2.2s",
+        "durationSeconds": 2.2,
+        "shotType": "primer plano",
+        "intensity": "alta",
+        "movement": "push-in rapido",
+        "transition": "hard cut"
+      },
+      {
+        "segment": "open_loop",
+        "timing": "2.2-5s",
+        "durationSeconds": 2.8,
+        "shotType": "plano detalle",
+        "intensity": "alta",
+        "movement": "zoom lento continuo",
+        "transition": "match cut"
+      },
+      {
+        "segment": "micro_value",
+        "timing": "5-8.2s",
+        "durationSeconds": 3.2,
+        "shotType": "plano medio",
+        "intensity": "media",
+        "movement": "micro paneo lateral",
+        "transition": "cut limpio"
+      },
+      {
+        "segment": "escalation",
+        "timing": "8.2-11.6s",
+        "durationSeconds": 3.4,
+        "shotType": "plano abierto",
+        "intensity": "media-alta",
+        "movement": "acercamiento progresivo",
+        "transition": "cut ritmico"
+      },
+      {
+        "segment": "reengage",
+        "timing": "11.6-14.2s",
+        "durationSeconds": 2.6,
+        "shotType": "primer plano",
+        "intensity": "muy alta",
+        "movement": "zoom agresivo",
+        "transition": "whip cut"
+      },
+      {
+        "segment": "peak",
+        "timing": "14.2-17.8s",
+        "durationSeconds": 3.6,
+        "shotType": "plano medio",
+        "intensity": "maxima",
+        "movement": "push-in sostenido",
+        "transition": "impact cut"
+      },
+      {
+        "segment": "open_ending",
+        "timing": "17.8-20.9s",
+        "durationSeconds": 3.1,
+        "shotType": "plano abierto",
+        "intensity": "media",
+        "movement": "zoom out suave",
+        "transition": "cut limpio"
+      },
+      {
+        "segment": "soft_cta",
+        "timing": "20.9-23.6s",
+        "durationSeconds": 2.7,
+        "shotType": "plano detalle",
+        "intensity": "media",
+        "movement": "micro acercamiento",
+        "transition": "hold corto"
+      }
+    ]
+  },
+  "identificationScore": 95,
+  "viralityScore": 35,
+  "viralityBreakdown": {
+    "hookStrength": 0,
+    "emotionalTrigger": 2,
+    "relatability": 16,
+    "loopPotential": 15,
+    "durationBonus": 2
+  },
+  "approved": false,
+  "estimatedWords": 114,
+  "durationSeconds": 49,
+  "llmMetrics": {
+    "llm_total_calls": 1,
+    "llm_parse_fail": false,
+    "llm_recovery_used": false,
+    "llm_hard_fail": false,
+    "emergency_fallback_used": false,
+    "llm_schema_fail": false,
+    "llm_truncated_suspected": true
+  },
+  "usedRecovery": false,
+  "generationSource": "generateScript",
+  "llmPath": [
+    "generateScript"
+  ],
+  "slotTracking": {
+    "batchId": "batch_1777030149072",
+    "slotId": "batch_1777030149072_slot_1",
+    "plannedOrder": 1,
+    "plannedRole": "follow",
+    "plannedCluster": "relationships",
+    "plannedHookType": "challenge",
+    "plannedMicroAction": "REPEAT_CHECK",
+    "recommendedCandidateId": "relationships-3",
+    "recommendedCandidateTitle": "El gesto pequeño que te cambia el día",
+    "businessMode": "monetization_priority",
+    "targetGoal": "monetization_priority",
+    "scheduleWindow": "4 días",
+    "recommendedPublishTime": "6 horas x slot 1",
+    "attributionType": "cluster_match",
+    "slotState": "queued",
+    "assignmentConfidence": 0.12,
+    "traceConfidence": 0.12,
+    "exactTraceAvailable": true,
+    "abLinked": false
+  },
+  "contentVersion": "v2",
+  "narrationPlan": {
+    "mode": "natural_short_v1",
+    "segments": {
+      "hook": {
+        "key": "hook",
+        "text": "Mira esto cuando algo pequeño te cambie el cuerpo.",
+        "deliveryStyle": "directo",
+        "narrationEnergy": "alta",
+        "pauseStrength": "fuerte",
+        "emphasisWords": [
+          "cambie",
+          "cuerpo"
+        ],
+        "pacing": "corto",
+        "pauseBefore": 0,
+        "pauseAfter": 0.46,
+        "joiner": "...",
+        "ssmlRate": "-10%",
+        "ssmlPitch": "+6%",
+        "ssmlVolume": "+2%"
+      },
+      "open_loop": {
+        "key": "open_loop",
+        "text": "Tu pareja dice algo sin intención y de repente sientes el pecho apretado.",
+        "deliveryStyle": "susurrado-tenso",
+        "narrationEnergy": "media-alta",
+        "pauseStrength": "media",
+        "emphasisWords": [
+          "pecho",
+          "apretado"
+        ],
+        "pacing": "tenso",
+        "pauseBefore": 0.06,
+        "pauseAfter": 0.12,
+        "joiner": ".",
+        "ssmlRate": "-6%",
+        "ssmlPitch": "+3%",
+        "ssmlVolume": "+1%"
+      },
+      "micro_value": {
+        "key": "micro_value",
+        "text": "Cómo los detalles mínimos disparan respuestas físicas enormes en la relación.",
+        "deliveryStyle": "claro",
+        "narrationEnergy": "media",
+        "pauseStrength": "corta",
+        "emphasisWords": [
+          "enormes",
+          "relacion"
+        ],
+        "pacing": "estable",
+        "pauseBefore": 0.04,
+        "pauseAfter": 0.08,
+        "joiner": ".",
+        "ssmlRate": "-2%",
+        "ssmlPitch": "0%",
+        "ssmlVolume": "0%"
+      },
+      "escalation": {
+        "key": "escalation",
+        "text": "Un tono diferente en un 'hola'. Un like que no llegó. El móvil boca abajo en la mesa. Tu cuerpo lo siente antes que tu mente.",
+        "deliveryStyle": "creciente",
+        "narrationEnergy": "media-alta",
+        "pauseStrength": "corta",
+        "emphasisWords": [
+          "antes",
+          "mente"
+        ],
+        "pacing": "agil",
+        "pauseBefore": 0.04,
+        "pauseAfter": 0.18,
+        "joiner": ".",
+        "ssmlRate": "+3%",
+        "ssmlPitch": "+1%",
+        "ssmlVolume": "+1%"
+      },
+      "reengage": {
+        "key": "reengage",
+        "text": "No estás siendo dramático. Tu cuerpo está detectando algo real.",
+        "deliveryStyle": "remate",
+        "narrationEnergy": "alta",
+        "pauseStrength": "fuerte",
+        "emphasisWords": [
+          "detectando",
+          "real"
+        ],
+        "pacing": "marcado",
+        "pauseBefore": 0.26,
+        "pauseAfter": 0.12,
+        "joiner": "...",
+        "ssmlRate": "-4%",
+        "ssmlPitch": "+6%",
+        "ssmlVolume": "+3%"
+      },
+      "peak": {
+        "key": "peak",
+        "text": "Esos cambios pequeños son señales. Tu sistema nervioso está leyendo el ambiente de la relación constantemente. Por eso te duele tanto algo que 'debería ser insignificante'.",
+        "deliveryStyle": "impacto",
+        "narrationEnergy": "muy alta",
+        "pauseStrength": "media",
+        "emphasisWords": [
+          "deberia",
+          "insignificante"
+        ],
+        "pacing": "enfatico",
+        "pauseBefore": 0.18,
+        "pauseAfter": 0.16,
+        "joiner": ".",
+        "ssmlRate": "-3%",
+        "ssmlPitch": "+4%",
+        "ssmlVolume": "+4%"
+      },
+      "open_ending": {
+        "key": "open_ending",
+        "text": "Pero ese dolor pequeño... a veces es el único aviso que tienes.",
+        "deliveryStyle": "eco",
+        "narrationEnergy": "media",
+        "pauseStrength": "corta",
+        "emphasisWords": [
+          "aviso",
+          "tienes"
+        ],
+        "pacing": "controlado",
+        "pauseBefore": 0.08,
+        "pauseAfter": 0.06,
+        "joiner": ".",
+        "ssmlRate": "-5%",
+        "ssmlPitch": "-1%",
+        "ssmlVolume": "0%"
+      },
+      "soft_cta": {
+        "key": "soft_cta",
+        "text": "¿Te ha pasado esto? Cuéntame en comentarios.",
+        "deliveryStyle": "conversacional",
+        "narrationEnergy": "media",
+        "pauseStrength": "ninguna",
+        "emphasisWords": [
+          "cuentame",
+          "comentarios"
+        ],
+        "pacing": "natural",
+        "pauseBefore": 0.05,
+        "pauseAfter": 0,
+        "joiner": "",
+        "ssmlRate": "-7%",
+        "ssmlPitch": "+2%",
+        "ssmlVolume": "0%"
+      }
+    },
+    "blocks": [
+      {
+        "key": "block_1",
+        "pauseAfter": 0.46,
+        "blockPacing": "controlado con gancho",
+        "parts": [
+          {
+            "key": "hook",
+            "text": "Mira esto cuando algo pequeño te cambie el cuerpo.",
+            "joiner": "...",
+            "pauseBefore": 0,
+            "profile": {
+              "key": "hook",
+              "text": "Mira esto cuando algo pequeño te cambie el cuerpo.",
+              "deliveryStyle": "directo",
+              "narrationEnergy": "alta",
+              "pauseStrength": "fuerte",
+              "emphasisWords": [
+                "cambie",
+                "cuerpo"
+              ],
+              "pacing": "corto",
+              "pauseBefore": 0,
+              "pauseAfter": 0.46,
+              "joiner": "...",
+              "ssmlRate": "-10%",
+              "ssmlPitch": "+6%",
+              "ssmlVolume": "+2%"
+            }
+          },
+          {
+            "key": "open_loop",
+            "text": "Tu pareja dice algo sin intención y de repente sientes el pecho apretado.",
+            "joiner": ".",
+            "pauseBefore": 0.06,
+            "profile": {
+              "key": "open_loop",
+              "text": "Tu pareja dice algo sin intención y de repente sientes el pecho apretado.",
+              "deliveryStyle": "susurrado-tenso",
+              "narrationEnergy": "media-alta",
+              "pauseStrength": "media",
+              "emphasisWords": [
+                "pecho",
+                "apretado"
+              ],
+              "pacing": "tenso",
+              "pauseBefore": 0.06,
+              "pauseAfter": 0.12,
+              "joiner": ".",
+              "ssmlRate": "-6%",
+              "ssmlPitch": "+3%",
+              "ssmlVolume": "+1%"
+            }
+          }
+        ],
+        "text": "Mira esto cuando algo pequeño te cambie el cuerpo... Tu pareja dice algo sin intención y de repente sientes el pecho apretado."
+      },
+      {
+        "key": "block_2",
+        "pauseAfter": 0.22,
+        "blockPacing": "creciente",
+        "parts": [
+          {
+            "key": "micro_value",
+            "text": "Cómo los detalles mínimos disparan respuestas físicas enormes en la relación.",
+            "joiner": ".",
+            "pauseBefore": 0.04,
+            "profile": {
+              "key": "micro_value",
+              "text": "Cómo los detalles mínimos disparan respuestas físicas enormes en la relación.",
+              "deliveryStyle": "claro",
+              "narrationEnergy": "media",
+              "pauseStrength": "corta",
+              "emphasisWords": [
+                "enormes",
+                "relacion"
+              ],
+              "pacing": "estable",
+              "pauseBefore": 0.04,
+              "pauseAfter": 0.08,
+              "joiner": ".",
+              "ssmlRate": "-2%",
+              "ssmlPitch": "0%",
+              "ssmlVolume": "0%"
+            }
+          },
+          {
+            "key": "escalation",
+            "text": "Un tono diferente en un 'hola'. Un like que no llegó. El móvil boca abajo en la mesa. Tu cuerpo lo siente antes que tu mente.",
+            "joiner": ".",
+            "pauseBefore": 0.04,
+            "profile": {
+              "key": "escalation",
+              "text": "Un tono diferente en un 'hola'. Un like que no llegó. El móvil boca abajo en la mesa. Tu cuerpo lo siente antes que tu mente.",
+              "deliveryStyle": "creciente",
+              "narrationEnergy": "media-alta",
+              "pauseStrength": "corta",
+              "emphasisWords": [
+                "antes",
+                "mente"
+              ],
+              "pacing": "agil",
+              "pauseBefore": 0.04,
+              "pauseAfter": 0.18,
+              "joiner": ".",
+              "ssmlRate": "+3%",
+              "ssmlPitch": "+1%",
+              "ssmlVolume": "+1%"
+            }
+          }
+        ],
+        "text": "Cómo los detalles mínimos disparan respuestas físicas enormes en la relación. Un tono diferente en un 'hola'. Un like que no llegó. El móvil boca abajo en la mesa. Tu cuerpo lo siente antes que tu mente."
+      },
+      {
+        "key": "block_3",
+        "pauseAfter": 0.18,
+        "blockPacing": "impacto",
+        "parts": [
+          {
+            "key": "reengage",
+            "text": "No estás siendo dramático. Tu cuerpo está detectando algo real.",
+            "joiner": "...",
+            "pauseBefore": 0.26,
+            "profile": {
+              "key": "reengage",
+              "text": "No estás siendo dramático. Tu cuerpo está detectando algo real.",
+              "deliveryStyle": "remate",
+              "narrationEnergy": "alta",
+              "pauseStrength": "fuerte",
+              "emphasisWords": [
+                "detectando",
+                "real"
+              ],
+              "pacing": "marcado",
+              "pauseBefore": 0.26,
+              "pauseAfter": 0.12,
+              "joiner": "...",
+              "ssmlRate": "-4%",
+              "ssmlPitch": "+6%",
+              "ssmlVolume": "+3%"
+            }
+          },
+          {
+            "key": "peak",
+            "text": "Esos cambios pequeños son señales. Tu sistema nervioso está leyendo el ambiente de la relación constantemente. Por eso te duele tanto algo que 'debería ser insignificante'.",
+            "joiner": ".",
+            "pauseBefore": 0.18,
+            "profile": {
+              "key": "peak",
+              "text": "Esos cambios pequeños son señales. Tu sistema nervioso está leyendo el ambiente de la relación constantemente. Por eso te duele tanto algo que 'debería ser insignificante'.",
+              "deliveryStyle": "impacto",
+              "narrationEnergy": "muy alta",
+              "pauseStrength": "media",
+              "emphasisWords": [
+                "deberia",
+                "insignificante"
+              ],
+              "pacing": "enfatico",
+              "pauseBefore": 0.18,
+              "pauseAfter": 0.16,
+              "joiner": ".",
+              "ssmlRate": "-3%",
+              "ssmlPitch": "+4%",
+              "ssmlVolume": "+4%"
+            }
+          }
+        ],
+        "text": "No estás siendo dramático. Tu cuerpo está detectando algo real... Esos cambios pequeños son señales. Tu sistema nervioso está leyendo el ambiente de la relación constantemente. Por eso te duele tanto algo que 'debería ser insignificante'."
+      },
+      {
+        "key": "block_4",
+        "pauseAfter": 0,
+        "blockPacing": "cierre conversacional",
+        "parts": [
+          {
+            "key": "open_ending",
+            "text": "Pero ese dolor pequeño... a veces es el único aviso que tienes.",
+            "joiner": ".",
+            "pauseBefore": 0.08,
+            "profile": {
+              "key": "open_ending",
+              "text": "Pero ese dolor pequeño... a veces es el único aviso que tienes.",
+              "deliveryStyle": "eco",
+              "narrationEnergy": "media",
+              "pauseStrength": "corta",
+              "emphasisWords": [
+                "aviso",
+                "tienes"
+              ],
+              "pacing": "controlado",
+              "pauseBefore": 0.08,
+              "pauseAfter": 0.06,
+              "joiner": ".",
+              "ssmlRate": "-5%",
+              "ssmlPitch": "-1%",
+              "ssmlVolume": "0%"
+            }
+          },
+          {
+            "key": "soft_cta",
+            "text": "¿Te ha pasado esto? Cuéntame en comentarios.",
+            "joiner": "",
+            "pauseBefore": 0.05,
+            "profile": {
+              "key": "soft_cta",
+              "text": "¿Te ha pasado esto? Cuéntame en comentarios.",
+              "deliveryStyle": "conversacional",
+              "narrationEnergy": "media",
+              "pauseStrength": "ninguna",
+              "emphasisWords": [
+                "cuentame",
+                "comentarios"
+              ],
+              "pacing": "natural",
+              "pauseBefore": 0.05,
+              "pauseAfter": 0,
+              "joiner": "",
+              "ssmlRate": "-7%",
+              "ssmlPitch": "+2%",
+              "ssmlVolume": "0%"
+            }
+          }
+        ],
+        "text": "Pero ese dolor pequeño... a veces es el único aviso que tienes. ¿Te ha pasado esto? Cuéntame en comentarios."
+      }
+    ]
+  }
+}
