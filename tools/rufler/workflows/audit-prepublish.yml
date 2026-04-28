@@ -1,0 +1,66 @@
+name: Auditoría Pre-Publish
+
+description: |
+  Valida que vídeos cumplen todos los requisitos antes de publicación.
+
+  Checklist:
+  - QC pass
+  - Subtítulos (si aplica)
+  - Audio presente y correcto
+  - Duration 25-35s
+  - No pantalla negra
+  - Metadata completa
+
+steps:
+  - name: "Buscar vídeos listos para publish"
+    type: exec
+    command: "find output -name 'qc.json' -type f | head -5"
+
+  - name: "Validar QC scores"
+    type: exec
+    command: "cat output/prod-video/qc.json 2>/dev/null | grep -E '(passed|score|threshold)' || echo 'No QC available'"
+    continue_on_error: true
+
+  - name: "Verificar duración (25-35s)"
+    type: exec
+    command: "ffprobe -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1:noinit=1 output/prod-video/output.mp4 2>/dev/null || echo 'Duration check skipped'"
+    continue_on_error: true
+
+  - name: "Validar presencia de audio"
+    type: exec
+    command: "ffprobe -v error -select_streams a:0 -show_entries stream=codec_type -of default=noprint_wrappers=1:nokey=1:noinit=1 output/prod-video/output.mp4 2>/dev/null || echo 'Audio check skipped'"
+    continue_on_error: true
+
+  - name: "Detectar pantalla negra en vídeo"
+    type: exec
+    command: "ffmpeg -i output/prod-video/output.mp4 -vf blackdetect=d=1:pix_th=0.1 -f null - 2>&1 | grep -c 'black_start' || echo '0'"
+    continue_on_error: true
+
+  - name: "Validar metadata del vídeo"
+    type: validate
+    files:
+      - path: "output/prod-video/script.json"
+      - path: "output/prod-video/render-metadata.json"
+      - path: "output/prod-video/qc.json"
+
+  - name: "Verificar que script tiene campos requeridos"
+    type: exec
+    command: "cat output/prod-video/script.json 2>/dev/null | grep -E '(hook|topic|emotionalTrigger)' && echo 'Script completo' || echo 'Script incompleto'"
+    continue_on_error: true
+
+  - name: "Generar reporte de auditoría"
+    type: exec
+    command: "node -e \"
+      console.log('=== Pre-Publish Audit Report ===');
+      console.log('Timestamp:', new Date().toISOString());
+      console.log('Video: output/prod-video/output.mp4');
+      console.log('');
+      console.log('Checklist:');
+      console.log('[ ] QC Pass');
+      console.log('[ ] Duration 25-35s');
+      console.log('[ ] Audio present');
+      console.log('[ ] No black screen');
+      console.log('[ ] Metadata complete');
+      console.log('');
+      console.log('Status: Ready for review');
+    \""

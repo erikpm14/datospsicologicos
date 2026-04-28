@@ -1,0 +1,15 @@
+# Rufler dev tool - ignore reports and outputs
+*.report.json
+*.log
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+venv/
+env/
+
+# OS
+.DS_Store
+Thumbs.db

@@ -1,0 +1,45 @@
+name: Validar QC en Vídeos
+
+description: |
+  Ejecuta validación QC en vídeos generados.
+  Verifica:
+  - Ausencia de pantalla negra
+  - Presencia de audio
+  - Metadata correcta
+  - Scores de calidad
+
+steps:
+  - name: "Buscar vídeos para QC"
+    type: exec
+    command: "find output -name 'output.mp4' -type f 2>/dev/null | head -3"
+
+  - name: "Verificar vídeos generados recientemente"
+    type: validate
+    files:
+      - path: "output/prod-video/output.mp4"
+
+  - name: "Ejecutar ffprobe en vídeo"
+    type: exec
+    command: "ffprobe -v quiet -print_format json -show_format -show_streams output/prod-video/output.mp4"
+    continue_on_error: true
+
+  - name: "Detectar pantalla negra con ffmpeg"
+    type: exec
+    command: "ffmpeg -i output/prod-video/output.mp4 -vf blackdetect=d=0.1:pix_th=0.1 -f null - 2>&1 | grep -i 'black' || echo 'No black screen detected'"
+    continue_on_error: true
+
+  - name: "Verificar duración del vídeo"
+    type: exec
+    command: "ffprobe -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1:noinit=1 output/prod-video/output.mp4 | head -c 10"
+    continue_on_error: true
+
+  - name: "Revisar metadata QC"
+    type: validate
+    files:
+      - "output/prod-video/qc.json"
+      - "output/prod-video/render-metadata.json"
+
+  - name: "Mostrar reporte QC"
+    type: exec
+    command: "cat output/prod-video/qc.json 2>/dev/null | head -100"
+    continue_on_error: true

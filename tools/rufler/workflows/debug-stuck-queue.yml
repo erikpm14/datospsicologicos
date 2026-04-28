@@ -1,0 +1,68 @@
+name: Debug Cola de Procesamiento
+
+description: |
+  Diagnostica problemas en la cola de vídeos.
+
+  Verifica:
+  - Trabajos pendientes
+  - Trabajos activos/atascados
+  - Errores en logs
+  - Estado de PM2
+
+steps:
+  - name: "Listar trabajos pendientes"
+    type: exec
+    command: "ls -la queue/pending/*.json 2>/dev/null | wc -l"
+
+  - name: "Listar trabajos activos"
+    type: exec
+    command: "ls -la queue/active/*.json 2>/dev/null | head -5"
+
+  - name: "Listar trabajos fallidos"
+    type: exec
+    command: "ls -la queue/failed/*.json 2>/dev/null | head -5"
+
+  - name: "Verificar tiempo de vídeo atascado"
+    type: exec
+    command: "find queue/active -name '*.json' -type f -mmin +30 2>/dev/null || echo 'No stuck jobs found'"
+
+  - name: "Revisar logs del backend"
+    type: exec
+    command: "tail -100 logs/backend.log 2>/dev/null | grep -i error || echo 'No recent errors'"
+    continue_on_error: true
+
+  - name: "Estado de PM2"
+    type: exec
+    command: "pm2 list 2>/dev/null || echo 'PM2 not available'"
+    continue_on_error: true
+
+  - name: "Verificar estado de pipeline"
+    type: validate
+    files:
+      - path: "data/pipeline-state.json"
+
+  - name: "Mostrar estado actual"
+    type: exec
+    command: "cat data/pipeline-state.json 2>/dev/null | head -50"
+    continue_on_error: true
+
+  - name: "Buscar vídeos con error de render"
+    type: exec
+    command: "grep -r 'HYPERFRAME_RENDER_FAILED\\|render failed' logs/ 2>/dev/null | tail -5 || echo 'No render failures in logs'"
+    continue_on_error: true
+
+  - name: "Generar diagnóstico"
+    type: exec
+    command: "node -e \"
+      console.log('=== Queue Diagnostics ===');
+      console.log('Timestamp:', new Date().toISOString());
+      console.log('');
+      console.log('Common Issues:');
+      console.log('1. Check if renderer is failing (RENDER_MODE mismatch)');
+      console.log('2. Verify audio synthesis completed');
+      console.log('3. Check FFmpeg availability');
+      console.log('4. Review QC thresholds');
+      console.log('');
+      console.log('Recovery:');
+      console.log('pm2 restart all');
+    \""

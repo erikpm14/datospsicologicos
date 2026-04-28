@@ -1,0 +1,37 @@
+name: Validar Render Hyperframe
+
+description: |
+  Verifica que el renderer Hyperframe funciona correctamente.
+  - Generación de vídeo de prueba
+  - Validación de output file
+  - Verificación de metadatos
+
+steps:
+  - name: "Limpiar output anterior"
+    type: exec
+    command: "rm -rf test-hyperframe-output"
+    continue_on_error: true
+
+  - name: "Ejecutar test de Hyperframe"
+    type: script
+    script: "test-hyperframe.js"
+
+  - name: "Validar archivos generados"
+    type: validate
+    files:
+      - path: "test-hyperframe-output/test_001_hook/output.mp4"
+        min_size: 100000  # Al menos 100KB
+      - path: "test-hyperframe-output/test_002_relationships/output.mp4"
+        min_size: 100000
+      - path: "test-hyperframe-output/test_003_validation/output.mp4"
+        min_size: 100000
+      - "test-hyperframe-output/validation-report.json"
+
+  - name: "Verificar report de validación"
+    type: exec
+    command: "cat test-hyperframe-output/validation-report.json | node -e \"console.log(JSON.stringify(JSON.parse(require('fs').readFileSync(0, 'utf8')), null, 2))\""
+    continue_on_error: true
+
+  - name: "Comprobar render sin errores"
+    type: assert
+    condition: "cmd-exit-0:test -f test-hyperframe-output/validation-report.json"

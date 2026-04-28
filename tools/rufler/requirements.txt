@@ -1,0 +1,10 @@
+# Rufler - Desarrollo & Debugging Tool
+# Solo dependencias para workflows de desarrollo
+# NO afecta pipeline de producción
+
+# YAML parsing for workflow definitions
+pyyaml>=6.0
+
+# Optional: para notificaciones futuras
+# slack-sdk>=3.0  (no usado aún)
+# requests>=2.28  (no usado aún)
