@@ -23,6 +23,7 @@ const { validateVideoV4 } = require('../contracts/video-v4.contract');
 const { scoreHumanity } = require('../utils/humanity-scorer');
 const { getOptimizationContext } = require('./insights-optimizer.service');
 const viralHooksData = require('../templates/viral-hooks.json');
+const performanceTracker = require('./performance-tracker.service');
 
 const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 const COMPACT_SCRIPT_SCHEMA = `{
@@ -881,6 +882,19 @@ ${COMPACT_SCRIPT_SCHEMA}`;
     logger.info(`V4_PASS | generation | videoId=${script.videoId}`);
 
     logger.info(`Script OK | words=${totalWords} | duration=${script.durationSeconds}s | structure=confessional | v4.1=true | reengage=${script.hasReengage} | score=${viralityResult.score} | llmCalls=${llmMetrics.llm_total_calls} | recovery=${llmMetrics.llm_recovery_used ? 1 : 0} | truncated=${llmMetrics.llm_truncated_suspected ? 1 : 0} | model=${formatDurationMs(modelPhase.durationMs)} | parse=${formatDurationMs(parsePhase.durationMs)} | total=${formatDurationMs(perf.snapshot().totalMs)}`);
+
+    // PERFORMANCE TRACKING (non-blocking)
+    try {
+      await performanceTracker.trackScriptGeneration({
+        videoId: script.videoId,
+        hook: script.hook,
+        pattern_used: script.viralTrigger || null,
+        topic: script.topic,
+      });
+    } catch (err) {
+      logger.warn(`[tracking] Script tracking failed: ${err.message}`);
+    }
+
     return script;
 
   } catch (err) {

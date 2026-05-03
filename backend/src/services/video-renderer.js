@@ -17,6 +17,7 @@ const path = require('path');
 const logger = require('../utils/logger');
 const { createPerfTracker, formatDurationMs } = require('../utils/perf-tracker');
 const { buildStyledSubtitleBlocks, buildStyledDrawtextFilters, buildSRTContent, buildKaraokeASSFile, buildStyledASSFile, optimizeSubtitlesForVirality } = require('./subtitle-styler');
+const performanceTracker = require('./performance-tracker.service');
 const { getVisualStyleReference, STYLE_CLIP_KEYWORDS } = require('../utils/visual-style-system');
 const { detectVoiceSegments } = require('./audio-postprocess');
 const { mapSubtitlesToVoiceSegments } = require('./audio-subtitle-mapper');
@@ -1180,6 +1181,15 @@ async function renderVideo({ script, audioPath, audioDuration, outputPath, theme
   // 🎬 RENDER COMPLETE — Abrir carpeta automáticamente
   if (result && fs.existsSync(outputPath)) {
     await _openOutputFolder(outputPath);
+  }
+
+  // PERFORMANCE TRACKING (non-blocking)
+  if (result && script?.videoId) {
+    try {
+      await performanceTracker.trackVideoRender(script.videoId, realDuration);
+    } catch (err) {
+      logger.warn(`[tracking] Video render tracking failed: ${err.message}`);
+    }
   }
 
   return result;

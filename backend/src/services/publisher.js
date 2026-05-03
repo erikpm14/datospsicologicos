@@ -18,6 +18,7 @@ const logger = require('../utils/logger');
 const { validateForPublish, discardInvalidVideo } = require('./publish-validator.service');
 const { validateCaptionsForPublish } = require('./caption-pre-publish-validator');
 const { validatePrepublish } = require('./prepublish-visual-qc.service');
+const performanceTracker = require('./performance-tracker.service');
 const PUBLISH_RETRY_DELAY_MS = Math.max(1000, parseInt(process.env.PUBLISH_RETRY_DELAY_MS || '4000', 10) || 4000);
 const PUBLISH_MAX_RETRIES = Math.max(1, parseInt(process.env.PUBLISH_MAX_RETRIES || '3', 10) || 3);
 
@@ -278,19 +279,43 @@ async function publishToYouTube(videoPath, script) {
 
 /**
  * Obtiene access token de YouTube usando refresh token.
+ * Si falla, proporciona instrucciones claras para renovar.
  */
 async function getYouTubeAccessToken() {
+  const hasRefreshToken = Boolean(process.env.YOUTUBE_REFRESH_TOKEN && process.env.YOUTUBE_REFRESH_TOKEN !== 'RELLENAR');
+
+  if (!hasRefreshToken) {
+    logger.error('YOUTUBE_OAUTH_MISSING | refresh_token no configurado en .env');
+    throw new Error('YOUTUBE_OAUTH_MISSING: YOUTUBE_REFRESH_TOKEN no está en .env o es RELLENAR');
+  }
+
   try {
+    logger.debug(`YouTube OAuth: intentando renovación de token...`);
     const response = await axios.post('https://oauth2.googleapis.com/token', {
       client_id: process.env.YOUTUBE_CLIENT_ID,
       client_secret: process.env.YOUTUBE_CLIENT_SECRET,
       refresh_token: process.env.YOUTUBE_REFRESH_TOKEN,
       grant_type: 'refresh_token',
     });
+    logger.debug(`YouTube OAuth: token renovado exitosamente`);
     return response.data.access_token;
   } catch (err) {
-    const detail = err.response?.data?.error || err.response?.data || err.message;
-    throw new Error(`YouTube OAuth failed (${err.response?.status}): ${JSON.stringify(detail)}`);
+    const errorCode = err.response?.data?.error || 'UNKNOWN';
+    const errorDesc = err.response?.data?.error_description || err.response?.data?.message || err.message;
+    const httpStatus = err.response?.status || 'N/A';
+
+    // invalid_grant = token expirado o inválido
+    if (errorCode === 'invalid_grant') {
+      const msg = `YOUTUBE_OAUTH_INVALID_GRANT: refresh_token está expirado o inválido.\n` +
+        `ACCIÓN REQUERIDA: Regenera el token en http://localhost:3001/auth/youtube\n` +
+        `O ejecuta: node backend/scripts/check-youtube-oauth.js`;
+      logger.error(msg);
+      throw new Error(msg);
+    }
+
+    const detail = `${errorCode}: ${errorDesc}`;
+    logger.error(`YouTube OAuth failed (${httpStatus}): ${detail}`);
+    throw new Error(`YouTube OAuth failed (${httpStatus}): ${detail}`);
   }
 }
 
@@ -301,8 +326,12 @@ async function getYouTubeAccessToken() {
 /**
  * Publica en todas las plataformas disponibles (según tokens configurados).
  * Solo intenta plataformas con credenciales reales (no "RELLENAR").
+ * @param {string} videoPath
+ * @param {object} script
+ * @param {string} videoUrl - optional
+ * @param {object} options - { skipPrepublishVisualQC: boolean }
  */
-async function publishAll(videoPath, script, videoUrl = null) {
+async function publishAll(videoPath, script, videoUrl = null, options = {}) {
   const videoId = script?.videoId || script?.id || path.basename(path.dirname(videoPath || 'unknown'));
   const hasLegacyValidationShape = Boolean(
     script?.data?.prefabScript ||
@@ -362,23 +391,27 @@ async function publishAll(videoPath, script, videoUrl = null) {
   // GATE 0.5: VALIDACIÓN VISUAL PRE-PUBLISH (DETECTA VÍDEOS NEGROS)
   // Impide publicar pantallas negras, sin stream de video, etc.
   // ═══════════════════════════════════════════════════════════════
-  const outputDir = path.dirname(videoPath);
-  const visualQcResult = await validatePrepublish(videoPath, outputDir, videoId);
-  if (!visualQcResult.ok) {
-    logger.error(`PREPUBLISH_VISUAL_QC_BLOCKED videoId=${videoId} reasons=${visualQcResult.blockedReasons?.join(',') || 'unknown'}`, {
-      videoId,
-      blockedReasons: visualQcResult.blockedReasons,
-      checks: visualQcResult.checks,
-    });
-    return {
-      success: false,
-      error: 'PREPUBLISH_VISUAL_QC_BLOCKED',
-      reason: `Video failed visual QC: ${visualQcResult.blockedReasons?.join(', ') || 'unknown'}`,
-      details: visualQcResult.checks,
-      discarded: true,
-    };
+  if (!options.skipPrepublishVisualQC) {
+    const outputDir = path.dirname(videoPath);
+    const visualQcResult = await validatePrepublish(videoPath, outputDir, videoId);
+    if (!visualQcResult.ok) {
+      logger.error(`PREPUBLISH_VISUAL_QC_BLOCKED videoId=${videoId} reasons=${visualQcResult.blockedReasons?.join(',') || 'unknown'}`, {
+        videoId,
+        blockedReasons: visualQcResult.blockedReasons,
+        checks: visualQcResult.checks,
+      });
+      return {
+        success: false,
+        error: 'PREPUBLISH_VISUAL_QC_BLOCKED',
+        reason: `Video failed visual QC: ${visualQcResult.blockedReasons?.join(', ') || 'unknown'}`,
+        details: visualQcResult.checks,
+        discarded: true,
+      };
+    }
+    logger.info(`PREPUBLISH_VISUAL_QC_PASS videoId=${videoId}`);
+  } else {
+    logger.info(`PREPUBLISH_VISUAL_QC_SKIPPED videoId=${videoId} (recovery mode)`);
   }
-  logger.info(`PREPUBLISH_VISUAL_QC_PASS videoId=${videoId}`);
 
   // ═══════════════════════════════════════════════════════════════
   // GATE 1: VALIDACIÓN SCRIPT + QC HARD
@@ -470,6 +503,15 @@ async function publishAll(videoPath, script, videoUrl = null) {
     try {
       const ytResult = await runWithRetry('YouTube', () => publishToYouTube(videoPath, script));
       results.push(ytResult);
+
+      // PERFORMANCE TRACKING (non-blocking)
+      if (ytResult && ytResult.videoId) {
+        try {
+          await performanceTracker.trackPublish(videoId, ytResult.videoId, new Date().toISOString());
+        } catch (err) {
+          logger.warn(`[tracking] Publish tracking failed: ${err.message}`);
+        }
+      }
     } catch (err) {
       // ⚠️  ESPECIAL: No descartar si OAuth falla con invalid_grant
       // El vídeo es válido, solo el token expiró. Permitir reintento.
