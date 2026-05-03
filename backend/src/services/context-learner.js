@@ -12,6 +12,7 @@
 const fs     = require('fs');
 const path   = require('path');
 const logger = require('../utils/logger');
+const { callAnthropicWithTimeout } = require('../utils/llm-call');
 
 const MATRIX_PATH        = path.resolve('./data/context-matrix.json');
 const VIDEOS_PATH        = path.resolve('./data/videos.json');
@@ -389,14 +390,14 @@ async function analyzeFailuresWithClaude() {
     const avgScore = items.reduce((s, r) => s + (r.viralityScore || 0), 0) / items.length;
 
     try {
-      const msg = await client.messages.create({
+      const msg = await callAnthropicWithTimeout(client, {
         model:      'claude-haiku-4-5-20251001',
         max_tokens: 250,
         messages: [{
           role:    'user',
           content: `Soy un bot de YouTube Shorts de psicología en español. Estos scripts del topic "${topic}" son rechazados por score de viralidad bajo (media ${avgScore.toFixed(0)}/100, umbral 78):\n\n${sample}\n\nDa 3 razones concretas del fallo y 2 estrategias específicas para mejorar los scripts de "${topic}". Máximo 4 líneas.`,
         }],
-      });
+      }, { label: `learning-${topic}` });
 
       analyses[topic] = {
         analysis:    msg.content[0].text.trim(),

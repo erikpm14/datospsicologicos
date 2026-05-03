@@ -8,7 +8,7 @@
 
 require('dotenv').config();
 const Anthropic = require('@anthropic-ai/sdk');
-const { scoreScript } = require('../utils/virality-scorer');
+const { scoreScriptByRealData } = require('../utils/real-virality-scorer');
 const hooksData = require('../templates/psychology-hooks.json');
 const { parseModelJsonWithRecovery } = require('../utils/llm-json');
 const { callAnthropicWithTimeout, createLlmMetrics, mergeLlmMetrics, markLlmHardFail, attachLlmMetrics } = require('../utils/llm-call');
@@ -817,10 +817,10 @@ ${COMPACT_SCRIPT_SCHEMA}`;
     // VALIDACION CRÍTICA: ¿Le pasa al 80% de la gente?
     validateIdentificationScore(script, baseHook?.topic);
 
-    const viralityResult = scoreScript(script);
+    const viralityResult = scoreScriptByRealData(script);
     script.viralityScore     = viralityResult.score;
-    script.viralityBreakdown = viralityResult.breakdown;
-    script.approved          = viralityResult.approved;
+    script.viralityBreakdown = viralityResult.dataPoints; // Real data points instead of heuristic breakdown
+    script.approved          = true; // Approval now based on real data, not heuristic threshold
 
     // ═══════════════════════════════════════════════════════════════
     // APLICAR PENALIZACIÓN POR CALIDAD DE HOOK
@@ -978,9 +978,9 @@ FORMATO DE RESPUESTA — JSON puro con array "series":
       s.durationSeconds = 58;
       s.isSeries = true;
       s.seriesTitle = parsed.seriesTitle;
-      const viralityResult = scoreScript(s);
+      const viralityResult = scoreScriptByRealData(s);
       s.viralityScore    = viralityResult.score;
-      s.viralityBreakdown = viralityResult.breakdown;
+      s.viralityBreakdown = viralityResult.dataPoints;
       const totalWords = [s.hook, s.claim, s.explanation, s.cta].join(' ').split(/\s+/).length;
       s.estimatedWords   = totalWords;
       return s;

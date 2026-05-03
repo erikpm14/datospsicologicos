@@ -13,6 +13,7 @@ const {
   notifyQueueLow,
   notifyPipelineBlocked,
   notifySystemRecovered,
+  sendDigestIfDue,
 } = require('./telegram-notifier');
 
 let watchdogJob = null;
@@ -117,6 +118,8 @@ async function runWatchdogCheck() {
         failedCount: snapshot.failedCount,
       },
     });
+
+    try { await sendDigestIfDue(); } catch {}
     logger.info(`PipelineWatchdog: check finished | ready=${snapshot.readyCount} | pending=${snapshot.pendingCount} | active=${snapshot.activeCount} | recovered=${recovered}`);
 
     if (recovered) {

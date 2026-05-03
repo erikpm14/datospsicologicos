@@ -54,7 +54,9 @@ function buildSegmentsFromFields(script = {}) {
 }
 
 function hasExpandedStructure(script = {}) {
-  return EXPANDED_SEGMENT_KEYS.some((key) => Boolean(String(script[key] || '').trim()));
+  // Check for expanded-only keys (excluding hook which is in both formats)
+  const expandedOnlyKeys = ['open_loop', 'micro_value', 'escalation', 'reengage', 'peak', 'open_ending', 'soft_cta'];
+  return expandedOnlyKeys.some((key) => Boolean(String(script[key] || '').trim()));
 }
 
 function ensureLegacyFields(script = {}) {

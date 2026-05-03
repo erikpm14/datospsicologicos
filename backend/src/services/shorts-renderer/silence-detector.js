@@ -4,7 +4,7 @@
  * Los gaps ≥400ms son puntos naturales de corte entre clips.
  */
 
-const { spawn } = require('child_process');
+const { safeSpawn } = require('../../utils/safe-spawn');
 const fs = require('fs');
 const { SILENCE_DETECTION_CONFIG } = require('./style-config');
 const logger = require('../utils/logger');
@@ -29,7 +29,7 @@ async function detectSilenceGaps(audioPath, minGapMs = SILENCE_DETECTION_CONFIG.
     // FFmpeg silencedetect: encuentra períodos de silencio
     // noise=-30dB: threshold de silencio
     // duration=X: duración mínima del silencio para reportar
-    const cmd = spawn('ffmpeg', [
+    const cmd = safeSpawn('ffmpeg', [
       '-i', audioPath,
       '-af', `silencedetect=noise=${SILENCE_DETECTION_CONFIG.noiseThreshold}:duration=${minDuration}`,
       '-f', 'null',

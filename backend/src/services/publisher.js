@@ -19,6 +19,8 @@ const { validateForPublish, discardInvalidVideo } = require('./publish-validator
 const { validateCaptionsForPublish } = require('./caption-pre-publish-validator');
 const { validatePrepublish } = require('./prepublish-visual-qc.service');
 const performanceTracker = require('./performance-tracker.service');
+const duplicateDetector = require('./duplicate-detector.service');
+const duplicateTracker = require('./duplicate-tracker');
 const PUBLISH_RETRY_DELAY_MS = Math.max(1000, parseInt(process.env.PUBLISH_RETRY_DELAY_MS || '4000', 10) || 4000);
 const PUBLISH_MAX_RETRIES = Math.max(1, parseInt(process.env.PUBLISH_MAX_RETRIES || '3', 10) || 3);
 
@@ -411,6 +413,48 @@ async function publishAll(videoPath, script, videoUrl = null, options = {}) {
     logger.info(`PREPUBLISH_VISUAL_QC_PASS videoId=${videoId}`);
   } else {
     logger.info(`PREPUBLISH_VISUAL_QC_SKIPPED videoId=${videoId} (recovery mode)`);
+  }
+
+  // ═══════════════════════════════════════════════════════════════
+  // GATE 0.7: DETECCIÓN DE DUPLICADOS
+  // Bloquea contenido demasiado similar a vídeos recientes
+  // ═══════════════════════════════════════════════════════════════
+  const scriptData = hasLegacyValidationShape ? (script.data?.prefabScript || script.prefabScript) : script;
+  if (scriptData && (scriptData.hook || scriptData.topic)) {
+    const duplicateCheck = duplicateDetector.detectDuplicate(scriptData, {
+      limit: 50,
+      hookExactMatchLimit: 10,
+      similarityThreshold: 70,
+    });
+
+    duplicateDetector.logDuplicateDetection(videoId, duplicateCheck);
+
+    if (duplicateCheck.isDuplicate) {
+      logger.error(`[DUPLICATE_BLOCKED] videoId=${videoId} reason=${duplicateCheck.blockedReason}`);
+      if (duplicateCheck.exactHookMatches.length > 0) {
+        logger.error(`  Similar videos: ${JSON.stringify(duplicateCheck.exactHookMatches.slice(0, 3))}`);
+      }
+      if (duplicateCheck.duplicateRisks.length > 0) {
+        logger.error(`  Risk videos: ${duplicateCheck.duplicateRisks.slice(0, 2).map(r => `${r.videoId}(${r.similarity}%)`).join(', ')}`);
+      }
+
+      // FASE 3: Record in tracking
+      duplicateTracker.recordDuplicateBlock(videoId, duplicateCheck);
+
+      return {
+        success: false,
+        error: 'DUPLICATE_CONTENT_BLOCKED',
+        reason: duplicateCheck.blockedReason,
+        similarityScore: duplicateCheck.similarityScore,
+        matchedVideos: duplicateCheck.exactHookMatches.length + duplicateCheck.duplicateRisks.length,
+        discarded: false, // No descartar, solo bloquear publicación
+        shouldRegenerateHook: true, // Signal para regenerar con hook diferente
+      };
+    } else if (duplicateCheck.warnings.length > 0) {
+      logger.warn(`[DUPLICATE_WARNING] videoId=${videoId} similarity=${duplicateCheck.similarityScore}%`);
+      // FASE 3: Record warning
+      duplicateTracker.recordDuplicateWarning(videoId, duplicateCheck.similarityScore);
+    }
   }
 
   // ═══════════════════════════════════════════════════════════════

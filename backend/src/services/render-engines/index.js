@@ -1,15 +1,37 @@
 require('dotenv').config();
 const logger = require('../../utils/logger');
 const { renderWithVideoUse } = require('./video-use-renderer');
-const { renderHyperframe } = require('../renderers/hyperframe-renderer');
+const { renderHyperframe } = require('../../renderers/hyperframe-renderer');
 const fs = require('fs');
 const path = require('path');
 
 const MIN_VIDEO_DURATION = 25; // segundos
 const RENDER_MODE = process.env.RENDER_MODE || 'video_use';
 
+// FIX #3: NEVER REUSE SUBTITLE FILES
+function cleanOldSubtitles(outputDir) {
+  if (!outputDir) return;
+  const subtitleExtensions = ['.srt', '.ass', '.vtt'];
+  for (const ext of subtitleExtensions) {
+    const subtitlePath = path.join(outputDir, `subtitles${ext}`);
+    if (fs.existsSync(subtitlePath)) {
+      try {
+        fs.unlinkSync(subtitlePath);
+        logger.info(`[render-router] Cleaned old subtitle: ${subtitlePath}`);
+      } catch (err) {
+        logger.warn(`[render-router] Failed to clean old subtitle ${subtitlePath}: ${err.message}`);
+      }
+    }
+  }
+}
+
 async function renderVideoWithRouter(options = {}) {
   const { audioDuration, outputPath } = options;
+  const outputDir = path.dirname(outputPath);
+
+  // FIX #3: Clean old subtitle files before rendering
+  cleanOldSubtitles(outputDir);
+  logger.info(`[render-router] Output directory: ${outputDir} (subtitles cleaned)`);
 
   // Validar duración mínima
   if (audioDuration && audioDuration < MIN_VIDEO_DURATION) {

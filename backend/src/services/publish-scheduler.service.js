@@ -47,6 +47,16 @@ const {
   validateCaptionsForPublish,
   logCaptionValidation,
 } = require('./caption-pre-publish-validator');
+const {
+  isPerfectVideo,
+  publishOpportunistic,
+  hasReachedDailyLimit,
+  isTooCloseToNextSlot,
+} = require('./opportunistic-publish');
+const {
+  publishWithRetries,
+  ensureAtLeastOnePublishable,
+} = require('./anti-failure-publish-wrapper');
 
 const OUTPUT_DIR         = path.resolve(process.env.OUTPUT_DIR || './output');
 const PUBLISH_LOG_PATH   = path.resolve('./data/publish-log.json');
@@ -171,42 +181,131 @@ function isSlotFillEligible(video, qg) {
   );
 }
 
-async function validateReadyCandidate(video) {
+async function validateReadyCandidate(video, allowFallback = false) {
   const snapshot = inspectOutputVideo(video.videoId);
-  if (!snapshot.exists || !fs.existsSync(snapshot.videoPath)) {
-    return { ok: false, reasons: ['output file missing'] };
+
+  // Core validation using centralized validator
+  const { validatePublishCandidate } = require('./publish-candidate-validator.service');
+  const coreValidation = validatePublishCandidate({ videoId: video.videoId }, true);
+
+  // If hard blocks, reject immediately
+  if (!coreValidation.hardPassed) {
+    return {
+      ok: false,
+      reasons: coreValidation.hardBlocks,
+      blockingReasons: coreValidation.hardBlocks,
+      nonBlockingReasons: [],
+      blocking: true,
+      snapshot,
+      videoDuration: coreValidation.duration,
+      coreValidation
+    };
   }
-  if (!snapshot.sizeBytes || snapshot.sizeBytes < 1024) {
-    return { ok: false, reasons: ['output file empty or too small'] };
-  }
-  if (!isMetadataComplete(snapshot.script)) {
-    return { ok: false, reasons: ['critical metadata missing'] };
-  }
+
+  const videoDuration = coreValidation.duration;
 
   const qc = await checkProductionQuality(snapshot.dir, snapshot.script);
   saveQCResult(snapshot.dir, qc);
 
-  const reasons = [];
-  if (!qc.passed) reasons.push(...qc.reasons);
-  if (snapshot.render?.visibleVisuals !== true) reasons.push('render without visible visuals');
-  if (['gradient', 'gradient_fallback'].includes(snapshot.render?.renderMode)) reasons.push(`render degraded (${snapshot.render.renderMode})`);
+  const blockingReasons = [];
+  const nonBlockingReasons = [];
 
-  // ✨ NUEVA VALIDACIÓN: Captions-debug.json OBLIGATORIO
+  // Separar bloqueantes vs no bloqueantes
+  if (!qc.passed) {
+    // Si QC falla pero el video es básicamente válido (>300KB, >8s), es no bloqueante en fallback
+    if (allowFallback && snapshot.sizeBytes >= 300 * 1024 && videoDuration >= 8) {
+      nonBlockingReasons.push(...qc.reasons);
+    } else {
+      blockingReasons.push(...qc.reasons);
+    }
+  }
+
+  if (snapshot.render?.visibleVisuals !== true && !allowFallback) {
+    blockingReasons.push('render without visible visuals');
+  }
+
+  if (['gradient', 'gradient_fallback'].includes(snapshot.render?.renderMode) && !allowFallback) {
+    blockingReasons.push(`render degraded (${snapshot.render.renderMode})`);
+  }
+
+  // Captions: bloqueante solo si hay error crítico
   const captionValidation = validateCaptionsForPublish(video.videoId);
   if (!captionValidation.ok) {
-    reasons.push(`captions_invalid | ${captionValidation.reason}`);
+    if (captionValidation.reason?.includes('CRITICAL') || captionValidation.reason?.includes('MISSING')) {
+      blockingReasons.push(`captions_critical | ${captionValidation.reason}`);
+    } else if (!allowFallback) {
+      blockingReasons.push(`captions_invalid | ${captionValidation.reason}`);
+    } else {
+      nonBlockingReasons.push(`captions_warning | ${captionValidation.reason}`);
+    }
     logCaptionValidation(video.videoId, captionValidation, 'CHECK');
   } else {
     logCaptionValidation(video.videoId, captionValidation, 'CHECK');
   }
 
+  // Add core validation warnings to non-blocking
+  nonBlockingReasons.push(...coreValidation.warnings);
+
+  const allReasons = [...blockingReasons, ...nonBlockingReasons];
+  const hasBlockingReasons = blockingReasons.length > 0;
+
   return {
-    ok: reasons.length === 0,
-    reasons,
+    ok: !hasBlockingReasons,
+    reasons: allReasons,
+    blockingReasons,
+    nonBlockingReasons,
+    blocking: hasBlockingReasons,
     qc,
     snapshot,
     captionValidation,
+    videoDuration,
+    coreValidation
   };
+}
+
+async function findFallbackCandidate() {
+  try {
+    const allReadyVideos = getReadyToPublishVideos();
+    if (allReadyVideos.length === 0) {
+      return null;
+    }
+
+    const candidates = [];
+    for (const video of allReadyVideos) {
+      const validation = await validateReadyCandidate(video, true);
+
+      if (validation.snapshot?.videoPath && fs.existsSync(validation.snapshot.videoPath)) {
+        const stats = fs.statSync(validation.snapshot.videoPath);
+
+        if (stats.size >= 300 * 1024 && validation.videoDuration >= 8) {
+          candidates.push({
+            ...video,
+            validation,
+            sizeBytes: stats.size,
+            score: (video.script?.viralityScore || 0) + (validation.qc?.score || 0) * 0.5,
+          });
+        }
+      }
+    }
+
+    if (candidates.length === 0) {
+      logger.warn(`PublishScheduler: FALLBACK no candidates found (need >=300KB, >=8s duration)`);
+      return null;
+    }
+
+    const best = candidates.sort((a, b) => {
+      return (b.script?.viralityScore || 0) - (a.script?.viralityScore || 0) ||
+             (b.validation?.qc?.score || 0) - (a.validation?.qc?.score || 0) ||
+             (b.createdAt || 0) - (a.createdAt || 0);
+    })[0];
+
+    logger.info(`PublishScheduler: FALLBACK_CANDIDATE selected | videoId=${best.videoId} | virality=${best.script?.viralityScore || 0} | size=${(best.sizeBytes / 1024 / 1024).toFixed(1)}MB | duration=${best.validation.videoDuration?.toFixed(1)}s`);
+
+    return best;
+  } catch (err) {
+    logger.error(`PublishScheduler: findFallbackCandidate error: ${err.message}`);
+    return null;
+  }
 }
 
 async function triggerGenerationTopUp(urgent = false) {
@@ -355,6 +454,113 @@ async function publishCandidate(video, { publishAll, saveVideo, state, fallbackR
 }
 
 // ─────────────────────────────────────────────
+//  PUBLICACIÓN OPPORTUNISTIC (sin slots)
+// ─────────────────────────────────────────────
+
+async function checkOpportunisticPublishes(readyVideos, nextSlotTime) {
+  const { saveVideo } = require('./analytics-tracker');
+
+  const opportunisticPublished = [];
+  const remainingVideos = [];
+
+  // PROTECCIÓN 1: Máximo 1 por ciclo
+  let publishedThisRound = 0;
+  const MAX_PER_CYCLE = 1;
+
+  // PROTECCIÓN 3: Límite diario
+  if (hasReachedDailyLimit()) {
+    logger.info('OPPORTUNISTIC_PUBLISH_SKIPPED daily_limit_reached');
+    return {
+      opportunisticPublished: [],
+      remainingVideos: readyVideos,
+      maxPerCycleEnforced: true,
+      dailyLimitReached: true,
+    };
+  }
+
+  // PROTECCIÓN 4: Guard de proximidad a slot
+  if (isTooCloseToNextSlot(nextSlotTime)) {
+    const minutesToSlot = Math.round((nextSlotTime.getTime() - new Date().getTime()) / 60000);
+    logger.info(`OPPORTUNISTIC_SKIPPED_NEAR_SLOT minutesToNextSlot=${minutesToSlot}`);
+    return {
+      opportunisticPublished: [],
+      remainingVideos: readyVideos,
+      maxPerCycleEnforced: true,
+      skippedNearSlot: true,
+    };
+  }
+
+  for (const video of readyVideos) {
+    try {
+      // Si ya publicamos 1 este ciclo, todos los demás van a remaining
+      if (publishedThisRound >= MAX_PER_CYCLE) {
+        remainingVideos.push(video);
+        continue;
+      }
+
+      const videoPath = video.videoPath;
+      const outputDir = path.dirname(videoPath);
+      const videoId = video.videoId;
+
+      // PROTECCIÓN 2: Validación estricta (output.mp4 + metadata)
+      const validation = isPerfectVideo(videoPath, outputDir, videoId);
+      if (!validation.perfect) {
+        logger.debug(`OPPORTUNISTIC_PUBLISH_REJECTED videoId=${videoId} reason=${validation.reason}`, validation);
+        remainingVideos.push(video);
+        continue;
+      }
+
+      logger.info(`OPPORTUNISTIC_PUBLISH_TRIGGERED videoId=${videoId}`, {
+        reason: 'perfect_video_detected',
+        criteria: validation.metadata,
+      });
+
+      const result = await publishOpportunistic(videoId, videoPath, video.script);
+
+      if (result.published) {
+        logger.info(`OPPORTUNISTIC_PUBLISH_SUCCESS videoId=${videoId} youtubeUrl=${result.youtubeUrl}`);
+
+        // Registrar en analytics sin consumir slot
+        await saveVideo({
+          id: videoId,
+          title: video.script?.title || videoId,
+          topic: video.script?.topic,
+          hook: video.script?.hook,
+          viralityScore: video.script?.viralityScore,
+          script: { ...video.script, opportunisticPublish: true },
+          youtubeId: result.youtubeUrl ? result.youtubeUrl.split('/').pop() : null,
+        }).catch(err => {
+          logger.warn(`Failed to save opportunistic video to analytics: ${err.message}`);
+        });
+
+        opportunisticPublished.push(videoId);
+        publishedThisRound++;
+
+        // Cleanup si está configurado
+        try {
+          if (process.env.CLEANUP_PUBLISHED_OUTPUT !== 'false') {
+            fs.rmSync(outputDir, { recursive: true, force: true });
+          }
+        } catch {}
+      } else {
+        // Si falla la publicación opportunistic, deja en ready para siguiente slot
+        remainingVideos.push(video);
+        logger.warn(`OPPORTUNISTIC_PUBLISH_FAILED videoId=${videoId} error=${result.error}`);
+      }
+    } catch (err) {
+      logger.error(`OPPORTUNISTIC_PUBLISH_EXCEPTION videoId=${video.videoId} error=${err.message}`);
+      remainingVideos.push(video);
+    }
+  }
+
+  return {
+    opportunisticPublished,
+    remainingVideos,
+    maxPerCycleEnforced: publishedThisRound <= MAX_PER_CYCLE,
+  };
+}
+
+// ─────────────────────────────────────────────
 //  CICLO DE PUBLICACIÓN
 // ─────────────────────────────────────────────
 
@@ -370,13 +576,27 @@ async function runPublishCycle({ force = false } = {}) {
   }
 
   isPublishing = true;
-  touchPipelineState({ publishRunning: true, publishLastStartedAt: new Date().toISOString() });
+  const cycleStartTime = new Date();
+  const slotTime = cycleStartTime.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Madrid' });
+  touchPipelineState({ publishRunning: true, publishLastStartedAt: cycleStartTime.toISOString() });
+
+  // HEARTBEAT/WATCHDOG LOG: Confirmar que el scheduler está vivo
+  logger.info(`🔴 [SCHEDULER_HEARTBEAT] slot=${slotTime} CET | process.uptime=${(process.uptime()/3600).toFixed(1)}h | AUTO_PUBLISH_ENABLED=${process.env.AUTO_PUBLISH_ENABLED}`);
 
   try {
+    // TRIGGER: Slot activation
+    logger.warn(
+      `🔔 [SLOT_TRIGGERED] slotTime=${slotTime} CET | ` +
+      `phase=${getGrowthPhase()} | AUTO_PUBLISH_ENABLED=${process.env.AUTO_PUBLISH_ENABLED}`
+    );
+
     const state     = getPublishState();
     const maxPerDay = getMaxPerDayForPhase();
     const thresholds = getOperationalThresholds();
     const expectedSlot = getExpectedPublishSlot();
+
+    logger.info(`📊 [SLOT_DETAILS] time=${slotTime} CET | phase=${getGrowthPhase()} | maxPerDay=${maxPerDay} | todayCount=${state.count}`);
+    logger.info(`📋 [REGISTERED_SLOTS] PUBLISH_TIMES_CET=${process.env.PUBLISH_TIMES_CET || DEFAULT_TIMES}`);
 
     if (state.count >= maxPerDay) {
       logger.info(`PublishScheduler: daily limit reached (${state.count}/${maxPerDay}) — phase=${getGrowthPhase()}`);
@@ -393,20 +613,43 @@ async function runPublishCycle({ force = false } = {}) {
       return;
     }
 
-    const readyVideos = getReadyToPublishVideos();
+    let readyVideos = getReadyToPublishVideos();
     if (readyVideos.length === 0) {
       logger.info('PublishScheduler: no videos ready to publish');
       try {
         await notifySlotFailed({ reason: 'no_videos', slot: new Date().toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Madrid' }) });
       } catch {}
-      await notifyQueueLow({ readyCount: 0, minReady: thresholds.minReady, inPipeline: getQueueSnapshot().inPipeline, reason: 'publish_slot_empty' });
-      await notifyPipelineBlocked({ reason: 'publish_slot_without_ready_video', detail: expectedSlot?.slot || 'sin slot detectado' });
+      return;
+    }
+
+    // FASE 1: Buscar y publicar vídeos perfectos (sin consumir slots)
+    // Calcular próximo slot para guard de proximidad
+    let nextSlotTime = null;
+    if (expectedSlot && expectedSlot.slot) {
+      const [hour, minute] = expectedSlot.slot.split(':').map(Number);
+      nextSlotTime = new Date();
+      nextSlotTime.setHours(hour, minute, 0, 0);
+      // Si el slot es hoy y ya pasó, apuntar al siguiente
+      if (nextSlotTime <= new Date()) {
+        nextSlotTime.setDate(nextSlotTime.getDate() + 1);
+      }
+    }
+
+    const { opportunisticPublished, remainingVideos } = await checkOpportunisticPublishes(readyVideos, nextSlotTime);
+    readyVideos = remainingVideos; // Actualizar lista para flujo normal
+
+    if (opportunisticPublished.length > 0) {
+      logger.info(`PublishScheduler: ${opportunisticPublished.length} videos published opportunistically (without slots)`);
+    }
+
+    if (readyVideos.length === 0) {
+      logger.info('PublishScheduler: no regular-slot videos available after opportunistic publishes');
       return;
     }
 
     // Máximo 1 por slot (el cron fires múltiples veces al día)
     const maxThisSlot = Math.min(maxPerDay - state.count, 1);
-    logger.info(`PublishScheduler: ${readyVideos.length} ready | publishing ${maxThisSlot} | phase=${getGrowthPhase()} (${state.count}/${maxPerDay} today)`);
+    logger.info(`PublishScheduler: ${readyVideos.length} ready (after opportunistic) | publishing ${maxThisSlot} | phase=${getGrowthPhase()} (${state.count}/${maxPerDay} today)`);
 
     const { publishAll } = require('./publisher');
     const { saveVideo }  = require('./analytics-tracker');
@@ -414,55 +657,97 @@ async function runPublishCycle({ force = false } = {}) {
     let publishedThisSlot = 0;
     const publishLog = loadPublishLog();
     const discardSummary = [];
-    const slotFillCandidates = [];
+    const validCandidates = []; // hardPassed videos
+    const qcFailedCandidates = []; // hardPassed but QC failed
 
     for (const video of readyVideos) {
       if (state.count >= maxPerDay || publishedThisSlot >= maxThisSlot) break;
 
-      const validation = await validateReadyCandidate(video);
-      if (!validation.ok) {
-        logger.warn(`PublishScheduler: invalid render ${video.videoId} | ${validation.reasons.join(' | ')}`);
-        discardVideo(video.videoId, 'discarded_invalid_render', validation.reasons.join(' | '));
-        discardSummary.push({ videoId: video.videoId, reason: 'discarded_invalid_render', detail: validation.reasons.join(' | ') });
-        await notifyCandidateDiscarded({ videoId: video.videoId, reasons: validation.reasons, fallbackAttempted: true });
-        try { fs.rmSync(path.join(OUTPUT_DIR, video.videoId), { recursive: true, force: true }); } catch {}
+      const validation = await validateReadyCandidate(video, false);
+
+      // CRITICAL: Hard blocks must reject immediately (technical impossibilities)
+      if (!validation.coreValidation?.hardPassed) {
+        const videoPath = validation.snapshot?.videoPath;
+        const sizeKB = validation.snapshot?.sizeBytes ? (validation.snapshot.sizeBytes / 1024).toFixed(0) : 'unknown';
+        const durationStr = validation.videoDuration ? `${validation.videoDuration.toFixed(1)}s` : 'unknown';
+
+        logger.warn(
+          `⏭️  [CANDIDATE_HARD_REJECTED] videoId=${video.videoId} | ` +
+          `file=${sizeKB}KB | duration=${durationStr} | ` +
+          `hard_blocks=${validation.coreValidation?.hardBlocks?.join(' | ') || 'unknown'}`
+        );
+
+        discardVideo(video.videoId, 'discarded_hard_block', validation.coreValidation?.hardBlocks?.join(' | ') || 'unknown');
+        discardSummary.push({
+          videoId: video.videoId,
+          reason: 'discarded_hard_block',
+          detail: validation.coreValidation?.hardBlocks?.join(' | ') || 'unknown',
+          sizeKB: parseInt(sizeKB) || 0,
+          duration: validation.videoDuration || 0,
+        });
+
+        await notifyCandidateDiscarded({ videoId: video.videoId, reasons: validation.coreValidation?.hardBlocks || [], fallbackAttempted: false });
+
+        // Only hard delete if truly invalid (missing file, <100KB)
+        const hardDelete = !validation.snapshot?.videoPath ||
+          !fs.existsSync(validation.snapshot.videoPath) ||
+          (validation.snapshot.sizeBytes || 0) < 100 * 1024;
+        if (hardDelete) {
+          try { fs.rmSync(path.join(OUTPUT_DIR, video.videoId), { recursive: true, force: true }); } catch {}
+        }
         await triggerGenerationTopUp(true);
         continue;
       }
+
+      // Video passed hard blocks: it's technically publishable
       video.qc = validation.qc;
       video.script = validation.snapshot.script;
+      video.validation = validation;
 
-      // ── Quality Gate: 3-stage evaluation ────────────────────────────────────
+      // ── Quality Gate: NEVER blocks hardPassed videos, only affects priority ────────────────────────────────────
       if (!force) {
         const qg = evaluateCandidate(video.script, publishLog);
         if (!qg.pass) {
-          if (isSlotFillEligible(video, qg)) {
-            logger.warn(`PublishScheduler: defer-slot-fill ${video.videoId} | motivo=${qg.discardReason} | ${qg.discardDetail}`);
-            discardSummary.push({ videoId: video.videoId, reason: qg.discardReason, detail: qg.discardDetail });
-            slotFillCandidates.push(video);
-            continue;
-          }
+          // QC failed but video is technically valid: add to fallback pool
           logger.warn(
-            `PublishScheduler: DESCARTADO ${video.videoId} | ` +
+            `⚠️  [QC_FAILED_SAVE_FOR_FALLBACK] ${video.videoId} | ` +
             `motivo=${qg.discardReason} | ${qg.discardDetail} | ` +
-            `scoreA=${qg.scoreA} scoreB=${qg.scoreB}`,
+            `scoreA=${qg.scoreA} scoreB=${qg.scoreB} | STATUS=will_use_if_no_qc_pass`
           );
-          discardVideo(video.videoId, qg.discardReason, qg.discardDetail);
-          discardSummary.push({ videoId: video.videoId, reason: qg.discardReason, detail: qg.discardDetail });
-          await notifyCandidateDiscarded({ videoId: video.videoId, reasons: [qg.discardReason, qg.discardDetail], fallbackAttempted: true });
-          // Limpiar carpeta para no acumular GB de MP4 descartados
-          try { fs.rmSync(path.join(OUTPUT_DIR, video.videoId), { recursive: true, force: true }); } catch {}
-          await triggerGenerationTopUp(true);
+          qcFailedCandidates.push({ video, qg });
           continue;
         }
-        logger.info(`PublishScheduler: APROBADO ${video.videoId} | scoreA=${qg.scoreA} scoreB=${qg.scoreB} final=${qg.scoreFinal}`);
+        logger.info(`PublishScheduler: QC_PASSED ${video.videoId} | scoreA=${qg.scoreA} scoreB=${qg.scoreB} final=${qg.scoreFinal}`);
+        video.qg = qg;
       }
 
-      logger.info(`PublishScheduler: publishing ${video.videoId} | priority=${video.priority}${video.isAbVariant ? ` | AB=${video.experimentId}/${video.variantId}` : ''}`);
+      // Passed hard blocks and (no QC required OR QC passed): eligible to publish
+      validCandidates.push(video);
+    }
+
+    // ── PRIMARY ATTEMPT: Publish videos that passed QC with anti-failure retries ────────────────────────────────────
+    for (const video of validCandidates) {
+      if (state.count >= maxPerDay || publishedThisSlot >= maxThisSlot) break;
+
+      logger.info(
+        `PublishScheduler: attempting QC-passed video ${video.videoId} | ` +
+        `priority=${video.priority}${video.isAbVariant ? ` | AB=${video.experimentId}/${video.variantId}` : ''}`
+      );
 
       try {
-        const published = await publishCandidate(video, { publishAll, saveVideo, state });
-        if (!published) continue;
+        const published = await publishWithRetries({
+          video,
+          strategy: 'normal',
+          publishAll,
+          saveVideo,
+          state,
+        });
+
+        if (!published) {
+          logger.warn(`PublishScheduler: QC-passed retry exhausted ${video.videoId}, trying next candidate`);
+          continue;
+        }
+
         publishedThisSlot++;
         await triggerGenerationTopUp(false);
         const postPublishSnapshot = getQueueSnapshot();
@@ -475,51 +760,135 @@ async function runPublishCycle({ force = false } = {}) {
           });
         }
         await notifySystemRecovered({ scope: 'publish', detail: `slot ${expectedSlot?.slot || 'manual'} completado` });
+        return;
       } catch (err) {
-        logger.error(`PublishScheduler: failed ${video.videoId}: ${err.message}`);
-        try {
-          await notifySlotFailed({ reason: 'publish_error', error: err.message, slot: new Date().toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Madrid' }) });
-        } catch {}
-        await notifyPipelineBlocked({ reason: 'publish_error', detail: err.message });
+        logger.error(`PublishScheduler: exception during QC-passed publish ${video.videoId}: ${err.message}`);
         await triggerGenerationTopUp(true);
+        continue;
       }
     }
 
-    // ── Log de slot vacío ────────────────────────────────────────────────────
-    if (publishedThisSlot === 0) {
-      if (slotFillCandidates.length > 0) {
-        const picked = slotFillCandidates.sort((a, b) => b.priority - a.priority)[0];
-        logger.warn(`PublishScheduler: slot-fill fallback publishing ${picked.videoId} to avoid empty slot`);
-        const validation = await validateReadyCandidate(picked);
-        if (!validation.ok) {
-          discardVideo(picked.videoId, 'discarded_invalid_slot_fill', validation.reasons.join(' | '));
-          await notifyCandidateDiscarded({ videoId: picked.videoId, reasons: validation.reasons, fallbackAttempted: true });
-          await triggerGenerationTopUp(true);
-          return;
-        }
-        const published = await publishCandidate({ ...picked, script: validation.snapshot.script, qc: validation.qc }, { publishAll, saveVideo, state, fallbackReason: 'slot_fill_low_virality' });
-        if (published) {
-          publishedThisSlot++;
-          await triggerGenerationTopUp(true);
-          return;
+    // ── FALLBACK: If no QC-passed videos, use hardPassed videos (QC override) ────────────────────────────────────
+    if (publishedThisSlot === 0 && qcFailedCandidates.length > 0) {
+      logger.warn(`⚠️  [QC_OVERRIDE_FALLBACK] no_qc_passed_videos | qc_failed_but_valid=${qcFailedCandidates.length}`);
+
+      // Sort by virality to pick best despite QC failure
+      const picked = qcFailedCandidates.sort((a, b) => {
+        const virB = b.video.script?.viralityScore || 0;
+        const virA = a.video.script?.viralityScore || 0;
+        return virB - virA;
+      })[0];
+
+      if (picked) {
+        logger.warn(
+          `🔄 [QC_OVERRIDE_PUBLISH] videoId=${picked.video.videoId} | ` +
+          `qc_fail_reason=${picked.qg?.discardReason} | ` +
+          `virality=${picked.video.script?.viralityScore || 0} | ` +
+          `reason=hardpassed_override`
+        );
+
+        try {
+          const published = await publishWithRetries({
+            video: picked.video,
+            strategy: 'force',
+            publishAll,
+            saveVideo,
+            state,
+          });
+
+          if (published) {
+            logger.info(`✅ [QC_OVERRIDE_EXECUTED] videoId=${picked.video.videoId} | slot_protected_by_hardpassed`);
+            publishedThisSlot++;
+            await triggerGenerationTopUp(true);
+            return;
+          } else {
+            logger.warn(`PublishScheduler: QC override retry exhausted ${picked.video.videoId}, trying best-valid fallback`);
+          }
+        } catch (err) {
+          logger.error(`PublishScheduler: QC override exception ${picked.video.videoId}: ${err.message}`);
         }
       }
+
+      // FALLBACK 2: Buscar best valid MP4 (>300KB, >=8s) entre todos ready videos
+      const fallbackCandidate = await findFallbackCandidate();
+      if (fallbackCandidate) {
+        logger.warn(
+          `🔄 [FALLBACK_PUBLISH_ATTEMPT] strategy=best_valid_output | ` +
+          `videoId=${fallbackCandidate.videoId} | virality=${fallbackCandidate.script?.viralityScore || 0}`
+        );
+        try {
+          const published = await publishWithRetries({
+            video: { ...fallbackCandidate, script: fallbackCandidate.validation.snapshot.script, qc: fallbackCandidate.validation.qc },
+            strategy: 'fallback',
+            publishAll,
+            saveVideo,
+            state,
+          });
+
+          if (published) {
+            logger.info(`✅ [FALLBACK_PUBLISH_USED] strategy=best_valid_output | videoId=${fallbackCandidate.videoId}`);
+            publishedThisSlot++;
+            await triggerGenerationTopUp(true);
+            return;
+          } else {
+            logger.warn(`PublishScheduler: Fallback retry exhausted ${fallbackCandidate.videoId}`);
+          }
+        } catch (err) {
+          logger.error(`❌ [FALLBACK_PUBLISH_FAILED] videoId=${fallbackCandidate.videoId} | error=${err.message}`);
+        }
+      }
+
+      // NO FALLBACK POSIBLE: Registrar SLOT_SKIPPED_NO_VALID_VIDEO o SLOT_LOST_FINAL
       if (discardSummary.length > 0) {
         const byReason = discardSummary.reduce((acc, d) => {
           acc[d.reason] = (acc[d.reason] || 0) + 1;
           return acc;
         }, {});
-        logger.warn(
-          `PublishScheduler: SLOT VACÍO — ${discardSummary.length} candidato(s) descartado(s) | ` +
-          Object.entries(byReason).map(([r, n]) => `${r}×${n}`).join(' | '),
-        );
-        try {
-          const slotTime = new Date().toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Madrid' });
-          await notifySlotFailed({ reason: 'discarded', discards: discardSummary, slot: slotTime });
-        } catch {}
+        const blockingCount = discardSummary.filter(d => d.blocking).length;
+        const nonBlockingCount = discardSummary.filter(d => !d.blocking).length;
+        const hasValidSize = discardSummary.some(d => d.sizeKB >= 300 && d.duration >= 8);
+
+        if (!hasValidSize) {
+          // No hay candidatos con size>=300KB y duration>=8s: guardar estado de slot saltado
+          logger.warn(
+            `⏸️  [SLOT_SKIPPED_NO_VALID_VIDEO] slot=${slotTime} CET | ` +
+            `totalDiscarded=${discardSummary.length} (blocking=${blockingCount}, non-blocking=${nonBlockingCount}) | ` +
+            `reasons=[${Object.entries(byReason).map(([r, n]) => `${r}×${n}`).join(', ')}]`
+          );
+
+          // Guardar estado de slot saltado para late publish recovery
+          const skippedSlotState = {
+            lastSkippedSlot: {
+              slotTime,
+              date: new Date().toISOString().split('T')[0],
+              skippedAt: new Date().toISOString(),
+              mustExpireAt: new Date(Date.now() + 2 * 60 * 60 * 1000).toISOString(), // 2 horas
+              reason: 'no_valid_candidates',
+            },
+          };
+          try {
+            const stateFile = path.join(path.resolve('.'), 'data', 'skipped-slots-state.json');
+            const dataDir = path.dirname(stateFile);
+            if (!fs.existsSync(dataDir)) fs.mkdirSync(dataDir, { recursive: true });
+            fs.writeFileSync(stateFile, JSON.stringify(skippedSlotState, null, 2));
+            logger.info(`[SLOT_SKIPPED_SAVED] late-publish will be attempted within 2h`);
+          } catch (err) {
+            logger.warn(`[SLOT_SKIPPED_SAVE_ERROR] ${err.message}`);
+          }
+        } else {
+          // Hay candidatos válidos pero fueron rechazados por QC: registrar como LOST
+          logger.error(
+            `🔴 [SLOT_LOST_FINAL] slot=${slotTime} CET | ` +
+            `totalDiscarded=${discardSummary.length} (blocking=${blockingCount}, non-blocking=${nonBlockingCount}) | ` +
+            `reasons=[${Object.entries(byReason).map(([r, n]) => `${r}×${n}`).join(', ')}]`
+          );
+          try {
+            await notifySlotFailed({ reason: 'discarded', discards: discardSummary, slot: slotTime });
+          } catch {}
+        }
         await triggerGenerationTopUp(true);
       } else {
-        logger.info('PublishScheduler: SLOT VACÍO — sin candidatos disponibles (cola vacía)');
+        logger.error(`🔴 [SLOT_LOST_FINAL] slot=${slotTime} CET | reason=no_ready_videos (queue empty)`);
         await triggerGenerationTopUp(true);
       }
     }
@@ -582,6 +951,32 @@ function startPublishScheduler() {
     const [hour, min = '0'] = time.split(':');
     const cronExpr = `${min} ${hour} * * *`;
     logger.info(`PublishScheduler: scheduled at ${time} CET (${cronExpr})`);
+
+    // Pre-slot ping (5 minutos antes): visibilidad + alerta si cola baja
+    try {
+      const h = parseInt(hour, 10);
+      const m = parseInt(min, 10);
+      if (!Number.isNaN(h) && !Number.isNaN(m)) {
+        const preMins = (h * 60 + m - 5 + 24 * 60) % (24 * 60);
+        const preH = Math.floor(preMins / 60);
+        const preMin = preMins % 60;
+        const preExpr = `${preMin} ${preH} * * *`;
+        cron.schedule(preExpr, async () => {
+          try {
+            const snapshot = getQueueSnapshot();
+            const ready = snapshot?.readyCount ?? (snapshot?.readyVideos?.length || 0);
+            logger.info(`PublishScheduler: pre-slot check for ${time} | ready=${ready} | inPipeline=${snapshot?.inPipeline ?? 'n/a'}`);
+            try {
+              const { notifyQueueLow } = require('./telegram-notifier');
+              await notifyQueueLow({ readyCount: ready, minReady: 2, inPipeline: snapshot?.inPipeline ?? 0, reason: 'pre_slot', slot: time, minutesUntilSlot: 5 });
+            } catch {}
+          } catch (err) {
+            logger.warn(`PublishScheduler: pre-slot check failed: ${err.message}`);
+          }
+        }, { timezone: 'Europe/Madrid' });
+      }
+    } catch {}
+
     cron.schedule(cronExpr, async () => {
       logger.info(`PublishScheduler: slot fired at ${time}`);
       await runPublishCycle();

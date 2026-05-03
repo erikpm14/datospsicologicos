@@ -1,4 +1,5 @@
 const logger = require('./logger');
+const { canMakeLLMCall, enforceEmergencyMode, incrementUsage, getRemainingCalls } = require('./llm-usage-tracker');
 
 function getLlmTimeoutMs() {
   return parseInt(process.env.LLM_TIMEOUT_MS || '35000', 10) || 35000;
@@ -52,10 +53,27 @@ function attachLlmMetrics(target, metrics = {}) {
 }
 
 async function callAnthropicWithTimeout(client, payload, { label = 'llm-call', timeoutMs = getLlmTimeoutMs() } = {}) {
+  // PRE-CHECK: ¿Límite de llamadas alcanzado?
+  if (process.env.EMERGENCY_NO_LLM_MODE === 'true') {
+    const error = new Error(`${label}: LLM DISABLED — daily limit reached`);
+    error.code = 'LLM_LIMIT_REACHED';
+    logger.error(error.message);
+    throw error;
+  }
+
+  if (!canMakeLLMCall()) {
+    enforceEmergencyMode();
+    const error = new Error(`${label}: LLM BLOCKED — daily limit reached (${getRemainingCalls()} remaining)`);
+    error.code = 'LLM_LIMIT_REACHED';
+    logger.error(error.message);
+    throw error;
+  }
+
   let timer = null;
 
   try {
-    return await Promise.race([
+    // Hacer la llamada
+    const result = await Promise.race([
       client.messages.create(payload),
       new Promise((_, reject) => {
         timer = setTimeout(() => {
@@ -66,9 +84,21 @@ async function callAnthropicWithTimeout(client, payload, { label = 'llm-call', t
         }, timeoutMs);
       }),
     ]);
+
+    // Incrementar contador DESPUÉS de éxito
+    incrementUsage(label);
+    logger.info(`${label}: LLM call success | remaining: ${getRemainingCalls()}`);
+
+    return result;
   } catch (error) {
     if (error?.isLlmTimeout) {
       logger.error(`${label}: LLM timeout after ${timeoutMs}ms`);
+    } else if (error?.code === 'LLM_LIMIT_REACHED') {
+      // No incrementar contador si alcanzamos límite
+      throw error;
+    } else {
+      // Otros errores aún cuentan como llamada
+      incrementUsage(label);
     }
     throw error;
   } finally {

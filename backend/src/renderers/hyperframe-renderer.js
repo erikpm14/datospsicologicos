@@ -14,12 +14,13 @@ require('dotenv').config();
 const ffmpegInstaller = require('@ffmpeg-installer/ffmpeg');
 const ffprobeInstaller = require('@ffprobe-installer/ffprobe');
 const ffmpeg = require('fluent-ffmpeg');
-const { exec } = require('child_process');
+const { exec, spawn } = require('child_process');
 const { promisify } = require('util');
 const fs = require('fs');
 const path = require('path');
 const logger = require('../utils/logger');
 const { createPerfTracker, formatDurationMs } = require('../utils/perf-tracker');
+const { safeSpawn } = require('../utils/safe-spawn');
 
 ffmpeg.setFfmpegPath(ffmpegInstaller.path);
 ffmpeg.setFfprobePath(ffprobeInstaller.path);
@@ -150,37 +151,93 @@ async function renderWithFFmpeg(options = {}) {
   } = options;
 
   try {
-    // Construir comando FFmpeg
+    // Validar inputs
+    if (!audioPath || !audioPath.trim()) {
+      throw new Error('audioPath is empty');
+    }
+    if (!outputPath || !outputPath.trim()) {
+      throw new Error('outputPath is empty');
+    }
+    if (!fs.existsSync(audioPath)) {
+      throw new Error(`Audio file not found: ${audioPath}`);
+    }
+
     const ffmpegBin = ffmpegInstaller.path;
     const durationStr = Math.ceil(audioDuration).toString();
-
-    // Construir filtro de video
-    // Por ahora, sin subtítulos (ASS filter tiene issues en Windows)
     let vf = `fps=${FPS}`;
-    // TODO: Añadir soporte de subtítulos con drawtext o formato diferente
-    // if (assSubtitlePath) { vf += ... }
 
-    // Comando FFmpeg: color + audio + subtítulos
-    const cmd = [
-      `"${ffmpegBin}"`,
-      `-f lavfi -i color=c=0a0e27:s=${W}x${H}:d=${durationStr}`,
-      `-i "${audioPath}"`,
-      `-vf "${vf}"`,
-      `-map 0:v -map 1:a`,
-      `-c:v libx264 -preset faster -crf 22`,
-      `-c:a aac -b:a 128k`,
-      `-shortest`,
-      `-y`,
-      `"${outputPath}"`,
-    ].join(' ');
+    // Usar spawn con array de argumentos (no string exec que falla en Windows)
+    const ffmpegArgs = [
+      '-f', 'lavfi',
+      '-i', `color=c=0a0e27:s=${W}x${H}:d=${durationStr}`,
+      '-i', audioPath,
+      '-vf', vf,
+      '-map', '0:v',
+      '-map', '1:a',
+      '-c:v', 'libx264',
+      '-preset', 'faster',
+      '-crf', '22',
+      '-c:a', 'aac',
+      '-b:a', '128k',
+      '-shortest',
+      '-y',
+      outputPath,
+    ];
 
-    logger.info(`[Hyperframe] Running FFmpeg (30s render)...`);
+    logger.info(`[Hyperframe] Running FFmpeg (${durationStr}s render)...`);
+    logger.info(`[Hyperframe] Audio: ${audioPath} (${audioDuration.toFixed(2)}s)`);
+    logger.info(`[Hyperframe] Output: ${outputPath}`);
 
-    const { stdout, stderr } = await execAsync(cmd, { maxBuffer: 10 * 1024 * 1024, timeout: 120000 });
+    const ffmpegProcess = safeSpawn(ffmpegBin, ffmpegArgs, {
+      detached: false,
+    });
 
-    if (stderr && !stderr.includes('frame=')) {
-      logger.info(`[Hyperframe] FFmpeg done`);
+    let stderr = '';
+    let stdout = '';
+
+    ffmpegProcess.stderr.on('data', (data) => {
+      stderr += data.toString();
+    });
+
+    ffmpegProcess.stdout.on('data', (data) => {
+      stdout += data.toString();
+    });
+
+    // Esperar a que termine
+    const exitCode = await new Promise((resolve) => {
+      ffmpegProcess.on('close', (code) => {
+        resolve(code);
+      });
+
+      ffmpegProcess.on('error', (err) => {
+        logger.error(`[Hyperframe] FFmpeg spawn error: ${err.message}`);
+        resolve(1);
+      });
+    });
+
+    // Validar resultado
+    if (exitCode !== 0) {
+      const stderrTail = stderr.slice(-500);
+      logger.error(`[Hyperframe] FFmpeg failed with exit code ${exitCode}`);
+      logger.error(`[Hyperframe] Stderr: ${stderrTail}`);
+      throw new Error(`FFmpeg exited with code ${exitCode}`);
     }
+
+    logger.info(`[Hyperframe] FFmpeg completed successfully (exit code 0)`);
+
+    // Hard validation: archivo debe existir y tener tamaño > 100KB
+    if (!fs.existsSync(outputPath)) {
+      throw new Error(`Output file not created: ${outputPath}`);
+    }
+
+    const stats = fs.statSync(outputPath);
+    const sizeMB = (stats.size / 1024 / 1024).toFixed(3);
+
+    if (stats.size < 100 * 1024) {
+      throw new Error(`Output file too small: ${sizeMB}MB (${stats.size} bytes), expected >100KB`);
+    }
+
+    logger.info(`[Hyperframe] Output validated: ${sizeMB}MB`);
 
     return outputPath;
   } catch (error) {

@@ -14,13 +14,43 @@ const CHAT_ID = process.env.TELEGRAM_CHAT_ID;
 const DASHBOARD_URL = process.env.DASHBOARD_URL || `http://localhost:${process.env.PORT || 3001}`;
 const ALERT_STATE_PATH = path.resolve('./data/telegram-alert-state.json');
 
+const LEVELS = {
+  DEBUG: 10,
+  INFO: 20,
+  WARNING: 30,
+  ERROR: 40,
+  CRITICAL: 50,
+};
+
+function getNotificationsEnabled() {
+  return (process.env.TELEGRAM_NOTIFICATIONS_ENABLED || 'true') !== 'false';
+}
+
+function getMinLevel() {
+  const raw = String(process.env.TELEGRAM_MIN_LEVEL || 'ERROR').toUpperCase();
+  return LEVELS[raw] || LEVELS.ERROR;
+}
+
+function getCooldownMinutes() {
+  return parseInt(process.env.TELEGRAM_COOLDOWN_MINUTES || '30', 10) || 30;
+}
+
+function getDigestEnabled() {
+  return (process.env.TELEGRAM_DIGEST_ENABLED || 'true') !== 'false';
+}
+
+function getDigestHours() {
+  return parseInt(process.env.TELEGRAM_DIGEST_HOURS || '6', 10) || 6;
+}
+
 function isConfigured() {
   return TOKEN && TOKEN !== 'RELLENAR' && CHAT_ID && CHAT_ID !== 'RELLENAR';
 }
 
 async function sendMessage(text) {
-  if (!isConfigured()) return false;
+  if (!isConfigured() || !getNotificationsEnabled()) return false;
   try {
+    if ((process.env.TELEGRAM_DRY_RUN || 'false') === 'true') return true;
     await axios.post(`https://api.telegram.org/bot${TOKEN}/sendMessage`, {
       chat_id: CHAT_ID,
       text: toTelegramText(text),
@@ -50,15 +80,85 @@ function writeAlertState(state) {
   } catch {}
 }
 
-async function sendAlertWithCooldown(key, text, cooldownMinutes = 60) {
-  if (!isConfigured()) return false;
-  const now = Date.now();
+function shouldSendLevel(level) {
+  if (!isConfigured() || !getNotificationsEnabled()) return false;
+  return level >= getMinLevel();
+}
+
+function getDedupeKey({ type, component = 'unknown', slot = '' }) {
+  return `${type}:${component}:${slot || 'noslot'}`;
+}
+
+function trackDigestEvent(state, { type, component, slot, level }) {
+  if (!getDigestEnabled()) return;
+  const k = `digest:${getDedupeKey({ type, component, slot })}`;
+  const cur = state[k] || { count: 0, lastAt: null, level };
+  cur.count += 1;
+  cur.level = level;
+  cur.lastAt = new Date().toISOString();
+  state[k] = cur;
+}
+
+async function sendDigestIfDue({ force = false } = {}) {
+  if (!isConfigured() || !getNotificationsEnabled() || !getDigestEnabled()) return false;
   const state = readAlertState();
-  const lastSent = state[key] ? new Date(state[key]).getTime() : 0;
-  if (lastSent && (now - lastSent) < cooldownMinutes * 60 * 1000) return false;
+  const now = Date.now();
+  const intervalMs = getDigestHours() * 60 * 60 * 1000;
+  const last = state.__digest__?.lastSentAt ? new Date(state.__digest__.lastSentAt).getTime() : 0;
+  if (!force && last && (now - last) < intervalMs) return false;
+
+  const items = Object.entries(state)
+    .filter(([k]) => k.startsWith('digest:'))
+    .map(([k, v]) => ({ key: k.replace(/^digest:/, ''), count: v.count || 0, lastAt: v.lastAt || null, level: v.level || LEVELS.INFO }))
+    .filter((x) => x.count > 0 && x.level >= LEVELS.WARNING)
+    .sort((a, b) => b.count - a.count)
+    .slice(0, 12);
+
+  if (items.length === 0) return false;
+
+  const lines = items.map((x) => `• ${escapeHtml(x.key)}: ${x.count}`).join('\n');
+  const text =
+    `🧾 <b>Digest Telegram</b>\n\n` +
+    `${lines}\n\n` +
+    getDashboardLink();
+
   const sent = await sendMessage(text);
   if (!sent) return false;
-  state[key] = new Date(now).toISOString();
+  state.__digest__ = { lastSentAt: new Date(now).toISOString() };
+  for (const it of items) {
+    delete state[`digest:${it.key}`];
+  }
+  writeAlertState(state);
+  return true;
+}
+
+async function sendAlertWithCooldown(key, text, cooldownMinutes = null, { level = LEVELS.ERROR, type = 'alert', component = 'unknown', slot = '' } = {}) {
+  if (!shouldSendLevel(level)) {
+    const state = readAlertState();
+    trackDigestEvent(state, { type, component, slot, level });
+    writeAlertState(state);
+    return false;
+  }
+  const now = Date.now();
+  const state = readAlertState();
+  const cooldown = cooldownMinutes === null ? getCooldownMinutes() : cooldownMinutes;
+  const lastSent = state[key]?.lastSentAt ? new Date(state[key].lastSentAt).getTime() : 0;
+  if (lastSent && (now - lastSent) < cooldown * 60 * 1000) {
+    const cur = state[key] || {};
+    cur.lastSentAt = cur.lastSentAt || new Date(lastSent).toISOString();
+    cur.suppressed = (cur.suppressed || 0) + 1;
+    cur.lastSuppressedAt = new Date(now).toISOString();
+    state[key] = cur;
+    trackDigestEvent(state, { type, component, slot, level });
+    writeAlertState(state);
+    return false;
+  }
+
+  const suppressed = state[key]?.suppressed || 0;
+  const finalText = suppressed > 0 ? `${text}\n\n(Repetido ${suppressed} veces en cooldown)` : text;
+  const sent = await sendMessage(finalText);
+  if (!sent) return false;
+  state[key] = { lastSentAt: new Date(now).toISOString(), suppressed: 0, level, type, component, slot };
   writeAlertState(state);
   return true;
 }
@@ -118,8 +218,12 @@ async function notifyVideoPublished({ script, results, errors, videoId }) {
     (platformLines.length ? platformLines.join('\n') + '\n\n' : '') +
     getDashboardLink('Abrir dashboard');
 
-  await sendMessage(text);
-  logger.info('Telegram: notificación enviada');
+  await sendAlertWithCooldown(
+    getDedupeKey({ type: 'video_published', component: 'publisher', slot: videoId }),
+    text,
+    getCooldownMinutes(),
+    { level: LEVELS.INFO, type: 'video_published', component: 'publisher', slot: videoId },
+  );
 }
 
 /**
@@ -132,7 +236,12 @@ async function notifyJobFailed({ jobId, error }) {
     `Job: <code>${jobId}</code>\n` +
     `Error: ${error}\n\n` +
     getDashboardLink();
-  await sendMessage(text);
+  await sendAlertWithCooldown(
+    getDedupeKey({ type: 'job_failed', component: 'generation', slot: jobId }),
+    text,
+    getCooldownMinutes(),
+    { level: LEVELS.ERROR, type: 'job_failed', component: 'generation', slot: jobId },
+  );
 }
 
 /**
@@ -146,7 +255,12 @@ async function notifyResearchComplete({ totalVideos, newHooks }) {
     `🪝 Nuevos hooks añadidos: ${newHooks}\n\n` +
     `El generador ha sido actualizado con datos reales.\n` +
     `📈 <a href="${DASHBOARD_URL}/research">Ver insights</a>`;
-  await sendMessage(text);
+  await sendAlertWithCooldown(
+    getDedupeKey({ type: 'research_complete', component: 'research', slot: '' }),
+    text,
+    getCooldownMinutes(),
+    { level: LEVELS.INFO, type: 'research_complete', component: 'research', slot: '' },
+  );
 }
 
 /**
@@ -183,17 +297,34 @@ async function notifySlotFailed({ reason, discards = [], error = null, slot = ''
       getDashboardLink();
   }
 
-  if (text) await sendMessage(text);
+  if (text) {
+    await sendAlertWithCooldown(
+      getDedupeKey({ type: `slot_failed:${reason}`, component: 'publish', slot }),
+      text,
+      getCooldownMinutes(),
+      { level: LEVELS.CRITICAL, type: `slot_failed:${reason}`, component: 'publish', slot },
+    );
+  }
 }
 
-async function notifyQueueLow({ readyCount, minReady, inPipeline, reason = 'queue_low' }) {
+async function notifyQueueLow({ readyCount, minReady, inPipeline, reason = 'queue_low', slot = '', minutesUntilSlot = null }) {
   const text =
     `⚠️ <b>Cola operativa baja</b>\n\n` +
     `Ready: <b>${readyCount}</b> / mínimo ${minReady}\n` +
     `En pipeline: ${inPipeline}\n` +
     `Motivo: ${escapeHtml(reason)}\n\n` +
     getDashboardLink();
-  await sendAlertWithCooldown(`queue_low:${reason}`, text, parseInt(process.env.ALERT_QUEUE_LOW_COOLDOWN_MINUTES || '180', 10) || 180);
+
+  const beforeSlot = typeof minutesUntilSlot === 'number' && minutesUntilSlot >= 0 && minutesUntilSlot <= 90;
+  const shouldTelegram = beforeSlot && readyCount < 2;
+  const level = shouldTelegram ? LEVELS.ERROR : LEVELS.WARNING;
+
+  await sendAlertWithCooldown(
+    getDedupeKey({ type: `queue_low:${reason}`, component: 'queue', slot: slot || '' }),
+    text,
+    getCooldownMinutes(),
+    { level, type: `queue_low:${reason}`, component: 'queue', slot: slot || '' },
+  );
 }
 
 async function notifyCandidateDiscarded({ videoId, reasons = [], fallbackAttempted = false }) {
@@ -203,7 +334,12 @@ async function notifyCandidateDiscarded({ videoId, reasons = [], fallbackAttempt
     `${reasons.map((reason) => `• ${escapeHtml(reason)}`).join('\n')}\n\n` +
     `Top-up disparado: ${fallbackAttempted ? 'sí' : 'no'}\n\n` +
     getDashboardLink();
-  await sendAlertWithCooldown(`discarded:${videoId}`, text, parseInt(process.env.ALERT_DISCARDED_COOLDOWN_MINUTES || '240', 10) || 240);
+  await sendAlertWithCooldown(
+    getDedupeKey({ type: 'discarded', component: 'quality_gate', slot: videoId }),
+    text,
+    getCooldownMinutes(),
+    { level: LEVELS.WARNING, type: 'discarded', component: 'quality_gate', slot: videoId },
+  );
 }
 
 async function notifyGenerationStalled({ reason, attempts = null }) {
@@ -213,7 +349,12 @@ async function notifyGenerationStalled({ reason, attempts = null }) {
     `${attemptLine}` +
     `Motivo: ${escapeHtml(reason)}\n\n` +
     getDashboardLink();
-  await sendAlertWithCooldown(`generation_stalled:${reason}`, text, parseInt(process.env.ALERT_STALLED_COOLDOWN_MINUTES || '180', 10) || 180);
+  await sendAlertWithCooldown(
+    getDedupeKey({ type: `generation_stalled:${reason}`, component: 'generation', slot: '' }),
+    text,
+    getCooldownMinutes(),
+    { level: LEVELS.CRITICAL, type: `generation_stalled:${reason}`, component: 'generation', slot: '' },
+  );
 }
 
 async function notifySystemRecovered({ scope, detail }) {
@@ -222,7 +363,12 @@ async function notifySystemRecovered({ scope, detail }) {
     `Área: ${escapeHtml(scope)}\n` +
     `Detalle: ${escapeHtml(detail)}\n\n` +
     getDashboardLink();
-  await sendAlertWithCooldown(`recovered:${scope}:${detail}`, text, parseInt(process.env.ALERT_RECOVERED_COOLDOWN_MINUTES || '120', 10) || 120);
+  await sendAlertWithCooldown(
+    getDedupeKey({ type: 'recovered', component: scope, slot: '' }),
+    text,
+    getCooldownMinutes(),
+    { level: LEVELS.INFO, type: 'recovered', component: scope, slot: '' },
+  );
 }
 
 async function notifyPipelineBlocked({ reason, detail = '' }) {
@@ -231,7 +377,16 @@ async function notifyPipelineBlocked({ reason, detail = '' }) {
     `Motivo: ${escapeHtml(reason)}\n` +
     `${detail ? `Detalle: ${escapeHtml(detail)}\n\n` : '\n'}` +
     getDashboardLink();
-  await sendAlertWithCooldown(`blocked:${reason}`, text, parseInt(process.env.ALERT_BLOCKED_COOLDOWN_MINUTES || '120', 10) || 120);
+
+  const criticalReasons = new Set(['publish_slot_missed', 'no_real_progress', 'system_stopped', 'publish_error', 'oauth_invalid', 'llm_budget_exhausted', 'render_broken', 'tts_broken']);
+  const level = criticalReasons.has(reason) ? LEVELS.CRITICAL : LEVELS.WARNING;
+
+  await sendAlertWithCooldown(
+    getDedupeKey({ type: `blocked:${reason}`, component: 'pipeline', slot: '' }),
+    text,
+    getCooldownMinutes(),
+    { level, type: `blocked:${reason}`, component: 'pipeline', slot: '' },
+  );
 }
 
 module.exports = {
@@ -244,6 +399,7 @@ module.exports = {
   notifyGenerationStalled,
   notifySystemRecovered,
   notifyPipelineBlocked,
+  sendDigestIfDue,
   sendMessage,
   isConfigured,
 };

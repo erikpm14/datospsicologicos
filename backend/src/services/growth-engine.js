@@ -27,7 +27,7 @@ const {
   buildSelectionPenalties,
 } = require('./content-optimizer');
 const { generateScript }                         = require('./content-generator');
-const { scoreScript, getHookStrength }          = require('../utils/virality-scorer');
+const { scoreScriptByRealData }          = require('../utils/real-virality-scorer');
 const { scoreFormatMatch, scoreEmotionalImpact } = require('./format-match-engine');
 const { getFullAnalytics }                     = require('./analytics-tracker');
 const { createMultiVariantExperiment, getABStats } = require('./ab-test-engine');
@@ -104,10 +104,10 @@ function hydrateFallbackScript(script, decision, reason, options = {}) {
     approvalBypassReason = null,
   } = options;
   const viralityResult = script.viralityScore && script.viralityBreakdown
-    ? { score: script.viralityScore, breakdown: script.viralityBreakdown }
-    : scoreScript(script);
+    ? { score: script.viralityScore, dataPoints: script.viralityBreakdown }
+    : scoreScriptByRealData(script);
   script.viralityScore = viralityResult.score;
-  script.viralityBreakdown = viralityResult.breakdown;
+  script.viralityBreakdown = viralityResult.dataPoints;
 
   const formatResult = scoreFormatMatch(script);
   script.formatMatchScore = formatResult.score;
@@ -121,18 +121,14 @@ function hydrateFallbackScript(script, decision, reason, options = {}) {
 
   const minFormat = parseInt(process.env.MIN_FORMAT_MATCH_SCORE_TO_QUEUE || '70');
   const minVirality = parseInt(process.env.MIN_VIRALITY_SCORE_TO_QUEUE || '60');
-  const minHookStrength = parseInt(process.env.MIN_HOOK_STRENGTH || '8');
-  const hookStr = viralityResult.breakdown?.hookStrength ?? getHookStrength(script.hook);
   const formatOk = formatResult.score >= minFormat;
   const viralityOk = viralityResult.score >= minVirality;
-  const hookOk = hookStr >= minHookStrength;
 
   script.approved = forceApprove ? true : (formatOk && viralityOk);
   script.rejectionReason = !script.approved
     ? [
         !formatOk ? `format_match ${formatResult.score}/${minFormat}` : null,
-        !viralityOk ? `virality ${viralityResult.score}/${minVirality}` : null,
-        !hookOk ? `hook_weak ${hookStr}/${minHookStrength} (penalty)` : null,
+        !viralityOk ? `virality_data ${viralityResult.score}/${minVirality} (real data threshold)` : null,
       ].filter(Boolean).join(' | ')
     : null;
   script.growthContext = { ...decision, ...(script.growthContext || {}), fallbackGenerator: generator, fallbackReason: reason };

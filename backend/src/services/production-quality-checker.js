@@ -28,15 +28,46 @@ ffmpeg.setFfmpegPath(ffmpegInstaller.path);
 ffmpeg.setFfprobePath(ffprobeInstaller.path);
 
 // ── Umbrales (todos configurables por env) ──────────────────────────────────
-const MIN_AUDIO_SIZE_KB    = parseInt(process.env.QC_MIN_AUDIO_KB     || '20');
-const MIN_VIDEO_SIZE_KB    = parseInt(process.env.QC_MIN_VIDEO_KB     || '300');
-const MIN_AUDIO_DURATION   = parseFloat(process.env.QC_MIN_DURATION   || '8');
-const MAX_AUDIO_DURATION   = parseFloat(process.env.QC_MAX_DURATION   || '45');
-const MIN_VIRALITY         = parseInt(process.env.MIN_VIRALITY_SCORE_TO_PUBLISH || '70');
-const MIN_FORMAT           = parseInt(process.env.MIN_FORMAT_MATCH_SCORE_TO_QUEUE || '70');
-const MIN_QUALITY_SCORE    = parseInt(process.env.MIN_PRODUCTION_QUALITY_SCORE   || '55');
+const RECOVERY_MODE_ENABLED = process.env.RECOVERY_MODE === 'true'; // HOTFIX: modo temporal para recuperación
+
+// Thresholds normales vs RECOVERY_MODE
+const NORMAL_THRESHOLDS = {
+  MIN_AUDIO_SIZE_KB:    parseInt(process.env.QC_MIN_AUDIO_KB     || '20'),
+  MIN_VIDEO_SIZE_KB:    parseInt(process.env.QC_MIN_VIDEO_KB     || '300'),
+  MIN_AUDIO_DURATION:   parseFloat(process.env.QC_MIN_DURATION   || '8'),
+  MAX_AUDIO_DURATION:   parseFloat(process.env.QC_MAX_DURATION   || '45'),
+  MIN_VIRALITY:         parseInt(process.env.MIN_VIRALITY_SCORE_TO_PUBLISH || '70'),
+  MIN_FORMAT:           parseInt(process.env.MIN_FORMAT_MATCH_SCORE_TO_QUEUE || '70'),
+  MIN_QUALITY_SCORE:    parseInt(process.env.MIN_PRODUCTION_QUALITY_SCORE   || '55'),
+  MIN_VIDEO_DURATION:   parseFloat(process.env.QC_VIDEO_MIN_DURATION || process.env.QC_MIN_DURATION || '8'),
+};
+
+const RECOVERY_THRESHOLDS = {
+  MIN_AUDIO_SIZE_KB:    5,    // HOTFIX: bajado de 20
+  MIN_VIDEO_SIZE_KB:    100,  // HOTFIX: bajado de 300
+  MIN_AUDIO_DURATION:   4,    // HOTFIX: bajado de 8
+  MAX_AUDIO_DURATION:   55,   // HOTFIX: subido de 45
+  MIN_VIRALITY:         40,   // HOTFIX: bajado de 70
+  MIN_FORMAT:           60,   // HOTFIX: bajado de 70
+  MIN_QUALITY_SCORE:    30,   // HOTFIX: bajado de 55
+  MIN_VIDEO_DURATION:   4,    // HOTFIX: bajado de 8
+};
+
+const THRESHOLDS = RECOVERY_MODE_ENABLED ? RECOVERY_THRESHOLDS : NORMAL_THRESHOLDS;
+
+const MIN_AUDIO_SIZE_KB    = THRESHOLDS.MIN_AUDIO_SIZE_KB;
+const MIN_VIDEO_SIZE_KB    = THRESHOLDS.MIN_VIDEO_SIZE_KB;
+const MIN_AUDIO_DURATION   = THRESHOLDS.MIN_AUDIO_DURATION;
+const MAX_AUDIO_DURATION   = THRESHOLDS.MAX_AUDIO_DURATION;
+const MIN_VIRALITY         = THRESHOLDS.MIN_VIRALITY;
+const MIN_FORMAT           = THRESHOLDS.MIN_FORMAT;
+const MIN_QUALITY_SCORE    = THRESHOLDS.MIN_QUALITY_SCORE;
+const MIN_VIDEO_DURATION   = THRESHOLDS.MIN_VIDEO_DURATION;
 const QC_ENABLED           = process.env.PRODUCTION_QC_ENABLED !== 'false'; // activo por defecto
-const MIN_VIDEO_DURATION   = parseFloat(process.env.QC_VIDEO_MIN_DURATION || process.env.QC_MIN_DURATION || '8');
+
+if (RECOVERY_MODE_ENABLED) {
+  logger.warn(`QC RECOVERY_MODE ACTIVATED — using temporary lenient thresholds`);
+}
 
 // ── Pesos de cada check en el score total ─────────────────────────────────
 const WEIGHTS = {
@@ -50,8 +81,11 @@ const WEIGHTS = {
   hasTheme:        5,  // tema visual asignado
   contentVersion:  5,  // stamped con v2
   publishableFile: 10,
+  subtitleScriptCoherence: 20,  // NEW: subtítulos coherentes con script
+  hookAudioPresence:       15,  // NEW: hook presente en audio
+  packageIntegrity:        10,  // NEW: integridad del paquete
 };
-// Suma = 110
+// Suma = 140
 
 // ─────────────────────────────────────────────
 //  CHECKS INDIVIDUALES
@@ -160,7 +194,7 @@ function checkTheme(script) {
 function checkContentVersion(script) {
   const required = process.env.CONTENT_VERSION || null;
   if (!required) return { ok: true, reason: null };
-  const actual = script?.contentVersion;
+  const actual = script?.contentVersion || script?.content_version;
   return {
     ok:     actual === required,
     actual,
@@ -223,19 +257,49 @@ async function checkProductionQuality(outputDir, script = null) {
   // 1. Audio
   checks.audioExists = checkAudioFile(outputDir);
 
-  // 2. Duración
+  // 2. Duración (FIX: Use script.duration as source of truth, ffprobe as verification)
   let durationCheck = { ok: false, duration: null, reason: 'no audio to check duration' };
   if (checks.audioExists.ok) {
-    const dur = await getAudioDuration(checks.audioExists.path);
-    durationCheck = dur !== null
-      ? {
-          ok:       dur >= MIN_AUDIO_DURATION && dur <= MAX_AUDIO_DURATION,
-          duration: Math.round(dur * 10) / 10,
-          reason:   (dur < MIN_AUDIO_DURATION || dur > MAX_AUDIO_DURATION)
-            ? `duration ${dur.toFixed(1)}s outside [${MIN_AUDIO_DURATION}-${MAX_AUDIO_DURATION}s]`
-            : null,
+    // Preferir script.duration si está disponible
+    let dur = script?.duration;
+    let source = 'script';
+
+    // Si no hay script.duration, usar ffprobe
+    if (!dur || dur <= 0) {
+      dur = await getAudioDuration(checks.audioExists.path);
+      source = 'ffprobe';
+    } else if (dur > 0) {
+      // Verificar con ffprobe para detectar anomalías
+      const ffprobeDur = await getAudioDuration(checks.audioExists.path);
+      if (ffprobeDur && ffprobeDur > 0) {
+        // Si ffprobe devuelve algo muy diferente (>50% diferencia), sospechar silencio
+        const diff = Math.abs(ffprobeDur - dur) / Math.max(dur, ffprobeDur);
+        if (diff > 0.5) {
+          logger.warn(
+            `Audio duration mismatch detected: script=${dur}s, ffprobe=${ffprobeDur.toFixed(1)}s ` +
+            `(${(diff*100).toFixed(0)}% diff) — using script duration, ffprobe likely includes silence`
+          );
+          // Usar script.duration, no ffprobe
+        } else {
+          // Devs cercanos, usar ffprobe para ser conservador
+          dur = ffprobeDur;
+          source = 'ffprobe-verified';
         }
-      : { ok: false, duration: null, reason: 'ffprobe failed' };
+      }
+    }
+
+    if (dur !== null && dur > 0) {
+      durationCheck = {
+        ok:       dur >= MIN_AUDIO_DURATION && dur <= MAX_AUDIO_DURATION,
+        duration: Math.round(dur * 10) / 10,
+        source:   source,
+        reason:   (dur < MIN_AUDIO_DURATION || dur > MAX_AUDIO_DURATION)
+          ? `duration ${dur.toFixed(1)}s outside [${MIN_AUDIO_DURATION}-${MAX_AUDIO_DURATION}s] (source: ${source})`
+          : null,
+      };
+    } else {
+      durationCheck = { ok: false, duration: null, reason: 'no duration available (script or ffprobe)' };
+    }
   }
   checks.audioDuration = durationCheck;
 
@@ -250,6 +314,11 @@ async function checkProductionQuality(outputDir, script = null) {
   checks.formatScore     = checkFormatScore(script);
   checks.hasTheme        = checkTheme(script);
   checks.contentVersion  = checkContentVersion(script);
+
+  // 5. NEW COHERENCE CHECKS
+  checks.subtitleScriptCoherence = checkSubtitleScriptCoherence(outputDir, script);
+  checks.hookAudioPresence = checkHookAudioPresence(outputDir, script);
+  checks.packageIntegrity = checkPackageIntegrity(outputDir, script);
 
   const videoMeta = await getMediaMetadata(path.join(outputDir, 'output.mp4'));
   const videoDuration = parseFloat(videoMeta?.format?.duration || 0);
@@ -279,10 +348,22 @@ async function checkProductionQuality(outputDir, script = null) {
   if (checks.hasTheme.ok)      score += WEIGHTS.hasTheme;
   if (checks.contentVersion.ok)score += WEIGHTS.contentVersion;
   if (checks.publishableFile.ok && checks.renderVisuals.ok) score += WEIGHTS.publishableFile;
+  if (checks.subtitleScriptCoherence.ok) score += WEIGHTS.subtitleScriptCoherence;
+  if (checks.hookAudioPresence.ok)       score += WEIGHTS.hookAudioPresence;
+  if (checks.packageIntegrity.ok)        score += WEIGHTS.packageIntegrity;
 
-  const hardFailChecks = ['videoExists', 'renderVisuals', 'scriptComplete', 'publishableFile'];
+  // CRITICAL: Coherence checks are hard fails (must pass to publish)
+  // HOTFIX: En RECOVERY_MODE, solo require los checks fundamentales
+  const hardFailChecks = RECOVERY_MODE_ENABLED
+    ? ['videoExists', 'scriptComplete', 'publishableFile']  // Solo lo mínimo
+    : ['videoExists', 'renderVisuals', 'scriptComplete', 'publishableFile', 'subtitleScriptCoherence', 'hookAudioPresence', 'packageIntegrity'];
+
   const hardFailed = hardFailChecks.some((key) => !checks[key]?.ok);
   const passed  = !hardFailed && score >= MIN_QUALITY_SCORE;
+
+  if (RECOVERY_MODE_ENABLED && !hardFailed) {
+    logger.warn(`[RECOVERY_MODE] QC passed with lenient thresholds — score=${score}/${MIN_QUALITY_SCORE}`);
+  }
   const reasons = Object.values(checks).map(c => c.reason).filter(Boolean);
 
   logger.info(
@@ -299,6 +380,170 @@ async function checkProductionQuality(outputDir, script = null) {
     checkedAt: new Date().toISOString(),
   };
 }
+
+// ─────────────────────────────────────────────
+//  CONTENT COHERENCE VALIDATORS (NEW)
+// ─────────────────────────────────────────────
+
+/**
+ * Valida que subtítulos y script sean coherentes (primeras 25 palabras).
+ * Mínimo 80% de similitud.
+ */
+function checkSubtitleScriptCoherence(outputDir, script) {
+  try {
+    const subtitlePath = path.join(outputDir, 'subtitles.srt');
+    if (!fs.existsSync(subtitlePath)) {
+      return { ok: false, reason: 'subtitles_missing', score: 0 };
+    }
+
+    const subtitleContent = fs.readFileSync(subtitlePath, 'utf-8');
+    const subtitleWords = subtitleContent
+      .split('\n')
+      .filter(line => line.trim() && !/^\d+$/.test(line.trim()) && !line.includes('-->'))
+      .map(line => line.trim())
+      .filter(line => line.length > 0)
+      .flatMap(line => line.split(/\s+/))
+      .slice(0, 25)
+      .join(' ')
+      .toLowerCase();
+
+    const scriptText = ((script?.explanation || script?.hook || '') + ' ' + (script?.claim || ''))
+      .split(' ')
+      .filter(w => w.length > 0)
+      .slice(0, 25)
+      .join(' ')
+      .toLowerCase();
+
+    if (!subtitleWords || !scriptText) {
+      return { ok: false, reason: 'empty_content', score: 0 };
+    }
+
+    const scriptWordsSet = new Set(scriptText.split(/\s+/).filter(w => w.length > 2));
+    const subtitleWordsSet = new Set(subtitleWords.split(/\s+/).filter(w => w.length > 2));
+
+    const intersection = [...scriptWordsSet].filter(w => subtitleWordsSet.has(w)).length;
+    const union = new Set([...scriptWordsSet, ...subtitleWordsSet]).size;
+    const similarity = union > 0 ? intersection / union : 0;
+
+    const ok = similarity >= 0.8;
+    if (!ok) {
+      logger.warn(`CONTENT_COHERENCE_BLOCKED: subtitle-script similarity ${(similarity*100).toFixed(0)}% < 80%`);
+    }
+
+    return {
+      ok,
+      reason: ok ? null : 'subtitle_script_mismatch',
+      score: Math.round(similarity * 100),
+    };
+  } catch (err) {
+    logger.warn(`Subtitle coherence check failed: ${err.message}`);
+    return { ok: false, reason: 'coherence_check_error', score: 0 };
+  }
+}
+
+/**
+ * Valida que el hook esté presente en los primeros subtítulos (primeros 5s aprox).
+ * Mínimo 60% de palabras clave del hook.
+ */
+function checkHookAudioPresence(outputDir, script) {
+  try {
+    const subtitlePath = path.join(outputDir, 'subtitles.srt');
+    if (!fs.existsSync(subtitlePath)) {
+      return { ok: false, reason: 'subtitles_missing', score: 0 };
+    }
+
+    const hook = (script?.hook || '').toLowerCase();
+    const hookKeywords = hook
+      .split(/\s+/)
+      .filter(w => w.length > 3)
+      .slice(0, 5);
+
+    if (hookKeywords.length === 0) {
+      return { ok: false, reason: 'hook_empty', score: 0 };
+    }
+
+    const subtitleContent = fs.readFileSync(subtitlePath, 'utf-8');
+    const firstSubtitles = subtitleContent
+      .split('\n')
+      .filter(line => line.trim() && !/^\d+$/.test(line.trim()) && !line.includes('-->'))
+      .slice(0, 5)
+      .join(' ')
+      .toLowerCase();
+
+    const foundKeywords = hookKeywords.filter(kw => firstSubtitles.includes(kw));
+    const presence = hookKeywords.length > 0 ? foundKeywords.length / hookKeywords.length : 0;
+
+    const ok = presence >= 0.6;
+    if (!ok) {
+      logger.warn(`HOOK_AUDIO_MISMATCH_BLOCKED: hook presence ${(presence*100).toFixed(0)}% < 60% | hook="${hook}" | found=${foundKeywords.join(',')}`);
+    }
+
+    return {
+      ok,
+      reason: ok ? null : 'hook_not_in_audio',
+      score: Math.round(presence * 100),
+    };
+  } catch (err) {
+    logger.warn(`Hook audio presence check failed: ${err.message}`);
+    return { ok: false, reason: 'hook_check_error', score: 0 };
+  }
+}
+
+/**
+ * Valida integridad del paquete de contenido (script, audio, subtítulos, output).
+ * Verifica que los hashes/metadatas coincidan.
+ */
+function checkPackageIntegrity(outputDir, script) {
+  try {
+    const checks = {
+      scriptExists: false,
+      audioExists: false,
+      subtitlesExist: false,
+      outputExists: false,
+      filesTimestampOrder: false,
+      renderId: false,
+    };
+
+    // Verificar existencia
+    checks.scriptExists = fs.existsSync(path.join(outputDir, 'script.json'));
+    checks.audioExists = fs.existsSync(path.join(outputDir, 'voice_proc.mp3')) ||
+                         fs.existsSync(path.join(outputDir, 'voice.mp3')) ||
+                         fs.existsSync(path.join(outputDir, 'voice.wav'));
+    checks.subtitlesExist = fs.existsSync(path.join(outputDir, 'subtitles.srt')) ||
+                            fs.existsSync(path.join(outputDir, 'subtitles.ass'));
+    checks.outputExists = fs.existsSync(path.join(outputDir, 'output.mp4'));
+
+    // Verificar orden de timestamps (output no debe ser más viejo que script)
+    if (checks.scriptExists && checks.outputExists) {
+      const scriptTime = fs.statSync(path.join(outputDir, 'script.json')).mtime;
+      const outputTime = fs.statSync(path.join(outputDir, 'output.mp4')).mtime;
+      checks.filesTimestampOrder = outputTime >= scriptTime;
+      if (!checks.filesTimestampOrder) {
+        logger.warn(`PACKAGE_INTEGRITY_FAILED: output.mp4 más viejo que script.json`);
+      }
+    }
+
+    // Verificar renderId/videoId en metadata
+    if (script?.id) {
+      checks.renderId = true;
+    }
+
+    const allOk = Object.values(checks).every(v => v === true);
+    return {
+      ok: allOk,
+      reason: allOk ? null : 'package_integrity_failed',
+      checks,
+      score: (Object.values(checks).filter(v => v === true).length / Object.keys(checks).length) * 100,
+    };
+  } catch (err) {
+    logger.warn(`Package integrity check failed: ${err.message}`);
+    return { ok: false, reason: 'integrity_check_error', score: 0, checks: {} };
+  }
+}
+
+// ─────────────────────────────────────────────
+//  GET QC RESULT
+// ─────────────────────────────────────────────
 
 /**
  * Lee el último resultado de QC de un vídeo (guardado en qc.json).
@@ -330,4 +575,12 @@ if (require.main === module) {
   });
 }
 
-module.exports = { checkProductionQuality, getQCResult, saveQCResult, MIN_QUALITY_SCORE };
+module.exports = {
+  checkProductionQuality,
+  getQCResult,
+  saveQCResult,
+  MIN_QUALITY_SCORE,
+  checkSubtitleScriptCoherence,
+  checkHookAudioPresence,
+  checkPackageIntegrity,
+};

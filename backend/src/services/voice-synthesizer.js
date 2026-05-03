@@ -11,10 +11,11 @@
 require('dotenv').config();
 const { MsEdgeTTS, OUTPUT_FORMAT, MetadataOptions } = require('msedge-tts');
 const { spawn } = require('child_process');
+const { safeSpawn } = require('../utils/safe-spawn');
 const fs   = require('fs');
 const path = require('path');
 const logger = require('../utils/logger');
-const { ensureLegacyFields, getCombinedScriptText, getScriptSections } = require('../utils/script-segments');
+const { ensureLegacyFields, getCombinedScriptText, getScriptSections, hasExpandedStructure } = require('../utils/script-segments');
 const { createPerfTracker, formatDurationMs } = require('../utils/perf-tracker');
 const { buildEmotionalSSML, EMOTIONAL_PROFILES } = require('../utils/emotional-ssml');
 const ffmpegInstaller  = require('@ffmpeg-installer/ffmpeg');
@@ -28,8 +29,14 @@ const KOKORO_VOICE       = process.env.KOKORO_VOICE      || 'ef_dora';
 const KOKORO_SPEED       = process.env.KOKORO_SPEED      || '1.05';
 const KOKORO_ENABLED     = process.env.KOKORO_ENABLED    !== 'false'; // activo por defecto
 const KOKORO_SCRIPT      = path.resolve(__dirname, '../utils/kokoro_tts.py');
-const PYTHON_BIN         = process.env.PYTHON_BIN        || 'python3';
-const TTS_TIMEOUT_MS     = 120000; // 2 minutos — evita colgadas indefinidas
+let PYTHON_BIN = process.env.PYTHON_BIN || (process.platform === 'win32' ? 'pythonw' : 'python3');
+if (process.platform === 'win32') {
+  const p = String(PYTHON_BIN).toLowerCase();
+  if (p === 'python' || p === 'python3' || p === 'py') PYTHON_BIN = 'pythonw';
+  if (p.endsWith('python.exe')) PYTHON_BIN = PYTHON_BIN.replace(/python\.exe$/i, 'pythonw.exe');
+}
+const TTS_TIMEOUT_MS     = 60000; // 60s HOTFIX: bajado de 120s para fallar rápido si Kokoro memory crash
+const KOKORO_TIMEOUT_MS  = 45000; // 45s individual timeout para Kokoro (fallback a Edge si es más lento)
 const SEGMENT_KEYS       = ['hook', 'open_loop', 'micro_value', 'escalation', 'reengage', 'peak', 'open_ending', 'soft_cta'];
 const STOPWORDS = new Set(['que', 'como', 'esto', 'esta', 'este', 'para', 'pero', 'porque', 'aunque', 'donde', 'cuando', 'quien', 'quienes', 'sobre', 'desde', 'hasta', 'entre', 'algo', 'alguien', 'nada', 'todo', 'siempre', 'nunca', 'solo', 'solo', 'mas', 'muy', 'con', 'sin', 'por', 'del', 'las', 'los', 'una', 'uno', 'unos', 'unas', 'esa', 'ese', 'eso', 'aqui', 'ahi', 'alli', 'tambien', 'mismo', 'misma', 'mismas', 'mismos', 'cada', 'justo', 'casi', 'tu', 'tus', 'te', 'ya']);
 
@@ -185,10 +192,17 @@ function _adaptSegmentText(text = '', key = '') {
 
 function prepareNarrationForTTS(script = {}) {
   const normalized = ensureLegacyFields(script);
+  const isExpanded = hasExpandedStructure(normalized);
+
+  // Choose segment keys based on script format
+  const segmentKeys = isExpanded
+    ? ['hook', 'open_loop', 'micro_value', 'escalation', 'reengage', 'peak', 'open_ending', 'soft_cta']
+    : ['hook', 'claim', 'explanation', 'cta'];
+
   const sectionMap = Object.fromEntries(getScriptSections(normalized).map((section) => [section.key, section.text]));
   const segments = {};
 
-  for (const key of SEGMENT_KEYS) {
+  for (const key of segmentKeys) {
     const rawText = sectionMap[key] || '';
     if (!rawText) continue;
     const profile = _getSegmentDelivery(key);
@@ -209,12 +223,19 @@ function prepareNarrationForTTS(script = {}) {
     };
   }
 
-  const blockDefinitions = [
-    { key: 'block_1', segments: ['hook', 'open_loop'], pauseAfter: 0.46, blockPacing: 'controlado con gancho' },
-    { key: 'block_2', segments: ['micro_value', 'escalation'], pauseAfter: 0.22, blockPacing: 'creciente' },
-    { key: 'block_3', segments: ['reengage', 'peak'], pauseAfter: 0.18, blockPacing: 'impacto' },
-    { key: 'block_4', segments: ['open_ending', 'soft_cta'], pauseAfter: 0, blockPacing: 'cierre conversacional' },
-  ];
+  const blockDefinitions = isExpanded
+    ? [
+        { key: 'block_1', segments: ['hook', 'open_loop'], pauseAfter: 0.46, blockPacing: 'controlado con gancho' },
+        { key: 'block_2', segments: ['micro_value', 'escalation'], pauseAfter: 0.22, blockPacing: 'creciente' },
+        { key: 'block_3', segments: ['reengage', 'peak'], pauseAfter: 0.18, blockPacing: 'impacto' },
+        { key: 'block_4', segments: ['open_ending', 'soft_cta'], pauseAfter: 0, blockPacing: 'cierre conversacional' },
+      ]
+    : [
+        { key: 'block_1', segments: ['hook'], pauseAfter: 0.46, blockPacing: 'hook' },
+        { key: 'block_2', segments: ['claim'], pauseAfter: 0.22, blockPacing: 'claim' },
+        { key: 'block_3', segments: ['explanation'], pauseAfter: 0.18, blockPacing: 'explanation' },
+        { key: 'block_4', segments: ['cta'], pauseAfter: 0, blockPacing: 'cta' },
+      ];
 
   const blocks = blockDefinitions
     .map((block) => {
@@ -374,7 +395,7 @@ function detectSpeechSegments(wavPath, sectionDuration) {
       '-',
     ];
 
-    const proc = spawn(ffmpegPath, args, { stdio: ['ignore', 'pipe', 'pipe'] });
+    const proc = safeSpawn(ffmpegPath, args);
     let output = '';
     proc.stderr.on('data', c => { output += c.toString(); });
     proc.stdout.on('data', c => { output += c.toString(); });
@@ -531,7 +552,7 @@ function _synthesizeRawTextWithKokoroOnce(text, outputWavPath, timeoutMs = 90_00
       ? `${pythonDir}${path.delimiter}${process.env.PATH || ''}`
       : (process.env.PATH || '');
 
-    const proc = spawn(
+    const proc = safeSpawn(
       PYTHON_BIN,
       [KOKORO_SCRIPT, '-', outputWavPath, KOKORO_VOICE, KOKORO_SPEED],
       {
@@ -782,11 +803,23 @@ async function synthesizeVoice(script, outputPath) {
     }
 
     const wordCount = text.split(/\s+/).length;
+    const minAudioDuration = (wordCount / 3.5) * 0.65; // ~0.65 seconds per 3.5 words
+
+    logger.info(`TTS_REQUEST_TEXT_WORDS=${wordCount}, minExpectedDuration=${minAudioDuration.toFixed(2)}s`, { videoId });
 
     // ── Intento 1: Kokoro (segmentado — duración real por sección) ───────────
     if (KOKORO_ENABLED) {
       try {
         const result = await synthesizeWithKokoro(normalizedScript, outputPath);
+        const actualDuration = result.estimatedDuration || 0;
+        logger.info(`KOKORO_AUDIO_DURATION=${actualDuration.toFixed(2)}s (expected>=${minAudioDuration.toFixed(2)}s)`, { videoId });
+
+        // Validar que Kokoro generó audio suficiente
+        if (actualDuration < minAudioDuration) {
+          logger.warn(`TTS_TOO_SHORT_FALLBACK_TO_EDGE: Kokoro generated ${actualDuration.toFixed(2)}s < ${minAudioDuration.toFixed(2)}s required`, { videoId });
+          throw new Error(`Kokoro audio too short: ${actualDuration.toFixed(2)}s < ${minAudioDuration.toFixed(2)}s`);
+        }
+
         return { ...result, wordCount, provider: 'kokoro', narrationPlan };
       } catch (kokoroErr) {
         logger.warn(`Kokoro TTS failed: ${kokoroErr.message.slice(0, 300)} — falling back to Edge TTS`, { videoId });
@@ -909,12 +942,22 @@ async function synthesizeWithEdgeTTS(script, text, outputPath) {
     audioStream.on('error', reject);
   });
 
+  // HOTFIX: Validación mejorada de audio
+  // 1. Verificar size > 5KB
+  // 2. Verificar duración > 2s con ffprobe
   let fileSize = fs.statSync(outputPath).size;
-  if (fileSize < 1000) {
-    // Retry hasta 2 veces — Edge TTS a veces cierra la stream antes de enviar datos
-    for (let attempt = 1; attempt <= 2 && fileSize < 1000; attempt++) {
-      logger.warn(`Edge TTS: empty audio (${fileSize}B) — retry ${attempt}/2`);
-      await new Promise(r => setTimeout(r, 1500 * attempt));
+  let isValidAudio = fileSize >= 5000;
+
+  if (!isValidAudio || fileSize < 1000) {
+    logger.warn(`Edge TTS: invalid audio (${fileSize}B) — retrying...`);
+  }
+
+  // Retry hasta 5 veces (HOTFIX: aumentado de 2)
+  for (let attempt = 1; attempt <= 5 && fileSize < 5000; attempt++) {
+    logger.warn(`Edge TTS: empty/invalid audio (${fileSize}B) — retry ${attempt}/5`);
+    await new Promise(r => setTimeout(r, 1500 * attempt)); // delay incremental
+
+    try {
       const tts2 = new MsEdgeTTS();
       await tts2.setMetadata(voice, OUTPUT_FORMAT.AUDIO_24KHZ_96KBITRATE_MONO_MP3);
       const { audioStream: as2 } = await tts2.toStream(ssmlContent);
@@ -926,11 +969,22 @@ async function synthesizeWithEdgeTTS(script, text, outputPath) {
         as2.on('error', reject);
       });
       fileSize = fs.statSync(outputPath).size;
-    }
-    if (fileSize < 1000) {
-      throw new Error(`Edge TTS returned empty audio (${fileSize} bytes)`);
+    } catch (retryErr) {
+      logger.warn(`Edge TTS retry ${attempt} failed: ${retryErr.message}`);
     }
   }
+
+  // Final validation: check size AND duration with ffprobe
+  if (fileSize < 5000) {
+    throw new Error(`Edge TTS returned empty audio after 5 retries (${fileSize} bytes) — aborting`);
+  }
+
+  // Validate audio duration > 2s
+  const duration = await getSegmentDuration(outputPath);
+  if (duration < 2) {
+    throw new Error(`Edge TTS audio too short: ${duration.toFixed(2)}s < 2s required (file: ${fileSize}B)`);
+  }
+  logger.debug(`Edge TTS: audio validated | size=${(fileSize/1024).toFixed(0)}KB duration=${duration.toFixed(2)}s`);
 
   const wordCount = text.split(/\s+/).length;
   const estimatedDuration = parseFloat(((wordCount / 140) * 60).toFixed(2));

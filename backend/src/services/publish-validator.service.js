@@ -7,7 +7,7 @@
 
 const fs = require('fs');
 const path = require('path');
-const { execSync } = require('child_process');
+const { execFileSync } = require('child_process');
 const logger = require('../utils/logger');
 const { validateVideoV4 } = require('../contracts/video-v4.contract');
 const ffprobePath = require('@ffprobe-installer/ffprobe').path;
@@ -46,8 +46,11 @@ function validateVideoQC(outputPath, assPath, videoId) {
 
     // 2. ffprobe validation
     try {
-      const probeOutput = execSync(`"${ffprobePath}" -v error -show_streams "${outputPath}"`,
-        { encoding: 'utf8', maxBuffer: 10 * 1024 * 1024 });
+      const probeOutput = execFileSync(
+        ffprobePath,
+        ['-v', 'error', '-show_streams', outputPath],
+        { encoding: 'utf8', maxBuffer: 10 * 1024 * 1024, windowsHide: true, shell: false, stdio: ['ignore', 'pipe', 'pipe'] },
+      );
 
       // Video stream
       const hasVideoStream = probeOutput.includes('codec_type=video');

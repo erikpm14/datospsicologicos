@@ -7,11 +7,12 @@
  */
 
 require('dotenv').config();
-const { execSync, spawn } = require('child_process');
+const { execFileSync } = require('child_process');
 const path = require('path');
 const fs = require('fs');
 const logger = require('../utils/logger');
 const { createPerfTracker } = require('../utils/perf-tracker');
+const { safeSpawn } = require('../utils/safe-spawn');
 
 const WHISPER_ENABLED = process.env.WHISPER_WORD_TIMESTAMPS_ENABLED !== 'false';
 const WHISPER_MODEL = process.env.WHISPER_MODEL || 'base';
@@ -23,7 +24,7 @@ const WHISPER_TIMEOUT_MS = parseInt(process.env.WHISPER_TIMEOUT_MS || '120000');
  */
 function isWhisperAvailable() {
   try {
-    execSync('python -c "from faster_whisper import WhisperModel"', { stdio: 'pipe', encoding: 'utf-8' });
+    execFileSync(process.platform === 'win32' ? 'pythonw' : 'python', ['-c', 'from faster_whisper import WhisperModel'], { stdio: ['ignore', 'pipe', 'pipe'], encoding: 'utf-8', windowsHide: true, shell: false });
     return true;
   } catch (err) {
     logger.debug(`Whisper availability check failed: ${err.message.slice(0, 100)}`);
@@ -80,13 +81,13 @@ async function getWordTimestampsFromWhisper(audioPath, language = 'es') {
 
     perf.start('whisper_process');
 
-    const pythonProcess = spawn('python', [
+    const pythonProcess = safeSpawn(process.platform === 'win32' ? 'pythonw' : 'python', [
       scriptPath,
       audioPath,
       language,
       WHISPER_MODEL,
     ], {
-      stdio: ['pipe', 'pipe', 'pipe'],
+      stdio: ['ignore', 'pipe', 'pipe'],
       env: { ...require('process').env, PYTHONUNBUFFERED: '1' },
     });
 

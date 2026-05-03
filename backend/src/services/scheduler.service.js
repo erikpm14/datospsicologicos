@@ -96,10 +96,21 @@ async function runGenerationCycle({ urgent = false } = {}) {
       return;
     }
 
+    // HOTFIX: Regla de urgencia por proximidad a próximo slot
+    // Si faltan < 90 min para slot y hay < 3 videos listos → urgente
+    const nextSlot = getNextPublishSlot();
+    let urgentSlotProximity = false;
+    if (nextSlot && nextSlot.minutesUntil >= 0 && nextSlot.minutesUntil < 90) {
+      if (publishable < 3) {
+        urgentSlotProximity = true;
+        logger.warn(`GenerationScheduler: URGENT top-up by slot proximity | nextSlot=${nextSlot.time} (${nextSlot.minutesUntil}min) | ready=${publishable} < 3`);
+      }
+    }
+
     // Modo urgente: sin vídeos buenos y sin nada renderizando
-    const needsUrgent = urgent || belowMinimumReady || (publishable === 0 && inPipeline === 0);
+    const needsUrgent = urgent || urgentSlotProximity || belowMinimumReady || (publishable === 0 && inPipeline === 0);
     if (needsUrgent) {
-      logger.info(`GenerationScheduler: top-up triggered | urgent=${urgent} | ready=${publishable}/${thresholds.targetReady} | inPipeline=${inPipeline}`);
+      logger.info(`GenerationScheduler: top-up triggered | urgent=${urgent} | slotProximity=${urgentSlotProximity} | ready=${publishable}/${thresholds.targetReady} | inPipeline=${inPipeline}`);
     }
 
     if (needsUrgent) {
@@ -173,6 +184,45 @@ async function runGenerationCycle({ urgent = false } = {}) {
       generationLastResult: lastResult,
       generationRunning: false,
     });
+  }
+}
+
+// ─────────────────────────────────────────────
+//  HELPERS DE SLOTS
+// ─────────────────────────────────────────────
+
+/**
+ * Calcula el próximo slot de publicación.
+ * Slots default: 09:00, 13:00, 15:30, 19:00, 21:00 (CET)
+ */
+function getNextPublishSlot() {
+  try {
+    const slotTimesStr = process.env.PUBLISH_TIMES_CET || '09:00,13:00,15:30,19:00,21:00';
+    const slots = slotTimesStr.split(',').map(s => {
+      const [h, m] = s.trim().split(':').map(Number);
+      return { h, m, time: `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}` };
+    }).sort((a, b) => a.h * 60 + a.m - (b.h * 60 + b.m));
+
+    const now = new Date();
+    const currentMinutes = now.getHours() * 60 + now.getMinutes();
+
+    // Buscar próximo slot hoy
+    for (const slot of slots) {
+      const slotMinutes = slot.h * 60 + slot.m;
+      if (slotMinutes > currentMinutes) {
+        const minutesUntil = slotMinutes - currentMinutes;
+        return { time: slot.time, minutesUntil, today: true };
+      }
+    }
+
+    // Si no hay slot hoy, próximo es el primero de mañana
+    const firstSlot = slots[0];
+    const minutesUntilMidnight = (24 * 60) - currentMinutes;
+    const minutesUntil = minutesUntilMidnight + (firstSlot.h * 60 + firstSlot.m);
+    return { time: firstSlot.time, minutesUntil, today: false };
+  } catch (err) {
+    logger.warn(`getNextPublishSlot error: ${err.message}`);
+    return null;
   }
 }
 

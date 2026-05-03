@@ -4,6 +4,7 @@
  */
 
 require('dotenv').config();
+require('./utils/child-process-debug');
 
 // Configura el binario de FFmpeg incluido en node_modules (sin instalación del sistema)
 const ffmpegInstaller = require('@ffmpeg-installer/ffmpeg');
@@ -22,7 +23,7 @@ const { refreshYouTubeIntegration } = require('./services/youtube-integration.se
 const { generateYouTubeChannelAnalysis } = require('./services/youtube-channel-analysis.service');
 const { addVideoToQueue, getQueueStatus } = require('./queue/video-processor');
 const { generateScript, generateSeries } = require('./services/content-generator');
-const { scoreScript } = require('./utils/virality-scorer');
+const { scoreScriptByRealData } = require('./utils/real-virality-scorer');
 const { scoreFormatMatch } = require('./services/format-match-engine');
 const { getSpanishVoices } = require('./services/voice-synthesizer');
 const { runGrowthCycle, getGrowthInsights, getNextVideoRecommendation, exploitWinner } = require('./services/growth-engine');
@@ -37,6 +38,7 @@ const { startGenerationScheduler, runGenerationCycle, getSchedulerStatus } = req
 const { analyzeHookPerformance, getHookPerformanceAnalysis, getTopHooks, getHookInsights } = require('./services/hook-performance-analyzer');
 const { startPublishScheduler, runPublishCycle, getPublishSchedulerStatus, getReadyToPublishVideos } = require('./services/publish-scheduler.service');
 const { startPipelineWatchdog } = require('./services/pipeline-watchdog.service');
+const { initAutoImport, shutdownAutoImport } = require('./services/auto-import-startup');
 const { getQueueSnapshot } = require('./services/operational-state.service');
 const { getVideoStatus, getNextSlot, getHealth } = require('./services/dashboard-stats.service');
 const hooksData = require('./templates/psychology-hooks.json');
@@ -270,7 +272,7 @@ app.post('/api/score', (req, res) => {
   try {
     const { script } = req.body;
     if (!script) return res.status(400).json({ ok: false, error: 'script is required' });
-    const virality = scoreScript(script);
+    const virality = scoreScriptByRealData(script);
     const format   = scoreFormatMatch(script);
     res.json({ ok: true, data: { virality, format } });
   } catch (err) {
@@ -1406,6 +1408,7 @@ async function start() {
     startGenerationScheduler();
     startPublishScheduler();
     startPipelineWatchdog();
+    initAutoImport();
   }, 2000);
 }
 

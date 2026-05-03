@@ -83,12 +83,15 @@ function buildComplexFilter(segments, inputMap, assFilePath, globalColorGrade = 
   // PASO 6: Subtítulos
   // ─────────────────────────────────────────────────────────────────
 
+  let subtitlesFilterApplied = false;
   if (assFilePath) {
     // Escapar la ruta para FFmpeg (Windows: reemplazar \ por /)
     const escapedPath = assFilePath.replace(/\\/g, '/');
     videoFilters.push(`${finalVideoLabel}subtitles='${escapedPath}'[out]`);
+    subtitlesFilterApplied = true;
   } else {
     videoFilters.push(`${finalVideoLabel}[out]`);
+    subtitlesFilterApplied = false;
   }
 
   // ─────────────────────────────────────────────────────────────────
@@ -104,7 +107,7 @@ function buildComplexFilter(segments, inputMap, assFilePath, globalColorGrade = 
 
   const allFilters = [...videoFilters, ...audioFilters].join(';');
 
-  logger.debug(`[concat-builder] Built filter for ${segments.length} segments`);
+  logger.debug(`[concat-builder] Built filter for ${segments.length} segments with subtitles=${subtitlesFilterApplied}`);
 
   return {
     filterGraph: allFilters,
@@ -112,6 +115,7 @@ function buildComplexFilter(segments, inputMap, assFilePath, globalColorGrade = 
       video: '[out]',
       audio: '[aout]',
     },
+    subtitlesFilterApplied,
   };
 }
 

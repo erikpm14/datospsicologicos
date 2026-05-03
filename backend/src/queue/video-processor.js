@@ -12,6 +12,7 @@
  */
 
 require('dotenv').config();
+require('../utils/child-process-debug');
 const PQueue = require('p-queue').default;
 const cron = require('node-cron');
 const fs = require('fs');
@@ -293,6 +294,15 @@ async function processPipeline(job) {
   }
   const renderPhase = perf.end({ outputPath: videoPath });
   logger.info(`[Job ${job.id}] render done in ${formatDurationMs(renderPhase.durationMs)}`);
+
+  // HARD VALIDATION: Check file exists before continuing
+  if (!fs.existsSync(videoPath) || fs.statSync(videoPath).size < 1024) {
+    const errMsg = `CRITICAL: Output file missing or too small after render: ${videoPath} (${fs.existsSync(videoPath) ? fs.statSync(videoPath).size : 0} bytes)`;
+    logger.error(`[Job ${job.id}] ${errMsg}`);
+    throw new Error(errMsg);
+  }
+  logger.info(`[Job ${job.id}] render file validated: ${(fs.statSync(videoPath).size / 1024 / 1024).toFixed(2)}MB`);
+
   if (script.slotTracking?.slotId) {
     markSlotAssignmentStatus(script.slotTracking.slotId, 'rendered', {
       assignedCandidateId: script.id || null,
@@ -374,6 +384,22 @@ async function processPipeline(job) {
     trimDoneFolder(50);
 
     logger.info(`[Job ${job.id}] Done! Video ${videoId} ready at output/${videoId}/output.mp4 — awaiting scheduled publish | total=${formatDurationMs(job.performance.totalMs)}`);
+
+    // Intentar late publish si existe slot saltado reciente
+    try {
+      const { attemptLatePublish } = require('../services/late-publish-recovery');
+      setImmediate(() => attemptLatePublish(videoId).catch(err => logger.warn(`[Job ${job.id}] late-publish error: ${err.message}`)));
+    } catch (err) {
+      // late-publish-recovery no disponible, ignorar
+    }
+
+    // Auto-sync: asegurar que vídeos en output estén registrados en queue/done
+    try {
+      const { runSync } = require('../services/auto-import-from-output.service');
+      setImmediate(() => runSync().catch(err => logger.debug(`[Job ${job.id}] auto-sync error: ${err.message}`)));
+    } catch (err) {
+      // auto-import no disponible, ignorar
+    }
   } else {
     // Modo inmediato: publicar ahora
     logger.info(`[Job ${job.id}] 4/5 Publishing...`);
@@ -725,13 +751,13 @@ async function runViralResearch(reason) {
 
   logger.info(`🔍 Iniciando investigación viral automática (${reason})...`);
 
-  const { execFile } = require('child_process');
+  const { safeExecFile } = require('../utils/safe-spawn');
   // __dirname = backend/src/queue → ../../../scripts = Generador_videos/scripts
   const scriptsDir = path.resolve(__dirname, '../../../scripts');
 
   const runScript = (script) =>
     new Promise((resolve, reject) => {
-      execFile('node', [path.join(scriptsDir, script)], { cwd: path.dirname(scriptsDir) }, (err, stdout, stderr) => {
+      safeExecFile('node', [path.join(scriptsDir, script)], { cwd: path.dirname(scriptsDir) }, (err, stdout, stderr) => {
         if (stdout) String(stdout).split('\n').filter(Boolean).forEach((l) => logger.info(`[research] ${l}`));
         if (err) return reject(new Error(String(stderr || err.message)));
         resolve();

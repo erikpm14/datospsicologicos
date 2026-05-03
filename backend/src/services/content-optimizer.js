@@ -15,7 +15,7 @@ require('dotenv').config();
 const fs        = require('fs');
 const path      = require('path');
 const Anthropic = require('@anthropic-ai/sdk');
-const { scoreScript, getHookStrength }       = require('../utils/virality-scorer');
+const { scoreScriptByRealData }       = require('../utils/real-virality-scorer');
 const { scoreFormatMatch, scoreEmotionalImpact } = require('./format-match-engine');
 const { getFromCache, saveToCache }          = require('./script-cache');
 const { getPatternContextForPrompt }         = require('./pattern-miner');
@@ -476,9 +476,9 @@ ${COMPACT_SCRIPT_SCHEMA}`;
   const normalizedScript = finalizeOptimizedScript(script, growthContext);
 
   // ── Scores ──
-  const viralityResult = scoreScript(normalizedScript);
+  const viralityResult = scoreScriptByRealData(normalizedScript);
   normalizedScript.viralityScore     = viralityResult.score;
-  normalizedScript.viralityBreakdown = viralityResult.breakdown;
+  normalizedScript.viralityBreakdown = viralityResult.dataPoints;
 
   const formatResult                  = scoreFormatMatch(normalizedScript);
   normalizedScript.formatMatchScore   = formatResult.score;
@@ -493,19 +493,15 @@ ${COMPACT_SCRIPT_SCHEMA}`;
   // ── Aprobación (para cola) ──
   const minFormat      = parseInt(process.env.MIN_FORMAT_MATCH_SCORE_TO_QUEUE || '70');
   const minVirality    = parseInt(process.env.MIN_VIRALITY_SCORE_TO_QUEUE     || '60');
-  const minHookStrength = parseInt(process.env.MIN_HOOK_STRENGTH              || '8');
 
-  const hookStr    = viralityResult.breakdown?.hookStrength ?? getHookStrength(normalizedScript.hook);
   const formatOk   = formatResult.score >= minFormat;
   const viralityOk = viralityResult.score >= minVirality;
-  const hookOk     = hookStr >= minHookStrength;
 
   normalizedScript.approved = formatOk && viralityOk;
   normalizedScript.rejectionReason = !normalizedScript.approved
     ? [
           !formatOk   ? `format_match ${formatResult.score}/${minFormat}` : null,
-          !viralityOk ? `virality ${viralityResult.score}/${minVirality}` : null,
-          !hookOk     ? `hook_weak ${hookStr}/${minHookStrength} (penalty)` : null,
+          !viralityOk ? `virality_data ${viralityResult.score}/${minVirality} (real data threshold)` : null,
         ...normalizedScript.segmentFeedbackSummary.slice(0, 3).map((issue) => `${issue} (penalty)`),
         ].filter(Boolean).join(' | ')
     : null;
@@ -1023,9 +1019,9 @@ ${COMPACT_VIRAL_SCHEMA}`;
   const script = finalizeOptimizedScript(rawScript, growthContext);
 
   // ── Scores ──
-  const viralityResult = scoreScript(script);
+  const viralityResult = scoreScriptByRealData(script);
   script.viralityScore     = viralityResult.score;
-  script.viralityBreakdown = viralityResult.breakdown;
+  script.viralityBreakdown = viralityResult.dataPoints;
 
   const formatResult            = scoreFormatMatch(script);
   script.formatMatchScore       = formatResult.score;
@@ -1040,19 +1036,15 @@ ${COMPACT_VIRAL_SCHEMA}`;
   // ── Aprobación ──
   const minFormat       = parseInt(process.env.MIN_FORMAT_MATCH_SCORE_TO_QUEUE || '70');
   const minVirality     = parseInt(process.env.MIN_VIRALITY_SCORE_TO_QUEUE     || '60');
-  const minHookStrength = parseInt(process.env.MIN_HOOK_STRENGTH               || '8');
 
-  const hookStr    = viralityResult.breakdown?.hookStrength ?? getHookStrength(script.hook);
   const formatOk   = formatResult.score >= minFormat;
   const viralityOk = viralityResult.score >= minVirality;
-  const hookOk     = hookStr >= minHookStrength;
 
   script.approved  = formatOk && viralityOk;
   script.rejectionReason = !script.approved
     ? [
           !formatOk   ? `format_match ${formatResult.score}/${minFormat}` : null,
-          !viralityOk ? `virality ${viralityResult.score}/${minVirality}` : null,
-          !hookOk     ? `hook_weak ${hookStr}/${minHookStrength} (penalty)` : null,
+          !viralityOk ? `virality_data ${viralityResult.score}/${minVirality} (real data threshold)` : null,
         ...script.segmentFeedbackSummary.slice(0, 3).map((issue) => `${issue} (penalty)`),
         ].filter(Boolean).join(' | ')
     : null;
