@@ -1,0 +1,177 @@
+{
+  "viralHooks": [
+    {
+      "id": "viral_001",
+      "pattern": "Tu cerebro está haciendo esto",
+      "text": "Tu cerebro te está [ENGAÑANDO/MINTIENDO] sobre esto",
+      "topic": "cognitive_biases",
+      "keywords": ["sesgo cognitivo", "engaño mental", "tu cerebro"],
+      "effectName": "SESGO COGNITIVO SIMPLE",
+      "structure": "sesgo → evidencia → aplicación",
+      "estimatedRetention": 0.56,
+      "compatibility": ["confirmación", "anclaje", "Dunning-Kruger", "ilusión de control"],
+      "emotionalTrigger": "curiosity",
+      "estimatedScore": 96
+    },
+    {
+      "id": "viral_002",
+      "pattern": "Esto explica por qué siempre te pasa",
+      "text": "Esto que haces [TODOS LOS DÍAS/EN CADA RELACIÓN/CUANDO NECESITAS] está arruinando tu [RESULTADO]",
+      "topic": "self_sabotage",
+      "keywords": ["sabotaje", "autosabotaje", "patrón"],
+      "effectName": "AUTOSABOTAJE DIRECTO",
+      "structure": "problema → causa psicológica → solución",
+      "estimatedRetention": 0.55,
+      "compatibility": ["relaciones tóxicas", "procrastinación", "ansiedad", "decisiones impulsivas"],
+      "emotionalTrigger": "urgency",
+      "estimatedScore": 95
+    },
+    {
+      "id": "viral_003",
+      "pattern": "Estás haciendo esto sin darte cuenta",
+      "text": "TODO lo que crees sobre [TEMA] es mentira",
+      "topic": "false_beliefs",
+      "keywords": ["creencia falsa", "verdad", "engaño"],
+      "effectName": "INVERSIÓN DE CREENCIA COMPLETA",
+      "structure": "mito ↔ verdad ↔ consecuencia",
+      "estimatedRetention": 0.58,
+      "compatibility": ["ansiedad", "confianza", "éxito", "relaciones románticas"],
+      "emotionalTrigger": "surprise",
+      "estimatedScore": 97
+    },
+    {
+      "id": "viral_004",
+      "pattern": "¿Por qué SIEMPRE te pasa esto?",
+      "text": "¿Por qué SIEMPRE [PATRÓN]?",
+      "topic": "patterns",
+      "keywords": ["patrón", "repetición", "programación"],
+      "effectName": "PATRÓN REPETITIVO",
+      "structure": "problema → causa psicológica → reframe",
+      "estimatedRetention": 0.52,
+      "compatibility": ["elegir parejas tóxicas", "fallos repetitivos", "sentirse ignorado", "decisiones impulsivas"],
+      "emotionalTrigger": "recognition",
+      "estimatedScore": 94
+    },
+    {
+      "id": "viral_005",
+      "pattern": "Hay algo en tu mente que",
+      "text": "Estás dejando pasar [COSA VALIOSA] sin darte cuenta",
+      "topic": "loss_aversion",
+      "keywords": ["oportunidad", "pérdida", "desaprovechado"],
+      "effectName": "AVERSIÓN A PÉRDIDA ACTIVADA",
+      "structure": "universalidad → especificidad → empoderamiento",
+      "estimatedRetention": 0.54,
+      "compatibility": ["oportunidades de carrera", "relaciones saludables", "crecimiento personal", "momentos importantes"],
+      "emotionalTrigger": "fear",
+      "estimatedScore": 92
+    },
+    {
+      "id": "viral_006",
+      "pattern": "Si haces esto, tu cerebro",
+      "text": "[EMOCIÓN NEGATIVA] es en realidad BUENA",
+      "topic": "emotion_reframe",
+      "keywords": ["reframe", "emoción positiva", "bueno"],
+      "effectName": "REFRAME PROVOCATIVO",
+      "structure": "vulnerabilidad → validación → esperanza",
+      "estimatedRetention": 0.57,
+      "compatibility": ["ansiedad positiva", "miedo como señal", "culpa como brújula", "frustración como combustible"],
+      "emotionalTrigger": "validation",
+      "estimatedScore": 93
+    },
+    {
+      "id": "viral_007",
+      "pattern": "Siempre te pasa esto por",
+      "text": "El [X%] de las personas NO SABE esto sobre sí misma",
+      "topic": "statistics_trigger",
+      "keywords": ["estadística", "porcentaje", "desconocido"],
+      "effectName": "ESTADÍSTICA POLARIZADORA",
+      "structure": "dato → aplicación específica → empoderamiento",
+      "estimatedRetention": 0.53,
+      "compatibility": ["cualquier patrón psicológico", "errores comunes", "creencias limitantes", "dinámicas relacionales"],
+      "emotionalTrigger": "curiosity",
+      "estimatedScore": 91
+    },
+    {
+      "id": "viral_008",
+      "pattern": "Siempre te pasa esto por",
+      "text": "Tu [COSA NEGATIVA] en realidad no es por [RAZÓN OBVIA]",
+      "topic": "counterintuitive",
+      "keywords": ["contraintuitivo", "no es por", "verdadera razón"],
+      "effectName": "DEFINICIÓN CONTRAINTUITIVA",
+      "structure": "problema → causa real → revelación",
+      "estimatedRetention": 0.56,
+      "compatibility": ["infidelidad", "procrastinación", "ansiedad", "fracasos"],
+      "emotionalTrigger": "revelation",
+      "estimatedScore": 94
+    },
+    {
+      "id": "viral_009",
+      "pattern": "Esto explica por qué siempre te pasa",
+      "text": "YO hago esto en [CONTEXTO] y me arruina [RESULTADO]",
+      "topic": "vulnerability_confession",
+      "keywords": ["confesión", "vulnerable", "experiencia personal"],
+      "effectName": "CONFESIÓN VULNERABLE",
+      "structure": "vuln → validación → esperanza",
+      "estimatedRetention": 0.55,
+      "compatibility": ["relaciones personales", "decisiones profesionales", "interacciones sociales", "autosabotaje"],
+      "emotionalTrigger": "identification",
+      "estimatedScore": 92
+    },
+    {
+      "id": "viral_010",
+      "pattern": "Hay algo en tu mente que",
+      "text": "STOP - Si crees que [CREENCIA], estás completamente engañado",
+      "topic": "belief_interrupt",
+      "keywords": ["stop", "pausa", "mentira desmentida"],
+      "effectName": "PATTERN INTERRUPT AGRESIVO",
+      "structure": "interruption → desmentir → verdad científica",
+      "estimatedRetention": 0.51,
+      "compatibility": ["creencias sobre uno mismo", "mitos psicológicos", "narrativas falsas", "identidades limitantes"],
+      "emotionalTrigger": "shock",
+      "estimatedScore": 90
+    }
+  ],
+  "themes": {
+    "TIER_1_VIRAL": ["apego ansioso", "procrastinación", "patrones relacionales", "creencias limitantes", "sabotaje mental"],
+    "TIER_2_HIGH": ["patrón comportamiento", "comunicación", "autoestima", "ansiedad", "sesgo cognitivo"],
+    "TIER_3_GOOD": ["productividad", "motivación"]
+  },
+  "closurePatterns": [
+    {
+      "type": "reflexive",
+      "examples": ["¿Tú ya lo habías notado?", "¿Reconoces esto en ti?", "¿A cuál te pareces más?"],
+      "estimatedEngagement": 0.48
+    },
+    {
+      "type": "provocative",
+      "examples": ["¿Te atreves a hacerlo diferente?", "¿Vas a seguir dejándote sabotear?", "¿Cambiarás o seguirás igual?"],
+      "estimatedEngagement": 0.52
+    },
+    {
+      "type": "validation_hope",
+      "examples": ["No estás solo en esto", "Pero puedes cambiar", "Yo también lo hice"],
+      "estimatedEngagement": 0.56
+    },
+    {
+      "type": "cliffhanger",
+      "examples": ["Pero aquí viene lo importante...", "Aunque hay un problema...", "La mayoría falla en esto porque..."],
+      "estimatedEngagement": 0.59
+    }
+  ],
+  "pacing": {
+    "hookDuration": 2000,
+    "microValueDuration": 8000,
+    "twistDuration": 8000,
+    "closureDuration": 2000,
+    "visualChangeInterval": 2500,
+    "subtitleChangeInterval": 2500
+  },
+  "constraints": {
+    "maxHookWords": 8,
+    "maxSubtitleWords": 8,
+    "minDuration": 15000,
+    "maxDuration": 25000,
+    "minVisualChanges": 4,
+    "targetRetention": 0.55
+  }
+}

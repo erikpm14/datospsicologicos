@@ -4,7 +4,7 @@
  * Usa SEGMENT_DEFAULTS para duraciones y movimientos.
  */
 
-const { SEGMENT_KEYS, SEGMENT_DEFAULTS, TOTAL_SEGMENT_DURATION, PUNCH_ZOOM_CONFIG } = require('./style-config');
+const { SEGMENT_KEYS, SEGMENT_DEFAULTS, TOTAL_SEGMENT_DURATION, PUNCH_ZOOM_CONFIG, VIRAL_PACING } = require('./style-config');
 const { filterGapsForSegment } = require('./silence-detector');
 const logger = require('../utils/logger');
 
@@ -116,8 +116,55 @@ function needsPunchZoom(segmentKey) {
   return segmentKey === 'reengage' || segmentKey === 'peak';
 }
 
+/**
+ * Valida que el plan visual cumpla con restricciones de viralidad:
+ * - Cada segmento entre 1.5-3 segundos
+ * - Cambios visuales cada 2-3 segundos
+ * - Duración total 15-25 segundos
+ */
+function validateViralPacing(segmentPlan, realDuration) {
+  const violations = [];
+
+  // Validar duración total
+  if (realDuration < VIRAL_PACING.minDuration / 1000) {
+    violations.push(`Duration too short: ${realDuration}s < ${VIRAL_PACING.minDuration / 1000}s (min)`);
+  }
+  if (realDuration > VIRAL_PACING.maxDuration / 1000) {
+    violations.push(`Duration too long: ${realDuration}s > ${VIRAL_PACING.maxDuration / 1000}s (max)`);
+  }
+
+  // Validar duración de segmentos
+  segmentPlan.forEach((segment, idx) => {
+    const durationMs = segment.duration * 1000;
+    if (durationMs > VIRAL_PACING.maxSegmentDuration) {
+      violations.push(`Segment ${idx} (${segment.key}) too long: ${segment.duration}s > ${VIRAL_PACING.maxSegmentDuration / 1000}s`);
+    }
+    if (durationMs < VIRAL_PACING.minSegmentDuration) {
+      violations.push(`Segment ${idx} (${segment.key}) too short: ${segment.duration}s < ${VIRAL_PACING.minSegmentDuration / 1000}s`);
+    }
+  });
+
+  // Log violations si existen
+  if (violations.length > 0) {
+    logger.warn(`[viral-pacing] Violations detected: ${violations.join(' | ')}`);
+  } else {
+    logger.info(`[viral-pacing] ✓ All constraints met | ${segmentPlan.length} segments | ${realDuration.toFixed(1)}s duration`);
+  }
+
+  return {
+    valid: violations.length === 0,
+    violations,
+    conformance: {
+      segmentCount: segmentPlan.length,
+      totalDuration: realDuration,
+      avgSegmentDuration: (realDuration / segmentPlan.length).toFixed(2),
+    },
+  };
+}
+
 module.exports = {
   buildVisualPlan,
   computeClipOffset,
   needsPunchZoom,
+  validateViralPacing,
 };

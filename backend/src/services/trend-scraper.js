@@ -87,12 +87,31 @@ const KEYWORD_TOPIC_MAP = {
   ilusión:         'perception',
 };
 
+/**
+ * VIRALITY RANKING — Priorizar temas de máxima viralidad
+ * TIER_1: sesgo cognitivo, error en relaciones, sabotaje mental, creencias limitantes
+ * TIER_2: patrón de comportamiento, comunicación, autoestima, ansiedad
+ * TIER_3: productividad, motivación
+ */
+const VIRALITY_RANKING = {
+  TIER_1_VIRAL: ['cognitive_biases', 'relationships', 'self_talk', 'habits'],
+  TIER_2_HIGH: ['social_patterns', 'communication', 'emotions', 'body_language'],
+  TIER_3_GOOD: ['motivation', 'attention'],
+};
+
+function getViralityRank(topic) {
+  if (VIRALITY_RANKING.TIER_1_VIRAL.includes(topic)) return 3;
+  if (VIRALITY_RANKING.TIER_2_HIGH.includes(topic)) return 2;
+  if (VIRALITY_RANKING.TIER_3_GOOD.includes(topic)) return 1;
+  return 0; // neutral
+}
+
 function detectTopic(text) {
   const lower = text.toLowerCase();
   for (const [keyword, topic] of Object.entries(KEYWORD_TOPIC_MAP)) {
     if (lower.includes(keyword)) return topic;
   }
-  return 'cognitive_biases'; // fallback más genérico y viral
+  return 'cognitive_biases'; // fallback más genérico y viral (TIER_1)
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -218,34 +237,44 @@ function aggregateTrends(allItems) {
     byTopic[t].sources.add(item.source);
   }
 
-  // Convertir a array y ordenar por señal
+  // Convertir a array y ordenar por señal + virality boost
   const ranked = Object.values(byTopic)
-    .map(t => ({
-      ...t,
-      sources:     Array.from(t.sources),
-      topPosts:    t.posts
-                     .sort((a, b) => b.viralSignal - a.viralSignal)
-                     .slice(0, 3)
-                     .map(p => ({ title: p.title, signal: p.viralSignal, source: p.source })),
-      // Hook hints de los posts más virales (para inspirar el generador)
-      hookHints:   [...new Set(
-                     t.posts
+    .map(t => {
+      const viralityRank = getViralityRank(t.topic);
+      // Boost signal para temas TIER_1 (multiplicador 3x), TIER_2 (2x)
+      const boostedSignal = t.totalSignal * Math.max(1, viralityRank);
+      return {
+        ...t,
+        viralityRank,
+        boostedSignal,
+        sources:     Array.from(t.sources),
+        topPosts:    t.posts
                        .sort((a, b) => b.viralSignal - a.viralSignal)
-                       .slice(0, 5)
-                       .map(p => p.hookHint)
-                   )],
-    }))
-    .sort((a, b) => b.totalSignal - a.totalSignal);
+                       .slice(0, 3)
+                       .map(p => ({ title: p.title, signal: p.viralSignal, source: p.source })),
+        // Hook hints de los posts más virales (para inspirar el generador)
+        hookHints:   [...new Set(
+                       t.posts
+                         .sort((a, b) => b.viralSignal - a.viralSignal)
+                         .slice(0, 5)
+                         .map(p => p.hookHint)
+                     )],
+      };
+    })
+    .sort((a, b) => b.boostedSignal - a.boostedSignal);
 
-  // Top 5 trending
+  // Top 5 trending (con virality boost aplicado)
   const trending = ranked.slice(0, 5).map((t, i) => ({
-    rank:        i + 1,
-    topic:       t.topic,
-    totalSignal: t.totalSignal,
-    sources:     t.sources,
-    topPosts:    t.topPosts,
-    hookHints:   t.hookHints,
-    isTrending:  true,
+    rank:           i + 1,
+    topic:          t.topic,
+    totalSignal:    t.totalSignal,
+    boostedSignal:  t.boostedSignal,
+    viralityRank:   t.viralityRank,
+    viralityTier:   t.viralityRank === 3 ? 'TIER_1_VIRAL' : (t.viralityRank === 2 ? 'TIER_2_HIGH' : (t.viralityRank === 1 ? 'TIER_3_GOOD' : 'NEUTRAL')),
+    sources:        t.sources,
+    topPosts:       t.topPosts,
+    hookHints:      t.hookHints,
+    isTrending:     true,
   }));
 
   return { trending, allTopics: ranked };
@@ -262,9 +291,12 @@ function loadGoogleTrends() {
   if (!fs.existsSync(GOOGLE_TRENDS_SCRIPT)) return [];
 
   try {
-    const result = spawnSync('python', [GOOGLE_TRENDS_SCRIPT], {
+    const result = spawnSync(process.platform === 'win32' ? 'pythonw' : 'python', [GOOGLE_TRENDS_SCRIPT], {
       encoding: 'utf8',
       timeout:  60000,  // 60s max
+      windowsHide: true,
+      shell: false,
+      stdio: ['ignore', 'pipe', 'pipe'],
     });
 
     if (result.status !== 0 || !result.stdout) return [];

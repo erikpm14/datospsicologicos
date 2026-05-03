@@ -11,7 +11,7 @@ const ffprobe = require('fluent-ffmpeg').ffprobe;
 const logger = require('../utils/logger');
 
 // Módulos
-const { buildVisualPlan } = require('./visual-planner');
+const { buildVisualPlan, validateViralPacing } = require('./visual-planner');
 const { detectSilenceGaps } = require('./silence-detector');
 const { buildSubtitles, writeASSFile, writeSRTFile } = require('./subtitle-builder');
 const { selectColorGrade } = require('./color-grader');
@@ -94,6 +94,12 @@ async function orchestrateRender(options = {}) {
     const totalPlanDuration = segments.reduce((sum, s) => sum + s.duration, 0);
     logger.info(`[orchestrator] Planned ${segments.length} segments, duration ${totalPlanDuration.toFixed(1)}s`);
 
+    // VIRAL PACING VALIDATION
+    const pacingCheck = validateViralPacing(segments, realDuration);
+    if (!pacingCheck.valid) {
+      logger.warn(`[orchestrator] Pacing warnings: ${pacingCheck.violations.join(' | ')}`);
+    }
+
     // ─── PASO 5: subtitle-builder ───
     logger.info('[orchestrator] [5/8] Building subtitles...');
     const { blocks } = await buildSubtitles(script, realDuration, wordBoundaries, sectionDurations);
@@ -115,8 +121,8 @@ async function orchestrateRender(options = {}) {
       logoIdx: null,  // opcional: agregar logo si existe
     };
 
-    const { filterGraph, outputLabels } = buildComplexFilter(segments, inputMap, assPath, globalColorGrade);
-    logger.debug(`[orchestrator] FilterGraph length: ${filterGraph.length} chars`);
+    const { filterGraph, outputLabels, subtitlesFilterApplied } = buildComplexFilter(segments, inputMap, assPath, globalColorGrade);
+    logger.debug(`[orchestrator] FilterGraph length: ${filterGraph.length} chars | subtitlesFilterApplied=${subtitlesFilterApplied}`);
 
     // ─── PASO 8: render-executor ───
     logger.info('[orchestrator] [8/8] Rendering video...');
@@ -134,8 +140,13 @@ async function orchestrateRender(options = {}) {
       logger.warn(`[orchestrator] Output validation failed: ${validation.reason}`);
     }
 
-    // Escribir metadatos
-    writeRenderMetadata(outputDir, { segments, totalDuration: realDuration, colorGrade: globalColorGrade }, renderResult);
+    // Escribir metadatos incluyendo flag de subtítulos
+    writeRenderMetadata(outputDir, {
+      segments,
+      totalDuration: realDuration,
+      colorGrade: globalColorGrade,
+      subtitlesFilterApplied,
+    }, renderResult);
 
     const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
     logger.info(`[orchestrator] Render complete in ${elapsed}s`);

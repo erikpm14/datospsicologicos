@@ -72,6 +72,27 @@ const SEGMENT_DEFAULTS = {
 const TOTAL_SEGMENT_DURATION = Object.values(SEGMENT_DEFAULTS).reduce((sum, s) => sum + s.durationSeconds, 0);
 
 /**
+ * VIRAL PACING CONSTRAINTS
+ * - Visual change every 2-3 segundos (máximo engagement)
+ * - Hook 0-2s: máximo impacto
+ * - Micro-valor 2-10s: rápido y claro
+ * - Giro 10-20s: sorpresa/revelación
+ * - Cierre 20-25s: pregunta abierta
+ */
+const VIRAL_PACING = {
+  minDuration: 15000, // ms
+  maxDuration: 25000, // ms
+  maxSegmentDuration: 3000, // ms (3 segundos máximo)
+  minSegmentDuration: 1500, // ms (1.5 segundos mínimo)
+  visualChangeInterval: 2500, // ms (cambio visual cada 2.5s)
+
+  hookWindow: { start: 0, end: 2000 }, // 0-2s: hook crítico
+  microValueWindow: { start: 2000, end: 10000 }, // 2-10s: valor rápido
+  twistWindow: { start: 10000, end: 20000 }, // 10-20s: giro/sorpresa
+  closureWindow: { start: 20000, end: 25000 }, // 20-25s: cierre abierto
+};
+
+/**
  * Colores por sección (compatibles con CSS_TO_ASS corregido en subtitle-styler.js)
  */
 const SECTION_COLORS = {
@@ -206,4 +227,5 @@ module.exports = {
   VIGNETTE_CONFIG,
   FFMPEG_CONFIG,
   SILENCE_CUTS_CONFIG,
+  VIRAL_PACING,
 };

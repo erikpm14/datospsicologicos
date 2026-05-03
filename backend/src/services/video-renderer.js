@@ -16,11 +16,12 @@ const fs = require('fs');
 const path = require('path');
 const logger = require('../utils/logger');
 const { createPerfTracker, formatDurationMs } = require('../utils/perf-tracker');
-const { buildStyledSubtitleBlocks, buildStyledDrawtextFilters, buildSRTContent, buildKaraokeASSFile, buildStyledASSFile } = require('./subtitle-styler');
+const { buildStyledSubtitleBlocks, buildStyledDrawtextFilters, buildSRTContent, buildKaraokeASSFile, buildStyledASSFile, optimizeSubtitlesForVirality } = require('./subtitle-styler');
 const { getVisualStyleReference, STYLE_CLIP_KEYWORDS } = require('../utils/visual-style-system');
 const { detectVoiceSegments } = require('./audio-postprocess');
 const { mapSubtitlesToVoiceSegments } = require('./audio-subtitle-mapper');
 const { alignWordTimestamps } = require('./word-timestamp-aligner');
+const { buildHyperframes } = require('../utils/hyperframe-engine');
 const { exportVideo } = require('./export-manager');
 const VIDEO_USE_SKILL = require('../../../integrations/video-use/skill-config');
 const { validateAndFixAssets } = require('./asset-validator.service');
@@ -941,6 +942,27 @@ async function renderVideo({ script, audioPath, audioDuration, outputPath, theme
     }
   }
 
+  // ─── HYPERFRAME ENGINE ───
+  // Construir pseudo-hyperframes si captions están disponibles
+  let hyperframesMetadata = { segmentsUsed: 0, textOverlaysCreated: 0 };
+  if (syncedCaptions && syncedCaptions.length > 0) {
+    try {
+      perf.start('hyperframe_build');
+      const { hyperframes, metadata: hfMetadata } = buildHyperframes({
+        script,
+        captions: syncedCaptions,
+        videoDuration: realDuration,
+        outputDir,
+        videoId: script.videoId || script.id || path.basename(outputDir),
+      });
+      hyperframesMetadata = hfMetadata;
+      perf.end({ ...hfMetadata });
+      logger.info(`Hyperframes: ${hfMetadata.segmentsUsed} segments | textOverlays=${hfMetadata.textOverlaysCreated}`);
+    } catch (hfErr) {
+      logger.warn(`Hyperframe engine: ${hfErr.message} — continuing without visual enhancements`);
+    }
+  }
+
   // Construir bloques de subtítulo (fallback drawtext si no hay karaoke)
   perf.start('subtitle_build');
   let blocks;
@@ -972,9 +994,12 @@ async function renderVideo({ script, audioPath, audioDuration, outputPath, theme
     blocks = buildStyledSubtitleBlocks(script, realDuration, wordBoundaries || [], enrichedSectionDurations || null, wordTimestamps);
   }
 
+  // VIRAL OPTIMIZATION: Apply virality constraints to subtitles
+  blocks = optimizeSubtitlesForVirality(blocks);
+
   const renderSegments = buildRenderSegments(realDuration, blocks, sectionDurations || null);
   const overlayEvents = buildOverlayEvents(script, renderSegments);
-  logger.info(`Subtitles: ${blocks.length} blocks | mode=${subtitleMode}`);
+  logger.info(`Subtitles: ${blocks.length} blocks | mode=${subtitleMode} | viralOptimized=true`);
 
   // Guardar SRT
   try {
@@ -1114,6 +1139,9 @@ async function renderVideo({ script, audioPath, audioDuration, outputPath, theme
     wordAlignmentEngine: wordAlignmentEngine,
     subtitleBlocksCount: blocks.length,
     alignmentWarnings: wordTimestampWarnings,
+    hyperframeSegmentsUsed: hyperframesMetadata.segmentsUsed || 0,
+    hyperframeTextOverlays: hyperframesMetadata.textOverlaysCreated || 0,
+    hyperframeEnabled: hyperframesMetadata.segmentsUsed > 0,
     renderWarnings: bgVideos.length > 0 ? ['gradient_fallback_after_pexels_failure'] : ['no_pexels_assets_available'],
   });
   logger.info(`Render phase ffmpeg_render done in ${formatDurationMs(renderPhase.durationMs)} | total=${formatDurationMs(perf.snapshot().totalMs)}`);
@@ -1191,7 +1219,8 @@ function renderWithPexelsBg({ bgVideos, audioPath, musicPath, realDuration, rend
       let cmd = ffmpeg();
       const clipPath = bgVideos[0];
       const clipOffset = Math.max(0, selectedSegment.clipOffset || 0);
-      cmd = cmd.input(clipPath).inputOptions(['-stream_loop -1', `-t ${Math.max(selectedSegment.duration + clipOffset + 0.4, 1.4)}`, '-vsync cfr']);
+      // FIX: Use realDuration (actual audio duration) instead of selectedSegment.duration (which is segment-specific, ~1.4s)
+      cmd = cmd.input(clipPath).inputOptions(['-stream_loop -1', `-t ${realDuration}`, '-vsync cfr']);
 
       cmd = cmd.input(audioPath);
       const hasMusic = musicPath && fs.existsSync(musicPath);
@@ -1212,11 +1241,11 @@ function renderWithPexelsBg({ bgVideos, audioPath, musicPath, realDuration, rend
       const panY = hitsReengage ? 18 : segment.isPunchZoom ? 14 : 8;
 
       let videoFilter =
-        `[0:v]trim=start=${clipOffset}:duration=${segDur},setpts=PTS-STARTPTS,` +
+        `[0:v]trim=start=${clipOffset}:duration=${realDuration},setpts=PTS-STARTPTS,` +
         `scale=${scaledW}:${scaledH}:force_original_aspect_ratio=increase,` +
         `crop=${W}:${H}:` +
-        `x='max(0,min(iw-${W},(iw-${W})/2+${panX}*sin(2*PI*t/${Math.max(segDur, 1.2)})))':` +
-        `y='max(0,min(ih-${H},(ih-${H})/2+${panY}*cos(2*PI*t/${Math.max(segDur, 1.2)})))',` +
+        `x='max(0,min(iw-${W},(iw-${W})/2+${panX}*sin(2*PI*t/${Math.max(realDuration, 1.2)})))':` +
+        `y='max(0,min(ih-${H},(ih-${H})/2+${panY}*cos(2*PI*t/${Math.max(realDuration, 1.2)})))',` +
         `fps=30,format=yuv420p,setsar=1[v0];` +
         `[v0]eq=contrast=1.24:brightness=-0.01:saturation=1.10:gamma=0.96[graded];` +
         `[graded]vignette='PI/4'[vig];`;
@@ -1474,7 +1503,7 @@ async function _openOutputFolder(outputPath) {
    * Linux: xdg-open <folder>
    */
   try {
-    const { execSync } = require('child_process');
+    const { safeSpawn } = require('../utils/safe-spawn');
     const folderPath = path.dirname(outputPath);
 
     if (!fs.existsSync(folderPath)) {
@@ -1484,11 +1513,14 @@ async function _openOutputFolder(outputPath) {
 
     const platform = process.platform;
     if (platform === 'win32') {
-      execSync(`start explorer "${folderPath}"`, { stdio: 'ignore' });
+      const p = safeSpawn('explorer', [folderPath]);
+      p.on('error', () => {});
     } else if (platform === 'darwin') {
-      execSync(`open "${folderPath}"`, { stdio: 'ignore' });
+      const p = safeSpawn('open', [folderPath]);
+      p.on('error', () => {});
     } else {
-      execSync(`xdg-open "${folderPath}"`, { stdio: 'ignore' });
+      const p = safeSpawn('xdg-open', [folderPath]);
+      p.on('error', () => {});
     }
 
     logger.info(`RENDER_COMPLETE_FOLDER_OPENED videoId=${path.basename(folderPath)}`);

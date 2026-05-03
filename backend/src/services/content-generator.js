@@ -22,6 +22,7 @@ const { validateHookConfessional, applyHookPenalty } = require('./hook-validator
 const { validateVideoV4 } = require('../contracts/video-v4.contract');
 const { scoreHumanity } = require('../utils/humanity-scorer');
 const { getOptimizationContext } = require('./insights-optimizer.service');
+const viralHooksData = require('../templates/viral-hooks.json');
 
 const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 const COMPACT_SCRIPT_SCHEMA = `{
@@ -452,6 +453,42 @@ function validateIdentificationScore(script = {}, topic = null) {
   return script;
 }
 
+/**
+ * Selecciona un patrón de hook viral basado en el tema
+ * Prioriza temas de TIER_1_VIRAL (máxima viralidad)
+ */
+function selectViralHookPattern(topic = null) {
+  if (!viralHooksData || !viralHooksData.viralHooks) {
+    return null;
+  }
+
+  const TIER_1_MAPPING = {
+    'relationships': ['apego ansioso', 'patrones relacionales'],
+    'habits': ['procrastinación', 'sabotaje mental'],
+    'self_esteem': ['creencias limitantes'],
+    'dark_psychology': ['sabotaje mental', 'patrones relacionales'],
+    'cognitive_biases': ['sesgo cognitivo'],
+    'emotions': ['ansiedad'],
+  };
+
+  // Seleccionar hooks virales TIER_1 si el tema coincide
+  const tier1Topics = viralHooksData.themes.TIER_1_VIRAL || [];
+
+  // 70% chance de usar patrón TIER_1 si existe para el tema
+  if (topic && Math.random() < 0.7) {
+    const viralHooks = viralHooksData.viralHooks.filter(h =>
+      h.compatibility && h.compatibility.some(c => tier1Topics.includes(c))
+    );
+    if (viralHooks.length > 0) {
+      return viralHooks[Math.floor(Math.random() * viralHooks.length)];
+    }
+  }
+
+  // Fallback: seleccionar hook viral aleatorio de los primeros 4 (máxima viralidad)
+  const topViral = viralHooksData.viralHooks.slice(0, 4);
+  return topViral[Math.floor(Math.random() * topViral.length)];
+}
+
 function selectHook(topic = null) {
   // Prioridad ALTA: topics ganadores en tu canal
   const PRIORITY_TOPICS = ['relationships', 'habits', 'social_patterns', 'body_language', 'emotional_patterns'];
@@ -645,7 +682,11 @@ async function generateScript(options = {}) {
 
   logger.info(`Generating script | Topic: ${finalTopic} | Hook variety: ${hookVariety}`);
 
-  const userPrompt = `Tema: ${baseHook?.topic || topic || 'relationships'}
+  // Seleccionar patrón de hook viral para máxima viralidad
+  const viralPattern = selectViralHookPattern(finalTopic);
+  const viralPatternNote = viralPattern ? `\n\nPATRÓN VIRAL: ${viralPattern.pattern}\nEstructura viral probada: ${viralPattern.structure}\nRetención estimada: ${Math.round(viralPattern.estimatedRetention * 100)}%` : '';
+
+  const userPrompt = `Tema: ${baseHook?.topic || topic || 'relationships'}${viralPatternNote}
 
 **HOOK OBLIGATORIO (NO GENERES OTRO)**: "${selectedHookText}"
 
@@ -686,12 +727,22 @@ PROHIBICIONES (NO INCLUYAS):
 ❌ Porcentajes o "estudios demuestran"
 ❌ Frases que expliquen EN LUGAR DE DESCRIBIR
 
+PACING VIRAL (CRÍTICO PARA YOUTUBE SHORTS):
+- 0-2s: HOOK fuerte (máximo 8 palabras)
+- 2-10s: Micro-valor (ejemplos rápidos, sin explicar)
+- 10-20s: Giro/sorpresa (desmentir creencia, revelar patrón)
+- 20-25s: Cierre abierto (pregunta, NO resolver completamente)
+
+Cambios visuales: cada 2-3s (NO pausas largas)
+Subtítulos: palabra clave EN MAYÚSCULA, máximo 8 palabras por línea
+
 Objetivo:
-- 40-55 segundos
+- 18-25 segundos (óptimo para viralidad)
 - Suena como alguien hablándote de qué haces
 - El espectador piensa "esto me pasa a mí"
 - NO piensa "esto es interesante/informativo"
 - emotionalTrigger DEBE ser: validation
+- Cierre abierto = el usuario tiene preguntas sin respuesta (maximiza retention)
 
 Devuelve EXACTAMENTE este JSON (usa el hook proporcionado arriba):
 ${COMPACT_SCRIPT_SCHEMA}`;

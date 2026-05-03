@@ -1262,6 +1262,53 @@ Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
   return outputPath;
 }
 
+/**
+ * optimizeSubtitlesForVirality - Aplica restricciones de viralidad a subtítulos
+ *
+ * Asegura:
+ * 1. Máximo 8 palabras por línea (mobile readability)
+ * 2. Keywords resaltadas en RED (#FF3B30) en primeros 2 segundos
+ * 3. Cambios visuales cada 2-3 segundos
+ * 4. Énfasis en power words
+ */
+function optimizeSubtitlesForVirality(blocks) {
+  if (!blocks || !Array.isArray(blocks)) return blocks;
+
+  const VIRAL_MAX_WORDS = 8;
+  const VIRAL_KEYWORD_COLOR = '#FF3B30'; // RED para máximo impacto
+  const VIRAL_HIGHLIGHT_COLOR = '#FFE500'; // YELLOW para hook
+  const VIRAL_HOOK_DURATION = 2000; // 0-2s = hook critical
+
+  return blocks.map((block, idx) => {
+    let optimized = { ...block };
+
+    // 1. Limitar palabras por línea
+    const words = (block.text || '').split(/\s+/).filter(Boolean);
+    if (words.length > VIRAL_MAX_WORDS) {
+      // Partidor inteligente: mantener sense chunks
+      optimized.text = words.slice(0, VIRAL_MAX_WORDS).join(' ');
+    }
+
+    // 2. Resaltar keywords en primeros 2s
+    if (block.start < VIRAL_HOOK_DURATION && block.section === 'hook') {
+      // Hook section: máximo impacto visual
+      optimized.color = VIRAL_HIGHLIGHT_COLOR; // YELLOW
+      optimized.fontSizeModifier = optimized.fontSizeModifier || 1.2;
+      optimized.isBold = true;
+    } else if (block.start < VIRAL_HOOK_DURATION && hasImpactWord(block.text)) {
+      // Keywords en primeros 2s: RED
+      optimized.color = VIRAL_KEYWORD_COLOR;
+      optimized.fontSizeModifier = optimized.fontSizeModifier || 1.15;
+    }
+
+    // 3. Asegurar cambios visuales cada 2-3s
+    const changeInterval = 2500; // 2.5 segundos
+    optimized.changeIntervalMs = changeInterval;
+
+    return optimized;
+  });
+}
+
 module.exports = {
   buildStyledSubtitleBlocks,
   buildStyledDrawtextFilters,
@@ -1269,6 +1316,7 @@ module.exports = {
   buildKaraokeASSFile,
   buildStyledASSFile,
   hasImpactWord,
+  optimizeSubtitlesForVirality,
   SECTION_COLORS,
   SECTION_FONT_SIZES,
 };
