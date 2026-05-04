@@ -1,0 +1,216 @@
+{
+  "videoId": "3a2d8a39-2c2f-430c-93ac-c1410b48505b",
+  "method": "caption-sync",
+  "source": "final-audio-speech-segment",
+  "detectionMethod": "initial-attempt",
+  "audioDuration": 35.109,
+  "voiceSegmentsCount": 1,
+  "voiceSegments": [
+    {
+      "start": 0,
+      "end": 35.108571,
+      "duration": 35.108571
+    }
+  ],
+  "captionsCount": 20,
+  "firstCaption": {
+    "text": "Ya decidiste .",
+    "start": 0,
+    "end": 0.75,
+    "section": "unknown",
+    "source": "final-audio-speech-segment",
+    "idx": 0
+  },
+  "middleCaption": {
+    "text": "Espera .  Eso significa que tu peor enemigo eres tú mismo .",
+    "start": 18.48058212101911,
+    "end": 20.88058212101911,
+    "section": "unknown",
+    "source": "final-audio-speech-segment",
+    "idx": 10
+  },
+  "lastCaption": {
+    "text": "Dime qué decisión crees que está sesgada ahora mismo .",
+    "start": 33.348734815286626,
+    "end": 35.088570999999995,
+    "section": "unknown",
+    "source": "final-audio-speech-segment",
+    "idx": 19
+  },
+  "captions": [
+    {
+      "text": "Ya decidiste .",
+      "start": 0,
+      "end": 0.75,
+      "section": "unknown",
+      "source": "final-audio-speech-segment",
+      "idx": 0
+    },
+    {
+      "text": "Tu cerebro solo busca razones para tener razón .",
+      "start": 0.78,
+      "end": 2.5734576560509552,
+      "section": "unknown",
+      "source": "final-audio-speech-segment",
+      "idx": 1
+    },
+    {
+      "text": "Lo grave no es la decisión .",
+      "start": 2.603457656050955,
+      "end": 4.138807955414012,
+      "section": "unknown",
+      "source": "final-audio-speech-segment",
+      "idx": 2
+    },
+    {
+      "text": "Es que ni te das cuenta de que estás ciego .",
+      "start": 4.168807955414012,
+      "end": 6.568807955414012,
+      "section": "unknown",
+      "source": "final-audio-speech-segment",
+      "idx": 3
+    },
+    {
+      "text": "Tu sesgo de confirmación filtra todo lo que ves .",
+      "start": 6.6286441401273875,
+      "end": 8.834858853503185,
+      "section": "unknown",
+      "source": "final-audio-speech-segment",
+      "idx": 4
+    },
+    {
+      "text": "Solo entra lo que ya creías .  El resto desaparece .",
+      "start": 8.864858853503184,
+      "end": 11.264858853503183,
+      "section": "unknown",
+      "source": "final-audio-speech-segment",
+      "idx": 5
+    },
+    {
+      "text": "Miras un empleado y ves incompetencia .",
+      "start": 11.324695038216559,
+      "end": 12.860045337579617,
+      "section": "unknown",
+      "source": "final-audio-speech-segment",
+      "idx": 6
+    },
+    {
+      "text": "Después todo lo que hace lo interpretas mal .",
+      "start": 12.890045337579616,
+      "end": 14.872638579617833,
+      "section": "unknown",
+      "source": "final-audio-speech-segment",
+      "idx": 7
+    },
+    {
+      "text": "Aunque haga bien el trabajo .",
+      "start": 14.902638579617832,
+      "end": 16.214367407643312,
+      "section": "unknown",
+      "source": "final-audio-speech-segment",
+      "idx": 8
+    },
+    {
+      "text": "Tu cerebro ya decidió quién es .  Y punto .",
+      "start": 16.244367407643313,
+      "end": 18.45058212101911,
+      "section": "unknown",
+      "source": "final-audio-speech-segment",
+      "idx": 9
+    },
+    {
+      "text": "Espera .  Eso significa que tu peor enemigo eres tú mismo .",
+      "start": 18.48058212101911,
+      "end": 20.88058212101911,
+      "section": "unknown",
+      "source": "final-audio-speech-segment",
+      "idx": 10
+    },
+    {
+      "text": "No buscas la verdad .",
+      "start": 21.164039777070066,
+      "end": 22.252147133757962,
+      "section": "unknown",
+      "source": "final-audio-speech-segment",
+      "idx": 11
+    },
+    {
+      "text": "Buscas ganar la discusión contigo mismo .",
+      "start": 22.282147133757963,
+      "end": 23.81749743312102,
+      "section": "unknown",
+      "source": "final-audio-speech-segment",
+      "idx": 12
+    },
+    {
+      "text": "Por eso sigues igual .  Por eso repites los mismos errores",
+      "start": 23.84749743312102,
+      "end": 26.24749743312102,
+      "section": "unknown",
+      "source": "final-audio-speech-segment",
+      "idx": 13
+    },
+    {
+      "text": ".  Tu prueba nunca llega .",
+      "start": 26.307333617834395,
+      "end": 27.61906244585987,
+      "section": "unknown",
+      "source": "final-audio-speech-segment",
+      "idx": 14
+    },
+    {
+      "text": "¿Cuándo fue la última vez que cambiaste de opinión de verdad",
+      "start": 27.649062445859872,
+      "end": 30.04906244585987,
+      "section": "unknown",
+      "source": "final-audio-speech-segment",
+      "idx": 15
+    },
+    {
+      "text": "?",
+      "start": 30.108898630573247,
+      "end": 30.858898630573247,
+      "section": "unknown",
+      "source": "final-audio-speech-segment",
+      "idx": 16
+    },
+    {
+      "text": "Y más importante: ¿qué tendrías que escuchar para hacerlo ahora",
+      "start": 30.888898630573248,
+      "end": 32.538734815286624,
+      "section": "unknown",
+      "source": "final-audio-speech-segment",
+      "idx": 17
+    },
+    {
+      "text": "?",
+      "start": 32.568734815286625,
+      "end": 33.318734815286625,
+      "section": "unknown",
+      "source": "final-audio-speech-segment",
+      "idx": 18
+    },
+    {
+      "text": "Dime qué decisión crees que está sesgada ahora mismo .",
+      "start": 33.348734815286626,
+      "end": 35.088570999999995,
+      "section": "unknown",
+      "source": "final-audio-speech-segment",
+      "idx": 19
+    }
+  ],
+  "syncTuning": {
+    "captionStartLead": 0.08,
+    "captionEndExtension": 0.12,
+    "minDuration": 0.75,
+    "maxDuration": 2.2,
+    "silenceThreshold": -35,
+    "minSilenceDuration": 0.18
+  },
+  "drift": {
+    "value": 0.02,
+    "status": "excellent",
+    "maxAcceptable": 0.35
+  },
+  "generatedAt": "2026-04-29T06:50:37.097Z"
+}

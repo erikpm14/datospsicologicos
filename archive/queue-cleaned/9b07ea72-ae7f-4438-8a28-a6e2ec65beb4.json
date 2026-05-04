@@ -1,0 +1,630 @@
+{
+  "id": "9b07ea72-ae7f-4438-8a28-a6e2ec65beb4",
+  "createdAt": "2026-04-29T07:21:28.786Z",
+  "status": "done",
+  "progress": 100,
+  "performance": {
+    "label": "video-pipeline",
+    "startedAt": "2026-04-29T07:21:28.788Z",
+    "totalMs": 50527,
+    "phases": [
+      {
+        "name": "script_generation",
+        "startedAt": "2026-04-29T07:21:28.790Z",
+        "status": "completed",
+        "endedAt": "2026-04-29T07:21:28.791Z",
+        "durationMs": 1,
+        "source": "prefab",
+        "estimatedWords": 136,
+        "durationSeconds": 59
+      },
+      {
+        "name": "tts",
+        "startedAt": "2026-04-29T07:21:28.792Z",
+        "status": "completed",
+        "endedAt": "2026-04-29T07:21:54.677Z",
+        "durationMs": 25885,
+        "provider": "kokoro",
+        "estimatedDuration": 43.697333,
+        "wordBoundaries": 0
+      },
+      {
+        "name": "audio_postprocess",
+        "startedAt": "2026-04-29T07:21:54.679Z",
+        "status": "completed",
+        "endedAt": "2026-04-29T07:21:56.239Z",
+        "durationMs": 1560,
+        "outputPath": "C:\\Users\\Erik\\Desktop\\Generador_videos\\output\\8abdc6ef-d206-446c-8b9a-68e6c9273f59\\voice_proc.mp3"
+      },
+      {
+        "name": "render",
+        "startedAt": "2026-04-29T07:21:56.240Z",
+        "status": "completed",
+        "endedAt": "2026-04-29T07:22:19.217Z",
+        "durationMs": 22977,
+        "outputPath": "C:\\Users\\Erik\\Desktop\\Generador_videos\\output\\8abdc6ef-d206-446c-8b9a-68e6c9273f59\\output.mp4"
+      },
+      {
+        "name": "quality_check",
+        "startedAt": "2026-04-29T07:22:19.218Z",
+        "status": "completed",
+        "endedAt": "2026-04-29T07:22:19.313Z",
+        "durationMs": 95,
+        "passed": true,
+        "score": 130,
+        "threshold": 30
+      }
+    ],
+    "activePhase": null,
+    "jobId": "9b07ea72-ae7f-4438-8a28-a6e2ec65beb4",
+    "videoId": "8abdc6ef-d206-446c-8b9a-68e6c9273f59",
+    "topic": "social_patterns",
+    "result": "deferred"
+  },
+  "data": {
+    "topic": "social_patterns",
+    "prefabScript": {
+      "title": "social_patterns_1777445570897_1777447287274",
+      "topic": "social_patterns",
+      "hook": "Crees que decides solo, pero el grupo ya votó por ti.",
+      "open_loop": "Sin que hables ni una palabra, tus amigos ya te empujaron a elegir. Aquí está cómo.",
+      "micro_value": "El efecto normalizador: tu cerebro copia a los demás incluso cuando te da rabia admitirlo.",
+      "escalation": "Estás en la cafetería, todos piden café. Tú quería té. Pero ves que nadie lo pide. Esperas. Esperas. Al final pides café como ellos. No porque te obliguen. Porque tu cerebro borró la opción.",
+      "reengage": "Pero aquí viene lo peor: mañana juraras que siempre quisiste café.",
+      "peak": "La presión de grupo no es amenaza ni crítica. Es silencio. Es ver que otros eligen algo y tu mente automáticamente borra las alternativas. Ocurre en 1.7 segundos sin darte cuenta.",
+      "open_ending": "¿Cuántas veces hoy ya votaron los demás por ti?",
+      "soft_cta": "Comenta: ¿Te pasa más en trabajo o con amigos?",
+      "claim": "El efecto normalizador: tu cerebro copia a los demás incluso cuando te da rabia admitirlo.",
+      "explanation": "Estás en la cafetería, todos piden café. Tú quería té. Pero ves que nadie lo pide. Esperas. Esperas. Al final pides café como ellos. No porque te obliguen. Porque tu cerebro borró la opción. Y lo peor es que mañana juraráS que siempre querías café. La presión de grupo no es amenaza ni crítica. Es silencio. Es ver que otros eligen algo y tu mente automáticamente borra las alternativas. Ocurre en 1.7 segundos sin darte cuenta.",
+      "cta": "¿Cuántas veces hoy ya votaron los demás por ti? Comenta: ¿Te pasa más en trabajo o con amigos?",
+      "psychologicalFact": "El efecto normalizador reduce opciones percibidas sin coerción explícita.",
+      "viralTrigger": "identificacion",
+      "emotionalTrigger": "curiosity",
+      "durationSeconds": 59,
+      "keywords": [
+        "presión de grupo",
+        "decisiones automáticas"
+      ],
+      "hashtags": [
+        "#psicologia",
+        "#mente",
+        "#cerebro"
+      ],
+      "allHooks": null,
+      "selectedHookType": "challenge",
+      "hookSelectionReason": "Desafío directo genera scroll stop y engagement inmediato sin sonar académico",
+      "optimizationNotes": {
+        "patronUsado": "Contradicción incómoda entre percepción y realidad del comportamiento"
+      },
+      "learningSignals": {},
+      "autoevaluacion": {},
+      "segments": [
+        {
+          "type": "HOOK",
+          "text": "Crees que decides solo, pero el grupo ya votó por ti.",
+          "visualIntent": "punch zoom, texto impactante, fondo oscuro",
+          "emotion": "tension"
+        },
+        {
+          "type": "OPEN_LOOP",
+          "text": "Sin que hables ni una palabra, tus amigos ya te empujaron a elegir. Aquí está cómo.",
+          "visualIntent": "zoom lento, rostro pensativo, tension",
+          "emotion": "curiosity"
+        },
+        {
+          "type": "MICRO_VALUE",
+          "text": "El efecto normalizador: tu cerebro copia a los demás incluso cuando te da rabia admitirlo.",
+          "visualIntent": "zoom lento, rostro pensativo, tension",
+          "emotion": "curiosity"
+        },
+        {
+          "type": "ESCALATION",
+          "text": "Estás en la cafetería, todos piden café. Tú quería té. Pero ves que nadie lo pide. Esperas. Esperas. Al final pides café como ellos. No porque te obliguen. Porque tu cerebro borró la opción.",
+          "visualIntent": "zoom lento, rostro pensativo, tension",
+          "emotion": "curiosity"
+        },
+        {
+          "type": "REENGAGE",
+          "text": "Y lo peor es que mañana juraráS que siempre querías café.",
+          "visualIntent": "cambio brusco, tension, zoom corto",
+          "emotion": "curiosity"
+        },
+        {
+          "type": "PEAK",
+          "text": "La presión de grupo no es amenaza ni crítica. Es silencio. Es ver que otros eligen algo y tu mente automáticamente borra las alternativas. Ocurre en 1.7 segundos sin darte cuenta.",
+          "visualIntent": "aislamiento, silueta, punch zoom",
+          "emotion": "impacto"
+        },
+        {
+          "type": "OPEN_ENDING",
+          "text": "¿Cuántas veces hoy ya votaron los demás por ti?",
+          "visualIntent": "zoom lento, rostro pensativo, tension",
+          "emotion": "curiosity"
+        },
+        {
+          "type": "SOFT_CTA",
+          "text": "Comenta: ¿Te pasa más en trabajo o con amigos?",
+          "visualIntent": "zoom lento, rostro pensativo, tension",
+          "emotion": "cercania"
+        }
+      ],
+      "structureVersion": "open_loop_escalation_v1",
+      "hasReengage": true,
+      "segmentFeedback": [],
+      "segmentFeedbackSummary": [],
+      "estimatedWords": 136,
+      "fullScript": "Crees que decides solo, pero el grupo ya votó por ti. Sin que hables ni una palabra, tus amigos ya te empujaron a elegir. Aquí está cómo. El efecto normalizador: tu cerebro copia a los demás incluso cuando te da rabia admitirlo. Estás en la cafetería, todos piden café. Tú quería té. Pero ves que nadie lo pide. Esperas. Esperas. Al final pides café como ellos. No porque te obliguen. Porque tu cerebro borró la opción. Y lo peor es que mañana juraráS que siempre querías café. La presión de grupo no es amenaza ni crítica. Es silencio. Es ver que otros eligen algo y tu mente automáticamente borra las alternativas. Ocurre en 1.7 segundos sin darte cuenta. ¿Cuántas veces hoy ya votaron los demás por ti? Comenta: ¿Te pasa más en trabajo o con amigos?",
+      "videoInstructions": {
+        "singleFocus": true,
+        "visualStyle": [
+          "estetica cinematografica oscura",
+          "fondo negro o casi negro",
+          "alto contraste con azul electrico dominante",
+          "acento rojo oscuro solo para tension",
+          "single focus constante sin overlays complejos",
+          "cambio de plano cada 2-3 segundos",
+          "zoom progresivo y movimiento suave"
+        ],
+        "subtitleStyle": "tipografia condensada bold, blanco frio con acentos azul electrico y rojo oscuro, subtitulos grandes y sincronizados",
+        "audioStyle": {
+          "voice": "voz clara y con ritmo",
+          "pauses": [
+            "hook",
+            "reengage",
+            "peak"
+          ]
+        },
+        "scenes": [
+          {
+            "segment": "hook",
+            "timing": "0-2.2s",
+            "visual": "primer plano de cerebro luminoso o rostro inquietante, relacionado con social_patterns, fondo negro o muy oscuro, contraste alto, azul electrico y rojo oscuro como acentos, zoom lento, iluminacion dramatica, sensacion de misterio psicologico",
+            "cut": "corte rapido con push-in",
+            "startSeconds": 0,
+            "endSeconds": 2.2,
+            "durationSeconds": 2.2,
+            "shotType": "primer plano",
+            "framing": "primer plano",
+            "intensity": "alta",
+            "movement": "push-in rapido",
+            "transition": "hard cut",
+            "emphasis": "scroll-stop inmediato",
+            "syncCue": "movimiento continuo con remate en palabra fuerte"
+          },
+          {
+            "segment": "open_loop",
+            "timing": "2.2-5s",
+            "visual": "ojo humano extremo o gesto suspendido en sombra, relacionado con social_patterns, fondo negro o muy oscuro, contraste alto, azul electrico y rojo oscuro como acentos, zoom lento, iluminacion dramatica, sensacion de misterio psicologico",
+            "cut": "zoom corto continuo",
+            "startSeconds": 2.2,
+            "endSeconds": 5,
+            "durationSeconds": 2.8,
+            "shotType": "plano detalle",
+            "framing": "plano detalle",
+            "intensity": "alta",
+            "movement": "zoom lento continuo",
+            "transition": "match cut",
+            "emphasis": "curiosidad sostenida",
+            "syncCue": "movimiento continuo con remate en palabra fuerte"
+          },
+          {
+            "segment": "micro_value",
+            "timing": "5-8.2s",
+            "visual": "detalle simbolico del mecanismo mental en glow azul, relacionado con social_patterns, fondo negro o muy oscuro, contraste alto, azul electrico y rojo oscuro como acentos, zoom lento, iluminacion dramatica, sensacion de misterio psicologico",
+            "cut": "cambio de plano limpio",
+            "startSeconds": 5,
+            "endSeconds": 8.2,
+            "durationSeconds": 3.2,
+            "shotType": "plano medio",
+            "framing": "plano medio",
+            "intensity": "media",
+            "movement": "micro paneo lateral",
+            "transition": "cut limpio",
+            "emphasis": "primer pago de valor",
+            "syncCue": "movimiento continuo con remate en palabra fuerte"
+          },
+          {
+            "segment": "escalation",
+            "timing": "8.2-11.6s",
+            "visual": "silueta humana o tension social en contraluz, relacionado con social_patterns, fondo negro o muy oscuro, contraste alto, azul electrico y rojo oscuro como acentos, zoom lento, iluminacion dramatica, sensacion de misterio psicologico",
+            "cut": "cortes cada 2-3s",
+            "startSeconds": 8.2,
+            "endSeconds": 11.6,
+            "durationSeconds": 3.4,
+            "shotType": "plano abierto",
+            "framing": "plano abierto",
+            "intensity": "media-alta",
+            "movement": "acercamiento progresivo",
+            "transition": "cut ritmico",
+            "emphasis": "tension creciente",
+            "syncCue": "movimiento continuo con remate en palabra fuerte"
+          },
+          {
+            "segment": "reengage",
+            "timing": "11.6-14.2s",
+            "visual": "cambio brusco a plano mas cercano con rojo alerta, relacionado con social_patterns, fondo negro o muy oscuro, contraste alto, azul electrico y rojo oscuro como acentos, zoom lento, iluminacion dramatica, sensacion de misterio psicologico",
+            "cut": "cambio brusco + zoom agresivo",
+            "startSeconds": 11.6,
+            "endSeconds": 14.2,
+            "durationSeconds": 2.6,
+            "shotType": "primer plano",
+            "framing": "primer plano",
+            "intensity": "muy alta",
+            "movement": "zoom agresivo",
+            "transition": "whip cut",
+            "emphasis": "ruptura de patron",
+            "syncCue": "acercamiento en frase clave"
+          },
+          {
+            "segment": "peak",
+            "timing": "14.2-17.8s",
+            "visual": "escena humana real de conflicto, pareja o decision, relacionado con social_patterns, fondo negro o muy oscuro, contraste alto, azul electrico y rojo oscuro como acentos, zoom lento, iluminacion dramatica, sensacion de misterio psicologico",
+            "cut": "alternancia de planos cerrados",
+            "startSeconds": 14.2,
+            "endSeconds": 17.8,
+            "durationSeconds": 3.6,
+            "shotType": "plano medio",
+            "framing": "plano medio",
+            "intensity": "maxima",
+            "movement": "push-in sostenido",
+            "transition": "impact cut",
+            "emphasis": "impacto emocional",
+            "syncCue": "acercamiento en frase clave"
+          },
+          {
+            "segment": "open_ending",
+            "timing": "17.8-20.9s",
+            "visual": "figura sola alejandose en oscuridad con particulas, relacionado con social_patterns, fondo negro o muy oscuro, contraste alto, azul electrico y rojo oscuro como acentos, zoom lento, iluminacion dramatica, sensacion de misterio psicologico",
+            "cut": "desaceleracion ligera",
+            "startSeconds": 17.8,
+            "endSeconds": 20.9,
+            "durationSeconds": 3.1,
+            "shotType": "plano abierto",
+            "framing": "plano abierto",
+            "intensity": "media",
+            "movement": "zoom out suave",
+            "transition": "cut limpio",
+            "emphasis": "eco mental",
+            "syncCue": "movimiento continuo con remate en palabra fuerte"
+          },
+          {
+            "segment": "soft_cta",
+            "timing": "20.9-23.6s",
+            "visual": "rostro o silueta frontal con espacio negativo para cierre, relacionado con social_patterns, fondo negro o muy oscuro, contraste alto, azul electrico y rojo oscuro como acentos, zoom lento, iluminacion dramatica, sensacion de misterio psicologico",
+            "cut": "ultimo corte limpio",
+            "startSeconds": 20.9,
+            "endSeconds": 23.6,
+            "durationSeconds": 2.7,
+            "shotType": "plano detalle",
+            "framing": "plano detalle",
+            "intensity": "media",
+            "movement": "micro acercamiento",
+            "transition": "hold corto",
+            "emphasis": "cierre abierto",
+            "syncCue": "movimiento continuo con remate en palabra fuerte"
+          }
+        ],
+        "style": {
+          "theme": "psicologia oscura / mente humana / comportamiento",
+          "colorPalette": "negro absoluto, azul electrico, azul neon frio, rojo oscuro, blanco frio",
+          "visualStyle": "cinematografico, minimalista, alto contraste, single focus",
+          "lighting": "oscura, dramatica, contraluz duro, glow electrico dirigido, sombras marcadas",
+          "cameraMotion": "zoom lento constante, push-in suave, micro paneo lateral, cambio de plano cada 2-3 segundos",
+          "effects": "glow ligero, particulas sutiles, neblina tenue, ruido cinematografico muy fino",
+          "composition": "single focus, sujeto dominante a la derecha o centrado, texto respirando a la izquierda, primeros planos y siluetas, profundidad negativa",
+          "emotionalTone": "misterio psicologico, obsesion, tension contenida, intriga oscura",
+          "consistencyRules": [
+            "una sola escena principal por segmento",
+            "fondo siempre oscuro o casi negro",
+            "usar azul electrico como color dominante y rojo solo para tension o reengage",
+            "priorizar cerebros, ojos, siluetas y escenas humanas reconocibles",
+            "evitar stock luminoso, lifestyle genérico o composiciones planas"
+          ],
+          "clipKeywords": [
+            "presión de grupo",
+            "decisiones automáticas",
+            "glowing brain dark background",
+            "blue eye close up dark",
+            "person silhouette red light",
+            "couple argument silhouette blue light",
+            "moody face close up shadow",
+            "dark cinematic person thinking"
+          ]
+        },
+        "clipKeywords": [
+          "presión de grupo",
+          "decisiones automáticas",
+          "glowing brain dark background",
+          "blue eye close up dark",
+          "person silhouette red light",
+          "couple argument silhouette blue light",
+          "moody face close up shadow",
+          "dark cinematic person thinking"
+        ],
+        "rhythmRule": "cambio visual cada 2-3 segundos, sin escenas estaticas ni repeticiones consecutivas de encuadre",
+        "timeline": [
+          {
+            "segment": "hook",
+            "timing": "0-2.2s",
+            "durationSeconds": 2.2,
+            "shotType": "primer plano",
+            "intensity": "alta",
+            "movement": "push-in rapido",
+            "transition": "hard cut"
+          },
+          {
+            "segment": "open_loop",
+            "timing": "2.2-5s",
+            "durationSeconds": 2.8,
+            "shotType": "plano detalle",
+            "intensity": "alta",
+            "movement": "zoom lento continuo",
+            "transition": "match cut"
+          },
+          {
+            "segment": "micro_value",
+            "timing": "5-8.2s",
+            "durationSeconds": 3.2,
+            "shotType": "plano medio",
+            "intensity": "media",
+            "movement": "micro paneo lateral",
+            "transition": "cut limpio"
+          },
+          {
+            "segment": "escalation",
+            "timing": "8.2-11.6s",
+            "durationSeconds": 3.4,
+            "shotType": "plano abierto",
+            "intensity": "media-alta",
+            "movement": "acercamiento progresivo",
+            "transition": "cut ritmico"
+          },
+          {
+            "segment": "reengage",
+            "timing": "11.6-14.2s",
+            "durationSeconds": 2.6,
+            "shotType": "primer plano",
+            "intensity": "muy alta",
+            "movement": "zoom agresivo",
+            "transition": "whip cut"
+          },
+          {
+            "segment": "peak",
+            "timing": "14.2-17.8s",
+            "durationSeconds": 3.6,
+            "shotType": "plano medio",
+            "intensity": "maxima",
+            "movement": "push-in sostenido",
+            "transition": "impact cut"
+          },
+          {
+            "segment": "open_ending",
+            "timing": "17.8-20.9s",
+            "durationSeconds": 3.1,
+            "shotType": "plano abierto",
+            "intensity": "media",
+            "movement": "zoom out suave",
+            "transition": "cut limpio"
+          },
+          {
+            "segment": "soft_cta",
+            "timing": "20.9-23.6s",
+            "durationSeconds": 2.7,
+            "shotType": "plano detalle",
+            "intensity": "media",
+            "movement": "micro acercamiento",
+            "transition": "hold corto"
+          }
+        ]
+      },
+      "growthContext": {
+        "nextTopic": "social_patterns",
+        "hookType": "challenge",
+        "emotionalTrigger": "curiosity",
+        "angle": "presión de grupo y decisiones",
+        "avoidTopics": [
+          "habits",
+          "procrastination",
+          "motivation",
+          "body_language",
+          "perception",
+          "memory",
+          "cognitive_biases",
+          "dopamina y procrastinación diaria",
+          "self_talk",
+          "dopamine y redes sociales",
+          "emotions",
+          "relationships",
+          "decision_making",
+          "dopamine",
+          "emotional_patterns",
+          "attention"
+        ],
+        "avoidRecentHooks": [
+          "Cruzas los brazos sin saberlo y ya perdiste.",
+          "No es debilidad. Tu cerebro tiene un límite físico.",
+          "Ya decidiste. Tu cerebro solo busca razones para tener razón.",
+          "Tu miedo acaba de elegir por ti. Sin que lo supieras.",
+          "Tu dopamina te sabotea. No terminas nada.",
+          "Logras algo y ya buscas lo siguiente. Eso es tu cerebro.",
+          "Logras algo y ya buscas lo siguiente. Eso es tu cerebro.",
+          "Tu dopamina te sabotea. No terminas nada."
+        ],
+        "reasoning": "Topic 'social_patterns' por estrategia explore. [TRENDING — boosteado por señal de tendencia actual] Saturados evitados: habits, procrastination, motivation, body_language, perception, memory, cognitive_biases, dopamina y procrastinación diaria, self_talk, dopamine y redes sociales, emotions, relationships, decision_making, dopamine, emotional_patterns, attention.",
+        "confidence": 0.5,
+        "strategy": "explore",
+        "decisionAt": "2026-04-29T06:52:43.953Z",
+        "fallbackGenerator": "last-valid-script",
+        "fallbackReason": "400 {\"type\":\"error\",\"error\":{\"type\":\"invalid_request_error\",\"message\":\"Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.\"},\"request_id\":\"req_011CaXfAgd3QgvrSGoMM39gD\"}"
+      },
+      "viralityScore": 44,
+      "viralityBreakdown": {
+        "hookStrength": 0,
+        "emotionalTrigger": 11,
+        "relatability": 16,
+        "loopPotential": 15,
+        "durationBonus": 2
+      },
+      "formatMatchScore": 71,
+      "formatMatchBreakdown": {
+        "hookFormat": 14,
+        "brevity": 12,
+        "clarity": 13,
+        "narrativeRhythm": 4,
+        "psychologicalImpact": 6,
+        "scrollStop": 0,
+        "infoDensity": 6,
+        "earlyRevelation": 8,
+        "singleIdea": 3,
+        "reengage": 5
+      },
+      "formatMatchSegmentGaps": [],
+      "formatMatchGaps": [
+        "Hay relleno o rodeos — elimina intro, empieza con el dato",
+        "Revelación psicológica débil — añade nombre de efecto o cifra concreta",
+        "Hook no para el scroll — falta tensión, shock o reconocimiento inmediato"
+      ],
+      "emotionalImpactScore": 49,
+      "emotionalImpactBreakdown": {
+        "powerWords": 24,
+        "personalId": 20,
+        "surpriseFactor": 5,
+        "visceral": 0,
+        "tensionResolution": 0
+      },
+      "approved": true,
+      "rejectionReason": null,
+      "selectionPenalties": [
+        "virality_low:44"
+      ],
+      "llmMetrics": {
+        "llm_total_calls": 9,
+        "llm_parse_fail": false,
+        "llm_recovery_used": false,
+        "llm_hard_fail": true,
+        "emergency_fallback_used": false,
+        "llm_schema_fail": false,
+        "llm_truncated_suspected": false
+      },
+      "usedRecovery": false,
+      "generationSource": "generateViralScript",
+      "llmPath": [
+        "generateViralScript",
+        "generateOptimizedScript",
+        "generateScript",
+        "last-valid-script"
+      ],
+      "generationFallback": "last-valid-script",
+      "usedLastValid": true,
+      "usedEmergencyFallback": false,
+      "approvalBypassReason": "last-valid-script_fallback",
+      "final_generation_route": "generateViralScript -> generateOptimizedScript -> generateScript -> last-valid-script",
+      "total_llm_calls": 9,
+      "fallback_level_reached": 3,
+      "quickOptimizedSegment": "reengage",
+      "quickOptimizedReason": "[reengage] reengage poco agresivo",
+      "selectedQuality": "fallback",
+      "approvalBypass": "last-valid-script_fallback",
+      "bestAvailableScore": 54,
+      "selectionReasons": [
+        "virality_low:44"
+      ],
+      "abVariantId": "v_a",
+      "slotTracking": {
+        "batchId": null,
+        "slotId": null,
+        "plannedOrder": null,
+        "plannedRole": null,
+        "plannedCluster": null,
+        "plannedHookType": null,
+        "plannedMicroAction": null,
+        "recommendedCandidateId": null,
+        "recommendedCandidateTitle": null,
+        "attributionType": "unplanned",
+        "slotState": "unplanned",
+        "assignmentConfidence": 0,
+        "traceConfidence": 0,
+        "exactTraceAvailable": false,
+        "abLinked": true
+      },
+      "reusedLastValidScript": true,
+      "reusedAt": "2026-04-29T07:21:27.274Z",
+      "lastValidMetadata": {
+        "id": "social_patterns_1777445570897",
+        "topic": "social_patterns",
+        "angle": "presión de grupo y decisiones",
+        "hookType": "challenge",
+        "emotionalTrigger": "curiosity",
+        "generationSource": "generateViralScript",
+        "createdAt": "2026-04-29T06:53:14.399Z"
+      }
+    },
+    "growthContext": {
+      "nextTopic": "procrastination",
+      "hookType": "challenge",
+      "emotionalTrigger": "fear",
+      "angle": "por qué empiezas y abandonas",
+      "avoidTopics": [
+        "habits",
+        "social_patterns",
+        "body_language",
+        "motivation",
+        "perception",
+        "memory",
+        "cognitive_biases",
+        "dopamina y procrastinación diaria",
+        "self_talk",
+        "dopamine y redes sociales",
+        "emotions",
+        "relationships",
+        "decision_making",
+        "attention",
+        "dopamine",
+        "emotional_patterns"
+      ],
+      "avoidRecentHooks": [
+        "Cada mañana haces lo mismo sin decidirlo nunca.",
+        "Cada mañana haces lo mismo sin decidirlo nunca.",
+        "Crees que decides solo, pero el grupo ya votó por ti.",
+        "Cruzas los brazos sin saberlo y ya perdiste.",
+        "No es debilidad. Tu cerebro tiene un límite físico.",
+        "Ya decidiste. Tu cerebro solo busca razones para tener razón.",
+        "Tu miedo acaba de elegir por ti. Sin que lo supieras.",
+        "Tu dopamina te sabotea. No terminas nada."
+      ],
+      "reasoning": "Topic 'procrastination' por estrategia explore. Saturados evitados: habits, social_patterns, body_language, motivation, perception, memory, cognitive_biases, dopamina y procrastinación diaria, self_talk, dopamine y redes sociales, emotions, relationships, decision_making, attention, dopamine, emotional_patterns.",
+      "confidence": 0.5,
+      "strategy": "explore",
+      "decisionAt": "2026-04-29T07:21:19.676Z"
+    },
+    "hookId": null,
+    "themeIndex": 0,
+    "slotTracking": {
+      "batchId": null,
+      "slotId": null,
+      "plannedOrder": null,
+      "plannedRole": null,
+      "plannedCluster": null,
+      "plannedHookType": null,
+      "plannedMicroAction": null,
+      "recommendedCandidateId": null,
+      "recommendedCandidateTitle": null,
+      "attributionType": "unplanned",
+      "slotState": "unplanned",
+      "assignmentConfidence": 0,
+      "traceConfidence": 0,
+      "exactTraceAvailable": false,
+      "abLinked": true
+    }
+  },
+  "startedAt": "2026-04-29T07:21:28.788Z",
+  "videoId": "8abdc6ef-d206-446c-8b9a-68e6c9273f59",
+  "lastStage": "qc_passed",
+  "lastProgressAt": "2026-04-29T07:22:19.314Z",
+  "result": {
+    "videoId": "8abdc6ef-d206-446c-8b9a-68e6c9273f59",
+    "deferred": true,
+    "readyAt": "2026-04-29T07:22:19.315Z"
+  },
+  "completedAt": "2026-04-29T07:22:19.315Z"
+}

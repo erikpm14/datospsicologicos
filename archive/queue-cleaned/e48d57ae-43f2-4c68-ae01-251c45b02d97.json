@@ -1,0 +1,638 @@
+{
+  "id": "e48d57ae-43f2-4c68-ae01-251c45b02d97",
+  "createdAt": "2026-04-28T12:41:47.016Z",
+  "status": "done",
+  "progress": 100,
+  "performance": {
+    "label": "video-pipeline",
+    "startedAt": "2026-04-28T12:41:47.018Z",
+    "totalMs": 39941,
+    "phases": [
+      {
+        "name": "script_generation",
+        "startedAt": "2026-04-28T12:41:47.019Z",
+        "status": "completed",
+        "endedAt": "2026-04-28T12:41:47.020Z",
+        "durationMs": 1,
+        "source": "prefab",
+        "estimatedWords": 109,
+        "durationSeconds": 47
+      },
+      {
+        "name": "tts",
+        "startedAt": "2026-04-28T12:41:47.021Z",
+        "status": "completed",
+        "endedAt": "2026-04-28T12:42:13.308Z",
+        "durationMs": 26287,
+        "provider": "kokoro",
+        "estimatedDuration": 36.849334,
+        "wordBoundaries": 0
+      },
+      {
+        "name": "audio_postprocess",
+        "startedAt": "2026-04-28T12:42:13.310Z",
+        "status": "completed",
+        "endedAt": "2026-04-28T12:42:14.649Z",
+        "durationMs": 1339,
+        "outputPath": "C:\\Users\\Erik\\Desktop\\Generador_videos\\output\\0dc24560-1e1d-4796-aec4-47b901ed5d07\\voice_proc.mp3"
+      },
+      {
+        "name": "render",
+        "startedAt": "2026-04-28T12:42:14.651Z",
+        "status": "completed",
+        "endedAt": "2026-04-28T12:42:26.740Z",
+        "durationMs": 12089,
+        "outputPath": "C:\\Users\\Erik\\Desktop\\Generador_videos\\output\\0dc24560-1e1d-4796-aec4-47b901ed5d07\\output.mp4"
+      },
+      {
+        "name": "quality_check",
+        "startedAt": "2026-04-28T12:42:26.741Z",
+        "status": "completed",
+        "endedAt": "2026-04-28T12:42:26.959Z",
+        "durationMs": 218,
+        "passed": false,
+        "score": 85,
+        "threshold": 70
+      }
+    ],
+    "activePhase": null,
+    "jobId": "e48d57ae-43f2-4c68-ae01-251c45b02d97",
+    "videoId": "0dc24560-1e1d-4796-aec4-47b901ed5d07",
+    "topic": "dopamine",
+    "result": "qc_failed"
+  },
+  "data": {
+    "topic": "dopamine",
+    "prefabScript": {
+      "title": "por_que_necesitas_mas_dopamina",
+      "topic": "dopamine",
+      "hook": "Tu cerebro está literalmente adicto a buscar, no a encontrar",
+      "open_loop": "Y no es culpa tuya. Hay un detalle que explica por qué nunca paras de buscar",
+      "micro_value": "Dopamina no es placer. Es el hambre de buscarlo. Por eso scrolleas sin parar",
+      "escalation": "Ves notificación, sueltas dopamina antes de abrirla. Te decepciona. Vuelves a buscar. Tu cuerpo necesita dosis más fuertes cada vez. Es ciclo físico puro",
+      "reengage": "Lo grave es que ya no sabes vivir sin ella",
+      "peak": "Cuando normalizas monotonía, tu umbral sube. Café ya no basta. Conversación ya no basta. Confundes sensación con sentido. Eso es lo jodido",
+      "open_ending": "¿Dónde está tu línea? ¿Dónde paras?",
+      "soft_cta": "Hoy haz algo sin buscar recompensa inmediata",
+      "psychologicalFact": "Tolerancia hedónica: cerebro se adapta bajando sensibilidad a estímulos",
+      "viralTrigger": "identificacion",
+      "emotionalTrigger": "validation",
+      "effectName": "escalada de tolerancia neurobiológica",
+      "keywords": [
+        "dopamina",
+        "estimulación constante"
+      ],
+      "claim": "Dopamina no es placer. Es el hambre de buscarlo. Por eso scrolleas sin parar",
+      "explanation": "Ves notificación, sueltas dopamina antes de abrirla. Te decepciona. Vuelves a buscar. Tu cuerpo necesita dosis más fuertes cada vez. Es ciclo físico puro Lo grave es que ya no sabes vivir sin ella Cuando normalizas monotonía, tu umbral sube. Café ya no basta. Conversación ya no basta. Confundes sensación con sentido. Eso es lo jodido",
+      "cta": "¿Dónde está tu línea? ¿Dónde paras? Hoy haz algo sin buscar recompensa inmediata",
+      "segments": [
+        {
+          "type": "HOOK",
+          "text": "Tu cerebro pide estimulación porque ya no le basta",
+          "visualIntent": "punch zoom, texto impactante, fondo oscuro",
+          "emotion": "tension"
+        },
+        {
+          "type": "OPEN_LOOP",
+          "text": "Y no es culpa tuya. Hay un detalle que explica por qué nunca paras de buscar",
+          "visualIntent": "zoom lento, rostro pensativo, tension",
+          "emotion": "curiosity"
+        },
+        {
+          "type": "MICRO_VALUE",
+          "text": "Dopamina no es placer. Es el hambre de buscarlo. Por eso scrolleas sin parar",
+          "visualIntent": "zoom lento, rostro pensativo, tension",
+          "emotion": "curiosity"
+        },
+        {
+          "type": "ESCALATION",
+          "text": "Ves notificación, sueltas dopamina antes de abrirla. Te decepciona. Vuelves a buscar. Tu cuerpo necesita dosis más fuertes cada vez. Es ciclo físico puro",
+          "visualIntent": "zoom lento, rostro pensativo, tension",
+          "emotion": "curiosity"
+        },
+        {
+          "type": "REENGAGE",
+          "text": "Lo grave es que ya no sabes vivir sin ella",
+          "visualIntent": "cambio brusco, tension, zoom corto",
+          "emotion": "curiosity"
+        },
+        {
+          "type": "PEAK",
+          "text": "Cuando normalizas monotonía, tu umbral sube. Café ya no basta. Conversación ya no basta. Confundes sensación con sentido. Eso es lo jodido",
+          "visualIntent": "aislamiento, silueta, punch zoom",
+          "emotion": "impacto"
+        },
+        {
+          "type": "OPEN_ENDING",
+          "text": "¿Dónde está tu línea? ¿Dónde paras?",
+          "visualIntent": "zoom lento, rostro pensativo, tension",
+          "emotion": "curiosity"
+        },
+        {
+          "type": "SOFT_CTA",
+          "text": "Hoy haz algo sin buscar recompensa inmediata",
+          "visualIntent": "zoom lento, rostro pensativo, tension",
+          "emotion": "cercania"
+        }
+      ],
+      "structureVersion": "open_loop_escalation_v1",
+      "hasReengage": true,
+      "segmentFeedback": [
+        {
+          "segment": "hook",
+          "issue": "hook genérico"
+        },
+        {
+          "segment": "reengage",
+          "issue": "reengage poco agresivo"
+        },
+        {
+          "segment": "soft_cta",
+          "issue": "soft_cta poco conversacional"
+        }
+      ],
+      "segmentFeedbackSummary": [
+        "[hook] hook genérico",
+        "[reengage] reengage poco agresivo",
+        "[soft_cta] soft_cta poco conversacional"
+      ],
+      "estimatedWords": 109,
+      "durationSeconds": 47,
+      "fullScript": "Tu cerebro pide estimulación porque ya no le basta Y no es culpa tuya. Hay un detalle que explica por qué nunca paras de buscar Dopamina no es placer. Es el hambre de buscarlo. Por eso scrolleas sin parar Ves notificación, sueltas dopamina antes de abrirla. Te decepciona. Vuelves a buscar. Tu cuerpo necesita dosis más fuertes cada vez. Es ciclo físico puro Lo grave es que ya no sabes vivir sin ella Cuando normalizas monotonía, tu umbral sube. Café ya no basta. Conversación ya no basta. Confundes sensación con sentido. Eso es lo jodido ¿Dónde está tu línea? ¿Dónde paras? Hoy haz algo sin buscar recompensa inmediata",
+      "videoInstructions": {
+        "singleFocus": true,
+        "visualStyle": [
+          "estetica cinematografica oscura",
+          "fondo negro o casi negro",
+          "alto contraste con azul electrico dominante",
+          "acento rojo oscuro solo para tension",
+          "single focus constante sin overlays complejos",
+          "cambio de plano cada 2-3 segundos",
+          "zoom progresivo y movimiento suave"
+        ],
+        "subtitleStyle": "tipografia condensada bold, blanco frio con acentos azul electrico y rojo oscuro, subtitulos grandes y sincronizados",
+        "audioStyle": {
+          "voice": "voz clara y con ritmo",
+          "pauses": [
+            "hook",
+            "reengage",
+            "peak"
+          ]
+        },
+        "scenes": [
+          {
+            "segment": "hook",
+            "timing": "0-2.2s",
+            "visual": "primer plano de cerebro luminoso o rostro inquietante, relacionado con dopamine, fondo negro o muy oscuro, contraste alto, azul electrico y rojo oscuro como acentos, zoom lento, iluminacion dramatica, sensacion de misterio psicologico",
+            "cut": "corte rapido con push-in",
+            "startSeconds": 0,
+            "endSeconds": 2.2,
+            "durationSeconds": 2.2,
+            "shotType": "primer plano",
+            "framing": "primer plano",
+            "intensity": "alta",
+            "movement": "push-in rapido",
+            "transition": "hard cut",
+            "emphasis": "scroll-stop inmediato",
+            "syncCue": "movimiento continuo con remate en palabra fuerte"
+          },
+          {
+            "segment": "open_loop",
+            "timing": "2.2-5s",
+            "visual": "ojo humano extremo o gesto suspendido en sombra, relacionado con dopamine, fondo negro o muy oscuro, contraste alto, azul electrico y rojo oscuro como acentos, zoom lento, iluminacion dramatica, sensacion de misterio psicologico",
+            "cut": "zoom corto continuo",
+            "startSeconds": 2.2,
+            "endSeconds": 5,
+            "durationSeconds": 2.8,
+            "shotType": "plano detalle",
+            "framing": "plano detalle",
+            "intensity": "alta",
+            "movement": "zoom lento continuo",
+            "transition": "match cut",
+            "emphasis": "curiosidad sostenida",
+            "syncCue": "movimiento continuo con remate en palabra fuerte"
+          },
+          {
+            "segment": "micro_value",
+            "timing": "5-8.2s",
+            "visual": "detalle simbolico del mecanismo mental en glow azul, relacionado con dopamine, fondo negro o muy oscuro, contraste alto, azul electrico y rojo oscuro como acentos, zoom lento, iluminacion dramatica, sensacion de misterio psicologico",
+            "cut": "cambio de plano limpio",
+            "startSeconds": 5,
+            "endSeconds": 8.2,
+            "durationSeconds": 3.2,
+            "shotType": "plano medio",
+            "framing": "plano medio",
+            "intensity": "media",
+            "movement": "micro paneo lateral",
+            "transition": "cut limpio",
+            "emphasis": "primer pago de valor",
+            "syncCue": "movimiento continuo con remate en palabra fuerte"
+          },
+          {
+            "segment": "escalation",
+            "timing": "8.2-11.6s",
+            "visual": "silueta humana o tension social en contraluz, relacionado con dopamine, fondo negro o muy oscuro, contraste alto, azul electrico y rojo oscuro como acentos, zoom lento, iluminacion dramatica, sensacion de misterio psicologico",
+            "cut": "cortes cada 2-3s",
+            "startSeconds": 8.2,
+            "endSeconds": 11.6,
+            "durationSeconds": 3.4,
+            "shotType": "plano abierto",
+            "framing": "plano abierto",
+            "intensity": "media-alta",
+            "movement": "acercamiento progresivo",
+            "transition": "cut ritmico",
+            "emphasis": "tension creciente",
+            "syncCue": "movimiento continuo con remate en palabra fuerte"
+          },
+          {
+            "segment": "reengage",
+            "timing": "11.6-14.2s",
+            "visual": "cambio brusco a plano mas cercano con rojo alerta, relacionado con dopamine, fondo negro o muy oscuro, contraste alto, azul electrico y rojo oscuro como acentos, zoom lento, iluminacion dramatica, sensacion de misterio psicologico",
+            "cut": "cambio brusco + zoom agresivo",
+            "startSeconds": 11.6,
+            "endSeconds": 14.2,
+            "durationSeconds": 2.6,
+            "shotType": "primer plano",
+            "framing": "primer plano",
+            "intensity": "muy alta",
+            "movement": "zoom agresivo",
+            "transition": "whip cut",
+            "emphasis": "ruptura de patron",
+            "syncCue": "acercamiento en frase clave"
+          },
+          {
+            "segment": "peak",
+            "timing": "14.2-17.8s",
+            "visual": "escena humana real de conflicto, pareja o decision, relacionado con dopamine, fondo negro o muy oscuro, contraste alto, azul electrico y rojo oscuro como acentos, zoom lento, iluminacion dramatica, sensacion de misterio psicologico",
+            "cut": "alternancia de planos cerrados",
+            "startSeconds": 14.2,
+            "endSeconds": 17.8,
+            "durationSeconds": 3.6,
+            "shotType": "plano medio",
+            "framing": "plano medio",
+            "intensity": "maxima",
+            "movement": "push-in sostenido",
+            "transition": "impact cut",
+            "emphasis": "impacto emocional",
+            "syncCue": "acercamiento en frase clave"
+          },
+          {
+            "segment": "open_ending",
+            "timing": "17.8-20.9s",
+            "visual": "figura sola alejandose en oscuridad con particulas, relacionado con dopamine, fondo negro o muy oscuro, contraste alto, azul electrico y rojo oscuro como acentos, zoom lento, iluminacion dramatica, sensacion de misterio psicologico",
+            "cut": "desaceleracion ligera",
+            "startSeconds": 17.8,
+            "endSeconds": 20.9,
+            "durationSeconds": 3.1,
+            "shotType": "plano abierto",
+            "framing": "plano abierto",
+            "intensity": "media",
+            "movement": "zoom out suave",
+            "transition": "cut limpio",
+            "emphasis": "eco mental",
+            "syncCue": "movimiento continuo con remate en palabra fuerte"
+          },
+          {
+            "segment": "soft_cta",
+            "timing": "20.9-23.6s",
+            "visual": "rostro o silueta frontal con espacio negativo para cierre, relacionado con dopamine, fondo negro o muy oscuro, contraste alto, azul electrico y rojo oscuro como acentos, zoom lento, iluminacion dramatica, sensacion de misterio psicologico",
+            "cut": "ultimo corte limpio",
+            "startSeconds": 20.9,
+            "endSeconds": 23.6,
+            "durationSeconds": 2.7,
+            "shotType": "plano detalle",
+            "framing": "plano detalle",
+            "intensity": "media",
+            "movement": "micro acercamiento",
+            "transition": "hold corto",
+            "emphasis": "cierre abierto",
+            "syncCue": "movimiento continuo con remate en palabra fuerte"
+          }
+        ],
+        "style": {
+          "theme": "psicologia oscura / mente humana / comportamiento",
+          "colorPalette": "negro absoluto, azul electrico, azul neon frio, rojo oscuro, blanco frio",
+          "visualStyle": "cinematografico, minimalista, alto contraste, single focus",
+          "lighting": "oscura, dramatica, contraluz duro, glow electrico dirigido, sombras marcadas",
+          "cameraMotion": "zoom lento constante, push-in suave, micro paneo lateral, cambio de plano cada 2-3 segundos",
+          "effects": "glow ligero, particulas sutiles, neblina tenue, ruido cinematografico muy fino",
+          "composition": "single focus, sujeto dominante a la derecha o centrado, texto respirando a la izquierda, primeros planos y siluetas, profundidad negativa",
+          "emotionalTone": "misterio psicologico, obsesion, tension contenida, intriga oscura",
+          "consistencyRules": [
+            "una sola escena principal por segmento",
+            "fondo siempre oscuro o casi negro",
+            "usar azul electrico como color dominante y rojo solo para tension o reengage",
+            "priorizar cerebros, ojos, siluetas y escenas humanas reconocibles",
+            "evitar stock luminoso, lifestyle genérico o composiciones planas"
+          ],
+          "clipKeywords": [
+            "dopamina",
+            "estimulación constante",
+            "glowing brain dark background",
+            "blue eye close up dark",
+            "person silhouette red light",
+            "couple argument silhouette blue light",
+            "moody face close up shadow",
+            "dark cinematic person thinking"
+          ]
+        },
+        "clipKeywords": [
+          "dopamina",
+          "estimulación constante",
+          "glowing brain dark background",
+          "blue eye close up dark",
+          "person silhouette red light",
+          "couple argument silhouette blue light",
+          "moody face close up shadow",
+          "dark cinematic person thinking"
+        ],
+        "rhythmRule": "cambio visual cada 2-3 segundos, sin escenas estaticas ni repeticiones consecutivas de encuadre",
+        "timeline": [
+          {
+            "segment": "hook",
+            "timing": "0-2.2s",
+            "durationSeconds": 2.2,
+            "shotType": "primer plano",
+            "intensity": "alta",
+            "movement": "push-in rapido",
+            "transition": "hard cut"
+          },
+          {
+            "segment": "open_loop",
+            "timing": "2.2-5s",
+            "durationSeconds": 2.8,
+            "shotType": "plano detalle",
+            "intensity": "alta",
+            "movement": "zoom lento continuo",
+            "transition": "match cut"
+          },
+          {
+            "segment": "micro_value",
+            "timing": "5-8.2s",
+            "durationSeconds": 3.2,
+            "shotType": "plano medio",
+            "intensity": "media",
+            "movement": "micro paneo lateral",
+            "transition": "cut limpio"
+          },
+          {
+            "segment": "escalation",
+            "timing": "8.2-11.6s",
+            "durationSeconds": 3.4,
+            "shotType": "plano abierto",
+            "intensity": "media-alta",
+            "movement": "acercamiento progresivo",
+            "transition": "cut ritmico"
+          },
+          {
+            "segment": "reengage",
+            "timing": "11.6-14.2s",
+            "durationSeconds": 2.6,
+            "shotType": "primer plano",
+            "intensity": "muy alta",
+            "movement": "zoom agresivo",
+            "transition": "whip cut"
+          },
+          {
+            "segment": "peak",
+            "timing": "14.2-17.8s",
+            "durationSeconds": 3.6,
+            "shotType": "plano medio",
+            "intensity": "maxima",
+            "movement": "push-in sostenido",
+            "transition": "impact cut"
+          },
+          {
+            "segment": "open_ending",
+            "timing": "17.8-20.9s",
+            "durationSeconds": 3.1,
+            "shotType": "plano abierto",
+            "intensity": "media",
+            "movement": "zoom out suave",
+            "transition": "cut limpio"
+          },
+          {
+            "segment": "soft_cta",
+            "timing": "20.9-23.6s",
+            "durationSeconds": 2.7,
+            "shotType": "plano detalle",
+            "intensity": "media",
+            "movement": "micro acercamiento",
+            "transition": "hold corto"
+          }
+        ]
+      },
+      "growthContext": {
+        "nextTopic": "dopamine",
+        "hookType": "challenge",
+        "emotionalTrigger": "validation",
+        "angle": "por qué buscas estimulación constantemente",
+        "avoidTopics": [
+          "habits",
+          "procrastination",
+          "cognitive_biases",
+          "motivation",
+          "body_language",
+          "perception",
+          "memory",
+          "emotions",
+          "self_talk",
+          "relationships",
+          "decision_making",
+          "attention",
+          "social_patterns",
+          "emotional_patterns",
+          "dopamine y redes sociales",
+          "psychology"
+        ],
+        "avoidRecentHooks": [
+          "Tu teléfono te roba dopamina cada vez que lo abres",
+          "Tu miedo decide antes que tu cerebro.",
+          "Llevas años queriendo dejar ese hábito y no lo consigues.",
+          "Tu cerebro decide sin pedirte permiso.",
+          "Tu cerebro decide sin pedirte permiso.",
+          "Llevas años queriendo dejar ese hábito y no lo consigues.",
+          "Eliges parejas iguales a tu peor relación pasada.",
+          "El 81% repite lo mismo sin elegirlo realmente."
+        ],
+        "reasoning": "Topic 'dopamine' por estrategia explore. [TRENDING — boosteado por señal de tendencia actual] Saturados evitados: habits, procrastination, cognitive_biases, motivation, body_language, perception, memory, emotions, self_talk, relationships, decision_making, attention, social_patterns, emotional_patterns, dopamine y redes sociales, psychology.",
+        "confidence": 0.5,
+        "strategy": "explore",
+        "decisionAt": "2026-04-28T12:41:10.770Z",
+        "fallbackGenerator": "best-available",
+        "fallbackReason": "virality 56/60 | [hook] hook genérico (penalty) | [reengage] reengage poco agresivo (penalty) | [soft_cta] soft_cta poco conversacional (penalty)"
+      },
+      "viralityScore": 56,
+      "viralityBreakdown": {
+        "hookStrength": 20,
+        "emotionalTrigger": 8,
+        "relatability": 13,
+        "loopPotential": 13,
+        "durationBonus": 2
+      },
+      "formatMatchScore": 79,
+      "formatMatchBreakdown": {
+        "hookFormat": 16,
+        "brevity": 12,
+        "clarity": 13,
+        "narrativeRhythm": 6,
+        "psychologicalImpact": 6,
+        "scrollStop": 6,
+        "infoDensity": 4,
+        "earlyRevelation": 8,
+        "singleIdea": 3,
+        "reengage": 5
+      },
+      "formatMatchSegmentGaps": [
+        "[hook] hook genérico",
+        "[reengage] reengage poco agresivo",
+        "[soft_cta] soft_cta poco conversacional"
+      ],
+      "formatMatchGaps": [
+        "Revelación psicológica débil — añade nombre de efecto o cifra concreta",
+        "Baja densidad — más información útil en menos palabras",
+        "[hook] hook genérico",
+        "[reengage] reengage poco agresivo",
+        "[soft_cta] soft_cta poco conversacional"
+      ],
+      "emotionalImpactScore": 39,
+      "emotionalImpactBreakdown": {
+        "powerWords": 0,
+        "personalId": 19,
+        "surpriseFactor": 5,
+        "visceral": 5,
+        "tensionResolution": 10
+      },
+      "approved": true,
+      "rejectionReason": null,
+      "selectionPenalties": [
+        "virality_low:56",
+        "[hook] hook genérico",
+        "[reengage] reengage poco agresivo",
+        "[soft_cta] soft_cta poco conversacional"
+      ],
+      "llmMetrics": {
+        "llm_total_calls": 5,
+        "llm_parse_fail": true,
+        "llm_recovery_used": true,
+        "llm_hard_fail": false,
+        "emergency_fallback_used": false,
+        "llm_schema_fail": false,
+        "llm_truncated_suspected": true
+      },
+      "usedRecovery": true,
+      "generationSource": "generateOptimizedScript",
+      "llmPath": [
+        "generateViralScript",
+        "generateOptimizedScript"
+      ],
+      "generationFallback": "best-available",
+      "usedLastValid": false,
+      "usedEmergencyFallback": false,
+      "approvalBypassReason": null,
+      "final_generation_route": "generateViralScript -> generateOptimizedScript",
+      "total_llm_calls": 5,
+      "fallback_level_reached": 1,
+      "quickOptimizedSegment": "hook",
+      "quickOptimizedReason": "[hook] hook genérico",
+      "selectedQuality": "acceptable",
+      "approvalBypass": "best_available_after_3_attempts",
+      "bestAvailableScore": 62,
+      "selectionReasons": [
+        "virality_low:56",
+        "[hook] hook genérico",
+        "[reengage] reengage poco agresivo",
+        "[soft_cta] soft_cta poco conversacional"
+      ],
+      "abVariantId": "v_a",
+      "slotTracking": {
+        "batchId": null,
+        "slotId": null,
+        "plannedOrder": null,
+        "plannedRole": null,
+        "plannedCluster": null,
+        "plannedHookType": null,
+        "plannedMicroAction": null,
+        "recommendedCandidateId": null,
+        "recommendedCandidateTitle": null,
+        "attributionType": "unplanned",
+        "slotState": "unplanned",
+        "assignmentConfidence": 0,
+        "traceConfidence": 0,
+        "exactTraceAvailable": false,
+        "abLinked": true
+      }
+    },
+    "growthContext": {
+      "nextTopic": "dopamine",
+      "hookType": "challenge",
+      "emotionalTrigger": "validation",
+      "angle": "por qué buscas estimulación constantemente",
+      "avoidTopics": [
+        "habits",
+        "procrastination",
+        "cognitive_biases",
+        "motivation",
+        "body_language",
+        "perception",
+        "memory",
+        "emotions",
+        "self_talk",
+        "relationships",
+        "decision_making",
+        "attention",
+        "social_patterns",
+        "emotional_patterns",
+        "dopamine y redes sociales",
+        "psychology"
+      ],
+      "avoidRecentHooks": [
+        "Tu teléfono te roba dopamina cada vez que lo abres",
+        "Tu miedo decide antes que tu cerebro.",
+        "Llevas años queriendo dejar ese hábito y no lo consigues.",
+        "Tu cerebro decide sin pedirte permiso.",
+        "Tu cerebro decide sin pedirte permiso.",
+        "Llevas años queriendo dejar ese hábito y no lo consigues.",
+        "Eliges parejas iguales a tu peor relación pasada.",
+        "El 81% repite lo mismo sin elegirlo realmente."
+      ],
+      "reasoning": "Topic 'dopamine' por estrategia explore. [TRENDING — boosteado por señal de tendencia actual] Saturados evitados: habits, procrastination, cognitive_biases, motivation, body_language, perception, memory, emotions, self_talk, relationships, decision_making, attention, social_patterns, emotional_patterns, dopamine y redes sociales, psychology.",
+      "confidence": 0.5,
+      "strategy": "explore",
+      "decisionAt": "2026-04-28T12:41:10.770Z"
+    },
+    "hookId": null,
+    "themeIndex": 46,
+    "slotTracking": {
+      "batchId": null,
+      "slotId": null,
+      "plannedOrder": null,
+      "plannedRole": null,
+      "plannedCluster": null,
+      "plannedHookType": null,
+      "plannedMicroAction": null,
+      "recommendedCandidateId": null,
+      "recommendedCandidateTitle": null,
+      "attributionType": "unplanned",
+      "slotState": "unplanned",
+      "assignmentConfidence": 0,
+      "traceConfidence": 0,
+      "exactTraceAvailable": false,
+      "abLinked": true
+    }
+  },
+  "startedAt": "2026-04-28T12:41:47.018Z",
+  "videoId": "0dc24560-1e1d-4796-aec4-47b901ed5d07",
+  "lastStage": "render_done",
+  "lastProgressAt": "2026-04-28T12:42:26.740Z",
+  "result": {
+    "videoId": "0dc24560-1e1d-4796-aec4-47b901ed5d07",
+    "skipped": true,
+    "qcScore": 85,
+    "qcReasons": [
+      "virality 56 < 65",
+      "video duration 2.9s < 8s"
+    ]
+  },
+  "completedAt": "2026-04-28T12:42:26.959Z"
+}

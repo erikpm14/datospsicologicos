@@ -1,0 +1,630 @@
+{
+  "id": "1f2e8cb9-c93f-4654-beef-4e24ad0ac88e",
+  "createdAt": "2026-04-27T22:16:50.020Z",
+  "status": "done",
+  "progress": 100,
+  "performance": {
+    "label": "video-pipeline",
+    "startedAt": "2026-04-27T22:16:50.022Z",
+    "totalMs": 57353,
+    "phases": [
+      {
+        "name": "script_generation",
+        "startedAt": "2026-04-27T22:16:50.024Z",
+        "status": "completed",
+        "endedAt": "2026-04-27T22:16:50.024Z",
+        "durationMs": 0,
+        "source": "prefab",
+        "estimatedWords": 131,
+        "durationSeconds": 57
+      },
+      {
+        "name": "tts",
+        "startedAt": "2026-04-27T22:16:50.025Z",
+        "status": "completed",
+        "endedAt": "2026-04-27T22:17:29.628Z",
+        "durationMs": 39603,
+        "provider": "kokoro",
+        "estimatedDuration": 55.004,
+        "wordBoundaries": 0
+      },
+      {
+        "name": "audio_postprocess",
+        "startedAt": "2026-04-27T22:17:29.630Z",
+        "status": "completed",
+        "endedAt": "2026-04-27T22:17:31.872Z",
+        "durationMs": 2242,
+        "outputPath": "C:\\Users\\Erik\\Desktop\\Generador_videos\\output\\7625b9dc-bba2-4e2d-9c5e-2aa7b7509afc\\voice_proc.mp3"
+      },
+      {
+        "name": "render",
+        "startedAt": "2026-04-27T22:17:31.876Z",
+        "status": "completed",
+        "endedAt": "2026-04-27T22:17:47.285Z",
+        "durationMs": 15409,
+        "outputPath": "C:\\Users\\Erik\\Desktop\\Generador_videos\\output\\7625b9dc-bba2-4e2d-9c5e-2aa7b7509afc\\output.mp4"
+      },
+      {
+        "name": "quality_check",
+        "startedAt": "2026-04-27T22:17:47.286Z",
+        "status": "completed",
+        "endedAt": "2026-04-27T22:17:47.375Z",
+        "durationMs": 89,
+        "passed": false,
+        "score": 55,
+        "threshold": 70
+      }
+    ],
+    "activePhase": null,
+    "jobId": "1f2e8cb9-c93f-4654-beef-4e24ad0ac88e",
+    "videoId": "7625b9dc-bba2-4e2d-9c5e-2aa7b7509afc",
+    "topic": "motivation",
+    "result": "qc_failed"
+  },
+  "data": {
+    "topic": "motivation",
+    "prefabScript": {
+      "title": "motivation_1777328180094",
+      "topic": "motivation",
+      "hook": "Te prometen dinero y dejas de querer hacerlo.",
+      "open_loop": "¿Por qué? Porque tu cerebro acaba de cambiar el juego sin avisarte.",
+      "micro_value": "Se llama efecto de sobrejustificación: cuando añades recompensa externa, tu cerebro elimina la razón interna.",
+      "escalation": "Piensa en un hobby que te encanta. Ahora imagina que alguien te paga por hacerlo cada día. En dos semanas ya no es diversión, es obligación. Tu mente buscó la excusa perfecta para abandonar el placer original.",
+      "reengage": "Espera. Antes de que abandones esto, necesitas saber algo que tu cerebro está ocultando. Ese mecanismo que te sabotea cada vez que monetizas lo que amas... ya está activado en tu vida ahora mismo. Y si no lo cortas aquí, se va a repetir con todo lo que intentes.",
+      "peak": "Un estudio famoso lo demostró: niños que pintaban por pura alegría dejaron de hacerlo cuando les ofrecieron dinero. Meses después, aunque quitaron la recompensa, nunca volvieron a disfrutarlo como antes.",
+      "open_ending": "¿Y si tu motivación ya está envenenada sin que lo sepas?",
+      "soft_cta": "Cuéntame: ¿qué has dejado de disfrutar por dinero.",
+      "claim": "Tu cerebro sabotea automáticamente lo que monetizas",
+      "explanation": "El efecto de sobrejustificación no solo aplica al dinero. Aplica a cada promesa, expectativa o presión que te pones. Una vez que la mente lo aprende, lo replica forever",
+      "cta": "Dime: ¿en qué estás haciendo esto ahora mismo?",
+      "psychologicalFact": "La motivación intrínseca se ve desplazada por recompensas externas en tareas creativas.",
+      "viralTrigger": "identificacion",
+      "emotionalTrigger": "relatability",
+      "durationSeconds": 57,
+      "keywords": [
+        "motivacion",
+        "recompensa"
+      ],
+      "hashtags": [
+        "#psicologia",
+        "#mente",
+        "#cerebro"
+      ],
+      "allHooks": null,
+      "selectedHookType": "challenge",
+      "hookSelectionReason": "Desafía creencia común sobre recompensas, detiene scroll por incomodidad",
+      "optimizationNotes": {
+        "patronUsado": "contradiction_reward"
+      },
+      "learningSignals": {},
+      "autoevaluacion": {},
+      "segments": [
+        {
+          "type": "HOOK",
+          "text": "Te prometen dinero y dejas de querer hacerlo.",
+          "visualIntent": "punch zoom, texto impactante, fondo oscuro",
+          "emotion": "tension"
+        },
+        {
+          "type": "OPEN_LOOP",
+          "text": "¿Por qué? Porque tu cerebro acaba de cambiar el juego sin avisarte.",
+          "visualIntent": "zoom lento, rostro pensativo, tension",
+          "emotion": "curiosity"
+        },
+        {
+          "type": "MICRO_VALUE",
+          "text": "Se llama efecto de sobrejustificación: cuando añades recompensa externa, tu cerebro elimina la razón interna.",
+          "visualIntent": "zoom lento, rostro pensativo, tension",
+          "emotion": "curiosity"
+        },
+        {
+          "type": "ESCALATION",
+          "text": "Piensa en un hobby que te encanta. Ahora imagina que alguien te paga por hacerlo cada día. En dos semanas ya no es diversión, es obligación. Tu mente buscó la excusa perfecta para abandonar el placer original.",
+          "visualIntent": "zoom lento, rostro pensativo, tension",
+          "emotion": "curiosity"
+        },
+        {
+          "type": "REENGAGE",
+          "text": "Y lo peor es que funciona al revés también.",
+          "visualIntent": "cambio brusco, tension, zoom corto",
+          "emotion": "curiosity"
+        },
+        {
+          "type": "PEAK",
+          "text": "Un estudio famoso lo demostró: niños que pintaban por pura alegría dejaron de hacerlo cuando les ofrecieron dinero. Meses después, aunque quitaron la recompensa, nunca volvieron a disfrutarlo como antes.",
+          "visualIntent": "aislamiento, silueta, punch zoom",
+          "emotion": "impacto"
+        },
+        {
+          "type": "OPEN_ENDING",
+          "text": "¿Y si tu motivación ya está envenenada sin que lo sepas?",
+          "visualIntent": "zoom lento, rostro pensativo, tension",
+          "emotion": "curiosity"
+        },
+        {
+          "type": "SOFT_CTA",
+          "text": "Cuéntame: ¿qué has dejado de disfrutar por dinero.",
+          "visualIntent": "zoom lento, rostro pensativo, tension",
+          "emotion": "cercania"
+        }
+      ],
+      "structureVersion": "open_loop_escalation_v1",
+      "hasReengage": true,
+      "segmentFeedback": [
+        {
+          "segment": "open_loop",
+          "issue": "open_loop demasiado resolutivo"
+        }
+      ],
+      "segmentFeedbackSummary": [
+        "[open_loop] open_loop demasiado resolutivo"
+      ],
+      "estimatedWords": 131,
+      "fullScript": "Te prometen dinero y dejas de querer hacerlo. ¿Por qué? Porque tu cerebro acaba de cambiar el juego sin avisarte. Se llama efecto de sobrejustificación: cuando añades recompensa externa, tu cerebro elimina la razón interna. Piensa en un hobby que te encanta. Ahora imagina que alguien te paga por hacerlo cada día. En dos semanas ya no es diversión, es obligación. Tu mente buscó la excusa perfecta para abandonar el placer original. Y lo peor es que funciona al revés también. Un estudio famoso lo demostró: niños que pintaban por pura alegría dejaron de hacerlo cuando les ofrecieron dinero. Meses después, aunque quitaron la recompensa, nunca volvieron a disfrutarlo como antes. ¿Y si tu motivación ya está envenenada sin que lo sepas? Cuéntame: ¿qué has dejado de disfrutar por dinero.",
+      "videoInstructions": {
+        "singleFocus": true,
+        "visualStyle": [
+          "estetica cinematografica oscura",
+          "fondo negro o casi negro",
+          "alto contraste con azul electrico dominante",
+          "acento rojo oscuro solo para tension",
+          "single focus constante sin overlays complejos",
+          "cambio de plano cada 2-3 segundos",
+          "zoom progresivo y movimiento suave"
+        ],
+        "subtitleStyle": "tipografia condensada bold, blanco frio con acentos azul electrico y rojo oscuro, subtitulos grandes y sincronizados",
+        "audioStyle": {
+          "voice": "voz clara y con ritmo",
+          "pauses": [
+            "hook",
+            "reengage",
+            "peak"
+          ]
+        },
+        "scenes": [
+          {
+            "segment": "hook",
+            "timing": "0-2.2s",
+            "visual": "primer plano de cerebro luminoso o rostro inquietante, relacionado con motivation, fondo negro o muy oscuro, contraste alto, azul electrico y rojo oscuro como acentos, zoom lento, iluminacion dramatica, sensacion de misterio psicologico",
+            "cut": "corte rapido con push-in",
+            "startSeconds": 0,
+            "endSeconds": 2.2,
+            "durationSeconds": 2.2,
+            "shotType": "primer plano",
+            "framing": "primer plano",
+            "intensity": "alta",
+            "movement": "push-in rapido",
+            "transition": "hard cut",
+            "emphasis": "scroll-stop inmediato",
+            "syncCue": "movimiento continuo con remate en palabra fuerte"
+          },
+          {
+            "segment": "open_loop",
+            "timing": "2.2-5s",
+            "visual": "ojo humano extremo o gesto suspendido en sombra, relacionado con motivation, fondo negro o muy oscuro, contraste alto, azul electrico y rojo oscuro como acentos, zoom lento, iluminacion dramatica, sensacion de misterio psicologico",
+            "cut": "zoom corto continuo",
+            "startSeconds": 2.2,
+            "endSeconds": 5,
+            "durationSeconds": 2.8,
+            "shotType": "plano detalle",
+            "framing": "plano detalle",
+            "intensity": "alta",
+            "movement": "zoom lento continuo",
+            "transition": "match cut",
+            "emphasis": "curiosidad sostenida",
+            "syncCue": "movimiento continuo con remate en palabra fuerte"
+          },
+          {
+            "segment": "micro_value",
+            "timing": "5-8.2s",
+            "visual": "detalle simbolico del mecanismo mental en glow azul, relacionado con motivation, fondo negro o muy oscuro, contraste alto, azul electrico y rojo oscuro como acentos, zoom lento, iluminacion dramatica, sensacion de misterio psicologico",
+            "cut": "cambio de plano limpio",
+            "startSeconds": 5,
+            "endSeconds": 8.2,
+            "durationSeconds": 3.2,
+            "shotType": "plano medio",
+            "framing": "plano medio",
+            "intensity": "media",
+            "movement": "micro paneo lateral",
+            "transition": "cut limpio",
+            "emphasis": "primer pago de valor",
+            "syncCue": "movimiento continuo con remate en palabra fuerte"
+          },
+          {
+            "segment": "escalation",
+            "timing": "8.2-11.6s",
+            "visual": "silueta humana o tension social en contraluz, relacionado con motivation, fondo negro o muy oscuro, contraste alto, azul electrico y rojo oscuro como acentos, zoom lento, iluminacion dramatica, sensacion de misterio psicologico",
+            "cut": "cortes cada 2-3s",
+            "startSeconds": 8.2,
+            "endSeconds": 11.6,
+            "durationSeconds": 3.4,
+            "shotType": "plano abierto",
+            "framing": "plano abierto",
+            "intensity": "media-alta",
+            "movement": "acercamiento progresivo",
+            "transition": "cut ritmico",
+            "emphasis": "tension creciente",
+            "syncCue": "movimiento continuo con remate en palabra fuerte"
+          },
+          {
+            "segment": "reengage",
+            "timing": "11.6-14.2s",
+            "visual": "cambio brusco a plano mas cercano con rojo alerta, relacionado con motivation, fondo negro o muy oscuro, contraste alto, azul electrico y rojo oscuro como acentos, zoom lento, iluminacion dramatica, sensacion de misterio psicologico",
+            "cut": "cambio brusco + zoom agresivo",
+            "startSeconds": 11.6,
+            "endSeconds": 14.2,
+            "durationSeconds": 2.6,
+            "shotType": "primer plano",
+            "framing": "primer plano",
+            "intensity": "muy alta",
+            "movement": "zoom agresivo",
+            "transition": "whip cut",
+            "emphasis": "ruptura de patron",
+            "syncCue": "acercamiento en frase clave"
+          },
+          {
+            "segment": "peak",
+            "timing": "14.2-17.8s",
+            "visual": "escena humana real de conflicto, pareja o decision, relacionado con motivation, fondo negro o muy oscuro, contraste alto, azul electrico y rojo oscuro como acentos, zoom lento, iluminacion dramatica, sensacion de misterio psicologico",
+            "cut": "alternancia de planos cerrados",
+            "startSeconds": 14.2,
+            "endSeconds": 17.8,
+            "durationSeconds": 3.6,
+            "shotType": "plano medio",
+            "framing": "plano medio",
+            "intensity": "maxima",
+            "movement": "push-in sostenido",
+            "transition": "impact cut",
+            "emphasis": "impacto emocional",
+            "syncCue": "acercamiento en frase clave"
+          },
+          {
+            "segment": "open_ending",
+            "timing": "17.8-20.9s",
+            "visual": "figura sola alejandose en oscuridad con particulas, relacionado con motivation, fondo negro o muy oscuro, contraste alto, azul electrico y rojo oscuro como acentos, zoom lento, iluminacion dramatica, sensacion de misterio psicologico",
+            "cut": "desaceleracion ligera",
+            "startSeconds": 17.8,
+            "endSeconds": 20.9,
+            "durationSeconds": 3.1,
+            "shotType": "plano abierto",
+            "framing": "plano abierto",
+            "intensity": "media",
+            "movement": "zoom out suave",
+            "transition": "cut limpio",
+            "emphasis": "eco mental",
+            "syncCue": "movimiento continuo con remate en palabra fuerte"
+          },
+          {
+            "segment": "soft_cta",
+            "timing": "20.9-23.6s",
+            "visual": "rostro o silueta frontal con espacio negativo para cierre, relacionado con motivation, fondo negro o muy oscuro, contraste alto, azul electrico y rojo oscuro como acentos, zoom lento, iluminacion dramatica, sensacion de misterio psicologico",
+            "cut": "ultimo corte limpio",
+            "startSeconds": 20.9,
+            "endSeconds": 23.6,
+            "durationSeconds": 2.7,
+            "shotType": "plano detalle",
+            "framing": "plano detalle",
+            "intensity": "media",
+            "movement": "micro acercamiento",
+            "transition": "hold corto",
+            "emphasis": "cierre abierto",
+            "syncCue": "movimiento continuo con remate en palabra fuerte"
+          }
+        ],
+        "style": {
+          "theme": "psicologia oscura / mente humana / comportamiento",
+          "colorPalette": "negro absoluto, azul electrico, azul neon frio, rojo oscuro, blanco frio",
+          "visualStyle": "cinematografico, minimalista, alto contraste, single focus",
+          "lighting": "oscura, dramatica, contraluz duro, glow electrico dirigido, sombras marcadas",
+          "cameraMotion": "zoom lento constante, push-in suave, micro paneo lateral, cambio de plano cada 2-3 segundos",
+          "effects": "glow ligero, particulas sutiles, neblina tenue, ruido cinematografico muy fino",
+          "composition": "single focus, sujeto dominante a la derecha o centrado, texto respirando a la izquierda, primeros planos y siluetas, profundidad negativa",
+          "emotionalTone": "misterio psicologico, obsesion, tension contenida, intriga oscura",
+          "consistencyRules": [
+            "una sola escena principal por segmento",
+            "fondo siempre oscuro o casi negro",
+            "usar azul electrico como color dominante y rojo solo para tension o reengage",
+            "priorizar cerebros, ojos, siluetas y escenas humanas reconocibles",
+            "evitar stock luminoso, lifestyle genérico o composiciones planas"
+          ],
+          "clipKeywords": [
+            "motivacion",
+            "recompensa",
+            "glowing brain dark background",
+            "blue eye close up dark",
+            "person silhouette red light",
+            "couple argument silhouette blue light",
+            "moody face close up shadow",
+            "dark cinematic person thinking"
+          ]
+        },
+        "clipKeywords": [
+          "motivacion",
+          "recompensa",
+          "glowing brain dark background",
+          "blue eye close up dark",
+          "person silhouette red light",
+          "couple argument silhouette blue light",
+          "moody face close up shadow",
+          "dark cinematic person thinking"
+        ],
+        "rhythmRule": "cambio visual cada 2-3 segundos, sin escenas estaticas ni repeticiones consecutivas de encuadre",
+        "timeline": [
+          {
+            "segment": "hook",
+            "timing": "0-2.2s",
+            "durationSeconds": 2.2,
+            "shotType": "primer plano",
+            "intensity": "alta",
+            "movement": "push-in rapido",
+            "transition": "hard cut"
+          },
+          {
+            "segment": "open_loop",
+            "timing": "2.2-5s",
+            "durationSeconds": 2.8,
+            "shotType": "plano detalle",
+            "intensity": "alta",
+            "movement": "zoom lento continuo",
+            "transition": "match cut"
+          },
+          {
+            "segment": "micro_value",
+            "timing": "5-8.2s",
+            "durationSeconds": 3.2,
+            "shotType": "plano medio",
+            "intensity": "media",
+            "movement": "micro paneo lateral",
+            "transition": "cut limpio"
+          },
+          {
+            "segment": "escalation",
+            "timing": "8.2-11.6s",
+            "durationSeconds": 3.4,
+            "shotType": "plano abierto",
+            "intensity": "media-alta",
+            "movement": "acercamiento progresivo",
+            "transition": "cut ritmico"
+          },
+          {
+            "segment": "reengage",
+            "timing": "11.6-14.2s",
+            "durationSeconds": 2.6,
+            "shotType": "primer plano",
+            "intensity": "muy alta",
+            "movement": "zoom agresivo",
+            "transition": "whip cut"
+          },
+          {
+            "segment": "peak",
+            "timing": "14.2-17.8s",
+            "durationSeconds": 3.6,
+            "shotType": "plano medio",
+            "intensity": "maxima",
+            "movement": "push-in sostenido",
+            "transition": "impact cut"
+          },
+          {
+            "segment": "open_ending",
+            "timing": "17.8-20.9s",
+            "durationSeconds": 3.1,
+            "shotType": "plano abierto",
+            "intensity": "media",
+            "movement": "zoom out suave",
+            "transition": "cut limpio"
+          },
+          {
+            "segment": "soft_cta",
+            "timing": "20.9-23.6s",
+            "durationSeconds": 2.7,
+            "shotType": "plano detalle",
+            "intensity": "media",
+            "movement": "micro acercamiento",
+            "transition": "hold corto"
+          }
+        ]
+      },
+      "growthContext": {
+        "nextTopic": "motivation",
+        "hookType": "challenge",
+        "emotionalTrigger": "relatability",
+        "angle": "por qué la motivación desaparece cuando te recompensan",
+        "avoidTopics": [
+          "procrastination",
+          "cognitive_biases",
+          "body_language",
+          "emotions",
+          "emotional_patterns",
+          "habits",
+          "attention",
+          "dopamine",
+          "social_patterns",
+          "relationships",
+          "psychology"
+        ],
+        "avoidRecentHooks": [
+          "Tu cerebro prefiere dolor ahora que éxito después",
+          "Tu cerebro prefiere dolor ahora que éxito después",
+          "Tu postura grita lo que tu boca calla.",
+          "Acabas de cambiar de opinión sin darte cuenta.",
+          "Acabas de cambiar de opinión sin darte cuenta.",
+          "Tu postura grita lo que tu boca calla.",
+          "Miras el móvil sin decidir hacerlo nunca.",
+          "Sin aburrimiento tu cerebro se muere en vida"
+        ],
+        "reasoning": "Topic 'motivation' por estrategia explore. Saturados evitados: procrastination, cognitive_biases, body_language, emotions, emotional_patterns, habits, attention, dopamine, social_patterns, relationships, psychology.",
+        "confidence": 0.5,
+        "strategy": "explore",
+        "decisionAt": "2026-04-27T22:16:14.723Z",
+        "fallbackGenerator": "best-available",
+        "fallbackReason": "format_match 68/75 | virality 44/60 | hook_weak 0/8 (penalty) | [open_loop] open_loop demasiado resolutivo (penalty) | [reengage] reengage poco agresivo (penalty)"
+      },
+      "viralityScore": 44,
+      "viralityBreakdown": {
+        "hookStrength": 0,
+        "emotionalTrigger": 14,
+        "relatability": 13,
+        "loopPotential": 15,
+        "durationBonus": 2
+      },
+      "formatMatchScore": 68,
+      "formatMatchBreakdown": {
+        "hookFormat": 16,
+        "brevity": 12,
+        "clarity": 8,
+        "narrativeRhythm": 4,
+        "psychologicalImpact": 8,
+        "scrollStop": 0,
+        "infoDensity": 4,
+        "earlyRevelation": 8,
+        "singleIdea": 3,
+        "reengage": 5
+      },
+      "formatMatchSegmentGaps": [
+        "[open_loop] open_loop demasiado resolutivo"
+      ],
+      "formatMatchGaps": [
+        "Hay relleno o rodeos — elimina intro, empieza con el dato",
+        "Hook no para el scroll — falta tensión, shock o reconocimiento inmediato",
+        "Baja densidad — más información útil en menos palabras",
+        "[open_loop] open_loop demasiado resolutivo"
+      ],
+      "emotionalImpactScore": 62,
+      "emotionalImpactBreakdown": {
+        "powerWords": 12,
+        "personalId": 20,
+        "surpriseFactor": 10,
+        "visceral": 0,
+        "tensionResolution": 20
+      },
+      "approved": true,
+      "rejectionReason": null,
+      "selectionPenalties": [
+        "virality_low:44",
+        "format_low:68",
+        "[open_loop] open_loop demasiado resolutivo"
+      ],
+      "llmMetrics": {
+        "llm_total_calls": 5,
+        "llm_parse_fail": true,
+        "llm_recovery_used": true,
+        "llm_hard_fail": false,
+        "emergency_fallback_used": false,
+        "llm_schema_fail": false,
+        "llm_truncated_suspected": true
+      },
+      "usedRecovery": false,
+      "generationSource": "generateViralScript",
+      "llmPath": [
+        "generateViralScript"
+      ],
+      "generationFallback": "best-available",
+      "usedLastValid": false,
+      "usedEmergencyFallback": false,
+      "approvalBypassReason": null,
+      "final_generation_route": "generateViralScript",
+      "total_llm_calls": 1,
+      "fallback_level_reached": 0,
+      "quickOptimizedSegment": "reengage",
+      "quickOptimizedReason": "[reengage] reengage poco agresivo",
+      "selectedQuality": "acceptable",
+      "approvalBypass": "best_available_after_3_attempts",
+      "bestAvailableScore": 55,
+      "selectionReasons": [
+        "virality_low:44",
+        "format_low:68",
+        "[open_loop] open_loop demasiado resolutivo",
+        "[reengage] reengage poco agresivo"
+      ],
+      "abVariantId": "v_b",
+      "slotTracking": {
+        "batchId": null,
+        "slotId": null,
+        "plannedOrder": null,
+        "plannedRole": null,
+        "plannedCluster": null,
+        "plannedHookType": null,
+        "plannedMicroAction": null,
+        "recommendedCandidateId": null,
+        "recommendedCandidateTitle": null,
+        "attributionType": "unplanned",
+        "slotState": "unplanned",
+        "assignmentConfidence": 0,
+        "traceConfidence": 0,
+        "exactTraceAvailable": false,
+        "abLinked": true
+      },
+      "abExperimentId": "exp_1777328205899_f8ab870e",
+      "hookType": "challenge",
+      "publishAfter": "2026-04-28T00:16:50.020Z"
+    },
+    "growthContext": {
+      "nextTopic": "motivation",
+      "hookType": "challenge",
+      "emotionalTrigger": "relatability",
+      "angle": "por qué la motivación desaparece cuando te recompensan",
+      "avoidTopics": [
+        "procrastination",
+        "cognitive_biases",
+        "body_language",
+        "emotions",
+        "emotional_patterns",
+        "habits",
+        "attention",
+        "dopamine",
+        "social_patterns",
+        "relationships",
+        "psychology"
+      ],
+      "avoidRecentHooks": [
+        "Tu cerebro prefiere dolor ahora que éxito después",
+        "Tu cerebro prefiere dolor ahora que éxito después",
+        "Tu postura grita lo que tu boca calla.",
+        "Acabas de cambiar de opinión sin darte cuenta.",
+        "Acabas de cambiar de opinión sin darte cuenta.",
+        "Tu postura grita lo que tu boca calla.",
+        "Miras el móvil sin decidir hacerlo nunca.",
+        "Sin aburrimiento tu cerebro se muere en vida"
+      ],
+      "reasoning": "Topic 'motivation' por estrategia explore. Saturados evitados: procrastination, cognitive_biases, body_language, emotions, emotional_patterns, habits, attention, dopamine, social_patterns, relationships, psychology.",
+      "confidence": 0.5,
+      "strategy": "explore",
+      "decisionAt": "2026-04-27T22:16:14.723Z"
+    },
+    "hookId": null,
+    "themeIndex": 12,
+    "slotTracking": {
+      "batchId": null,
+      "slotId": null,
+      "plannedOrder": null,
+      "plannedRole": null,
+      "plannedCluster": null,
+      "plannedHookType": null,
+      "plannedMicroAction": null,
+      "recommendedCandidateId": null,
+      "recommendedCandidateTitle": null,
+      "attributionType": "unplanned",
+      "slotState": "unplanned",
+      "assignmentConfidence": 0,
+      "traceConfidence": 0,
+      "exactTraceAvailable": false,
+      "abLinked": true
+    }
+  },
+  "startedAt": "2026-04-27T22:16:50.022Z",
+  "videoId": "7625b9dc-bba2-4e2d-9c5e-2aa7b7509afc",
+  "lastStage": "render_done",
+  "lastProgressAt": "2026-04-27T22:17:47.285Z",
+  "result": {
+    "videoId": "7625b9dc-bba2-4e2d-9c5e-2aa7b7509afc",
+    "skipped": true,
+    "qcScore": 55,
+    "qcReasons": [
+      "video too small (276 KB < 300 KB)",
+      "virality 44 < 65",
+      "format 68 < 75",
+      "video too small (276 KB < 300 KB)"
+    ]
+  },
+  "completedAt": "2026-04-27T22:17:47.375Z"
+}

@@ -1,0 +1,47 @@
+[Script Info]
+ScriptType: v4.00+
+PlayResX: 1080
+PlayResY: 1920
+WrapStyle: 2
+
+[V4+ Styles]
+Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+Style: Default,Impact,100,&H00FFFFFF,&H00FFFFFF,&H00000000,&H90000000,-1,0,0,0,100,100,0,0,1,6,4,8,10,10,10,1
+
+[Events]
+Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
+Dialogue: 0,0:00:00.00,0:00:01.00,Default,,0,0,0,,{\c&H00FFF7F3\fs109\b-1\bord8\pos(540,1320)}TU potencial es
+Dialogue: 0,0:00:01.02,0:00:01.72,Default,,0,0,0,,{\c&H00FFF7F3\fs119\b-1\bord8\pos(540,1320)}INFINITO.
+Dialogue: 0,0:03:21.57,0:03:22.49,Default,,0,0,0,,{\c&H00FFF7F3\fs94\b0\bord6\pos(540,1320)}Tienes todo lo
+Dialogue: 0,0:03:22.51,0:03:23.71,Default,,0,0,0,,{\c&H00FFF7F3\fs94\b0\bord6\pos(540,1320)}que necesitas dentro.
+Dialogue: 0,0:06:43.64,0:06:44.58,Default,,0,0,0,,{\c&H00303BFF\fs97\b0\bord6\pos(540,1320)}Tu potencial es
+Dialogue: 0,0:06:44.92,0:06:45.82,Default,,0,0,0,,{\c&H00303BFF\fs97\b0\bord6\pos(540,1320)}infinito y tienes
+Dialogue: 0,0:06:45.52,0:06:46.02,Default,,0,0,0,,{\c&H00303BFF\fs103\b-1\bord8\pos(540,1320)}todo lo que
+Dialogue: 0,0:06:46.43,0:06:47.31,Default,,0,0,0,,{\c&H00303BFF\fs97\b0\bord6\pos(540,1320)}necesitas dentro de
+Dialogue: 0,0:06:47.02,0:06:47.34,Default,,0,0,0,,{\c&H00303BFF\fs106\b-1\bord8\pos(540,1320)}TI.
+Dialogue: 0,0:06:47.54,0:06:48.02,Default,,0,0,0,,{\c&H00303BFF\fs97\b0\bord6\pos(540,1320)}Cada día es
+Dialogue: 0,0:06:48.04,0:06:48.74,Default,,0,0,0,,{\c&H00303BFF\fs97\b0\bord6\pos(540,1320)}una nueva oportunidad
+Dialogue: 0,0:06:48.76,0:06:49.70,Default,,0,0,0,,{\c&H00303BFF\fs97\b0\bord6\pos(540,1320)}para avanzar y
+Dialogue: 0,0:06:49.80,0:06:50.14,Default,,0,0,0,,{\c&H00303BFF\fs106\b-1\bord8\pos(540,1320)}CRECER.
+Dialogue: 0,0:06:50.38,0:06:51.02,Default,,0,0,0,,{\c&H00303BFF\fs97\b0\bord6\pos(540,1320)}Eres más capaz
+Dialogue: 0,0:06:51.04,0:06:51.40,Default,,0,0,0,,{\c&H00303BFF\fs103\b-1\bord8\pos(540,1320)}de lo que
+Dialogue: 0,0:06:51.42,0:06:52.26,Default,,0,0,0,,{\c&H00303BFF\fs97\b0\bord6\pos(540,1320)}crees posible.
+Dialogue: 0,0:06:52.50,0:06:53.26,Default,,0,0,0,,{\c&H00303BFF\fs103\b-1\bord8\pos(540,1320)}No IMPORTA cuántas
+Dialogue: 0,0:06:53.28,0:06:54.30,Default,,0,0,0,,{\c&H00303BFF\fs97\b0\bord6\pos(540,1320)}veces hayas caído,
+Dialogue: 0,0:06:54.38,0:06:55.42,Default,,0,0,0,,{\c&H00303BFF\fs103\b-1\bord8\pos(540,1320)}SIEMPRE puedes levantarte
+Dialogue: 0,0:06:55.44,0:06:55.96,Default,,0,0,0,,{\c&H00303BFF\fs97\b0\bord6\pos(540,1320)}de nuevo.
+Dialogue: 0,0:06:56.18,0:06:56.78,Default,,0,0,0,,{\c&H00303BFF\fs97\b0\bord6\pos(540,1320)}Tu fuerza viene
+Dialogue: 0,0:06:56.80,0:06:57.50,Default,,0,0,0,,{\c&H00303BFF\fs97\b0\bord6\pos(540,1320)}de adentro.
+Dialogue: 0,0:06:57.60,0:06:58.08,Default,,0,0,0,,{\c&H00303BFF\fs97\b0\bord6\pos(540,1320)}Tu decide es
+Dialogue: 0,0:06:58.10,0:06:58.88,Default,,0,0,0,,{\c&H00303BFF\fs97\b0\bord6\pos(540,1320)}qué significa el
+Dialogue: 0,0:06:58.98,0:06:59.36,Default,,0,0,0,,{\c&H00303BFF\fs106\b-1\bord8\pos(540,1320)}ÉXITO.
+Dialogue: 0,0:06:59.68,0:07:00.14,Default,,0,0,0,,{\c&H00303BFF\fs97\b0\bord6\pos(540,1320)}Tu decide es
+Dialogue: 0,0:07:00.16,0:07:01.04,Default,,0,0,0,,{\c&H00303BFF\fs97\b0\bord6\pos(540,1320)}cuando rendirte y
+Dialogue: 0,0:07:01.06,0:07:01.74,Default,,0,0,0,,{\c&H00303BFF\fs97\b0\bord6\pos(540,1320)}la respuesta es
+Dialogue: 0,0:07:01.84,0:07:02.16,Default,,0,0,0,,{\c&H00303BFF\fs106\b-1\bord8\pos(540,1320)}NUNCA.
+Dialogue: 0,0:07:02.54,0:07:02.96,Default,,0,0,0,,{\c&H00303BFF\fs97\b0\bord6\pos(540,1320)}Creé en ti
+Dialogue: 0,0:07:02.98,0:07:03.56,Default,,0,0,0,,{\c&H00303BFF\fs97\b0\bord6\pos(540,1320)}porque el mundo
+Dialogue: 0,0:07:03.58,0:07:04.72,Default,,0,0,0,,{\c&H00303BFF\fs97\b0\bord6\pos(540,1320)}necesita tu luz.
+Dialogue: 0,0:07:05.02,0:07:06.02,Default,,0,0,0,,{\c&H00303BFF\fs97\b0\bord6\pos(540,1320)}Tu puedes lograrlo.
+Dialogue: 0,0:10:25.42,0:10:26.36,Default,,0,0,0,,{\c&H00303BFF\fs106\b-1\bord8\pos(540,1320)}ABANZA
+Dialogue: 0,0:10:26.46,0:10:26.82,Default,,0,0,0,,{\c&H00303BFF\fs106\b-1\bord8\pos(540,1320)}HOY.

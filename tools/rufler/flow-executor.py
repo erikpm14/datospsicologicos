@@ -21,6 +21,8 @@ from pathlib import Path
 from typing import Dict, Any, List, Optional
 from datetime import datetime
 
+_NO_WINDOW = subprocess.CREATE_NO_WINDOW if sys.platform.startswith("win") else 0
+
 
 class FlowExecutor:
     """Ejecuta workflows declarativos en YAML."""
@@ -123,7 +125,8 @@ class FlowExecutor:
                 cwd=str(self.backend_root),
                 capture_output=True,
                 text=True,
-                timeout=120
+                timeout=120,
+                creationflags=_NO_WINDOW,
             )
 
             if result.returncode == 0:
@@ -171,7 +174,8 @@ class FlowExecutor:
                 cwd=str(self.backend_root),
                 capture_output=True,
                 text=True,
-                timeout=180
+                timeout=180,
+                creationflags=_NO_WINDOW,
             )
 
             if result.returncode == 0:

@@ -1,0 +1,82 @@
+[
+  {
+    "hook": "Tu cerebro está saboteando tu relación",
+    "script": "Tu cerebro está saboteando tu relación\n\nCuando te da ansiedad, empiezas a controlar.\nControlar = tu pareja siente desconfianza.\nDesconfianza = se aleja más.\nTú lo ves como rechazo, así que controlas más.\n\nPero aquí viene lo importante:\nNo es por mala comunicación.\nEs porque tienes apego ansioso.\n\n¿Eres así en tus relaciones?",
+    "topic": "apego ansioso",
+    "pattern_used": "Tu cerebro está haciendo esto",
+    "estimated_retention": 0.52,
+    "theme": "relaciones"
+  },
+  {
+    "hook": "Esto explica por qué procrastinas",
+    "script": "Esto explica por qué procrastinas\n\nNo es porque eres perezoso.\nTu cerebro tiene miedo.\n\nMiedo al fracaso.\nMiedo a ser juzgado.\nMiedo a no ser lo suficientemente bueno.\n\nAsí que espera hasta el último momento.\nPorque la presión silencia el miedo.\n\nHasta que un día ya no funciona.\n\n¿Cuándo empezaste a procrastinar?",
+    "topic": "procrastinación",
+    "pattern_used": "Esto explica por qué siempre te pasa",
+    "estimated_retention": 0.55,
+    "theme": "autosabotaje"
+  },
+  {
+    "hook": "Estás eligiendo parejas iguales sin saberlo",
+    "script": "Estás eligiendo parejas iguales sin saberlo\n\nTu primer amor traumático.\nTe dejó el corazón roto.\n\nAhora buscas alguien \"diferente\".\nPero eliges el mismo tipo de persona.\n\nPor qué:\nTu cerebro repite patrones de infancia.\nBusca \"completar\" lo que falta.\nIntenta arreglarlo esta vez.\n\nPero no puedes arreglar a otra persona.\nSolo a ti mismo.\n\n¿Reconoces este patrón?",
+    "topic": "patrones relacionales",
+    "pattern_used": "Estás haciendo esto sin darte cuenta",
+    "estimated_retention": 0.58,
+    "theme": "relaciones"
+  },
+  {
+    "hook": "Hay algo en tu mente que te limita",
+    "script": "Hay algo en tu mente que te limita\n\nCrees que \"no eres lo suficientemente bueno\".\nPero eso no es verdad.\nEs un trauma emocional.\n\nDe niño: fracasabas → te criticaban.\nAhora: tu cerebro cree fracasar = ser inútil.\n\nSin embargo:\nFracasar es cómo aprendes.\nTodo lo que hoy dominas, antes fracasaste.\n\n¿De dónde viene tu limitación?",
+    "topic": "creencias limitantes",
+    "pattern_used": "Hay algo en tu mente que...",
+    "estimated_retention": 0.56,
+    "theme": "autoestima"
+  },
+  {
+    "hook": "Si haces esto, tu cerebro entra en pánico",
+    "script": "Si haces esto, tu cerebro entra en pánico\n\nSi dices \"no\" a algo.\nTu cerebro teme el rechazo.\n\nAsí que dices sí a todo.\nAunque no quieras.\nAunque te duela.\n\nPorque la gente feliz = tú estás bien.\nLa gente molesta = tú eres malo.\n\nPero aquí está el giro:\nNecesitas decepcionar a algunos.\nEs el precio de la libertad.\n\n¿A quién deberías decirle \"no\"?",
+    "topic": "complacencia",
+    "pattern_used": "Si haces esto, tu cerebro...",
+    "estimated_retention": 0.54,
+    "theme": "autosabotaje"
+  },
+  {
+    "hook": "Siempre escoges mal porque...",
+    "script": "Siempre escoges mal porque...\n\nTienes sesgo de confirmación.\nTu cerebro SOLO ve lo que quiere ver.\n\nCuando crees que alguien es malo:\nBúscas evidencia de que es malo.\nIgnoras todo lo demás.\n\nPor eso la gente siempre te parece igual.\nNo es porque sean iguales.\nEs porque TÚ no cambias lo que ves.\n\n¿Cuándo diste la última oportunidad?",
+    "topic": "sesgo de confirmación",
+    "pattern_used": "Siempre te pasa esto por...",
+    "estimated_retention": 0.53,
+    "theme": "sesgos cognitivos"
+  },
+  {
+    "hook": "Tu ansiedad no es debilidad",
+    "script": "Tu ansiedad no es debilidad\n\nEs un SISTEMA DE ALERTA.\nTe protege.\nQuiere que estés seguro.\n\nPero la sociedad dice:\n\"Tranquilízate.\"\n\"No seas miedoso.\"\n\nAsí que luchas contra ella.\nLo que la hace peor.\n\nSi aceptas tu ansiedad:\n\"Gracias cerebro, ya lo vi.\"\nSe relaja automáticamente.\n\n¿Cuándo aceptaste tu ansiedad por primera vez?",
+    "topic": "ansiedad",
+    "pattern_used": "Tu cerebro está haciendo esto",
+    "estimated_retention": 0.57,
+    "theme": "emociones"
+  },
+  {
+    "hook": "Estás buscando amor en el lugar equivocado",
+    "script": "Estás buscando amor en el lugar equivocado\n\nBuscas en parejas.\nPero vienes vacío emocionalmente.\n\nUna pareja no puede llenar un vacío interno.\nSolo tú puedes hacerlo.\n\nAsí que eliges a alguien que también está vacío.\nOs prometéis llenarse mutuamente.\nPero dos vacíos = relación tóxica.\n\nPrimero debes amarte a ti.\n\n¿Cuándo dejarás de buscar en otros?",
+    "topic": "dependencia emocional",
+    "pattern_used": "Estás haciendo esto sin darte cuenta",
+    "estimated_retention": 0.55,
+    "theme": "relaciones"
+  },
+  {
+    "hook": "Tu cerebro olvida lo importante",
+    "script": "Tu cerebro olvida lo importante\n\nRecuerdas cada crítica que recibiste.\nCada fracaso.\nCada momento donde te sentiste rechazado.\n\nOlvidas los logros.\nLas personas que te aman.\nLos momentos donde triunfaste.\n\nPor qué:\nTu cerebro está diseñado para supervivencia.\nLos peligros son prioritarios.\n\nAsí que te enfocas en lo negativo.\nY pierdes la alegría.\n\n¿Qué logro olvidaste celebrar?",
+    "topic": "sesgo negativo",
+    "pattern_used": "Tu cerebro está haciendo esto",
+    "estimated_retention": 0.51,
+    "theme": "sesgos cognitivos"
+  },
+  {
+    "hook": "Esto que dices mata tu relación",
+    "script": "Esto que dices mata tu relación\n\n\"Está bien, no importa.\"\nCuando algo SÍ importa.\n\nTu pareja siente que le mientes.\nQue no confías en ella.\nQue no le importa lo suficiente.\n\nAsí que se aleja.\nTú lo ves como desinterés.\nPero fue por tu silencio.\n\nLa verdad es incómoda.\nPero conecta.\nEl silencio destruye.\n\n¿Qué necesitas decir pero no dices?",
+    "topic": "comunicación",
+    "pattern_used": "Esto explica por qué siempre te pasa",
+    "estimated_retention": 0.56,
+    "theme": "relaciones"
+  }
+]

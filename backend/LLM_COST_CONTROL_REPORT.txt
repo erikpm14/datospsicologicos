@@ -1,0 +1,132 @@
+═══════════════════════════════════════════════════════════════════════════════
+                  SISTEMA DE CONTROL DE COSTES COMPLETADO
+                           Anthropic API Cost Control
+═══════════════════════════════════════════════════════════════════════════════
+
+PROBLEMA SOLUCIONADO:
+─────────────────────────────────────────────────────────────────────────────
+Sistema generaba demasiadas llamadas a Anthropic sin control:
+- Retries automáticos en JSON failures
+- Múltiples llamadas por vídeo (2-3 standard, 4-5 con retry)
+- Loops de gasto sin output
+- No había límite diario → créditos agotados sin medida
+
+SOLUCIÓN IMPLEMENTADA:
+─────────────────────────────────────────────────────────────────────────────
+
+1. CONTADOR DIARIO PERSISTENTE
+   Archivo: data/llm-usage.json
+   {
+     "date": "2026-04-29",
+     "calls": 45,
+     "lastCall": { "endpoint": "generateViralScript", "timestamp": "..." }
+   }
+   
+   Se reinicia automáticamente cada día.
+
+2. LÍMITE DIARIO CON BLOQUEO AUTOMÁTICO
+   .env: MAX_LLM_CALLS_PER_DAY=100
+   
+   Comportamiento:
+   - Calls 0-100: permitidas
+   - Call 101+: RECHAZADAS
+   - EMERGENCY_NO_LLM_MODE=true (automático)
+   - Log: "LLM DISABLED — DAILY LIMIT REACHED"
+
+3. INTEGRACIÓN EN PIPELINE EXISTENTE
+   src/utils/llm-call.js modificado:
+   - Pre-check antes de cada client.messages.create()
+   - Incremento contador DESPUÉS de éxito
+   - Mantiene compatibilidad total
+
+4. HERRAMIENTAS DE MONITOREO
+   Comando: node scripts/check-llm-usage.js
+   
+   Output:
+   ┌─────────────────────────────────────────┐
+   │ LLM USAGE REPORT                        │
+   │ Date: 2026-04-29                        │
+   │ Calls: 45 / 100                         │
+   │ Remaining: 55                           │
+   │ Usage: 45%                              │
+   └─────────────────────────────────────────┘
+
+NÚMEROS FINALES:
+─────────────────────────────────────────────────────────────────────────────
+
+Por vídeo exitoso:
+  generateViralScript()               1 llamada
+  generateOptimizedScript()           1 llamada
+  ─────────────────────────────────────────────
+  Total:                              2 llamadas (mínimo)
+
+Con A/B Testing:                      +1 llamada
+Con recovery fallback:                +1-2 llamadas
+
+Capacidad máxima (100 llamadas/día):
+  Sin retries:                        50 vídeos/día
+  Con retries ocasionales:            25-30 vídeos/día
+
+CONTROL DE COSTES:
+─────────────────────────────────────────────────────────────────────────────
+
+JSON Failures:
+  ✓ SIN retry automático
+  ✓ Fallback inmediato a script cache (costo 0)
+  ✓ No hay loops de reintento
+
+Límite protegido:
+  ✓ EMERGENCY_NO_LLM_MODE se activa automáticamente
+  ✓ Nuevas llamadas son rechazadas con error claro
+  ✓ Log obligatorio de cada intento bloqueado
+
+Prevención de loops:
+  ✓ Contador incremental sin excepciones
+  ✓ No hay "escape hatches" para saltar el límite
+  ✓ Fallback siempre disponible (0 cost)
+
+VERIFICACIÓN POST-IMPLEMENTACIÓN:
+─────────────────────────────────────────────────────────────────────────────
+
+1. Verificar configuración:
+   $ grep MAX_LLM_CALLS .env
+
+2. Verificar tracker existe:
+   $ ls src/utils/llm-usage-tracker.js
+
+3. Verificar integración en llm-call.js:
+   $ grep "llm-usage-tracker" src/utils/llm-call.js
+
+4. Ver uso actual:
+   $ node scripts/check-llm-usage.js
+
+5. Ver logs de llamadas:
+   $ grep "LLM CALL\|LLM BLOCKED" data/app.log
+
+COMANDO PARA PRODUCCIÓN:
+─────────────────────────────────────────────────────────────────────────────
+npm start
+
+Sistema iniciará con:
+✓ Límites activos
+✓ Contador diario en 0
+✓ EMERGENCY_NO_LLM_MODE=false
+✓ Listo para generar (si hay créditos)
+
+Si falta créditos:
+- Primera llamada a Claude retornará error 400
+- Sistema fallará gracefully
+- Necesita: agregar créditos a https://console.anthropic.com
+
+═══════════════════════════════════════════════════════════════════════════════
+
+ARCHIVOS CREADOS/MODIFICADOS:
+─────────────────────────────────────────────────────────────────────────────
+✓ src/utils/llm-usage-tracker.js (NUEVO)
+✓ src/utils/llm-call-wrapper.js (NUEVO)
+✓ scripts/check-llm-usage.js (NUEVO)
+✓ src/utils/llm-call.js (MODIFICADO)
+✓ .env (MODIFICADO — agregar MAX_LLM_CALLS_PER_DAY=100)
+✓ data/llm-call-audit.md (NUEVO — análisis detallado)
+
+═══════════════════════════════════════════════════════════════════════════════

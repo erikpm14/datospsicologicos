@@ -162,16 +162,14 @@ if (!fs.existsSync(TEST_OUTPUT_DIR)) {
 
       // Abrir carpeta
       console.log('🚀 Opening output folder...\n');
-      const { exec } = require('child_process');
+      const { spawn } = require('child_process');
       const isWindows = process.platform === 'win32';
-      const openCmd = isWindows
-        ? `explorer "${TEST_OUTPUT_DIR}"`
-        : `xdg-open "${TEST_OUTPUT_DIR}"`;
+      const openProc = isWindows
+        ? spawn('explorer', [TEST_OUTPUT_DIR], { windowsHide: true, shell: false, stdio: ['ignore', 'pipe', 'pipe'] })
+        : spawn(process.platform === 'darwin' ? 'open' : 'xdg-open', [TEST_OUTPUT_DIR], { windowsHide: true, shell: false, stdio: ['ignore', 'pipe', 'pipe'] });
 
-      exec(openCmd, (err) => {
-        if (err) {
-          console.log(`  (Manual open: ${TEST_OUTPUT_DIR})`);
-        }
+      openProc.on('error', () => {
+        console.log(`  (Manual open: ${TEST_OUTPUT_DIR})`);
       });
 
     } else {

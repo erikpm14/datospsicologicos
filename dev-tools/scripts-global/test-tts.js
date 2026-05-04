@@ -15,7 +15,7 @@ try {
 } catch {}
 
 const { MsEdgeTTS, OUTPUT_FORMAT } = require(path.resolve(__dirname, '../backend/node_modules/msedge-tts'));
-const { execFile } = require('child_process');
+const { safeExecFile } = require('../../backend/src/utils/safe-spawn');
 const fs   = require('fs');
 
 const TMP_DIR     = path.resolve(__dirname, '../backend/assets/kokoro');
@@ -128,7 +128,7 @@ async function testKokoroTTS() {
 
   const start = Date.now();
   return new Promise((resolve) => {
-    execFile(
+    safeExecFile(
       PYTHON_BIN,
       [KOKORO_SCRIPT, normalizedText, outPath, voice, speed],
       { timeout: 60_000 },

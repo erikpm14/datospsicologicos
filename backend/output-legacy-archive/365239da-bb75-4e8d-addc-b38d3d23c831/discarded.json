@@ -1,5 +1,0 @@
-{
-  "discardedAt": "2026-04-23T12:40:47.931Z",
-  "reason": "legacy_missing_render_metadata",
-  "details": "Removed from ready pool after visual pipeline fix; missing render-metadata validation."
-}

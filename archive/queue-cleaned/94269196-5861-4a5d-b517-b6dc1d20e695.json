@@ -1,0 +1,633 @@
+{
+  "id": "94269196-5861-4a5d-b517-b6dc1d20e695",
+  "createdAt": "2026-04-28T12:42:56.347Z",
+  "status": "done",
+  "progress": 100,
+  "performance": {
+    "label": "video-pipeline",
+    "startedAt": "2026-04-29T06:42:32.399Z",
+    "totalMs": 127183,
+    "phases": [
+      {
+        "name": "script_generation",
+        "startedAt": "2026-04-29T06:42:32.405Z",
+        "status": "completed",
+        "endedAt": "2026-04-29T06:42:32.409Z",
+        "durationMs": 4,
+        "source": "prefab",
+        "estimatedWords": 101,
+        "durationSeconds": 44
+      },
+      {
+        "name": "tts",
+        "startedAt": "2026-04-29T06:42:32.412Z",
+        "status": "completed",
+        "endedAt": "2026-04-29T06:44:05.211Z",
+        "durationMs": 92799,
+        "provider": "kokoro",
+        "estimatedDuration": 35.825333,
+        "wordBoundaries": 0
+      },
+      {
+        "name": "audio_postprocess",
+        "startedAt": "2026-04-29T06:44:05.214Z",
+        "status": "completed",
+        "endedAt": "2026-04-29T06:44:07.191Z",
+        "durationMs": 1977,
+        "outputPath": "C:\\Users\\Erik\\Desktop\\Generador_videos\\output\\1ab90461-5494-45d6-9a2c-edb21cf0d4a9\\voice_proc.mp3"
+      },
+      {
+        "name": "render",
+        "startedAt": "2026-04-29T06:44:07.194Z",
+        "status": "completed",
+        "endedAt": "2026-04-29T06:44:39.287Z",
+        "durationMs": 32092,
+        "outputPath": "C:\\Users\\Erik\\Desktop\\Generador_videos\\output\\1ab90461-5494-45d6-9a2c-edb21cf0d4a9\\output.mp4"
+      },
+      {
+        "name": "quality_check",
+        "startedAt": "2026-04-29T06:44:39.291Z",
+        "status": "completed",
+        "endedAt": "2026-04-29T06:44:39.581Z",
+        "durationMs": 290,
+        "passed": false,
+        "score": 85,
+        "threshold": 70
+      }
+    ],
+    "activePhase": null,
+    "jobId": "94269196-5861-4a5d-b517-b6dc1d20e695",
+    "videoId": "1ab90461-5494-45d6-9a2c-edb21cf0d4a9",
+    "topic": "dopamina y procrastinación diaria",
+    "result": "qc_failed"
+  },
+  "data": {
+    "topic": "dopamina y procrastinación diaria",
+    "prefabScript": {
+      "title": "dopamina_espera_mata",
+      "topic": "dopamina y procrastinación diaria",
+      "hook": "Tu dopamina te sabotea. No terminas nada.",
+      "open_loop": "Lo grave no es que postergues. Es por qué tu cuerpo te sabotea.",
+      "micro_value": "Tu dopamina sube anticipando, no terminando. Por eso empiezas pero nunca acabas nada.",
+      "escalation": "Trabajas ocho horas esperando el sofá. Pero tu móvil dispara dopamina más rápido que cualquier logro. Tu cerebro elige lo fácil. Siempre.",
+      "reengage": "Dejar cosas para después se convierte en tu droga favorita.",
+      "peak": "No eres vago. Tu dopamina busca disparos rápidos y predecibles. El trabajo real es lento, incierto, aburrido. Tu química te elige como enemigo.",
+      "open_ending": "¿Y si entiendes cómo funciona tu dopamina?",
+      "soft_cta": "Dime qué dejas siempre para mañana.",
+      "psychologicalFact": "La dopamina anticipatoria es más potente que la consumada.",
+      "viralTrigger": "identificacion",
+      "emotionalTrigger": "curiosity",
+      "effectName": "Incentive sensitization perpetua sin satisfacción",
+      "keywords": [
+        "dopamina",
+        "procrastinación"
+      ],
+      "claim": "Tu dopamina sube anticipando, no terminando. Por eso empiezas pero nunca acabas nada.",
+      "explanation": "Trabajas ocho horas esperando el sofá. Pero tu móvil dispara dopamina más rápido que cualquier logro. Tu cerebro elige lo fácil. Siempre. Dejar cosas para después se convierte en tu droga favorita. No eres vago. Tu dopamina busca disparos rápidos y predecibles. El trabajo real es lento, incierto, aburrido. Tu química te elige como enemigo.",
+      "cta": "¿Y si entiendes cómo funciona tu dopamina? Dime qué dejas siempre para mañana.",
+      "segments": [
+        {
+          "type": "HOOK",
+          "text": "Tu cerebro sabotea tu motivación cada día.",
+          "visualIntent": "punch zoom, texto impactante, fondo oscuro",
+          "emotion": "tension"
+        },
+        {
+          "type": "OPEN_LOOP",
+          "text": "Lo grave no es que postergues. Es por qué tu cuerpo te sabotea.",
+          "visualIntent": "zoom lento, rostro pensativo, tension",
+          "emotion": "curiosity"
+        },
+        {
+          "type": "MICRO_VALUE",
+          "text": "Tu dopamina sube anticipando, no terminando. Por eso empiezas pero nunca acabas nada.",
+          "visualIntent": "zoom lento, rostro pensativo, tension",
+          "emotion": "curiosity"
+        },
+        {
+          "type": "ESCALATION",
+          "text": "Trabajas ocho horas esperando el sofá. Pero tu móvil dispara dopamina más rápido que cualquier logro. Tu cerebro elige lo fácil. Siempre.",
+          "visualIntent": "zoom lento, rostro pensativo, tension",
+          "emotion": "curiosity"
+        },
+        {
+          "type": "REENGAGE",
+          "text": "Dejar cosas para después se convierte en tu droga favorita.",
+          "visualIntent": "cambio brusco, tension, zoom corto",
+          "emotion": "curiosity"
+        },
+        {
+          "type": "PEAK",
+          "text": "No eres vago. Tu dopamina busca disparos rápidos y predecibles. El trabajo real es lento, incierto, aburrido. Tu química te elige como enemigo.",
+          "visualIntent": "aislamiento, silueta, punch zoom",
+          "emotion": "impacto"
+        },
+        {
+          "type": "OPEN_ENDING",
+          "text": "¿Y si entiendes cómo funciona tu dopamina?",
+          "visualIntent": "zoom lento, rostro pensativo, tension",
+          "emotion": "curiosity"
+        },
+        {
+          "type": "SOFT_CTA",
+          "text": "Dime qué dejas siempre para mañana.",
+          "visualIntent": "zoom lento, rostro pensativo, tension",
+          "emotion": "cercania"
+        }
+      ],
+      "structureVersion": "open_loop_escalation_v1",
+      "hasReengage": true,
+      "segmentFeedback": [
+        {
+          "segment": "reengage",
+          "issue": "reengage poco agresivo"
+        },
+        {
+          "segment": "soft_cta",
+          "issue": "soft_cta poco conversacional"
+        }
+      ],
+      "segmentFeedbackSummary": [
+        "[reengage] reengage poco agresivo",
+        "[soft_cta] soft_cta poco conversacional"
+      ],
+      "estimatedWords": 101,
+      "durationSeconds": 44,
+      "fullScript": "Tu cerebro sabotea tu motivación cada día. Lo grave no es que postergues. Es por qué tu cuerpo te sabotea. Tu dopamina sube anticipando, no terminando. Por eso empiezas pero nunca acabas nada. Trabajas ocho horas esperando el sofá. Pero tu móvil dispara dopamina más rápido que cualquier logro. Tu cerebro elige lo fácil. Siempre. Dejar cosas para después se convierte en tu droga favorita. No eres vago. Tu dopamina busca disparos rápidos y predecibles. El trabajo real es lento, incierto, aburrido. Tu química te elige como enemigo. ¿Y si entiendes cómo funciona tu dopamina? Dime qué dejas siempre para mañana.",
+      "videoInstructions": {
+        "singleFocus": true,
+        "visualStyle": [
+          "estetica cinematografica oscura",
+          "fondo negro o casi negro",
+          "alto contraste con azul electrico dominante",
+          "acento rojo oscuro solo para tension",
+          "single focus constante sin overlays complejos",
+          "cambio de plano cada 2-3 segundos",
+          "zoom progresivo y movimiento suave"
+        ],
+        "subtitleStyle": "tipografia condensada bold, blanco frio con acentos azul electrico y rojo oscuro, subtitulos grandes y sincronizados",
+        "audioStyle": {
+          "voice": "voz clara y con ritmo",
+          "pauses": [
+            "hook",
+            "reengage",
+            "peak"
+          ]
+        },
+        "scenes": [
+          {
+            "segment": "hook",
+            "timing": "0-2.2s",
+            "visual": "primer plano de cerebro luminoso o rostro inquietante, relacionado con dopamina y procrastinación diaria, fondo negro o muy oscuro, contraste alto, azul electrico y rojo oscuro como acentos, zoom lento, iluminacion dramatica, sensacion de misterio psicologico",
+            "cut": "corte rapido con push-in",
+            "startSeconds": 0,
+            "endSeconds": 2.2,
+            "durationSeconds": 2.2,
+            "shotType": "primer plano",
+            "framing": "primer plano",
+            "intensity": "alta",
+            "movement": "push-in rapido",
+            "transition": "hard cut",
+            "emphasis": "scroll-stop inmediato",
+            "syncCue": "movimiento continuo con remate en palabra fuerte"
+          },
+          {
+            "segment": "open_loop",
+            "timing": "2.2-5s",
+            "visual": "ojo humano extremo o gesto suspendido en sombra, relacionado con dopamina y procrastinación diaria, fondo negro o muy oscuro, contraste alto, azul electrico y rojo oscuro como acentos, zoom lento, iluminacion dramatica, sensacion de misterio psicologico",
+            "cut": "zoom corto continuo",
+            "startSeconds": 2.2,
+            "endSeconds": 5,
+            "durationSeconds": 2.8,
+            "shotType": "plano detalle",
+            "framing": "plano detalle",
+            "intensity": "alta",
+            "movement": "zoom lento continuo",
+            "transition": "match cut",
+            "emphasis": "curiosidad sostenida",
+            "syncCue": "movimiento continuo con remate en palabra fuerte"
+          },
+          {
+            "segment": "micro_value",
+            "timing": "5-8.2s",
+            "visual": "detalle simbolico del mecanismo mental en glow azul, relacionado con dopamina y procrastinación diaria, fondo negro o muy oscuro, contraste alto, azul electrico y rojo oscuro como acentos, zoom lento, iluminacion dramatica, sensacion de misterio psicologico",
+            "cut": "cambio de plano limpio",
+            "startSeconds": 5,
+            "endSeconds": 8.2,
+            "durationSeconds": 3.2,
+            "shotType": "plano medio",
+            "framing": "plano medio",
+            "intensity": "media",
+            "movement": "micro paneo lateral",
+            "transition": "cut limpio",
+            "emphasis": "primer pago de valor",
+            "syncCue": "movimiento continuo con remate en palabra fuerte"
+          },
+          {
+            "segment": "escalation",
+            "timing": "8.2-11.6s",
+            "visual": "silueta humana o tension social en contraluz, relacionado con dopamina y procrastinación diaria, fondo negro o muy oscuro, contraste alto, azul electrico y rojo oscuro como acentos, zoom lento, iluminacion dramatica, sensacion de misterio psicologico",
+            "cut": "cortes cada 2-3s",
+            "startSeconds": 8.2,
+            "endSeconds": 11.6,
+            "durationSeconds": 3.4,
+            "shotType": "plano abierto",
+            "framing": "plano abierto",
+            "intensity": "media-alta",
+            "movement": "acercamiento progresivo",
+            "transition": "cut ritmico",
+            "emphasis": "tension creciente",
+            "syncCue": "movimiento continuo con remate en palabra fuerte"
+          },
+          {
+            "segment": "reengage",
+            "timing": "11.6-14.2s",
+            "visual": "cambio brusco a plano mas cercano con rojo alerta, relacionado con dopamina y procrastinación diaria, fondo negro o muy oscuro, contraste alto, azul electrico y rojo oscuro como acentos, zoom lento, iluminacion dramatica, sensacion de misterio psicologico",
+            "cut": "cambio brusco + zoom agresivo",
+            "startSeconds": 11.6,
+            "endSeconds": 14.2,
+            "durationSeconds": 2.6,
+            "shotType": "primer plano",
+            "framing": "primer plano",
+            "intensity": "muy alta",
+            "movement": "zoom agresivo",
+            "transition": "whip cut",
+            "emphasis": "ruptura de patron",
+            "syncCue": "acercamiento en frase clave"
+          },
+          {
+            "segment": "peak",
+            "timing": "14.2-17.8s",
+            "visual": "escena humana real de conflicto, pareja o decision, relacionado con dopamina y procrastinación diaria, fondo negro o muy oscuro, contraste alto, azul electrico y rojo oscuro como acentos, zoom lento, iluminacion dramatica, sensacion de misterio psicologico",
+            "cut": "alternancia de planos cerrados",
+            "startSeconds": 14.2,
+            "endSeconds": 17.8,
+            "durationSeconds": 3.6,
+            "shotType": "plano medio",
+            "framing": "plano medio",
+            "intensity": "maxima",
+            "movement": "push-in sostenido",
+            "transition": "impact cut",
+            "emphasis": "impacto emocional",
+            "syncCue": "acercamiento en frase clave"
+          },
+          {
+            "segment": "open_ending",
+            "timing": "17.8-20.9s",
+            "visual": "figura sola alejandose en oscuridad con particulas, relacionado con dopamina y procrastinación diaria, fondo negro o muy oscuro, contraste alto, azul electrico y rojo oscuro como acentos, zoom lento, iluminacion dramatica, sensacion de misterio psicologico",
+            "cut": "desaceleracion ligera",
+            "startSeconds": 17.8,
+            "endSeconds": 20.9,
+            "durationSeconds": 3.1,
+            "shotType": "plano abierto",
+            "framing": "plano abierto",
+            "intensity": "media",
+            "movement": "zoom out suave",
+            "transition": "cut limpio",
+            "emphasis": "eco mental",
+            "syncCue": "movimiento continuo con remate en palabra fuerte"
+          },
+          {
+            "segment": "soft_cta",
+            "timing": "20.9-23.6s",
+            "visual": "rostro o silueta frontal con espacio negativo para cierre, relacionado con dopamina y procrastinación diaria, fondo negro o muy oscuro, contraste alto, azul electrico y rojo oscuro como acentos, zoom lento, iluminacion dramatica, sensacion de misterio psicologico",
+            "cut": "ultimo corte limpio",
+            "startSeconds": 20.9,
+            "endSeconds": 23.6,
+            "durationSeconds": 2.7,
+            "shotType": "plano detalle",
+            "framing": "plano detalle",
+            "intensity": "media",
+            "movement": "micro acercamiento",
+            "transition": "hold corto",
+            "emphasis": "cierre abierto",
+            "syncCue": "movimiento continuo con remate en palabra fuerte"
+          }
+        ],
+        "style": {
+          "theme": "psicologia oscura / mente humana / comportamiento",
+          "colorPalette": "negro absoluto, azul electrico, azul neon frio, rojo oscuro, blanco frio",
+          "visualStyle": "cinematografico, minimalista, alto contraste, single focus",
+          "lighting": "oscura, dramatica, contraluz duro, glow electrico dirigido, sombras marcadas",
+          "cameraMotion": "zoom lento constante, push-in suave, micro paneo lateral, cambio de plano cada 2-3 segundos",
+          "effects": "glow ligero, particulas sutiles, neblina tenue, ruido cinematografico muy fino",
+          "composition": "single focus, sujeto dominante a la derecha o centrado, texto respirando a la izquierda, primeros planos y siluetas, profundidad negativa",
+          "emotionalTone": "misterio psicologico, obsesion, tension contenida, intriga oscura",
+          "consistencyRules": [
+            "una sola escena principal por segmento",
+            "fondo siempre oscuro o casi negro",
+            "usar azul electrico como color dominante y rojo solo para tension o reengage",
+            "priorizar cerebros, ojos, siluetas y escenas humanas reconocibles",
+            "evitar stock luminoso, lifestyle genérico o composiciones planas"
+          ],
+          "clipKeywords": [
+            "dopamina",
+            "procrastinación",
+            "glowing brain dark background",
+            "blue eye close up dark",
+            "person silhouette red light",
+            "couple argument silhouette blue light",
+            "moody face close up shadow",
+            "dark cinematic person thinking"
+          ]
+        },
+        "clipKeywords": [
+          "dopamina",
+          "procrastinación",
+          "glowing brain dark background",
+          "blue eye close up dark",
+          "person silhouette red light",
+          "couple argument silhouette blue light",
+          "moody face close up shadow",
+          "dark cinematic person thinking"
+        ],
+        "rhythmRule": "cambio visual cada 2-3 segundos, sin escenas estaticas ni repeticiones consecutivas de encuadre",
+        "timeline": [
+          {
+            "segment": "hook",
+            "timing": "0-2.2s",
+            "durationSeconds": 2.2,
+            "shotType": "primer plano",
+            "intensity": "alta",
+            "movement": "push-in rapido",
+            "transition": "hard cut"
+          },
+          {
+            "segment": "open_loop",
+            "timing": "2.2-5s",
+            "durationSeconds": 2.8,
+            "shotType": "plano detalle",
+            "intensity": "alta",
+            "movement": "zoom lento continuo",
+            "transition": "match cut"
+          },
+          {
+            "segment": "micro_value",
+            "timing": "5-8.2s",
+            "durationSeconds": 3.2,
+            "shotType": "plano medio",
+            "intensity": "media",
+            "movement": "micro paneo lateral",
+            "transition": "cut limpio"
+          },
+          {
+            "segment": "escalation",
+            "timing": "8.2-11.6s",
+            "durationSeconds": 3.4,
+            "shotType": "plano abierto",
+            "intensity": "media-alta",
+            "movement": "acercamiento progresivo",
+            "transition": "cut ritmico"
+          },
+          {
+            "segment": "reengage",
+            "timing": "11.6-14.2s",
+            "durationSeconds": 2.6,
+            "shotType": "primer plano",
+            "intensity": "muy alta",
+            "movement": "zoom agresivo",
+            "transition": "whip cut"
+          },
+          {
+            "segment": "peak",
+            "timing": "14.2-17.8s",
+            "durationSeconds": 3.6,
+            "shotType": "plano medio",
+            "intensity": "maxima",
+            "movement": "push-in sostenido",
+            "transition": "impact cut"
+          },
+          {
+            "segment": "open_ending",
+            "timing": "17.8-20.9s",
+            "durationSeconds": 3.1,
+            "shotType": "plano abierto",
+            "intensity": "media",
+            "movement": "zoom out suave",
+            "transition": "cut limpio"
+          },
+          {
+            "segment": "soft_cta",
+            "timing": "20.9-23.6s",
+            "durationSeconds": 2.7,
+            "shotType": "plano detalle",
+            "intensity": "media",
+            "movement": "micro acercamiento",
+            "transition": "hold corto"
+          }
+        ]
+      },
+      "growthContext": {
+        "nextTopic": "dopamine",
+        "hookType": "challenge",
+        "emotionalTrigger": "curiosity",
+        "angle": "dopamina y procrastinación diaria",
+        "avoidTopics": [
+          "habits",
+          "procrastination",
+          "cognitive_biases",
+          "motivation",
+          "body_language",
+          "perception",
+          "memory",
+          "self_talk",
+          "dopamine y redes sociales",
+          "relationships",
+          "decision_making",
+          "attention",
+          "social_patterns",
+          "emotional_patterns",
+          "emotions"
+        ],
+        "avoidRecentHooks": [
+          "Tu cerebro está literalmente adicto a buscar, no a encontrar",
+          "Tu teléfono te roba dopamina cada vez que lo abres",
+          "Tu miedo decide antes que tu cerebro.",
+          "Llevas años queriendo dejar ese hábito y no lo consigues.",
+          "Tu cerebro decide sin pedirte permiso.",
+          "Tu cerebro decide sin pedirte permiso.",
+          "Llevas años queriendo dejar ese hábito y no lo consigues.",
+          "Eliges parejas iguales a tu peor relación pasada."
+        ],
+        "reasoning": "Topic 'dopamine' por estrategia explore. [TRENDING — boosteado por señal de tendencia actual] Saturados evitados: habits, procrastination, cognitive_biases, motivation, body_language, perception, memory, self_talk, dopamine y redes sociales, relationships, decision_making, attention, social_patterns, emotional_patterns, emotions.",
+        "confidence": 0.5,
+        "strategy": "explore",
+        "decisionAt": "2026-04-28T12:42:27.240Z",
+        "fallbackGenerator": "best-available",
+        "fallbackReason": "virality 58/60 | [hook] hook genérico (penalty) | [reengage] reengage poco agresivo (penalty) | [soft_cta] soft_cta poco conversacional (penalty)"
+      },
+      "viralityScore": 58,
+      "viralityBreakdown": {
+        "hookStrength": 20,
+        "emotionalTrigger": 11,
+        "relatability": 10,
+        "loopPotential": 15,
+        "durationBonus": 2
+      },
+      "formatMatchScore": 81,
+      "formatMatchBreakdown": {
+        "hookFormat": 11,
+        "brevity": 12,
+        "clarity": 15,
+        "narrativeRhythm": 8,
+        "psychologicalImpact": 8,
+        "scrollStop": 3,
+        "infoDensity": 6,
+        "earlyRevelation": 8,
+        "singleIdea": 5,
+        "reengage": 5
+      },
+      "formatMatchSegmentGaps": [
+        "[reengage] reengage poco agresivo",
+        "[soft_cta] soft_cta poco conversacional"
+      ],
+      "formatMatchGaps": [
+        "Hook demasiado suave — necesita impacto brutal en el segundo 0, sin intro",
+        "Hook no para el scroll — falta tensión, shock o reconocimiento inmediato",
+        "[reengage] reengage poco agresivo",
+        "[soft_cta] soft_cta poco conversacional"
+      ],
+      "emotionalImpactScore": 47,
+      "emotionalImpactBreakdown": {
+        "powerWords": 12,
+        "personalId": 20,
+        "surpriseFactor": 5,
+        "visceral": 0,
+        "tensionResolution": 10
+      },
+      "approved": true,
+      "rejectionReason": null,
+      "selectionPenalties": [
+        "virality_low:58",
+        "[reengage] reengage poco agresivo",
+        "[soft_cta] soft_cta poco conversacional"
+      ],
+      "llmMetrics": {
+        "llm_total_calls": 5,
+        "llm_parse_fail": true,
+        "llm_recovery_used": true,
+        "llm_hard_fail": false,
+        "emergency_fallback_used": false,
+        "llm_schema_fail": false,
+        "llm_truncated_suspected": true
+      },
+      "usedRecovery": true,
+      "generationSource": "generateOptimizedScript",
+      "llmPath": [
+        "generateViralScript",
+        "generateOptimizedScript"
+      ],
+      "generationFallback": "best-available",
+      "usedLastValid": false,
+      "usedEmergencyFallback": false,
+      "approvalBypassReason": null,
+      "final_generation_route": "generateViralScript -> generateOptimizedScript",
+      "total_llm_calls": 5,
+      "fallback_level_reached": 1,
+      "quickOptimizedSegment": "hook",
+      "quickOptimizedReason": "[hook] hook genérico",
+      "selectedQuality": "acceptable",
+      "approvalBypass": "best_available_after_3_attempts",
+      "bestAvailableScore": 66,
+      "selectionReasons": [
+        "virality_low:58",
+        "[hook] hook genérico",
+        "[reengage] reengage poco agresivo",
+        "[soft_cta] soft_cta poco conversacional"
+      ],
+      "abVariantId": "v_a",
+      "slotTracking": {
+        "batchId": null,
+        "slotId": null,
+        "plannedOrder": null,
+        "plannedRole": null,
+        "plannedCluster": null,
+        "plannedHookType": null,
+        "plannedMicroAction": null,
+        "recommendedCandidateId": null,
+        "recommendedCandidateTitle": null,
+        "attributionType": "unplanned",
+        "slotState": "unplanned",
+        "assignmentConfidence": 0,
+        "traceConfidence": 0,
+        "exactTraceAvailable": false,
+        "abLinked": true
+      }
+    },
+    "growthContext": {
+      "nextTopic": "dopamine",
+      "hookType": "challenge",
+      "emotionalTrigger": "curiosity",
+      "angle": "dopamina y procrastinación diaria",
+      "avoidTopics": [
+        "habits",
+        "procrastination",
+        "cognitive_biases",
+        "motivation",
+        "body_language",
+        "perception",
+        "memory",
+        "self_talk",
+        "dopamine y redes sociales",
+        "relationships",
+        "decision_making",
+        "attention",
+        "social_patterns",
+        "emotional_patterns",
+        "emotions"
+      ],
+      "avoidRecentHooks": [
+        "Tu cerebro está literalmente adicto a buscar, no a encontrar",
+        "Tu teléfono te roba dopamina cada vez que lo abres",
+        "Tu miedo decide antes que tu cerebro.",
+        "Llevas años queriendo dejar ese hábito y no lo consigues.",
+        "Tu cerebro decide sin pedirte permiso.",
+        "Tu cerebro decide sin pedirte permiso.",
+        "Llevas años queriendo dejar ese hábito y no lo consigues.",
+        "Eliges parejas iguales a tu peor relación pasada."
+      ],
+      "reasoning": "Topic 'dopamine' por estrategia explore. [TRENDING — boosteado por señal de tendencia actual] Saturados evitados: habits, procrastination, cognitive_biases, motivation, body_language, perception, memory, self_talk, dopamine y redes sociales, relationships, decision_making, attention, social_patterns, emotional_patterns, emotions.",
+      "confidence": 0.5,
+      "strategy": "explore",
+      "decisionAt": "2026-04-28T12:42:27.240Z"
+    },
+    "hookId": null,
+    "themeIndex": 47,
+    "slotTracking": {
+      "batchId": null,
+      "slotId": null,
+      "plannedOrder": null,
+      "plannedRole": null,
+      "plannedCluster": null,
+      "plannedHookType": null,
+      "plannedMicroAction": null,
+      "recommendedCandidateId": null,
+      "recommendedCandidateTitle": null,
+      "attributionType": "unplanned",
+      "slotState": "unplanned",
+      "assignmentConfidence": 0,
+      "traceConfidence": 0,
+      "exactTraceAvailable": false,
+      "abLinked": true
+    }
+  },
+  "startedAt": "2026-04-29T06:42:32.400Z",
+  "videoId": "1ab90461-5494-45d6-9a2c-edb21cf0d4a9",
+  "lastStage": "render_done",
+  "lastProgressAt": "2026-04-29T06:44:39.287Z",
+  "recoveredAt": "2026-04-29T06:42:32.394Z",
+  "recoveredFrom": "active",
+  "result": {
+    "videoId": "1ab90461-5494-45d6-9a2c-edb21cf0d4a9",
+    "skipped": true,
+    "qcScore": 85,
+    "qcReasons": [
+      "render without visible visuals",
+      "virality 58 < 65",
+      "subtitle_script_mismatch",
+      "hook_not_in_audio",
+      "package_integrity_failed"
+    ]
+  },
+  "completedAt": "2026-04-29T06:44:39.582Z"
+}

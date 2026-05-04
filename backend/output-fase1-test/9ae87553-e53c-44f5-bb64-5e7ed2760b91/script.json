@@ -1,0 +1,490 @@
+{
+  "title": "patron_emocional_atrapado_1777464439365",
+  "topic": "emotional_patterns",
+  "hook": "Tu jefe te grita y tu cuerpo reacciona igual que con tu padre.",
+  "open_loop": "Pero no es culpa tuya. Es un patrón que repites sin darte cuenta.",
+  "micro_value": "El efecto repetición emocional: tu cerebro confunde caras, voces, situaciones. Replica la reacción antigua automáticamente.",
+  "escalation": "Mira, alguien levanta la voz en una reunión. Tú ya estás en modo defensa. Sudas, te cierras, hablas menos. Tu compañero al lado ni se inmuta. Mismo estímulo, respuestas opuestas. ¿Por qué?",
+  "reengage": "Y aquí viene lo peor: tu cuerpo no sabe que ya no estás en peligro.",
+  "peak": "Esa reacción no es debilidad. Es fidelidad a un trauma antiguo. Tu cuerpo te protege como entonces. El truco es romper la asociación, no ignorar la alarma.",
+  "open_ending": "¿A cuántas personas hoy te has cerrado sin motivo real?",
+  "soft_cta": "Descubre tu patrón específico en el siguiente video.",
+  "psychologicalFact": "El condicionamiento emocional clásico asocia situaciones nuevas con miedos antiguos en 0.2 segundos.",
+  "viralTrigger": "identificacion",
+  "emotionalTrigger": "curiosity",
+  "effectName": "Transferencia emocional o condicionamiento clásico reactivado",
+  "keywords": [
+    "patrón emocional",
+    "reacción automática"
+  ],
+  "claim": "El efecto repetición emocional: tu cerebro confunde caras, voces, situaciones. Replica la reacción antigua automáticamente.",
+  "explanation": "Mira, alguien levanta la voz en una reunión. Tú ya estás en modo defensa. Sudas, te cierras, hablas menos. Tu compañero al lado ni se inmuta. Mismo estímulo, respuestas opuestas. ¿Por qué? Porque llevas una grabación emocional que nadie más tiene. Esa reacción no es debilidad. Es fidelidad a un trauma antiguo. Tu cuerpo te protege como entonces. El truco es romper la asociación, no ignorar la alarma.",
+  "cta": "¿A cuántas personas hoy te has cerrado sin motivo real? Descubre tu patrón específico en el siguiente video.",
+  "segments": [
+    {
+      "type": "HOOK",
+      "text": "Tu jefe te grita y tu cuerpo reacciona igual que con tu padre.",
+      "visualIntent": "punch zoom, texto impactante, fondo oscuro",
+      "emotion": "tension"
+    },
+    {
+      "type": "OPEN_LOOP",
+      "text": "Pero no es culpa tuya. Es un patrón que repites sin darte cuenta.",
+      "visualIntent": "zoom lento, rostro pensativo, tension",
+      "emotion": "curiosity"
+    },
+    {
+      "type": "MICRO_VALUE",
+      "text": "El efecto repetición emocional: tu cerebro confunde caras, voces, situaciones. Replica la reacción antigua automáticamente.",
+      "visualIntent": "zoom lento, rostro pensativo, tension",
+      "emotion": "curiosity"
+    },
+    {
+      "type": "ESCALATION",
+      "text": "Mira, alguien levanta la voz en una reunión. Tú ya estás en modo defensa. Sudas, te cierras, hablas menos. Tu compañero al lado ni se inmuta. Mismo estímulo, respuestas opuestas. ¿Por qué?",
+      "visualIntent": "zoom lento, rostro pensativo, tension",
+      "emotion": "curiosity"
+    },
+    {
+      "type": "REENGAGE",
+      "text": "Porque llevas una grabación emocional que nadie más tiene.",
+      "visualIntent": "cambio brusco, tension, zoom corto",
+      "emotion": "curiosity"
+    },
+    {
+      "type": "PEAK",
+      "text": "Esa reacción no es debilidad. Es fidelidad a un trauma antiguo. Tu cuerpo te protege como entonces. El truco es romper la asociación, no ignorar la alarma.",
+      "visualIntent": "aislamiento, silueta, punch zoom",
+      "emotion": "impacto"
+    },
+    {
+      "type": "OPEN_ENDING",
+      "text": "¿A cuántas personas hoy te has cerrado sin motivo real?",
+      "visualIntent": "zoom lento, rostro pensativo, tension",
+      "emotion": "curiosity"
+    },
+    {
+      "type": "SOFT_CTA",
+      "text": "Descubre tu patrón específico en el siguiente video.",
+      "visualIntent": "zoom lento, rostro pensativo, tension",
+      "emotion": "cercania"
+    }
+  ],
+  "structureVersion": "open_loop_escalation_v1",
+  "hasReengage": true,
+  "segmentFeedback": [
+    {
+      "segment": "reengage",
+      "issue": "reengage poco agresivo"
+    },
+    {
+      "segment": "soft_cta",
+      "issue": "soft_cta poco conversacional"
+    }
+  ],
+  "segmentFeedbackSummary": [
+    "[reengage] reengage poco agresivo",
+    "[soft_cta] soft_cta poco conversacional"
+  ],
+  "estimatedWords": 133,
+  "durationSeconds": 58,
+  "fullScript": "Tu jefe te grita y tu cuerpo reacciona igual que con tu padre. Pero no es culpa tuya. Es un patrón que repites sin darte cuenta. El efecto repetición emocional: tu cerebro confunde caras, voces, situaciones. Replica la reacción antigua automáticamente. Mira, alguien levanta la voz en una reunión. Tú ya estás en modo defensa. Sudas, te cierras, hablas menos. Tu compañero al lado ni se inmuta. Mismo estímulo, respuestas opuestas. ¿Por qué? Porque llevas una grabación emocional que nadie más tiene. Esa reacción no es debilidad. Es fidelidad a un trauma antiguo. Tu cuerpo te protege como entonces. El truco es romper la asociación, no ignorar la alarma. ¿A cuántas personas hoy te has cerrado sin motivo real? Descubre tu patrón específico en el siguiente video.",
+  "videoInstructions": {
+    "singleFocus": true,
+    "visualStyle": [
+      "estetica cinematografica oscura",
+      "fondo negro o casi negro",
+      "alto contraste con azul electrico dominante",
+      "acento rojo oscuro solo para tension",
+      "single focus constante sin overlays complejos",
+      "cambio de plano cada 2-3 segundos",
+      "zoom progresivo y movimiento suave"
+    ],
+    "subtitleStyle": "tipografia condensada bold, blanco frio con acentos azul electrico y rojo oscuro, subtitulos grandes y sincronizados",
+    "audioStyle": {
+      "voice": "voz clara y con ritmo",
+      "pauses": [
+        "hook",
+        "reengage",
+        "peak"
+      ]
+    },
+    "scenes": [
+      {
+        "segment": "hook",
+        "timing": "0-2.2s",
+        "visual": "primer plano de cerebro luminoso o rostro inquietante, relacionado con emotional_patterns, fondo negro o muy oscuro, contraste alto, azul electrico y rojo oscuro como acentos, zoom lento, iluminacion dramatica, sensacion de misterio psicologico",
+        "cut": "corte rapido con push-in",
+        "startSeconds": 0,
+        "endSeconds": 2.2,
+        "durationSeconds": 2.2,
+        "shotType": "primer plano",
+        "framing": "primer plano",
+        "intensity": "alta",
+        "movement": "push-in rapido",
+        "transition": "hard cut",
+        "emphasis": "scroll-stop inmediato",
+        "syncCue": "movimiento continuo con remate en palabra fuerte"
+      },
+      {
+        "segment": "open_loop",
+        "timing": "2.2-5s",
+        "visual": "ojo humano extremo o gesto suspendido en sombra, relacionado con emotional_patterns, fondo negro o muy oscuro, contraste alto, azul electrico y rojo oscuro como acentos, zoom lento, iluminacion dramatica, sensacion de misterio psicologico",
+        "cut": "zoom corto continuo",
+        "startSeconds": 2.2,
+        "endSeconds": 5,
+        "durationSeconds": 2.8,
+        "shotType": "plano detalle",
+        "framing": "plano detalle",
+        "intensity": "alta",
+        "movement": "zoom lento continuo",
+        "transition": "match cut",
+        "emphasis": "curiosidad sostenida",
+        "syncCue": "movimiento continuo con remate en palabra fuerte"
+      },
+      {
+        "segment": "micro_value",
+        "timing": "5-8.2s",
+        "visual": "detalle simbolico del mecanismo mental en glow azul, relacionado con emotional_patterns, fondo negro o muy oscuro, contraste alto, azul electrico y rojo oscuro como acentos, zoom lento, iluminacion dramatica, sensacion de misterio psicologico",
+        "cut": "cambio de plano limpio",
+        "startSeconds": 5,
+        "endSeconds": 8.2,
+        "durationSeconds": 3.2,
+        "shotType": "plano medio",
+        "framing": "plano medio",
+        "intensity": "media",
+        "movement": "micro paneo lateral",
+        "transition": "cut limpio",
+        "emphasis": "primer pago de valor",
+        "syncCue": "movimiento continuo con remate en palabra fuerte"
+      },
+      {
+        "segment": "escalation",
+        "timing": "8.2-11.6s",
+        "visual": "silueta humana o tension social en contraluz, relacionado con emotional_patterns, fondo negro o muy oscuro, contraste alto, azul electrico y rojo oscuro como acentos, zoom lento, iluminacion dramatica, sensacion de misterio psicologico",
+        "cut": "cortes cada 2-3s",
+        "startSeconds": 8.2,
+        "endSeconds": 11.6,
+        "durationSeconds": 3.4,
+        "shotType": "plano abierto",
+        "framing": "plano abierto",
+        "intensity": "media-alta",
+        "movement": "acercamiento progresivo",
+        "transition": "cut ritmico",
+        "emphasis": "tension creciente",
+        "syncCue": "movimiento continuo con remate en palabra fuerte"
+      },
+      {
+        "segment": "reengage",
+        "timing": "11.6-14.2s",
+        "visual": "cambio brusco a plano mas cercano con rojo alerta, relacionado con emotional_patterns, fondo negro o muy oscuro, contraste alto, azul electrico y rojo oscuro como acentos, zoom lento, iluminacion dramatica, sensacion de misterio psicologico",
+        "cut": "cambio brusco + zoom agresivo",
+        "startSeconds": 11.6,
+        "endSeconds": 14.2,
+        "durationSeconds": 2.6,
+        "shotType": "primer plano",
+        "framing": "primer plano",
+        "intensity": "muy alta",
+        "movement": "zoom agresivo",
+        "transition": "whip cut",
+        "emphasis": "ruptura de patron",
+        "syncCue": "acercamiento en frase clave"
+      },
+      {
+        "segment": "peak",
+        "timing": "14.2-17.8s",
+        "visual": "escena humana real de conflicto, pareja o decision, relacionado con emotional_patterns, fondo negro o muy oscuro, contraste alto, azul electrico y rojo oscuro como acentos, zoom lento, iluminacion dramatica, sensacion de misterio psicologico",
+        "cut": "alternancia de planos cerrados",
+        "startSeconds": 14.2,
+        "endSeconds": 17.8,
+        "durationSeconds": 3.6,
+        "shotType": "plano medio",
+        "framing": "plano medio",
+        "intensity": "maxima",
+        "movement": "push-in sostenido",
+        "transition": "impact cut",
+        "emphasis": "impacto emocional",
+        "syncCue": "acercamiento en frase clave"
+      },
+      {
+        "segment": "open_ending",
+        "timing": "17.8-20.9s",
+        "visual": "figura sola alejandose en oscuridad con particulas, relacionado con emotional_patterns, fondo negro o muy oscuro, contraste alto, azul electrico y rojo oscuro como acentos, zoom lento, iluminacion dramatica, sensacion de misterio psicologico",
+        "cut": "desaceleracion ligera",
+        "startSeconds": 17.8,
+        "endSeconds": 20.9,
+        "durationSeconds": 3.1,
+        "shotType": "plano abierto",
+        "framing": "plano abierto",
+        "intensity": "media",
+        "movement": "zoom out suave",
+        "transition": "cut limpio",
+        "emphasis": "eco mental",
+        "syncCue": "movimiento continuo con remate en palabra fuerte"
+      },
+      {
+        "segment": "soft_cta",
+        "timing": "20.9-23.6s",
+        "visual": "rostro o silueta frontal con espacio negativo para cierre, relacionado con emotional_patterns, fondo negro o muy oscuro, contraste alto, azul electrico y rojo oscuro como acentos, zoom lento, iluminacion dramatica, sensacion de misterio psicologico",
+        "cut": "ultimo corte limpio",
+        "startSeconds": 20.9,
+        "endSeconds": 23.6,
+        "durationSeconds": 2.7,
+        "shotType": "plano detalle",
+        "framing": "plano detalle",
+        "intensity": "media",
+        "movement": "micro acercamiento",
+        "transition": "hold corto",
+        "emphasis": "cierre abierto",
+        "syncCue": "movimiento continuo con remate en palabra fuerte"
+      }
+    ],
+    "style": {
+      "theme": "psicologia oscura / mente humana / comportamiento",
+      "colorPalette": "negro absoluto, azul electrico, azul neon frio, rojo oscuro, blanco frio",
+      "visualStyle": "cinematografico, minimalista, alto contraste, single focus",
+      "lighting": "oscura, dramatica, contraluz duro, glow electrico dirigido, sombras marcadas",
+      "cameraMotion": "zoom lento constante, push-in suave, micro paneo lateral, cambio de plano cada 2-3 segundos",
+      "effects": "glow ligero, particulas sutiles, neblina tenue, ruido cinematografico muy fino",
+      "composition": "single focus, sujeto dominante a la derecha o centrado, texto respirando a la izquierda, primeros planos y siluetas, profundidad negativa",
+      "emotionalTone": "misterio psicologico, obsesion, tension contenida, intriga oscura",
+      "consistencyRules": [
+        "una sola escena principal por segmento",
+        "fondo siempre oscuro o casi negro",
+        "usar azul electrico como color dominante y rojo solo para tension o reengage",
+        "priorizar cerebros, ojos, siluetas y escenas humanas reconocibles",
+        "evitar stock luminoso, lifestyle genérico o composiciones planas"
+      ],
+      "clipKeywords": [
+        "patrón emocional",
+        "reacción automática",
+        "glowing brain dark background",
+        "blue eye close up dark",
+        "person silhouette red light",
+        "couple argument silhouette blue light",
+        "moody face close up shadow",
+        "dark cinematic person thinking"
+      ]
+    },
+    "clipKeywords": [
+      "patrón emocional",
+      "reacción automática",
+      "glowing brain dark background",
+      "blue eye close up dark",
+      "person silhouette red light",
+      "couple argument silhouette blue light",
+      "moody face close up shadow",
+      "dark cinematic person thinking"
+    ],
+    "rhythmRule": "cambio visual cada 2-3 segundos, sin escenas estaticas ni repeticiones consecutivas de encuadre",
+    "timeline": [
+      {
+        "segment": "hook",
+        "timing": "0-2.2s",
+        "durationSeconds": 2.2,
+        "shotType": "primer plano",
+        "intensity": "alta",
+        "movement": "push-in rapido",
+        "transition": "hard cut"
+      },
+      {
+        "segment": "open_loop",
+        "timing": "2.2-5s",
+        "durationSeconds": 2.8,
+        "shotType": "plano detalle",
+        "intensity": "alta",
+        "movement": "zoom lento continuo",
+        "transition": "match cut"
+      },
+      {
+        "segment": "micro_value",
+        "timing": "5-8.2s",
+        "durationSeconds": 3.2,
+        "shotType": "plano medio",
+        "intensity": "media",
+        "movement": "micro paneo lateral",
+        "transition": "cut limpio"
+      },
+      {
+        "segment": "escalation",
+        "timing": "8.2-11.6s",
+        "durationSeconds": 3.4,
+        "shotType": "plano abierto",
+        "intensity": "media-alta",
+        "movement": "acercamiento progresivo",
+        "transition": "cut ritmico"
+      },
+      {
+        "segment": "reengage",
+        "timing": "11.6-14.2s",
+        "durationSeconds": 2.6,
+        "shotType": "primer plano",
+        "intensity": "muy alta",
+        "movement": "zoom agresivo",
+        "transition": "whip cut"
+      },
+      {
+        "segment": "peak",
+        "timing": "14.2-17.8s",
+        "durationSeconds": 3.6,
+        "shotType": "plano medio",
+        "intensity": "maxima",
+        "movement": "push-in sostenido",
+        "transition": "impact cut"
+      },
+      {
+        "segment": "open_ending",
+        "timing": "17.8-20.9s",
+        "durationSeconds": 3.1,
+        "shotType": "plano abierto",
+        "intensity": "media",
+        "movement": "zoom out suave",
+        "transition": "cut limpio"
+      },
+      {
+        "segment": "soft_cta",
+        "timing": "20.9-23.6s",
+        "durationSeconds": 2.7,
+        "shotType": "plano detalle",
+        "intensity": "media",
+        "movement": "micro acercamiento",
+        "transition": "hold corto"
+      }
+    ]
+  },
+  "growthContext": {
+    "nextTopic": "emotional_patterns",
+    "hookType": "challenge",
+    "emotionalTrigger": "curiosity",
+    "angle": "por qué las mismas situaciones te afectan igual",
+    "avoidTopics": [
+      "psychology"
+    ],
+    "avoidRecentHooks": [
+      "Si alguien está ansioso cerca, contagias ansiedad en segundos.",
+      "Si alguien está ansioso cerca, contagias ansiedad en segundos.",
+      "Tu cuerpo decide tu estado emocional antes que tu cerebro",
+      "Checas el móvil cada 4 minutos sin darte cuenta.",
+      "Reprimes la rabia y luego explota sin razón aparente.",
+      "Cruzas los brazos sin saberlo y ya perdiste.",
+      "Te enojas antes de entender por qué estás furioso.",
+      "Te enojas antes de entender por qué estás furioso."
+    ],
+    "reasoning": "Topic 'emotional_patterns' por estrategia exploit_p80. Views promedio: 410, engagement: 0.83%. [PATRÓN P80 — score por encima del percentil 80, explotando variaciones] Saturados evitados: psychology.",
+    "confidence": 0.95,
+    "strategy": "exploit_p80",
+    "decisionAt": "2026-04-29T09:05:55.934Z",
+    "fallbackGenerator": "last-valid-script",
+    "fallbackReason": "content-generator.generateScript: LLM DISABLED — daily limit reached"
+  },
+  "viralityScore": 54,
+  "viralityBreakdown": {
+    "hookStrength": 18,
+    "emotionalTrigger": 8,
+    "relatability": 13,
+    "loopPotential": 13,
+    "durationBonus": 2
+  },
+  "formatMatchScore": 84,
+  "formatMatchBreakdown": {
+    "hookFormat": 16,
+    "brevity": 12,
+    "clarity": 15,
+    "narrativeRhythm": 6,
+    "psychologicalImpact": 6,
+    "scrollStop": 6,
+    "infoDensity": 4,
+    "earlyRevelation": 8,
+    "singleIdea": 3,
+    "reengage": 8
+  },
+  "formatMatchSegmentGaps": [
+    "[reengage] reengage poco agresivo",
+    "[soft_cta] soft_cta poco conversacional"
+  ],
+  "formatMatchGaps": [
+    "Revelación psicológica débil — añade nombre de efecto o cifra concreta",
+    "Baja densidad — más información útil en menos palabras",
+    "[reengage] reengage poco agresivo",
+    "[soft_cta] soft_cta poco conversacional"
+  ],
+  "emotionalImpactScore": 36,
+  "emotionalImpactBreakdown": {
+    "powerWords": 6,
+    "personalId": 20,
+    "surpriseFactor": 0,
+    "visceral": 10,
+    "tensionResolution": 0
+  },
+  "approved": true,
+  "rejectionReason": null,
+  "selectionPenalties": [
+    "virality_low:54",
+    "[reengage] reengage poco agresivo",
+    "[soft_cta] soft_cta poco conversacional"
+  ],
+  "llmMetrics": {
+    "llm_total_calls": 9,
+    "llm_parse_fail": false,
+    "llm_recovery_used": false,
+    "llm_hard_fail": true,
+    "emergency_fallback_used": false,
+    "llm_schema_fail": false,
+    "llm_truncated_suspected": false
+  },
+  "usedRecovery": false,
+  "generationSource": "generateOptimizedScript",
+  "llmPath": [
+    "generateViralScript",
+    "generateOptimizedScript",
+    "generateScript",
+    "last-valid-script"
+  ],
+  "generationFallback": "last-valid-script",
+  "usedLastValid": true,
+  "usedEmergencyFallback": false,
+  "approvalBypassReason": "last-valid-script_fallback",
+  "final_generation_route": "generateViralScript -> generateOptimizedScript -> generateScript -> last-valid-script",
+  "total_llm_calls": 9,
+  "fallback_level_reached": 3,
+  "quickOptimizedSegment": "reengage",
+  "quickOptimizedReason": "[reengage] reengage poco agresivo",
+  "selectedQuality": "fallback",
+  "approvalBypass": "last-valid-script_fallback",
+  "bestAvailableScore": 62,
+  "selectionReasons": [
+    "virality_low:54",
+    "[reengage] reengage poco agresivo",
+    "[soft_cta] soft_cta poco conversacional"
+  ],
+  "abVariantId": "v_a",
+  "slotTracking": {
+    "batchId": null,
+    "slotId": null,
+    "plannedOrder": null,
+    "plannedRole": null,
+    "plannedCluster": null,
+    "plannedHookType": null,
+    "plannedMicroAction": null,
+    "recommendedCandidateId": null,
+    "recommendedCandidateTitle": null,
+    "attributionType": "unplanned",
+    "slotState": "unplanned",
+    "assignmentConfidence": 0,
+    "traceConfidence": 0,
+    "exactTraceAvailable": false,
+    "abLinked": true
+  },
+  "reusedLastValidScript": true,
+  "reusedAt": "2026-04-29T12:07:19.365Z",
+  "lastValidMetadata": {
+    "id": "patron_emocional_atrapado",
+    "topic": "emotional_patterns",
+    "angle": "por qué las mismas situaciones te afectan igual",
+    "hookType": "challenge",
+    "emotionalTrigger": "curiosity",
+    "generationSource": "generateOptimizedScript",
+    "createdAt": "2026-04-29T09:06:23.920Z"
+  },
+  "contentVersion": "v2"
+}

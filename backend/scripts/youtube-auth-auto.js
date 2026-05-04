@@ -14,7 +14,7 @@ const path = require('path');
 const http = require('http');
 const url = require('url');
 const axios = require('axios');
-const { exec } = require('child_process');
+const { spawn } = require('child_process');
 const logger = require('../src/utils/logger');
 
 const PORT = 3000;
@@ -70,16 +70,16 @@ console.log(`╚═════════════════════�
 
       // Abrir navegador según SO
       const platform = process.platform;
-      const openCommand =
-        platform === 'darwin' ? `open "${authUrl}"` :
-        platform === 'win32' ? `start "" "${authUrl}"` :
-        `xdg-open "${authUrl}"`;
+      const openProc =
+        platform === 'darwin'
+          ? spawn('open', [authUrl], { windowsHide: true, shell: false, stdio: ['ignore', 'pipe', 'pipe'] })
+          : platform === 'win32'
+            ? spawn('explorer', [authUrl], { windowsHide: true, shell: false, stdio: ['ignore', 'pipe', 'pipe'] })
+            : spawn('xdg-open', [authUrl], { windowsHide: true, shell: false, stdio: ['ignore', 'pipe', 'pipe'] });
 
-      exec(openCommand, (error) => {
-        if (error) {
-          console.log(`   ⚠️  No se pudo abrir navegador automáticamente\n`);
-          console.log(`   Abre manualmente: ${authUrl}\n`);
-        }
+      openProc.on('error', () => {
+        console.log(`   ⚠️  No se pudo abrir navegador automáticamente\n`);
+        console.log(`   Abre manualmente: ${authUrl}\n`);
       });
     });
 

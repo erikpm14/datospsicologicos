@@ -262,9 +262,12 @@ function loadGoogleTrends() {
   if (!fs.existsSync(GOOGLE_TRENDS_SCRIPT)) return [];
 
   try {
-    const result = spawnSync('python', [GOOGLE_TRENDS_SCRIPT], {
+    const result = spawnSync(process.platform === 'win32' ? 'pythonw' : 'python', [GOOGLE_TRENDS_SCRIPT], {
       encoding: 'utf8',
       timeout:  60000,  // 60s max
+      windowsHide: true,
+      shell: false,
+      stdio: ['ignore', 'pipe', 'pipe'],
     });
 
     if (result.status !== 0 || !result.stdout) return [];

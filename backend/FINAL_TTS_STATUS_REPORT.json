@@ -1,0 +1,96 @@
+{
+  "status": "TTS FIX COMPLETE AND VALIDATED",
+  "timestamp": "2026-04-28T15:47:00Z",
+  
+  "tts_fix_summary": {
+    "problem": "Kokoro generating 2.32s audio instead of 28s for legacy-format scripts",
+    "root_cause": "prepareNarrationForTTS hardcoded to expanded format keys, ignoring legacy fields",
+    "solution": "Detect script format (legacy vs expanded) and use correct segment keys",
+    "status": "✅ FIXED AND VALIDATED"
+  },
+  
+  "code_changes": {
+    "src/utils/script-segments.js": {
+      "function": "hasExpandedStructure",
+      "change": "Only check for expanded-only keys (exclude 'hook' which is in both formats)",
+      "status": "✅ Fixed"
+    },
+    "src/services/voice-synthesizer.js": {
+      "changes": [
+        "prepareNarrationForTTS now detects script format and uses correct segment keys",
+        "Added post-TTS validation for audio duration",
+        "Added logging: TTS_REQUEST_TEXT_WORDS, KOKORO_AUDIO_DURATION",
+        "Added automatic fallback to Edge TTS if audio too short"
+      ],
+      "status": "✅ Fixed"
+    },
+    "src/services/production-quality-checker.js": {
+      "change": "Fixed content_version detection (support both snake_case and camelCase)",
+      "status": "✅ Fixed"
+    }
+  },
+  
+  "validation_tests": {
+    "test_1_legacy_57_words": {
+      "script_format": "legacy (hook, claim, explanation, cta)",
+      "total_words": 57,
+      "blocks_synthesized": 4,
+      "expected_min_duration": "10.59s",
+      "actual_duration": "20.10s",
+      "status": "✅ PASS"
+    },
+    "test_2_legacy_89_words": {
+      "script_format": "legacy (hook, claim, explanation, cta)",
+      "total_words": 89,
+      "blocks_synthesized": 4,
+      "expected_min_duration": "16.53s",
+      "actual_duration": "28.21s",
+      "status": "✅ PASS"
+    },
+    "test_3_legacy_160_words": {
+      "script_format": "legacy (hook, claim, explanation, cta)",
+      "total_words": 160,
+      "blocks_synthesized": 4,
+      "expected_min_duration": "29.53s",
+      "actual_duration": "49.63s",
+      "status": "✅ PASS"
+    }
+  },
+  
+  "tts_provider_status": {
+    "kokoro": "✅ Working correctly - generates appropriate audio for all legacy scripts",
+    "edge_tts": "✅ Fallback available if Kokoro generates insufficient audio"
+  },
+  
+  "known_issues": {
+    "render_video_duration": {
+      "symptom": "FFmpeg limiting output to 1s instead of audio duration",
+      "root_cause": "FFmpeg -t parameter set to 1.42s regardless of audio duration",
+      "component": "video-use integrator (not TTS)",
+      "impact": "Video generation fails even with correct audio",
+      "scope": "OUT OF SCOPE - Separate render pipeline issue"
+    },
+    "subtitle_coherence": {
+      "symptom": "Whisper transcription 50% match with script instead of 80%",
+      "root_cause": "Whisper creates different text than original script",
+      "component": "Whisper/caption pipeline (not TTS)",
+      "scope": "OUT OF SCOPE - Separate caption pipeline issue"
+    }
+  },
+  
+  "conclusion": {
+    "tts_functionality": "✅ COMPLETE AND PRODUCTION READY",
+    "legacy_script_support": "✅ FULLY IMPLEMENTED",
+    "audio_validation": "✅ WORKING CORRECTLY",
+    "fallback_system": "✅ CONFIGURED AND READY",
+    
+    "full_pipeline_status": "⚠️ BLOCKED BY RENDER ISSUES",
+    "notes": "TTS fix is complete. Additional issues with FFmpeg rendering and caption synchronization prevent end-to-end video generation. These are separate pipeline issues requiring independent fixes."
+  },
+  
+  "test_commands": {
+    "pure_tts_test": "node test-tts-only.js",
+    "full_pipeline_test": "node generate-validated-video.js",
+    "long_content_test": "node generate-long-content.js"
+  }
+}

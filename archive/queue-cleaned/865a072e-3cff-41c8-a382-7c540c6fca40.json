@@ -1,0 +1,593 @@
+{
+  "id": "865a072e-3cff-41c8-a382-7c540c6fca40",
+  "createdAt": "2026-04-28T12:38:25.351Z",
+  "status": "done",
+  "progress": 100,
+  "performance": {
+    "label": "video-pipeline",
+    "startedAt": "2026-04-28T12:38:25.353Z",
+    "totalMs": 66274,
+    "phases": [
+      {
+        "name": "script_generation",
+        "startedAt": "2026-04-28T12:38:25.354Z",
+        "status": "completed",
+        "endedAt": "2026-04-28T12:38:25.355Z",
+        "durationMs": 1,
+        "source": "prefab",
+        "estimatedWords": 119,
+        "durationSeconds": 52
+      },
+      {
+        "name": "tts",
+        "startedAt": "2026-04-28T12:38:25.356Z",
+        "status": "completed",
+        "endedAt": "2026-04-28T12:39:12.537Z",
+        "durationMs": 47181,
+        "provider": "kokoro",
+        "estimatedDuration": 42.86533299999999,
+        "wordBoundaries": 0
+      },
+      {
+        "name": "audio_postprocess",
+        "startedAt": "2026-04-28T12:39:12.539Z",
+        "status": "completed",
+        "endedAt": "2026-04-28T12:39:14.300Z",
+        "durationMs": 1761,
+        "outputPath": "C:\\Users\\Erik\\Desktop\\Generador_videos\\output\\9cdbc087-d796-4783-a16a-ecd869cb8c58\\voice_proc.mp3"
+      },
+      {
+        "name": "render",
+        "startedAt": "2026-04-28T12:39:14.302Z",
+        "status": "completed",
+        "endedAt": "2026-04-28T12:39:31.490Z",
+        "durationMs": 17188,
+        "outputPath": "C:\\Users\\Erik\\Desktop\\Generador_videos\\output\\9cdbc087-d796-4783-a16a-ecd869cb8c58\\output.mp4"
+      },
+      {
+        "name": "quality_check",
+        "startedAt": "2026-04-28T12:39:31.492Z",
+        "status": "completed",
+        "endedAt": "2026-04-28T12:39:31.627Z",
+        "durationMs": 135,
+        "passed": false,
+        "score": 85,
+        "threshold": 70
+      }
+    ],
+    "activePhase": null,
+    "jobId": "865a072e-3cff-41c8-a382-7c540c6fca40",
+    "videoId": "9cdbc087-d796-4783-a16a-ecd869cb8c58",
+    "topic": "emotional_patterns",
+    "result": "qc_failed"
+  },
+  "data": {
+    "topic": "emotional_patterns",
+    "prefabScript": {
+      "title": "reacciones_antes_de_pensar",
+      "topic": "emotional_patterns",
+      "hook": "Tu miedo decide antes que tu cerebro.",
+      "open_loop": "Y lo peor es que ni te das cuenta cuando está ocurriendo exactamente en ese momento.",
+      "micro_value": "Tu amígdala dispara en 200 milisegundos. Tu corteza prefrontal tarda 500. Esa brecha es donde pierdes.",
+      "escalation": "Te pasa en una entrevista, alguien te mira raro, tu jefe te llama. Tu cuerpo huye antes de entender qué coño pasa. Luego? Te arrepientes de lo que dijiste, hiciste, cómo reaccionaste. Siempre igual.",
+      "reengage": "Y aquí viene lo peor: puedes entrenarla.",
+      "peak": "Tus decisiones importantes nacen de reacción, no de pensamiento. Llevas años creyendo que eres racional. No lo eres. Te ha costado relaciones, oportunidades, paz mental.",
+      "open_ending": "¿Cuántas veces esta semana reaccionaste sin pensar?",
+      "soft_cta": "Cuéntame qué situación te controla más ahora.",
+      "psychologicalFact": "La amígdala procesa amenazas 80 milisegundos antes que la corteza prefrontal.",
+      "viralTrigger": "miedo",
+      "emotionalTrigger": "fear",
+      "effectName": "amygdala_hijack",
+      "keywords": [
+        "reacciones emocionales",
+        "control emocional"
+      ],
+      "claim": "Tu amígdala dispara en 200 milisegundos. Tu corteza prefrontal tarda 500. Esa brecha es donde pierdes.",
+      "explanation": "Te pasa en una entrevista, alguien te mira raro, tu jefe te llama. Tu cuerpo huye antes de entender qué coño pasa. Luego? Te arrepientes de lo que dijiste, hiciste, cómo reaccionaste. Siempre igual. No es debilidad. Es biología pura. Y puedes entrenarla. Tus decisiones importantes nacen de reacción, no de pensamiento. Llevas años creyendo que eres racional. No lo eres. Te ha costado relaciones, oportunidades, paz mental.",
+      "cta": "¿Cuántas veces esta semana reaccionaste sin pensar? Cuéntame qué situación te controla más ahora.",
+      "segments": [
+        {
+          "type": "HOOK",
+          "text": "Tu miedo decide antes que tu cerebro.",
+          "visualIntent": "punch zoom, texto impactante, fondo oscuro",
+          "emotion": "tension"
+        },
+        {
+          "type": "OPEN_LOOP",
+          "text": "Y lo peor es que ni te das cuenta cuando está ocurriendo exactamente en ese momento.",
+          "visualIntent": "zoom lento, rostro pensativo, tension",
+          "emotion": "curiosity"
+        },
+        {
+          "type": "MICRO_VALUE",
+          "text": "Tu amígdala dispara en 200 milisegundos. Tu corteza prefrontal tarda 500. Esa brecha es donde pierdes.",
+          "visualIntent": "zoom lento, rostro pensativo, tension",
+          "emotion": "curiosity"
+        },
+        {
+          "type": "ESCALATION",
+          "text": "Te pasa en una entrevista, alguien te mira raro, tu jefe te llama. Tu cuerpo huye antes de entender qué coño pasa. Luego? Te arrepientes de lo que dijiste, hiciste, cómo reaccionaste. Siempre igual.",
+          "visualIntent": "zoom lento, rostro pensativo, tension",
+          "emotion": "curiosity"
+        },
+        {
+          "type": "REENGAGE",
+          "text": "No es debilidad. Es biología pura. Y puedes entrenarla.",
+          "visualIntent": "cambio brusco, tension, zoom corto",
+          "emotion": "curiosity"
+        },
+        {
+          "type": "PEAK",
+          "text": "Tus decisiones importantes nacen de reacción, no de pensamiento. Llevas años creyendo que eres racional. No lo eres. Te ha costado relaciones, oportunidades, paz mental.",
+          "visualIntent": "aislamiento, silueta, punch zoom",
+          "emotion": "impacto"
+        },
+        {
+          "type": "OPEN_ENDING",
+          "text": "¿Cuántas veces esta semana reaccionaste sin pensar?",
+          "visualIntent": "zoom lento, rostro pensativo, tension",
+          "emotion": "curiosity"
+        },
+        {
+          "type": "SOFT_CTA",
+          "text": "Cuéntame qué situación te controla más ahora.",
+          "visualIntent": "zoom lento, rostro pensativo, tension",
+          "emotion": "cercania"
+        }
+      ],
+      "structureVersion": "open_loop_escalation_v1",
+      "hasReengage": true,
+      "segmentFeedback": [
+        {
+          "segment": "reengage",
+          "issue": "reengage poco agresivo"
+        },
+        {
+          "segment": "soft_cta",
+          "issue": "soft_cta poco conversacional"
+        }
+      ],
+      "segmentFeedbackSummary": [
+        "[reengage] reengage poco agresivo",
+        "[soft_cta] soft_cta poco conversacional"
+      ],
+      "estimatedWords": 119,
+      "durationSeconds": 52,
+      "fullScript": "Tu miedo decide antes que tu cerebro. Y lo peor es que ni te das cuenta cuando está ocurriendo exactamente en ese momento. Tu amígdala dispara en 200 milisegundos. Tu corteza prefrontal tarda 500. Esa brecha es donde pierdes. Te pasa en una entrevista, alguien te mira raro, tu jefe te llama. Tu cuerpo huye antes de entender qué coño pasa. Luego? Te arrepientes de lo que dijiste, hiciste, cómo reaccionaste. Siempre igual. No es debilidad. Es biología pura. Y puedes entrenarla. Tus decisiones importantes nacen de reacción, no de pensamiento. Llevas años creyendo que eres racional. No lo eres. Te ha costado relaciones, oportunidades, paz mental. ¿Cuántas veces esta semana reaccionaste sin pensar? Cuéntame qué situación te controla más ahora.",
+      "videoInstructions": {
+        "singleFocus": true,
+        "visualStyle": [
+          "estetica cinematografica oscura",
+          "fondo negro o casi negro",
+          "alto contraste con azul electrico dominante",
+          "acento rojo oscuro solo para tension",
+          "single focus constante sin overlays complejos",
+          "cambio de plano cada 2-3 segundos",
+          "zoom progresivo y movimiento suave"
+        ],
+        "subtitleStyle": "tipografia condensada bold, blanco frio con acentos azul electrico y rojo oscuro, subtitulos grandes y sincronizados",
+        "audioStyle": {
+          "voice": "voz clara y con ritmo",
+          "pauses": [
+            "hook",
+            "reengage",
+            "peak"
+          ]
+        },
+        "scenes": [
+          {
+            "segment": "hook",
+            "timing": "0-2.2s",
+            "visual": "primer plano de cerebro luminoso o rostro inquietante, relacionado con emotional_patterns, fondo negro o muy oscuro, contraste alto, azul electrico y rojo oscuro como acentos, zoom lento, iluminacion dramatica, sensacion de misterio psicologico",
+            "cut": "corte rapido con push-in",
+            "startSeconds": 0,
+            "endSeconds": 2.2,
+            "durationSeconds": 2.2,
+            "shotType": "primer plano",
+            "framing": "primer plano",
+            "intensity": "alta",
+            "movement": "push-in rapido",
+            "transition": "hard cut",
+            "emphasis": "scroll-stop inmediato",
+            "syncCue": "movimiento continuo con remate en palabra fuerte"
+          },
+          {
+            "segment": "open_loop",
+            "timing": "2.2-5s",
+            "visual": "ojo humano extremo o gesto suspendido en sombra, relacionado con emotional_patterns, fondo negro o muy oscuro, contraste alto, azul electrico y rojo oscuro como acentos, zoom lento, iluminacion dramatica, sensacion de misterio psicologico",
+            "cut": "zoom corto continuo",
+            "startSeconds": 2.2,
+            "endSeconds": 5,
+            "durationSeconds": 2.8,
+            "shotType": "plano detalle",
+            "framing": "plano detalle",
+            "intensity": "alta",
+            "movement": "zoom lento continuo",
+            "transition": "match cut",
+            "emphasis": "curiosidad sostenida",
+            "syncCue": "movimiento continuo con remate en palabra fuerte"
+          },
+          {
+            "segment": "micro_value",
+            "timing": "5-8.2s",
+            "visual": "detalle simbolico del mecanismo mental en glow azul, relacionado con emotional_patterns, fondo negro o muy oscuro, contraste alto, azul electrico y rojo oscuro como acentos, zoom lento, iluminacion dramatica, sensacion de misterio psicologico",
+            "cut": "cambio de plano limpio",
+            "startSeconds": 5,
+            "endSeconds": 8.2,
+            "durationSeconds": 3.2,
+            "shotType": "plano medio",
+            "framing": "plano medio",
+            "intensity": "media",
+            "movement": "micro paneo lateral",
+            "transition": "cut limpio",
+            "emphasis": "primer pago de valor",
+            "syncCue": "movimiento continuo con remate en palabra fuerte"
+          },
+          {
+            "segment": "escalation",
+            "timing": "8.2-11.6s",
+            "visual": "silueta humana o tension social en contraluz, relacionado con emotional_patterns, fondo negro o muy oscuro, contraste alto, azul electrico y rojo oscuro como acentos, zoom lento, iluminacion dramatica, sensacion de misterio psicologico",
+            "cut": "cortes cada 2-3s",
+            "startSeconds": 8.2,
+            "endSeconds": 11.6,
+            "durationSeconds": 3.4,
+            "shotType": "plano abierto",
+            "framing": "plano abierto",
+            "intensity": "media-alta",
+            "movement": "acercamiento progresivo",
+            "transition": "cut ritmico",
+            "emphasis": "tension creciente",
+            "syncCue": "movimiento continuo con remate en palabra fuerte"
+          },
+          {
+            "segment": "reengage",
+            "timing": "11.6-14.2s",
+            "visual": "cambio brusco a plano mas cercano con rojo alerta, relacionado con emotional_patterns, fondo negro o muy oscuro, contraste alto, azul electrico y rojo oscuro como acentos, zoom lento, iluminacion dramatica, sensacion de misterio psicologico",
+            "cut": "cambio brusco + zoom agresivo",
+            "startSeconds": 11.6,
+            "endSeconds": 14.2,
+            "durationSeconds": 2.6,
+            "shotType": "primer plano",
+            "framing": "primer plano",
+            "intensity": "muy alta",
+            "movement": "zoom agresivo",
+            "transition": "whip cut",
+            "emphasis": "ruptura de patron",
+            "syncCue": "acercamiento en frase clave"
+          },
+          {
+            "segment": "peak",
+            "timing": "14.2-17.8s",
+            "visual": "escena humana real de conflicto, pareja o decision, relacionado con emotional_patterns, fondo negro o muy oscuro, contraste alto, azul electrico y rojo oscuro como acentos, zoom lento, iluminacion dramatica, sensacion de misterio psicologico",
+            "cut": "alternancia de planos cerrados",
+            "startSeconds": 14.2,
+            "endSeconds": 17.8,
+            "durationSeconds": 3.6,
+            "shotType": "plano medio",
+            "framing": "plano medio",
+            "intensity": "maxima",
+            "movement": "push-in sostenido",
+            "transition": "impact cut",
+            "emphasis": "impacto emocional",
+            "syncCue": "acercamiento en frase clave"
+          },
+          {
+            "segment": "open_ending",
+            "timing": "17.8-20.9s",
+            "visual": "figura sola alejandose en oscuridad con particulas, relacionado con emotional_patterns, fondo negro o muy oscuro, contraste alto, azul electrico y rojo oscuro como acentos, zoom lento, iluminacion dramatica, sensacion de misterio psicologico",
+            "cut": "desaceleracion ligera",
+            "startSeconds": 17.8,
+            "endSeconds": 20.9,
+            "durationSeconds": 3.1,
+            "shotType": "plano abierto",
+            "framing": "plano abierto",
+            "intensity": "media",
+            "movement": "zoom out suave",
+            "transition": "cut limpio",
+            "emphasis": "eco mental",
+            "syncCue": "movimiento continuo con remate en palabra fuerte"
+          },
+          {
+            "segment": "soft_cta",
+            "timing": "20.9-23.6s",
+            "visual": "rostro o silueta frontal con espacio negativo para cierre, relacionado con emotional_patterns, fondo negro o muy oscuro, contraste alto, azul electrico y rojo oscuro como acentos, zoom lento, iluminacion dramatica, sensacion de misterio psicologico",
+            "cut": "ultimo corte limpio",
+            "startSeconds": 20.9,
+            "endSeconds": 23.6,
+            "durationSeconds": 2.7,
+            "shotType": "plano detalle",
+            "framing": "plano detalle",
+            "intensity": "media",
+            "movement": "micro acercamiento",
+            "transition": "hold corto",
+            "emphasis": "cierre abierto",
+            "syncCue": "movimiento continuo con remate en palabra fuerte"
+          }
+        ],
+        "style": {
+          "theme": "psicologia oscura / mente humana / comportamiento",
+          "colorPalette": "negro absoluto, azul electrico, azul neon frio, rojo oscuro, blanco frio",
+          "visualStyle": "cinematografico, minimalista, alto contraste, single focus",
+          "lighting": "oscura, dramatica, contraluz duro, glow electrico dirigido, sombras marcadas",
+          "cameraMotion": "zoom lento constante, push-in suave, micro paneo lateral, cambio de plano cada 2-3 segundos",
+          "effects": "glow ligero, particulas sutiles, neblina tenue, ruido cinematografico muy fino",
+          "composition": "single focus, sujeto dominante a la derecha o centrado, texto respirando a la izquierda, primeros planos y siluetas, profundidad negativa",
+          "emotionalTone": "misterio psicologico, obsesion, tension contenida, intriga oscura",
+          "consistencyRules": [
+            "una sola escena principal por segmento",
+            "fondo siempre oscuro o casi negro",
+            "usar azul electrico como color dominante y rojo solo para tension o reengage",
+            "priorizar cerebros, ojos, siluetas y escenas humanas reconocibles",
+            "evitar stock luminoso, lifestyle genérico o composiciones planas"
+          ],
+          "clipKeywords": [
+            "reacciones emocionales",
+            "control emocional",
+            "glowing brain dark background",
+            "blue eye close up dark",
+            "person silhouette red light",
+            "couple argument silhouette blue light",
+            "moody face close up shadow",
+            "dark cinematic person thinking"
+          ]
+        },
+        "clipKeywords": [
+          "reacciones emocionales",
+          "control emocional",
+          "glowing brain dark background",
+          "blue eye close up dark",
+          "person silhouette red light",
+          "couple argument silhouette blue light",
+          "moody face close up shadow",
+          "dark cinematic person thinking"
+        ],
+        "rhythmRule": "cambio visual cada 2-3 segundos, sin escenas estaticas ni repeticiones consecutivas de encuadre",
+        "timeline": [
+          {
+            "segment": "hook",
+            "timing": "0-2.2s",
+            "durationSeconds": 2.2,
+            "shotType": "primer plano",
+            "intensity": "alta",
+            "movement": "push-in rapido",
+            "transition": "hard cut"
+          },
+          {
+            "segment": "open_loop",
+            "timing": "2.2-5s",
+            "durationSeconds": 2.8,
+            "shotType": "plano detalle",
+            "intensity": "alta",
+            "movement": "zoom lento continuo",
+            "transition": "match cut"
+          },
+          {
+            "segment": "micro_value",
+            "timing": "5-8.2s",
+            "durationSeconds": 3.2,
+            "shotType": "plano medio",
+            "intensity": "media",
+            "movement": "micro paneo lateral",
+            "transition": "cut limpio"
+          },
+          {
+            "segment": "escalation",
+            "timing": "8.2-11.6s",
+            "durationSeconds": 3.4,
+            "shotType": "plano abierto",
+            "intensity": "media-alta",
+            "movement": "acercamiento progresivo",
+            "transition": "cut ritmico"
+          },
+          {
+            "segment": "reengage",
+            "timing": "11.6-14.2s",
+            "durationSeconds": 2.6,
+            "shotType": "primer plano",
+            "intensity": "muy alta",
+            "movement": "zoom agresivo",
+            "transition": "whip cut"
+          },
+          {
+            "segment": "peak",
+            "timing": "14.2-17.8s",
+            "durationSeconds": 3.6,
+            "shotType": "plano medio",
+            "intensity": "maxima",
+            "movement": "push-in sostenido",
+            "transition": "impact cut"
+          },
+          {
+            "segment": "open_ending",
+            "timing": "17.8-20.9s",
+            "durationSeconds": 3.1,
+            "shotType": "plano abierto",
+            "intensity": "media",
+            "movement": "zoom out suave",
+            "transition": "cut limpio"
+          },
+          {
+            "segment": "soft_cta",
+            "timing": "20.9-23.6s",
+            "durationSeconds": 2.7,
+            "shotType": "plano detalle",
+            "intensity": "media",
+            "movement": "micro acercamiento",
+            "transition": "hold corto"
+          }
+        ]
+      },
+      "growthContext": {
+        "hookType": "challenge",
+        "emotionalTrigger": "fear",
+        "angle": "reacciones emocionales antes de pensar",
+        "strategy": "exploit_p80",
+        "decisionAt": "2026-04-28T12:37:55.212Z"
+      },
+      "viralityScore": 61,
+      "viralityBreakdown": {
+        "hookStrength": 20,
+        "emotionalTrigger": 11,
+        "relatability": 13,
+        "loopPotential": 15,
+        "durationBonus": 2
+      },
+      "formatMatchScore": 75,
+      "formatMatchBreakdown": {
+        "hookFormat": 14,
+        "brevity": 12,
+        "clarity": 15,
+        "narrativeRhythm": 6,
+        "psychologicalImpact": 4,
+        "scrollStop": 6,
+        "infoDensity": 2,
+        "earlyRevelation": 8,
+        "singleIdea": 3,
+        "reengage": 5
+      },
+      "formatMatchSegmentGaps": [
+        "[reengage] reengage poco agresivo",
+        "[soft_cta] soft_cta poco conversacional"
+      ],
+      "formatMatchGaps": [
+        "Revelación psicológica débil — añade nombre de efecto o cifra concreta",
+        "Baja densidad — más información útil en menos palabras",
+        "[reengage] reengage poco agresivo",
+        "[soft_cta] soft_cta poco conversacional"
+      ],
+      "emotionalImpactScore": 47,
+      "emotionalImpactBreakdown": {
+        "powerWords": 12,
+        "personalId": 20,
+        "surpriseFactor": 10,
+        "visceral": 5,
+        "tensionResolution": 0
+      },
+      "approved": true,
+      "rejectionReason": null,
+      "selectionPenalties": [
+        "virality_low:61",
+        "[reengage] reengage poco agresivo",
+        "[soft_cta] soft_cta poco conversacional"
+      ],
+      "llmMetrics": {
+        "llm_total_calls": 5,
+        "llm_parse_fail": true,
+        "llm_recovery_used": true,
+        "llm_hard_fail": false,
+        "emergency_fallback_used": false,
+        "llm_schema_fail": false,
+        "llm_truncated_suspected": true
+      },
+      "usedRecovery": true,
+      "generationSource": "generateOptimizedScript",
+      "llmPath": [
+        "generateViralScript",
+        "generateOptimizedScript"
+      ],
+      "generationFallback": null,
+      "usedLastValid": false,
+      "usedEmergencyFallback": false,
+      "approvalBypassReason": null,
+      "final_generation_route": "generateViralScript -> generateOptimizedScript",
+      "total_llm_calls": 5,
+      "fallback_level_reached": 1,
+      "quickOptimizedSegment": "reengage",
+      "quickOptimizedReason": "[reengage] reengage poco agresivo",
+      "selectedQuality": "acceptable",
+      "bestAvailableScore": 64,
+      "selectionReasons": [
+        "virality_low:61",
+        "[reengage] reengage poco agresivo",
+        "[soft_cta] soft_cta poco conversacional"
+      ],
+      "abVariantId": "v_a",
+      "slotTracking": {
+        "batchId": null,
+        "slotId": null,
+        "plannedOrder": null,
+        "plannedRole": null,
+        "plannedCluster": null,
+        "plannedHookType": null,
+        "plannedMicroAction": null,
+        "recommendedCandidateId": null,
+        "recommendedCandidateTitle": null,
+        "attributionType": "unplanned",
+        "slotState": "unplanned",
+        "assignmentConfidence": 0,
+        "traceConfidence": 0,
+        "exactTraceAvailable": false,
+        "abLinked": true
+      }
+    },
+    "growthContext": {
+      "nextTopic": "emotional_patterns",
+      "hookType": "challenge",
+      "emotionalTrigger": "fear",
+      "angle": "reacciones emocionales antes de pensar",
+      "avoidTopics": [
+        "habits",
+        "procrastination",
+        "cognitive_biases",
+        "motivation",
+        "body_language",
+        "perception",
+        "memory",
+        "emotions",
+        "self_talk",
+        "relationships",
+        "decision_making",
+        "attention",
+        "social_patterns",
+        "psychology"
+      ],
+      "avoidRecentHooks": [
+        "Llevas años queriendo dejar ese hábito y no lo consigues.",
+        "Tu cerebro decide sin pedirte permiso.",
+        "Tu cerebro decide sin pedirte permiso.",
+        "Llevas años queriendo dejar ese hábito y no lo consigues.",
+        "Eliges parejas iguales a tu peor relación pasada.",
+        "El 81% repite lo mismo sin elegirlo realmente.",
+        "El 81% repite hábitos sin decidir hacerlo.",
+        "Tu cerebro automatiza tus peores hábitos sin permiso."
+      ],
+      "reasoning": "Topic 'emotional_patterns' por estrategia exploit_p80. Views promedio: 434, engagement: 0.94%. [PATRÓN P80 — score por encima del percentil 80, explotando variaciones] Saturados evitados: habits, procrastination, cognitive_biases, motivation, body_language, perception, memory, emotions, self_talk, relationships, decision_making, attention, social_patterns, psychology.",
+      "confidence": 0.95,
+      "strategy": "exploit_p80",
+      "decisionAt": "2026-04-28T12:37:55.212Z"
+    },
+    "hookId": null,
+    "themeIndex": 42,
+    "slotTracking": {
+      "batchId": null,
+      "slotId": null,
+      "plannedOrder": null,
+      "plannedRole": null,
+      "plannedCluster": null,
+      "plannedHookType": null,
+      "plannedMicroAction": null,
+      "recommendedCandidateId": null,
+      "recommendedCandidateTitle": null,
+      "attributionType": "unplanned",
+      "slotState": "unplanned",
+      "assignmentConfidence": 0,
+      "traceConfidence": 0,
+      "exactTraceAvailable": false,
+      "abLinked": true
+    }
+  },
+  "startedAt": "2026-04-28T12:38:25.353Z",
+  "videoId": "9cdbc087-d796-4783-a16a-ecd869cb8c58",
+  "lastStage": "render_done",
+  "lastProgressAt": "2026-04-28T12:39:31.490Z",
+  "result": {
+    "videoId": "9cdbc087-d796-4783-a16a-ecd869cb8c58",
+    "skipped": true,
+    "qcScore": 85,
+    "qcReasons": [
+      "virality 61 < 65",
+      "video duration 2.4s < 8s"
+    ]
+  },
+  "completedAt": "2026-04-28T12:39:31.627Z"
+}

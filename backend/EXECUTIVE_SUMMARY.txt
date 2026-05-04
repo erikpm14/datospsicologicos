@@ -1,0 +1,88 @@
+╔════════════════════════════════════════════════════════════════════════════╗
+║                    VIDEO ANALYSIS EXECUTIVE SUMMARY                        ║
+║                         DrABIgSBAa0 (Published 2026-04-28)                  ║
+╚════════════════════════════════════════════════════════════════════════════╝
+
+⚠️  SEVERITY: CRITICAL
+────────────────────────────────────────────────────────────────────────────
+
+PROBLEM
+───────
+El video publicado tiene CONTENIDO DISCORDANTE:
+  • Script dice: "Guardo lo que siento sin decirlo"
+  • Audio dice: "Mira esto cuando algo pequeño te cambie el cuerpo"
+  • Subtítulos son: incoherentes, del video anterior
+  
+CAUSA
+─────
+Recovery script reutilizó output.mp4 RESIDUAL de otra publicación
+(video dtGa75Hh9LE del 2026-04-24), no regeneró fresco.
+
+QUALITY SCORES
+──────────────
+  Hook Quality:           85/100  ✅ (si lo oyeras correctamente)
+  Retention Potential:    75/100  ✅ (buena estructura)
+  Visual Quality:         55/100  ⚠️  (stock footage medio)
+  Audio Quality:          75/100  ⚠️  (claro pero INCORRECTO)
+  Subtitle Quality:       15/100  🔴 (CRÍTICO - incoherentes)
+  Monetization Safety:    85/100  ✅
+  ──────────────────────────────────────
+  OVERALL:                59/100  🔴 FALLA (threshold: 60)
+
+CURRENT STATUS ON YOUTUBE
+──────────────────────────
+  Views:       0
+  Engagement:  0%
+  Duration:    30 seconds
+  Visibility:  PUBLIC (not yet indexed probably)
+  Damage:      LOW - content is harmless, just poor quality
+
+RECOMMENDATIONS
+────────────────
+1. KEEP VIDEO PUBLIC - no damage, useful for learning
+2. IMPLEMENT 4 immediate fixes (1-2 days):
+   ✓ Subtitle-Audio coherence validator
+   ✓ Hook-Audio presence validator
+   ✓ Never reuse subtitle files
+   ✓ Force fresh render in recovery mode
+
+3. ADD 4 NEW QUALITY GATES (0.5 days):
+   ✓ subtitle_audio_coherence_gate (>= 80%)
+   ✓ hook_audio_presence_gate (>= 60%)
+   ✓ subtitle_visibility_gate (>= 75% duration)
+   ✓ content_coherence_score (>= 70%)
+
+4. STOP PUBLISHING until fixes deployed
+   → Implement & test fixes this week
+   → Resume publishing when confident
+
+FILES GENERATED
+─────────────────
+  ✓ VIDEO_ANALYSIS_DrABIgSBAa0.json     - Full technical analysis
+  ✓ VIDEO_ANALYSIS_SUMMARY.md           - Executive summary
+  ✓ RECOMMENDED_FIXES.md                - Code fixes with examples
+  ✓ This file                           - Ultra-concise summary
+
+NEXT ACTIONS
+─────────────
+TODAY:
+  □ Read the analysis documents
+  □ Start Fix #1 (subtitle coherence validator)
+
+THIS WEEK:
+  □ Implement all 4 fixes
+  □ Add 4 new quality gates
+  □ Test with tools/rufler
+  □ Deploy to production
+  □ Resume publishing
+
+BOTTOM LINE
+────────────
+This video is an ACCIDENTAL MISTAKE due to recovery reusing old files.
+The system needs better validation gates to prevent this.
+Fixes are straightforward, implementation is 1-2 days of work.
+No urgent action required but should not publish again until fixed.
+
+────────────────────────────────────────────────────────────────────────────
+Generated: 2026-04-28 12:58:00Z
+Analysis tool: Claude Code Video Quality Auditor

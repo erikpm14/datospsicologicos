@@ -1,4 +1,4 @@
-const { execSync } = require('child_process');
+const { execFileSync } = require('child_process');
 const path = require('path');
 const fs = require('fs');
 
@@ -17,7 +17,12 @@ const checks = {
 // Check 1: Python availability
 console.log('1️⃣  Checking Python...');
 try {
-  const pythonVersion = execSync('python --version 2>&1 || python3 --version 2>&1', { encoding: 'utf-8' }).trim();
+  let pythonVersion = '';
+  try {
+    pythonVersion = String(execFileSync('python', ['--version'], { encoding: 'utf-8', windowsHide: true, shell: false, stdio: ['ignore', 'pipe', 'pipe'] })).trim();
+  } catch {
+    pythonVersion = String(execFileSync('python3', ['--version'], { encoding: 'utf-8', windowsHide: true, shell: false, stdio: ['ignore', 'pipe', 'pipe'] })).trim();
+  }
   checks.python = true;
   checks.pythonVersion = pythonVersion;
   console.log(`   ✅ ${pythonVersion}`);
@@ -29,7 +34,12 @@ try {
 if (checks.python) {
   console.log('\n2️⃣  Checking faster-whisper...');
   try {
-    const result = execSync('python -c "import faster_whisper; print(faster_whisper.__version__)" 2>&1 || python3 -c "import faster_whisper; print(faster_whisper.__version__)" 2>&1', { encoding: 'utf-8' }).trim();
+    let result = '';
+    try {
+      result = String(execFileSync('python', ['-c', 'import faster_whisper; print(faster_whisper.__version__)'], { encoding: 'utf-8', windowsHide: true, shell: false, stdio: ['ignore', 'pipe', 'pipe'] })).trim();
+    } catch {
+      result = String(execFileSync('python3', ['-c', 'import faster_whisper; print(faster_whisper.__version__)'], { encoding: 'utf-8', windowsHide: true, shell: false, stdio: ['ignore', 'pipe', 'pipe'] })).trim();
+    }
     checks.fasterWhisper = true;
     console.log(`   ✅ faster-whisper ${result} installed`);
   } catch (err) {

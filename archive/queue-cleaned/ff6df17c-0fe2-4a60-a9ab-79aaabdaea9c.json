@@ -1,0 +1,653 @@
+{
+  "id": "ff6df17c-0fe2-4a60-a9ab-79aaabdaea9c",
+  "createdAt": "2026-04-27T22:32:11.014Z",
+  "status": "done",
+  "progress": 100,
+  "performance": {
+    "label": "video-pipeline",
+    "startedAt": "2026-04-27T22:32:11.017Z",
+    "totalMs": 67821,
+    "phases": [
+      {
+        "name": "script_generation",
+        "startedAt": "2026-04-27T22:32:11.019Z",
+        "status": "completed",
+        "endedAt": "2026-04-27T22:32:11.020Z",
+        "durationMs": 1,
+        "source": "prefab",
+        "estimatedWords": 133,
+        "durationSeconds": 58
+      },
+      {
+        "name": "tts",
+        "startedAt": "2026-04-27T22:32:11.022Z",
+        "status": "completed",
+        "endedAt": "2026-04-27T22:32:56.520Z",
+        "durationMs": 45498,
+        "provider": "kokoro",
+        "estimatedDuration": 55.281333,
+        "wordBoundaries": 0
+      },
+      {
+        "name": "audio_postprocess",
+        "startedAt": "2026-04-27T22:32:56.522Z",
+        "status": "completed",
+        "endedAt": "2026-04-27T22:32:59.222Z",
+        "durationMs": 2700,
+        "outputPath": "C:\\Users\\Erik\\Desktop\\Generador_videos\\output\\d04f78b2-3651-420f-b690-c1d99202996d\\voice_proc.mp3"
+      },
+      {
+        "name": "render",
+        "startedAt": "2026-04-27T22:32:59.224Z",
+        "status": "completed",
+        "endedAt": "2026-04-27T22:33:18.305Z",
+        "durationMs": 19081,
+        "outputPath": "C:\\Users\\Erik\\Desktop\\Generador_videos\\output\\d04f78b2-3651-420f-b690-c1d99202996d\\output.mp4"
+      },
+      {
+        "name": "quality_check",
+        "startedAt": "2026-04-27T22:33:18.307Z",
+        "status": "completed",
+        "endedAt": "2026-04-27T22:33:18.837Z",
+        "durationMs": 530,
+        "passed": false,
+        "score": 70,
+        "threshold": 70
+      }
+    ],
+    "activePhase": null,
+    "jobId": "ff6df17c-0fe2-4a60-a9ab-79aaabdaea9c",
+    "videoId": "d04f78b2-3651-420f-b690-c1d99202996d",
+    "topic": "habits",
+    "result": "qc_failed"
+  },
+  "data": {
+    "topic": "habits",
+    "prefabScript": {
+      "title": "automatismo_cerebral_trap",
+      "topic": "habits",
+      "hook": "Tu cerebro automatiza tus peores hábitos sin permiso.",
+      "open_loop": "Y lo peor es que ni te das cuenta hasta que es demasiado tarde.",
+      "micro_value": "Cada vez que repites algo sin pensar, tu cerebro crea un atajo neuronal. Eso es automatismo. Te atrapa.",
+      "escalation": "Mira, tu cerebro es perezoso. Busca la eficiencia. Si haces algo tres veces seguidas, empieza a automatizarlo. El problema es que automatiza también las cosas que te joden. La ansiedad, la procrastinación, el victimismo. Todo.",
+      "reengage": "Y aquí está lo peor: mientras ves esto, tu cerebro YA lo hizo. Tres veces. Cinco veces. Ya automatizó tus peores patrones. Sin pedirte permiso. Sin que tu consciente se entere. Y eso que ves que haces 'por costumbre'... ya no es costumbre. Es un reflejo que controla tu vida.",
+      "peak": "Una vez automatizado, tu consciente casi desaparece. Actúas por puro reflejo. Y cambiar eso después requiere romper el circuito. Duele. Cuesta. Por eso la mayoría no lo hace.",
+      "open_ending": "¿Qué hábito automático tuyo te está saboteando ahora mismo?",
+      "soft_cta": "Dime en comentarios qué automatismo te controla.",
+      "psychologicalFact": "El cerebro busca automatizar para ahorrar energía cognitiva, pero automatiza indiscriminadamente.",
+      "viralTrigger": "identificacion",
+      "emotionalTrigger": "urgency|fear",
+      "effectName": "Automatismo neuronal sin consciencia",
+      "keywords": [
+        "automatismo",
+        "sabotaje"
+      ],
+      "claim": "Tu cerebro automatiza tus peores hábitos sin permiso.",
+      "explanation": "El cerebro busca eficiencia. Después de tres repeticiones, automatiza cualquier patrón, incluyendo los destructivos como ansiedad y procrastinación.",
+      "cta": "Descubre cómo romper estos circuitos antes de que sea demasiado tarde.",
+      "segments": [
+        {
+          "type": "HOOK",
+          "text": "Tu cerebro automatiza cosas que no querías automatizar.",
+          "visualIntent": "punch zoom, texto impactante, fondo oscuro",
+          "emotion": "tension"
+        },
+        {
+          "type": "OPEN_LOOP",
+          "text": "Y lo peor es que ni te das cuenta hasta que es demasiado tarde.",
+          "visualIntent": "zoom lento, rostro pensativo, tension",
+          "emotion": "curiosity"
+        },
+        {
+          "type": "MICRO_VALUE",
+          "text": "Cada vez que repites algo sin pensar, tu cerebro crea un atajo neuronal. Eso es automatismo. Te atrapa.",
+          "visualIntent": "zoom lento, rostro pensativo, tension",
+          "emotion": "curiosity"
+        },
+        {
+          "type": "ESCALATION",
+          "text": "Mira, tu cerebro es perezoso. Busca la eficiencia. Si haces algo tres veces seguidas, empieza a automatizarlo. El problema es que automatiza también las cosas que te joden. La ansiedad, la procrastinación, el victimismo. Todo.",
+          "visualIntent": "zoom lento, rostro pensativo, tension",
+          "emotion": "curiosity"
+        },
+        {
+          "type": "REENGAGE",
+          "text": "Lo grave no es repetir. Es que tu cerebro lo hace sin pedirte permiso.",
+          "visualIntent": "cambio brusco, tension, zoom corto",
+          "emotion": "curiosity"
+        },
+        {
+          "type": "PEAK",
+          "text": "Una vez automatizado, tu consciente casi desaparece. Actúas por puro reflejo. Y cambiar eso después requiere romper el circuito. Duele. Cuesta. Por eso la mayoría no lo hace.",
+          "visualIntent": "aislamiento, silueta, punch zoom",
+          "emotion": "impacto"
+        },
+        {
+          "type": "OPEN_ENDING",
+          "text": "¿Qué hábito automático tuyo te está saboteando ahora mismo?",
+          "visualIntent": "zoom lento, rostro pensativo, tension",
+          "emotion": "curiosity"
+        },
+        {
+          "type": "SOFT_CTA",
+          "text": "Dime en comentarios qué automatismo te controla.",
+          "visualIntent": "zoom lento, rostro pensativo, tension",
+          "emotion": "cercania"
+        }
+      ],
+      "structureVersion": "open_loop_escalation_v1",
+      "hasReengage": true,
+      "segmentFeedback": [
+        {
+          "segment": "hook",
+          "issue": "hook genérico"
+        },
+        {
+          "segment": "micro_value",
+          "issue": "micro_value poco concreto"
+        },
+        {
+          "segment": "reengage",
+          "issue": "reengage poco agresivo"
+        },
+        {
+          "segment": "soft_cta",
+          "issue": "soft_cta poco conversacional"
+        }
+      ],
+      "segmentFeedbackSummary": [
+        "[hook] hook genérico",
+        "[micro_value] micro_value poco concreto",
+        "[reengage] reengage poco agresivo",
+        "[soft_cta] soft_cta poco conversacional"
+      ],
+      "estimatedWords": 133,
+      "durationSeconds": 58,
+      "fullScript": "Tu cerebro automatiza cosas que no querías automatizar. Y lo peor es que ni te das cuenta hasta que es demasiado tarde. Cada vez que repites algo sin pensar, tu cerebro crea un atajo neuronal. Eso es automatismo. Te atrapa. Mira, tu cerebro es perezoso. Busca la eficiencia. Si haces algo tres veces seguidas, empieza a automatizarlo. El problema es que automatiza también las cosas que te joden. La ansiedad, la procrastinación, el victimismo. Todo. Lo grave no es repetir. Es que tu cerebro lo hace sin pedirte permiso. Una vez automatizado, tu consciente casi desaparece. Actúas por puro reflejo. Y cambiar eso después requiere romper el circuito. Duele. Cuesta. Por eso la mayoría no lo hace. ¿Qué hábito automático tuyo te está saboteando ahora mismo? Dime en comentarios qué automatismo te controla.",
+      "videoInstructions": {
+        "singleFocus": true,
+        "visualStyle": [
+          "estetica cinematografica oscura",
+          "fondo negro o casi negro",
+          "alto contraste con azul electrico dominante",
+          "acento rojo oscuro solo para tension",
+          "single focus constante sin overlays complejos",
+          "cambio de plano cada 2-3 segundos",
+          "zoom progresivo y movimiento suave"
+        ],
+        "subtitleStyle": "tipografia condensada bold, blanco frio con acentos azul electrico y rojo oscuro, subtitulos grandes y sincronizados",
+        "audioStyle": {
+          "voice": "voz clara y con ritmo",
+          "pauses": [
+            "hook",
+            "reengage",
+            "peak"
+          ]
+        },
+        "scenes": [
+          {
+            "segment": "hook",
+            "timing": "0-2.2s",
+            "visual": "primer plano de cerebro luminoso o rostro inquietante, relacionado con habits, fondo negro o muy oscuro, contraste alto, azul electrico y rojo oscuro como acentos, zoom lento, iluminacion dramatica, sensacion de misterio psicologico",
+            "cut": "corte rapido con push-in",
+            "startSeconds": 0,
+            "endSeconds": 2.2,
+            "durationSeconds": 2.2,
+            "shotType": "primer plano",
+            "framing": "primer plano",
+            "intensity": "alta",
+            "movement": "push-in rapido",
+            "transition": "hard cut",
+            "emphasis": "scroll-stop inmediato",
+            "syncCue": "movimiento continuo con remate en palabra fuerte"
+          },
+          {
+            "segment": "open_loop",
+            "timing": "2.2-5s",
+            "visual": "ojo humano extremo o gesto suspendido en sombra, relacionado con habits, fondo negro o muy oscuro, contraste alto, azul electrico y rojo oscuro como acentos, zoom lento, iluminacion dramatica, sensacion de misterio psicologico",
+            "cut": "zoom corto continuo",
+            "startSeconds": 2.2,
+            "endSeconds": 5,
+            "durationSeconds": 2.8,
+            "shotType": "plano detalle",
+            "framing": "plano detalle",
+            "intensity": "alta",
+            "movement": "zoom lento continuo",
+            "transition": "match cut",
+            "emphasis": "curiosidad sostenida",
+            "syncCue": "movimiento continuo con remate en palabra fuerte"
+          },
+          {
+            "segment": "micro_value",
+            "timing": "5-8.2s",
+            "visual": "detalle simbolico del mecanismo mental en glow azul, relacionado con habits, fondo negro o muy oscuro, contraste alto, azul electrico y rojo oscuro como acentos, zoom lento, iluminacion dramatica, sensacion de misterio psicologico",
+            "cut": "cambio de plano limpio",
+            "startSeconds": 5,
+            "endSeconds": 8.2,
+            "durationSeconds": 3.2,
+            "shotType": "plano medio",
+            "framing": "plano medio",
+            "intensity": "media",
+            "movement": "micro paneo lateral",
+            "transition": "cut limpio",
+            "emphasis": "primer pago de valor",
+            "syncCue": "movimiento continuo con remate en palabra fuerte"
+          },
+          {
+            "segment": "escalation",
+            "timing": "8.2-11.6s",
+            "visual": "silueta humana o tension social en contraluz, relacionado con habits, fondo negro o muy oscuro, contraste alto, azul electrico y rojo oscuro como acentos, zoom lento, iluminacion dramatica, sensacion de misterio psicologico",
+            "cut": "cortes cada 2-3s",
+            "startSeconds": 8.2,
+            "endSeconds": 11.6,
+            "durationSeconds": 3.4,
+            "shotType": "plano abierto",
+            "framing": "plano abierto",
+            "intensity": "media-alta",
+            "movement": "acercamiento progresivo",
+            "transition": "cut ritmico",
+            "emphasis": "tension creciente",
+            "syncCue": "movimiento continuo con remate en palabra fuerte"
+          },
+          {
+            "segment": "reengage",
+            "timing": "11.6-14.2s",
+            "visual": "cambio brusco a plano mas cercano con rojo alerta, relacionado con habits, fondo negro o muy oscuro, contraste alto, azul electrico y rojo oscuro como acentos, zoom lento, iluminacion dramatica, sensacion de misterio psicologico",
+            "cut": "cambio brusco + zoom agresivo",
+            "startSeconds": 11.6,
+            "endSeconds": 14.2,
+            "durationSeconds": 2.6,
+            "shotType": "primer plano",
+            "framing": "primer plano",
+            "intensity": "muy alta",
+            "movement": "zoom agresivo",
+            "transition": "whip cut",
+            "emphasis": "ruptura de patron",
+            "syncCue": "acercamiento en frase clave"
+          },
+          {
+            "segment": "peak",
+            "timing": "14.2-17.8s",
+            "visual": "escena humana real de conflicto, pareja o decision, relacionado con habits, fondo negro o muy oscuro, contraste alto, azul electrico y rojo oscuro como acentos, zoom lento, iluminacion dramatica, sensacion de misterio psicologico",
+            "cut": "alternancia de planos cerrados",
+            "startSeconds": 14.2,
+            "endSeconds": 17.8,
+            "durationSeconds": 3.6,
+            "shotType": "plano medio",
+            "framing": "plano medio",
+            "intensity": "maxima",
+            "movement": "push-in sostenido",
+            "transition": "impact cut",
+            "emphasis": "impacto emocional",
+            "syncCue": "acercamiento en frase clave"
+          },
+          {
+            "segment": "open_ending",
+            "timing": "17.8-20.9s",
+            "visual": "figura sola alejandose en oscuridad con particulas, relacionado con habits, fondo negro o muy oscuro, contraste alto, azul electrico y rojo oscuro como acentos, zoom lento, iluminacion dramatica, sensacion de misterio psicologico",
+            "cut": "desaceleracion ligera",
+            "startSeconds": 17.8,
+            "endSeconds": 20.9,
+            "durationSeconds": 3.1,
+            "shotType": "plano abierto",
+            "framing": "plano abierto",
+            "intensity": "media",
+            "movement": "zoom out suave",
+            "transition": "cut limpio",
+            "emphasis": "eco mental",
+            "syncCue": "movimiento continuo con remate en palabra fuerte"
+          },
+          {
+            "segment": "soft_cta",
+            "timing": "20.9-23.6s",
+            "visual": "rostro o silueta frontal con espacio negativo para cierre, relacionado con habits, fondo negro o muy oscuro, contraste alto, azul electrico y rojo oscuro como acentos, zoom lento, iluminacion dramatica, sensacion de misterio psicologico",
+            "cut": "ultimo corte limpio",
+            "startSeconds": 20.9,
+            "endSeconds": 23.6,
+            "durationSeconds": 2.7,
+            "shotType": "plano detalle",
+            "framing": "plano detalle",
+            "intensity": "media",
+            "movement": "micro acercamiento",
+            "transition": "hold corto",
+            "emphasis": "cierre abierto",
+            "syncCue": "movimiento continuo con remate en palabra fuerte"
+          }
+        ],
+        "style": {
+          "theme": "psicologia oscura / mente humana / comportamiento",
+          "colorPalette": "negro absoluto, azul electrico, azul neon frio, rojo oscuro, blanco frio",
+          "visualStyle": "cinematografico, minimalista, alto contraste, single focus",
+          "lighting": "oscura, dramatica, contraluz duro, glow electrico dirigido, sombras marcadas",
+          "cameraMotion": "zoom lento constante, push-in suave, micro paneo lateral, cambio de plano cada 2-3 segundos",
+          "effects": "glow ligero, particulas sutiles, neblina tenue, ruido cinematografico muy fino",
+          "composition": "single focus, sujeto dominante a la derecha o centrado, texto respirando a la izquierda, primeros planos y siluetas, profundidad negativa",
+          "emotionalTone": "misterio psicologico, obsesion, tension contenida, intriga oscura",
+          "consistencyRules": [
+            "una sola escena principal por segmento",
+            "fondo siempre oscuro o casi negro",
+            "usar azul electrico como color dominante y rojo solo para tension o reengage",
+            "priorizar cerebros, ojos, siluetas y escenas humanas reconocibles",
+            "evitar stock luminoso, lifestyle genérico o composiciones planas"
+          ],
+          "clipKeywords": [
+            "automatismo",
+            "sabotaje",
+            "glowing brain dark background",
+            "blue eye close up dark",
+            "person silhouette red light",
+            "couple argument silhouette blue light",
+            "moody face close up shadow",
+            "dark cinematic person thinking"
+          ]
+        },
+        "clipKeywords": [
+          "automatismo",
+          "sabotaje",
+          "glowing brain dark background",
+          "blue eye close up dark",
+          "person silhouette red light",
+          "couple argument silhouette blue light",
+          "moody face close up shadow",
+          "dark cinematic person thinking"
+        ],
+        "rhythmRule": "cambio visual cada 2-3 segundos, sin escenas estaticas ni repeticiones consecutivas de encuadre",
+        "timeline": [
+          {
+            "segment": "hook",
+            "timing": "0-2.2s",
+            "durationSeconds": 2.2,
+            "shotType": "primer plano",
+            "intensity": "alta",
+            "movement": "push-in rapido",
+            "transition": "hard cut"
+          },
+          {
+            "segment": "open_loop",
+            "timing": "2.2-5s",
+            "durationSeconds": 2.8,
+            "shotType": "plano detalle",
+            "intensity": "alta",
+            "movement": "zoom lento continuo",
+            "transition": "match cut"
+          },
+          {
+            "segment": "micro_value",
+            "timing": "5-8.2s",
+            "durationSeconds": 3.2,
+            "shotType": "plano medio",
+            "intensity": "media",
+            "movement": "micro paneo lateral",
+            "transition": "cut limpio"
+          },
+          {
+            "segment": "escalation",
+            "timing": "8.2-11.6s",
+            "durationSeconds": 3.4,
+            "shotType": "plano abierto",
+            "intensity": "media-alta",
+            "movement": "acercamiento progresivo",
+            "transition": "cut ritmico"
+          },
+          {
+            "segment": "reengage",
+            "timing": "11.6-14.2s",
+            "durationSeconds": 2.6,
+            "shotType": "primer plano",
+            "intensity": "muy alta",
+            "movement": "zoom agresivo",
+            "transition": "whip cut"
+          },
+          {
+            "segment": "peak",
+            "timing": "14.2-17.8s",
+            "durationSeconds": 3.6,
+            "shotType": "plano medio",
+            "intensity": "maxima",
+            "movement": "push-in sostenido",
+            "transition": "impact cut"
+          },
+          {
+            "segment": "open_ending",
+            "timing": "17.8-20.9s",
+            "durationSeconds": 3.1,
+            "shotType": "plano abierto",
+            "intensity": "media",
+            "movement": "zoom out suave",
+            "transition": "cut limpio"
+          },
+          {
+            "segment": "soft_cta",
+            "timing": "20.9-23.6s",
+            "durationSeconds": 2.7,
+            "shotType": "plano detalle",
+            "intensity": "media",
+            "movement": "micro acercamiento",
+            "transition": "hold corto"
+          }
+        ]
+      },
+      "growthContext": {
+        "nextTopic": "habits",
+        "hookType": "challenge",
+        "emotionalTrigger": "fear|urgency|validation",
+        "angle": "hábitos que el cerebro automatiza",
+        "avoidTopics": [
+          "habits",
+          "procrastination",
+          "cognitive_biases",
+          "motivation",
+          "body_language",
+          "perception",
+          "memory",
+          "emotions",
+          "self_talk",
+          "emotional_patterns",
+          "decision_making",
+          "attention",
+          "dopamine",
+          "social_patterns",
+          "relationships",
+          "psychology"
+        ],
+        "avoidRecentHooks": [
+          "No es falta de voluntad, es una trampa neuronal.",
+          "Hablas mal de ti y rindes peor. No es casualidad.",
+          "No es falta de voluntad, es una trampa neuronal.",
+          "No es falta de voluntad, es una trampa neuronal.",
+          "Hablas mal de ti y rindes peor. No es casualidad.",
+          "Acabas de arruinar tu oportunidad sin abrir la boca.",
+          "Repites algo tres veces y crees que es verdad.",
+          "Tu cerebro te miente todos los días sin que lo notes."
+        ],
+        "reasoning": "Topic 'habits' por estrategia explore. Saturados evitados: habits, procrastination, cognitive_biases, motivation, body_language, perception, memory, emotions, self_talk, emotional_patterns, decision_making, attention, dopamine, social_patterns, relationships, psychology.",
+        "confidence": 0.5,
+        "strategy": "explore",
+        "decisionAt": "2026-04-27T22:31:37.235Z",
+        "fallbackGenerator": "best-available",
+        "fallbackReason": "format_match 74/75 | virality 58/60 | [hook] hook genérico (penalty) | [micro_value] micro_value poco concreto (penalty) | [reengage] reengage poco agresivo (penalty)"
+      },
+      "viralityScore": 58,
+      "viralityBreakdown": {
+        "hookStrength": 20,
+        "emotionalTrigger": 8,
+        "relatability": 13,
+        "loopPotential": 15,
+        "durationBonus": 2
+      },
+      "formatMatchScore": 74,
+      "formatMatchBreakdown": {
+        "hookFormat": 16,
+        "brevity": 12,
+        "clarity": 15,
+        "narrativeRhythm": 4,
+        "psychologicalImpact": 6,
+        "scrollStop": 6,
+        "infoDensity": 2,
+        "earlyRevelation": 3,
+        "singleIdea": 5,
+        "reengage": 5
+      },
+      "formatMatchSegmentGaps": [
+        "[hook] hook genérico",
+        "[micro_value] micro_value poco concreto",
+        "[reengage] reengage poco agresivo",
+        "[soft_cta] soft_cta poco conversacional"
+      ],
+      "formatMatchGaps": [
+        "Hay relleno o rodeos — elimina intro, empieza con el dato",
+        "Revelación psicológica débil — añade nombre de efecto o cifra concreta",
+        "Baja densidad — más información útil en menos palabras",
+        "Revelación tardía — el claim debe ser breve y concreto, no llegar al segundo 8",
+        "[hook] hook genérico",
+        "[micro_value] micro_value poco concreto",
+        "[reengage] reengage poco agresivo",
+        "[soft_cta] soft_cta poco conversacional"
+      ],
+      "emotionalImpactScore": 42,
+      "emotionalImpactBreakdown": {
+        "powerWords": 12,
+        "personalId": 20,
+        "surpriseFactor": 0,
+        "visceral": 0,
+        "tensionResolution": 10
+      },
+      "approved": true,
+      "rejectionReason": null,
+      "selectionPenalties": [
+        "virality_low:58",
+        "[hook] hook genérico",
+        "[micro_value] micro_value poco concreto",
+        "[reengage] reengage poco agresivo",
+        "[soft_cta] soft_cta poco conversacional"
+      ],
+      "llmMetrics": {
+        "llm_total_calls": 4,
+        "llm_parse_fail": false,
+        "llm_recovery_used": false,
+        "llm_hard_fail": false,
+        "emergency_fallback_used": false,
+        "llm_schema_fail": false,
+        "llm_truncated_suspected": true
+      },
+      "usedRecovery": false,
+      "generationSource": "generateOptimizedScript",
+      "llmPath": [
+        "generateViralScript",
+        "generateOptimizedScript"
+      ],
+      "generationFallback": "best-available",
+      "usedLastValid": false,
+      "usedEmergencyFallback": false,
+      "approvalBypassReason": null,
+      "final_generation_route": "generateViralScript -> generateOptimizedScript",
+      "total_llm_calls": 4,
+      "fallback_level_reached": 1,
+      "quickOptimizedSegment": "hook",
+      "quickOptimizedReason": "[hook] hook genérico",
+      "selectedQuality": "acceptable",
+      "approvalBypass": "best_available_after_3_attempts",
+      "bestAvailableScore": 61,
+      "selectionReasons": [
+        "virality_low:58",
+        "[hook] hook genérico",
+        "[micro_value] micro_value poco concreto",
+        "[reengage] reengage poco agresivo",
+        "[soft_cta] soft_cta poco conversacional"
+      ],
+      "abVariantId": "v_b",
+      "slotTracking": {
+        "batchId": null,
+        "slotId": null,
+        "plannedOrder": null,
+        "plannedRole": null,
+        "plannedCluster": null,
+        "plannedHookType": null,
+        "plannedMicroAction": null,
+        "recommendedCandidateId": null,
+        "recommendedCandidateTitle": null,
+        "attributionType": "unplanned",
+        "slotState": "unplanned",
+        "assignmentConfidence": 0,
+        "traceConfidence": 0,
+        "exactTraceAvailable": false,
+        "abLinked": true
+      },
+      "abExperimentId": "exp_1777329126750_011afc61",
+      "hookType": "challenge",
+      "publishAfter": "2026-04-28T00:32:11.013Z"
+    },
+    "growthContext": {
+      "nextTopic": "habits",
+      "hookType": "challenge",
+      "emotionalTrigger": "fear|urgency|validation",
+      "angle": "hábitos que el cerebro automatiza",
+      "avoidTopics": [
+        "habits",
+        "procrastination",
+        "cognitive_biases",
+        "motivation",
+        "body_language",
+        "perception",
+        "memory",
+        "emotions",
+        "self_talk",
+        "emotional_patterns",
+        "decision_making",
+        "attention",
+        "dopamine",
+        "social_patterns",
+        "relationships",
+        "psychology"
+      ],
+      "avoidRecentHooks": [
+        "No es falta de voluntad, es una trampa neuronal.",
+        "Hablas mal de ti y rindes peor. No es casualidad.",
+        "No es falta de voluntad, es una trampa neuronal.",
+        "No es falta de voluntad, es una trampa neuronal.",
+        "Hablas mal de ti y rindes peor. No es casualidad.",
+        "Acabas de arruinar tu oportunidad sin abrir la boca.",
+        "Repites algo tres veces y crees que es verdad.",
+        "Tu cerebro te miente todos los días sin que lo notes."
+      ],
+      "reasoning": "Topic 'habits' por estrategia explore. Saturados evitados: habits, procrastination, cognitive_biases, motivation, body_language, perception, memory, emotions, self_talk, emotional_patterns, decision_making, attention, dopamine, social_patterns, relationships, psychology.",
+      "confidence": 0.5,
+      "strategy": "explore",
+      "decisionAt": "2026-04-27T22:31:37.235Z"
+    },
+    "hookId": null,
+    "themeIndex": 28,
+    "slotTracking": {
+      "batchId": null,
+      "slotId": null,
+      "plannedOrder": null,
+      "plannedRole": null,
+      "plannedCluster": null,
+      "plannedHookType": null,
+      "plannedMicroAction": null,
+      "recommendedCandidateId": null,
+      "recommendedCandidateTitle": null,
+      "attributionType": "unplanned",
+      "slotState": "unplanned",
+      "assignmentConfidence": 0,
+      "traceConfidence": 0,
+      "exactTraceAvailable": false,
+      "abLinked": true
+    }
+  },
+  "startedAt": "2026-04-27T22:32:11.017Z",
+  "videoId": "d04f78b2-3651-420f-b690-c1d99202996d",
+  "lastStage": "render_done",
+  "lastProgressAt": "2026-04-27T22:33:18.305Z",
+  "result": {
+    "videoId": "d04f78b2-3651-420f-b690-c1d99202996d",
+    "skipped": true,
+    "qcScore": 70,
+    "qcReasons": [
+      "virality 58 < 65",
+      "format 74 < 75",
+      "video duration 2.4s < 8s"
+    ]
+  },
+  "completedAt": "2026-04-27T22:33:18.838Z"
+}

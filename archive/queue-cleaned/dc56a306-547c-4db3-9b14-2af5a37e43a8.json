@@ -1,0 +1,640 @@
+{
+  "id": "dc56a306-547c-4db3-9b14-2af5a37e43a8",
+  "createdAt": "2026-04-27T22:18:11.579Z",
+  "status": "done",
+  "progress": 100,
+  "performance": {
+    "label": "video-pipeline",
+    "startedAt": "2026-04-27T22:18:11.581Z",
+    "totalMs": 53327,
+    "phases": [
+      {
+        "name": "script_generation",
+        "startedAt": "2026-04-27T22:18:11.582Z",
+        "status": "completed",
+        "endedAt": "2026-04-27T22:18:11.583Z",
+        "durationMs": 1,
+        "source": "prefab",
+        "estimatedWords": 136,
+        "durationSeconds": 59
+      },
+      {
+        "name": "tts",
+        "startedAt": "2026-04-27T22:18:11.586Z",
+        "status": "completed",
+        "endedAt": "2026-04-27T22:18:46.550Z",
+        "durationMs": 34964,
+        "provider": "kokoro",
+        "estimatedDuration": 51.76133399999999,
+        "wordBoundaries": 0
+      },
+      {
+        "name": "audio_postprocess",
+        "startedAt": "2026-04-27T22:18:46.551Z",
+        "status": "completed",
+        "endedAt": "2026-04-27T22:18:48.322Z",
+        "durationMs": 1771,
+        "outputPath": "C:\\Users\\Erik\\Desktop\\Generador_videos\\output\\661dbfce-d9e4-4c15-9b42-eec1c6f1b82d\\voice_proc.mp3"
+      },
+      {
+        "name": "render",
+        "startedAt": "2026-04-27T22:18:48.323Z",
+        "status": "completed",
+        "endedAt": "2026-04-27T22:19:04.790Z",
+        "durationMs": 16467,
+        "outputPath": "C:\\Users\\Erik\\Desktop\\Generador_videos\\output\\661dbfce-d9e4-4c15-9b42-eec1c6f1b82d\\output.mp4"
+      },
+      {
+        "name": "quality_check",
+        "startedAt": "2026-04-27T22:19:04.791Z",
+        "status": "completed",
+        "endedAt": "2026-04-27T22:19:04.908Z",
+        "durationMs": 117,
+        "passed": false,
+        "score": 70,
+        "threshold": 70
+      }
+    ],
+    "activePhase": null,
+    "jobId": "dc56a306-547c-4db3-9b14-2af5a37e43a8",
+    "videoId": "661dbfce-d9e4-4c15-9b42-eec1c6f1b82d",
+    "topic": "decision_making",
+    "result": "qc_failed"
+  },
+  "data": {
+    "topic": "decision_making",
+    "prefabScript": {
+      "title": "decision_making_1777328262706",
+      "topic": "decision_making",
+      "hook": "A las tres de la tarde tomas decisiones de mierda.",
+      "open_loop": "Y ni siquiera lo notas mientras lo haces. Tu cerebro ya lleva horas agotado.",
+      "micro_value": "Se llama ego depletion: después de decidir todo el día, tu prefrontal se queda sin gasolina. Literalmente sin energía química.",
+      "escalation": "Por eso compras cosas que no querías a las cinco. Por eso dices que sí a planes que luego cancelas. Por eso esa conversación difícil a las seis termina en grito cuando a las nueve habría sido negociación.",
+      "reengage": "Espera. Antes de que te vayas, necesitas saber esto: mientras ves este vídeo, tu cerebro está tomando decisiones basadas en cuándo fue la última vez que comiste. No es teoría. Es biología.",
+      "peak": "Un estudio de Yale con jueces mostró que las sentencias más duras llegaban justo después de comer. Mismo cerebro, mismos casos, peores decisiones. Solo porque el glucógeno se acabó.",
+      "open_ending": "¿Cuántas decisiones malas has tomado sin saberlo a esta hora?",
+      "soft_cta": "Cuéntame la peor decisión de tu tarde.",
+      "claim": "Las decisiones impulsivas no son debilidad, son fisiología",
+      "explanation": "Tu glucógeno controla tus decisiones más de lo que controla el consciente",
+      "cta": "Sigue hasta el final si quieres saber cuándo realmente puedes confiar en ti mismo",
+      "psychologicalFact": "El ego depletion reduce la capacidad de autorregulación tras agotamiento mental",
+      "viralTrigger": "identificacion",
+      "emotionalTrigger": "curiosity",
+      "durationSeconds": 59,
+      "keywords": [
+        "cansancio mental",
+        "decisiones"
+      ],
+      "hashtags": [
+        "#psicologia",
+        "#mente",
+        "#cerebro"
+      ],
+      "allHooks": null,
+      "selectedHookType": "challenge",
+      "hookSelectionReason": "El hook tipo 'challenge' genera identificación incómoda y frena scroll; funciona mejor para decision_making que revelation según datos",
+      "optimizationNotes": {
+        "patronUsado": "contradicción cotidiana + efecto temporal invisible"
+      },
+      "learningSignals": {},
+      "autoevaluacion": {},
+      "segments": [
+        {
+          "type": "HOOK",
+          "text": "A las tres de la tarde tomas decisiones de mierda.",
+          "visualIntent": "punch zoom, texto impactante, fondo oscuro",
+          "emotion": "tension"
+        },
+        {
+          "type": "OPEN_LOOP",
+          "text": "Y ni siquiera lo notas mientras lo haces. Tu cerebro ya lleva horas agotado.",
+          "visualIntent": "zoom lento, rostro pensativo, tension",
+          "emotion": "curiosity"
+        },
+        {
+          "type": "MICRO_VALUE",
+          "text": "Se llama ego depletion: después de decidir todo el día, tu prefrontal se queda sin gasolina. Literalmente sin energía química.",
+          "visualIntent": "zoom lento, rostro pensativo, tension",
+          "emotion": "curiosity"
+        },
+        {
+          "type": "ESCALATION",
+          "text": "Por eso compras cosas que no querías a las cinco. Por eso dices que sí a planes que luego cancelas. Por eso esa conversación difícil a las seis termina en grito cuando a las nueve habría sido negociación.",
+          "visualIntent": "zoom lento, rostro pensativo, tension",
+          "emotion": "curiosity"
+        },
+        {
+          "type": "REENGAGE",
+          "text": "Tu peor versión no eres tú. Es solo tu cerebro cansado.",
+          "visualIntent": "cambio brusco, tension, zoom corto",
+          "emotion": "curiosity"
+        },
+        {
+          "type": "PEAK",
+          "text": "Un estudio de Yale con jueces mostró que las sentencias más duras llegaban justo después de comer. Mismo cerebro, mismos casos, peores decisiones. Solo porque el glucógeno se acabó.",
+          "visualIntent": "aislamiento, silueta, punch zoom",
+          "emotion": "impacto"
+        },
+        {
+          "type": "OPEN_ENDING",
+          "text": "¿Cuántas decisiones malas has tomado sin saberlo a esta hora?",
+          "visualIntent": "zoom lento, rostro pensativo, tension",
+          "emotion": "curiosity"
+        },
+        {
+          "type": "SOFT_CTA",
+          "text": "Cuéntame la peor decisión de tu tarde.",
+          "visualIntent": "zoom lento, rostro pensativo, tension",
+          "emotion": "cercania"
+        }
+      ],
+      "structureVersion": "open_loop_escalation_v1",
+      "hasReengage": true,
+      "segmentFeedback": [
+        {
+          "segment": "peak",
+          "issue": "peak abstracto"
+        },
+        {
+          "segment": "soft_cta",
+          "issue": "soft_cta poco conversacional"
+        }
+      ],
+      "segmentFeedbackSummary": [
+        "[peak] peak abstracto",
+        "[soft_cta] soft_cta poco conversacional"
+      ],
+      "estimatedWords": 136,
+      "fullScript": "A las tres de la tarde tomas decisiones de mierda. Y ni siquiera lo notas mientras lo haces. Tu cerebro ya lleva horas agotado. Se llama ego depletion: después de decidir todo el día, tu prefrontal se queda sin gasolina. Literalmente sin energía química. Por eso compras cosas que no querías a las cinco. Por eso dices que sí a planes que luego cancelas. Por eso esa conversación difícil a las seis termina en grito cuando a las nueve habría sido negociación. Tu peor versión no eres tú. Es solo tu cerebro cansado. Un estudio de Yale con jueces mostró que las sentencias más duras llegaban justo después de comer. Mismo cerebro, mismos casos, peores decisiones. Solo porque el glucógeno se acabó. ¿Cuántas decisiones malas has tomado sin saberlo a esta hora? Cuéntame la peor decisión de tu tarde.",
+      "videoInstructions": {
+        "singleFocus": true,
+        "visualStyle": [
+          "estetica cinematografica oscura",
+          "fondo negro o casi negro",
+          "alto contraste con azul electrico dominante",
+          "acento rojo oscuro solo para tension",
+          "single focus constante sin overlays complejos",
+          "cambio de plano cada 2-3 segundos",
+          "zoom progresivo y movimiento suave"
+        ],
+        "subtitleStyle": "tipografia condensada bold, blanco frio con acentos azul electrico y rojo oscuro, subtitulos grandes y sincronizados",
+        "audioStyle": {
+          "voice": "voz clara y con ritmo",
+          "pauses": [
+            "hook",
+            "reengage",
+            "peak"
+          ]
+        },
+        "scenes": [
+          {
+            "segment": "hook",
+            "timing": "0-2.2s",
+            "visual": "primer plano de cerebro luminoso o rostro inquietante, relacionado con decision_making, fondo negro o muy oscuro, contraste alto, azul electrico y rojo oscuro como acentos, zoom lento, iluminacion dramatica, sensacion de misterio psicologico",
+            "cut": "corte rapido con push-in",
+            "startSeconds": 0,
+            "endSeconds": 2.2,
+            "durationSeconds": 2.2,
+            "shotType": "primer plano",
+            "framing": "primer plano",
+            "intensity": "alta",
+            "movement": "push-in rapido",
+            "transition": "hard cut",
+            "emphasis": "scroll-stop inmediato",
+            "syncCue": "movimiento continuo con remate en palabra fuerte"
+          },
+          {
+            "segment": "open_loop",
+            "timing": "2.2-5s",
+            "visual": "ojo humano extremo o gesto suspendido en sombra, relacionado con decision_making, fondo negro o muy oscuro, contraste alto, azul electrico y rojo oscuro como acentos, zoom lento, iluminacion dramatica, sensacion de misterio psicologico",
+            "cut": "zoom corto continuo",
+            "startSeconds": 2.2,
+            "endSeconds": 5,
+            "durationSeconds": 2.8,
+            "shotType": "plano detalle",
+            "framing": "plano detalle",
+            "intensity": "alta",
+            "movement": "zoom lento continuo",
+            "transition": "match cut",
+            "emphasis": "curiosidad sostenida",
+            "syncCue": "movimiento continuo con remate en palabra fuerte"
+          },
+          {
+            "segment": "micro_value",
+            "timing": "5-8.2s",
+            "visual": "detalle simbolico del mecanismo mental en glow azul, relacionado con decision_making, fondo negro o muy oscuro, contraste alto, azul electrico y rojo oscuro como acentos, zoom lento, iluminacion dramatica, sensacion de misterio psicologico",
+            "cut": "cambio de plano limpio",
+            "startSeconds": 5,
+            "endSeconds": 8.2,
+            "durationSeconds": 3.2,
+            "shotType": "plano medio",
+            "framing": "plano medio",
+            "intensity": "media",
+            "movement": "micro paneo lateral",
+            "transition": "cut limpio",
+            "emphasis": "primer pago de valor",
+            "syncCue": "movimiento continuo con remate en palabra fuerte"
+          },
+          {
+            "segment": "escalation",
+            "timing": "8.2-11.6s",
+            "visual": "silueta humana o tension social en contraluz, relacionado con decision_making, fondo negro o muy oscuro, contraste alto, azul electrico y rojo oscuro como acentos, zoom lento, iluminacion dramatica, sensacion de misterio psicologico",
+            "cut": "cortes cada 2-3s",
+            "startSeconds": 8.2,
+            "endSeconds": 11.6,
+            "durationSeconds": 3.4,
+            "shotType": "plano abierto",
+            "framing": "plano abierto",
+            "intensity": "media-alta",
+            "movement": "acercamiento progresivo",
+            "transition": "cut ritmico",
+            "emphasis": "tension creciente",
+            "syncCue": "movimiento continuo con remate en palabra fuerte"
+          },
+          {
+            "segment": "reengage",
+            "timing": "11.6-14.2s",
+            "visual": "cambio brusco a plano mas cercano con rojo alerta, relacionado con decision_making, fondo negro o muy oscuro, contraste alto, azul electrico y rojo oscuro como acentos, zoom lento, iluminacion dramatica, sensacion de misterio psicologico",
+            "cut": "cambio brusco + zoom agresivo",
+            "startSeconds": 11.6,
+            "endSeconds": 14.2,
+            "durationSeconds": 2.6,
+            "shotType": "primer plano",
+            "framing": "primer plano",
+            "intensity": "muy alta",
+            "movement": "zoom agresivo",
+            "transition": "whip cut",
+            "emphasis": "ruptura de patron",
+            "syncCue": "acercamiento en frase clave"
+          },
+          {
+            "segment": "peak",
+            "timing": "14.2-17.8s",
+            "visual": "escena humana real de conflicto, pareja o decision, relacionado con decision_making, fondo negro o muy oscuro, contraste alto, azul electrico y rojo oscuro como acentos, zoom lento, iluminacion dramatica, sensacion de misterio psicologico",
+            "cut": "alternancia de planos cerrados",
+            "startSeconds": 14.2,
+            "endSeconds": 17.8,
+            "durationSeconds": 3.6,
+            "shotType": "plano medio",
+            "framing": "plano medio",
+            "intensity": "maxima",
+            "movement": "push-in sostenido",
+            "transition": "impact cut",
+            "emphasis": "impacto emocional",
+            "syncCue": "acercamiento en frase clave"
+          },
+          {
+            "segment": "open_ending",
+            "timing": "17.8-20.9s",
+            "visual": "figura sola alejandose en oscuridad con particulas, relacionado con decision_making, fondo negro o muy oscuro, contraste alto, azul electrico y rojo oscuro como acentos, zoom lento, iluminacion dramatica, sensacion de misterio psicologico",
+            "cut": "desaceleracion ligera",
+            "startSeconds": 17.8,
+            "endSeconds": 20.9,
+            "durationSeconds": 3.1,
+            "shotType": "plano abierto",
+            "framing": "plano abierto",
+            "intensity": "media",
+            "movement": "zoom out suave",
+            "transition": "cut limpio",
+            "emphasis": "eco mental",
+            "syncCue": "movimiento continuo con remate en palabra fuerte"
+          },
+          {
+            "segment": "soft_cta",
+            "timing": "20.9-23.6s",
+            "visual": "rostro o silueta frontal con espacio negativo para cierre, relacionado con decision_making, fondo negro o muy oscuro, contraste alto, azul electrico y rojo oscuro como acentos, zoom lento, iluminacion dramatica, sensacion de misterio psicologico",
+            "cut": "ultimo corte limpio",
+            "startSeconds": 20.9,
+            "endSeconds": 23.6,
+            "durationSeconds": 2.7,
+            "shotType": "plano detalle",
+            "framing": "plano detalle",
+            "intensity": "media",
+            "movement": "micro acercamiento",
+            "transition": "hold corto",
+            "emphasis": "cierre abierto",
+            "syncCue": "movimiento continuo con remate en palabra fuerte"
+          }
+        ],
+        "style": {
+          "theme": "psicologia oscura / mente humana / comportamiento",
+          "colorPalette": "negro absoluto, azul electrico, azul neon frio, rojo oscuro, blanco frio",
+          "visualStyle": "cinematografico, minimalista, alto contraste, single focus",
+          "lighting": "oscura, dramatica, contraluz duro, glow electrico dirigido, sombras marcadas",
+          "cameraMotion": "zoom lento constante, push-in suave, micro paneo lateral, cambio de plano cada 2-3 segundos",
+          "effects": "glow ligero, particulas sutiles, neblina tenue, ruido cinematografico muy fino",
+          "composition": "single focus, sujeto dominante a la derecha o centrado, texto respirando a la izquierda, primeros planos y siluetas, profundidad negativa",
+          "emotionalTone": "misterio psicologico, obsesion, tension contenida, intriga oscura",
+          "consistencyRules": [
+            "una sola escena principal por segmento",
+            "fondo siempre oscuro o casi negro",
+            "usar azul electrico como color dominante y rojo solo para tension o reengage",
+            "priorizar cerebros, ojos, siluetas y escenas humanas reconocibles",
+            "evitar stock luminoso, lifestyle genérico o composiciones planas"
+          ],
+          "clipKeywords": [
+            "cansancio mental",
+            "decisiones",
+            "glowing brain dark background",
+            "blue eye close up dark",
+            "person silhouette red light",
+            "couple argument silhouette blue light",
+            "moody face close up shadow",
+            "dark cinematic person thinking"
+          ]
+        },
+        "clipKeywords": [
+          "cansancio mental",
+          "decisiones",
+          "glowing brain dark background",
+          "blue eye close up dark",
+          "person silhouette red light",
+          "couple argument silhouette blue light",
+          "moody face close up shadow",
+          "dark cinematic person thinking"
+        ],
+        "rhythmRule": "cambio visual cada 2-3 segundos, sin escenas estaticas ni repeticiones consecutivas de encuadre",
+        "timeline": [
+          {
+            "segment": "hook",
+            "timing": "0-2.2s",
+            "durationSeconds": 2.2,
+            "shotType": "primer plano",
+            "intensity": "alta",
+            "movement": "push-in rapido",
+            "transition": "hard cut"
+          },
+          {
+            "segment": "open_loop",
+            "timing": "2.2-5s",
+            "durationSeconds": 2.8,
+            "shotType": "plano detalle",
+            "intensity": "alta",
+            "movement": "zoom lento continuo",
+            "transition": "match cut"
+          },
+          {
+            "segment": "micro_value",
+            "timing": "5-8.2s",
+            "durationSeconds": 3.2,
+            "shotType": "plano medio",
+            "intensity": "media",
+            "movement": "micro paneo lateral",
+            "transition": "cut limpio"
+          },
+          {
+            "segment": "escalation",
+            "timing": "8.2-11.6s",
+            "durationSeconds": 3.4,
+            "shotType": "plano abierto",
+            "intensity": "media-alta",
+            "movement": "acercamiento progresivo",
+            "transition": "cut ritmico"
+          },
+          {
+            "segment": "reengage",
+            "timing": "11.6-14.2s",
+            "durationSeconds": 2.6,
+            "shotType": "primer plano",
+            "intensity": "muy alta",
+            "movement": "zoom agresivo",
+            "transition": "whip cut"
+          },
+          {
+            "segment": "peak",
+            "timing": "14.2-17.8s",
+            "durationSeconds": 3.6,
+            "shotType": "plano medio",
+            "intensity": "maxima",
+            "movement": "push-in sostenido",
+            "transition": "impact cut"
+          },
+          {
+            "segment": "open_ending",
+            "timing": "17.8-20.9s",
+            "durationSeconds": 3.1,
+            "shotType": "plano abierto",
+            "intensity": "media",
+            "movement": "zoom out suave",
+            "transition": "cut limpio"
+          },
+          {
+            "segment": "soft_cta",
+            "timing": "20.9-23.6s",
+            "durationSeconds": 2.7,
+            "shotType": "plano detalle",
+            "intensity": "media",
+            "movement": "micro acercamiento",
+            "transition": "hold corto"
+          }
+        ]
+      },
+      "growthContext": {
+        "nextTopic": "decision_making",
+        "hookType": "challenge",
+        "emotionalTrigger": "curiosity",
+        "angle": "por qué decides peor por la tarde",
+        "avoidTopics": [
+          "procrastination",
+          "cognitive_biases",
+          "body_language",
+          "emotions",
+          "emotional_patterns",
+          "habits",
+          "attention",
+          "dopamine",
+          "social_patterns",
+          "relationships",
+          "motivation",
+          "psychology"
+        ],
+        "avoidRecentHooks": [
+          "Te prometen dinero y dejas de querer hacerlo.",
+          "Tu cerebro prefiere dolor ahora que éxito después",
+          "Tu cerebro prefiere dolor ahora que éxito después",
+          "Tu postura grita lo que tu boca calla.",
+          "Acabas de cambiar de opinión sin darte cuenta.",
+          "Acabas de cambiar de opinión sin darte cuenta.",
+          "Tu postura grita lo que tu boca calla.",
+          "Miras el móvil sin decidir hacerlo nunca."
+        ],
+        "reasoning": "Topic 'decision_making' por estrategia explore. Saturados evitados: procrastination, cognitive_biases, body_language, emotions, emotional_patterns, habits, attention, dopamine, social_patterns, relationships, motivation, psychology.",
+        "confidence": 0.5,
+        "strategy": "explore",
+        "decisionAt": "2026-04-27T22:17:36.700Z",
+        "fallbackGenerator": "best-available",
+        "fallbackReason": "format_match 63/75 | virality 35/60 | hook_weak 0/8 (penalty) | [reengage] reengage poco agresivo (penalty) | [peak] peak abstracto (penalty) | [soft_cta] soft_cta poco conversacional (penalty)"
+      },
+      "viralityScore": 35,
+      "viralityBreakdown": {
+        "hookStrength": 0,
+        "emotionalTrigger": 8,
+        "relatability": 10,
+        "loopPotential": 15,
+        "durationBonus": 2
+      },
+      "formatMatchScore": 63,
+      "formatMatchBreakdown": {
+        "hookFormat": 14,
+        "brevity": 12,
+        "clarity": 6,
+        "narrativeRhythm": 4,
+        "psychologicalImpact": 8,
+        "scrollStop": 0,
+        "infoDensity": 6,
+        "earlyRevelation": 5,
+        "singleIdea": 3,
+        "reengage": 5
+      },
+      "formatMatchSegmentGaps": [
+        "[peak] peak abstracto",
+        "[soft_cta] soft_cta poco conversacional"
+      ],
+      "formatMatchGaps": [
+        "Frases demasiado largas — máximo 12 palabras por frase, sin excepciones",
+        "Hay relleno o rodeos — elimina intro, empieza con el dato",
+        "Hook no para el scroll — falta tensión, shock o reconocimiento inmediato",
+        "[peak] peak abstracto",
+        "[soft_cta] soft_cta poco conversacional"
+      ],
+      "emotionalImpactScore": 36,
+      "emotionalImpactBreakdown": {
+        "powerWords": 0,
+        "personalId": 16,
+        "surpriseFactor": 10,
+        "visceral": 0,
+        "tensionResolution": 10
+      },
+      "approved": true,
+      "rejectionReason": null,
+      "selectionPenalties": [
+        "virality_low:35",
+        "format_low:63",
+        "[peak] peak abstracto",
+        "[soft_cta] soft_cta poco conversacional"
+      ],
+      "llmMetrics": {
+        "llm_total_calls": 5,
+        "llm_parse_fail": true,
+        "llm_recovery_used": true,
+        "llm_hard_fail": false,
+        "emergency_fallback_used": false,
+        "llm_schema_fail": false,
+        "llm_truncated_suspected": true
+      },
+      "usedRecovery": false,
+      "generationSource": "generateViralScript",
+      "llmPath": [
+        "generateViralScript"
+      ],
+      "generationFallback": "best-available",
+      "usedLastValid": false,
+      "usedEmergencyFallback": false,
+      "approvalBypassReason": null,
+      "final_generation_route": "generateViralScript",
+      "total_llm_calls": 1,
+      "fallback_level_reached": 0,
+      "quickOptimizedSegment": "reengage",
+      "quickOptimizedReason": "[reengage] reengage poco agresivo",
+      "selectedQuality": "acceptable",
+      "approvalBypass": "best_available_after_3_attempts",
+      "bestAvailableScore": 45,
+      "selectionReasons": [
+        "virality_low:35",
+        "format_low:63",
+        "[reengage] reengage poco agresivo",
+        "[peak] peak abstracto",
+        "[soft_cta] soft_cta poco conversacional"
+      ],
+      "abVariantId": "v_b",
+      "slotTracking": {
+        "batchId": null,
+        "slotId": null,
+        "plannedOrder": null,
+        "plannedRole": null,
+        "plannedCluster": null,
+        "plannedHookType": null,
+        "plannedMicroAction": null,
+        "recommendedCandidateId": null,
+        "recommendedCandidateTitle": null,
+        "attributionType": "unplanned",
+        "slotState": "unplanned",
+        "assignmentConfidence": 0,
+        "traceConfidence": 0,
+        "exactTraceAvailable": false,
+        "abLinked": true
+      },
+      "abExperimentId": "exp_1777328289402_631b36d1",
+      "hookType": "challenge",
+      "publishAfter": "2026-04-28T00:18:11.578Z"
+    },
+    "growthContext": {
+      "nextTopic": "decision_making",
+      "hookType": "challenge",
+      "emotionalTrigger": "curiosity",
+      "angle": "por qué decides peor por la tarde",
+      "avoidTopics": [
+        "procrastination",
+        "cognitive_biases",
+        "body_language",
+        "emotions",
+        "emotional_patterns",
+        "habits",
+        "attention",
+        "dopamine",
+        "social_patterns",
+        "relationships",
+        "motivation",
+        "psychology"
+      ],
+      "avoidRecentHooks": [
+        "Te prometen dinero y dejas de querer hacerlo.",
+        "Tu cerebro prefiere dolor ahora que éxito después",
+        "Tu cerebro prefiere dolor ahora que éxito después",
+        "Tu postura grita lo que tu boca calla.",
+        "Acabas de cambiar de opinión sin darte cuenta.",
+        "Acabas de cambiar de opinión sin darte cuenta.",
+        "Tu postura grita lo que tu boca calla.",
+        "Miras el móvil sin decidir hacerlo nunca."
+      ],
+      "reasoning": "Topic 'decision_making' por estrategia explore. Saturados evitados: procrastination, cognitive_biases, body_language, emotions, emotional_patterns, habits, attention, dopamine, social_patterns, relationships, motivation, psychology.",
+      "confidence": 0.5,
+      "strategy": "explore",
+      "decisionAt": "2026-04-27T22:17:36.700Z"
+    },
+    "hookId": null,
+    "themeIndex": 14,
+    "slotTracking": {
+      "batchId": null,
+      "slotId": null,
+      "plannedOrder": null,
+      "plannedRole": null,
+      "plannedCluster": null,
+      "plannedHookType": null,
+      "plannedMicroAction": null,
+      "recommendedCandidateId": null,
+      "recommendedCandidateTitle": null,
+      "attributionType": "unplanned",
+      "slotState": "unplanned",
+      "assignmentConfidence": 0,
+      "traceConfidence": 0,
+      "exactTraceAvailable": false,
+      "abLinked": true
+    }
+  },
+  "startedAt": "2026-04-27T22:18:11.581Z",
+  "videoId": "661dbfce-d9e4-4c15-9b42-eec1c6f1b82d",
+  "lastStage": "render_done",
+  "lastProgressAt": "2026-04-27T22:19:04.790Z",
+  "result": {
+    "videoId": "661dbfce-d9e4-4c15-9b42-eec1c6f1b82d",
+    "skipped": true,
+    "qcScore": 70,
+    "qcReasons": [
+      "virality 35 < 65",
+      "format 63 < 75",
+      "video duration 2.9s < 8s"
+    ]
+  },
+  "completedAt": "2026-04-27T22:19:04.908Z"
+}

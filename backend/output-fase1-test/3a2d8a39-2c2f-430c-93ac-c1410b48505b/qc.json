@@ -1,0 +1,95 @@
+{
+  "score": 130,
+  "passed": true,
+  "threshold": 30,
+  "checks": {
+    "audioExists": {
+      "ok": true,
+      "path": "C:\\Users\\Erik\\Desktop\\Generador_videos\\backend\\output-fase1-test\\3a2d8a39-2c2f-430c-93ac-c1410b48505b\\voice_proc.mp3",
+      "sizeKB": 824,
+      "reason": null
+    },
+    "audioDuration": {
+      "ok": true,
+      "duration": 35.1,
+      "source": "ffprobe",
+      "reason": null
+    },
+    "videoExists": {
+      "ok": true,
+      "sizeKB": 26738,
+      "reason": null
+    },
+    "renderMode": {
+      "ok": true,
+      "mode": "video_use",
+      "reason": null
+    },
+    "renderVisuals": {
+      "ok": true,
+      "reason": null,
+      "renderMode": "video_use"
+    },
+    "scriptComplete": {
+      "ok": true,
+      "missing": [],
+      "reason": null
+    },
+    "viralityScore": {
+      "ok": true,
+      "score": 55,
+      "min": 40,
+      "reason": null
+    },
+    "formatScore": {
+      "ok": true,
+      "score": 71,
+      "min": 60,
+      "reason": null
+    },
+    "hasTheme": {
+      "ok": true,
+      "reason": null
+    },
+    "contentVersion": {
+      "ok": true,
+      "actual": "v2",
+      "required": "v2",
+      "reason": null
+    },
+    "subtitleScriptCoherence": {
+      "ok": false,
+      "reason": "subtitle_script_mismatch",
+      "score": 0
+    },
+    "hookAudioPresence": {
+      "ok": true,
+      "reason": null,
+      "score": 80
+    },
+    "packageIntegrity": {
+      "ok": false,
+      "reason": "package_integrity_failed",
+      "checks": {
+        "scriptExists": true,
+        "audioExists": true,
+        "subtitlesExist": true,
+        "outputExists": true,
+        "filesTimestampOrder": true,
+        "renderId": false
+      },
+      "score": 83.33333333333334
+    },
+    "publishableFile": {
+      "ok": true,
+      "duration": 35.1,
+      "hasVideoStream": true,
+      "reason": null
+    }
+  },
+  "reasons": [
+    "subtitle_script_mismatch",
+    "package_integrity_failed"
+  ],
+  "checkedAt": "2026-05-03T20:26:34.530Z"
+}

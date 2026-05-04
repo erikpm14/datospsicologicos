@@ -225,7 +225,9 @@ console.log('  Comprimiendo...');
 const psCmd = `Compress-Archive -Path '${TMP_DIR.replace(/\\/g, '\\\\')}\\*' -DestinationPath '${OUT_ZIP.replace(/\\/g, '\\\\')}' -CompressionLevel Optimal`;
 const result = spawnSync('powershell', ['-NoProfile', '-NonInteractive', '-Command', psCmd], {
   encoding: 'utf8',
-  stdio: 'pipe',
+  windowsHide: true,
+  shell: false,
+  stdio: ['ignore', 'pipe', 'pipe'],
 });
 
 if (result.status !== 0) {

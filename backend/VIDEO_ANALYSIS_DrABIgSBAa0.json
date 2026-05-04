@@ -1,0 +1,230 @@
+{
+  "analysis_timestamp": "2026-04-28T12:58:00Z",
+  "youtubeVideoId": "DrABIgSBAa0",
+  "severity": "CRITICAL",
+  "executive_summary": "Video de BAJA CALIDAD publicado con CONTENIDO DISCORDANTE. Output.mp4 pertenece a video diferente (dtGa75Hh9LE). Subtítulos incoherentes no corresponden a script esperado. Fallidas múltiples capas de validación QC.",
+
+  "section_1_youtube_metadata": {
+    "videoId": "DrABIgSBAa0",
+    "title": "Guardo lo que siento sin decirlo #Shorts",
+    "publishedAt": "2026-04-28T12:53:03Z",
+    "duration_seconds": 30,
+    "definition": "hd",
+    "caption_available": false,
+    "current_metrics": {
+      "views": 0,
+      "likes": 0,
+      "comments": 0,
+      "engagement_rate": 0.0
+    },
+    "hours_published": 0.08
+  },
+
+  "section_2_critical_mismatch": {
+    "issue": "output.mp4 es RESIDUAL de publicación anterior",
+    "actual_video_content": {
+      "hook_in_publication_summary": "Mira esto cuando algo pequeño te cambie el cuerpo",
+      "video_id_in_publication_summary": "dtGa75Hh9LE",
+      "virality_score_original": 22
+    },
+    "expected_video_content": {
+      "hook_in_script_json": "Guardo lo que siento sin decirlo",
+      "video_id_claimed": "prod-recovery",
+      "virality_score_claimed": 75
+    },
+    "implication": "El archivo output.mp4 reproducido NO coincide con script esperado. Audio y subtítulos del video ANTERIOR."
+  },
+
+  "section_3_subtitle_analysis": {
+    "expected_content": "Guardo lo que siento sin decirlo. Es un patrón que reconoces en ti. Esperas que alguien note tu silencio. Por eso duele cuando nadie pregunta. Eres válido aunque no hables.",
+    "actual_subtitles": ["MIRA esto cuando algo", "respondes, pero revisas cada", "sin comprometerte a responder,", "leiste, te duele que", "sabes que lo haces", "el teléfono, aunque dice", "sintiendo en ese", "visible. Pija de próxima"],
+    "word_count_mismatch": {
+      "expected": 30,
+      "actual": 8,
+      "deficit": 22
+    },
+    "alignment_status": "CRITICAL FAILURE - Subtítulos de video DIFERENTE",
+    "semantic_match": "0% - Contenido completamente discordante"
+  },
+
+  "section_4_render_quality": {
+    "render_mode": "video_use",
+    "visual_source": "Pexels stock footage (3 clips)",
+    "quality_score": 55,
+    "issues": [
+      "Stock footage quality variable",
+      "Subtitle misalignment with audio",
+      "No text prominence in visual analysis"
+    ],
+    "technical_correct": [
+      "Duration 30s (correct)",
+      "Segments generated (13)",
+      "Overlay events present (4)"
+    ]
+  },
+
+  "section_5_content_quality_scores": {
+    "hookScore": 85,
+    "hookScore_note": "Puntuación del hook EN SCRIPT (bueno). Pero usuario OIRIA audio incorrecto.",
+    "retentionPotential": 75,
+    "retentionPotential_note": "Estructura tiene cliff-hanger y CTA. Pero audio rompe la narrativa.",
+    "visualQuality": 55,
+    "visualQuality_note": "Stock footage respectable pero subtítulos mal aliñados.",
+    "audioQuality": 75,
+    "audioQuality_note": "TTS clara, pero CONTENIDO INCORRECTO - es de otro video.",
+    "subtitleQuality": 15,
+    "subtitleQuality_note": "CRÍTICO: Completamente desaliñado, incoherente.",
+    "monetizationSafety": 85,
+    "overallQuality": 59,
+    "overallQuality_threshold": 60,
+    "overallQuality_status": "BARELY FAILS"
+  },
+
+  "section_6_failure_diagnosis": {
+    "root_cause": "output.mp4 residual de publicación anterior (dtGa75Hh9LE) NO regenerado en recovery.",
+    "failure_chain": [
+      "1. Recovery script reutilizó output.mp4 existente del 2026-04-24",
+      "2. Ese output.mp4 pertenece a video DIFERENTE (dtGa75Hh9LE)",
+      "3. script.json reemplazado con metadata de 'prod-recovery' (incorrecto)",
+      "4. Audio y subtítulos NO coinciden con nuevo script",
+      "5. QC pasó porque no validó coherencia de contenido",
+      "6. Video publicado con narrativa ROTA"
+    ],
+    "primary_failures": [
+      "subtitle_bad - incoherentes, del video anterior",
+      "script_mismatch - audio no coincide con script esperado",
+      "render_misalignment - subtítulos no sincronizados con audio real"
+    ]
+  },
+
+  "section_7_qc_validation_gaps": {
+    "qc_checks_that_passed": [
+      "audioExists (✓)",
+      "audioDuration (✓)",
+      "videoExists (✓)",
+      "renderMode (✓)",
+      "renderVisuals (✓)",
+      "scriptComplete (✓)",
+      "viralityScore (✓)",
+      "publishableFile (✓)"
+    ],
+    "qc_checks_missing": [
+      "subtitle_audio_coherence - NO VALIDA",
+      "script_audio_match - NO VALIDA",
+      "content_consistency - NO VALIDA",
+      "hook_presence_in_audio - NO VALIDA",
+      "video_residue_detection - NO VALIDA"
+    ],
+    "consequence": "QC aprobó video con contenido fundamentalmente ROTO"
+  },
+
+  "section_8_recommended_system_fixes": {
+    "immediate_priority": [
+      {
+        "fix": "Subtitle-Audio Coherence Validator",
+        "location": "src/services/production-quality-checker.service.js",
+        "implementation": "Compara primeras 25 palabras de script.explanation vs subtitles. Requiere 80% similitud semántica.",
+        "effort_days": 1,
+        "impact": "Detectaría immediatamente mismatch como este"
+      },
+      {
+        "fix": "Hook-Audio Hook Validator",
+        "location": "src/services/production-quality-checker.service.js",
+        "implementation": "Detecta si palabras clave del hook aparecen en primeros 10 segundos de audio/subtítulos.",
+        "effort_days": 1,
+        "impact": "Evitaría publicar videos con audio incorrecto"
+      },
+      {
+        "fix": "Never Reuse Subtitle Files from Previous Renders",
+        "location": "src/services/render-engines/index.js",
+        "implementation": "Siempre regenerar .srt y .ass desde script.subtitleBlocks. Nunca copiar de renders anteriores.",
+        "effort_days": 0.5,
+        "impact": "Eliminaría archivos residuales de otros videos"
+      },
+      {
+        "fix": "Force Fresh Render in Recovery Mode",
+        "location": "quick-recovery-video.js, publisher.js",
+        "implementation": "Recovery videos deben regenerar completo (audio + render + subtítulos), nunca reutilizar output.mp4.",
+        "effort_days": 0.5,
+        "impact": "Garantizar coherencia en publicaciones de emergencia"
+      }
+    ],
+    "medium_term_improvements": [
+      {
+        "improvement": "Content Coherence Dashboard",
+        "description": "Post-publish audit: script hook vs audio hook vs subtitle first words (side-by-side visual comparison)",
+        "helps": "Detección manual de problemas de coherencia"
+      },
+      {
+        "improvement": "Automatic Unlisting for Low Coherence",
+        "description": "Si coherence_score < 70 post-publicación, auto-unlist en YouTube dentro de 1 hora",
+        "helps": "Minimizar daño reputacional"
+      },
+      {
+        "improvement": "Video Lineage Tracking",
+        "description": "Metadatos: qué output.mp4 pertenece a qué script, detectar reutilización no intencional",
+        "helps": "Auditoría y debugging"
+      }
+    ]
+  },
+
+  "section_9_new_quality_gates": {
+    "current_gates": {
+      "min_virality_score": 65,
+      "min_production_quality_score": 70,
+      "min_content_quality_score": 60
+    },
+    "recommended_new_gates": [
+      {
+        "gate_name": "subtitle_audio_coherence_gate",
+        "rule": "First 25 words of subtitles must match script.explanation (>80% semantic similarity)",
+        "min_threshold": 0.8,
+        "reject_if_below": true,
+        "position": "before_publish"
+      },
+      {
+        "gate_name": "hook_audio_presence_gate",
+        "rule": "Hook keywords must appear in first 5 seconds of audio",
+        "min_threshold": 0.7,
+        "reject_if_below": true,
+        "position": "before_publish"
+      },
+      {
+        "gate_name": "subtitle_visible_duration_gate",
+        "rule": "Subtítulos must be visible/readable for >= 75% of video duration",
+        "min_threshold": 0.75,
+        "reject_if_below": true,
+        "position": "before_publish"
+      },
+      {
+        "gate_name": "content_coherence_score",
+        "rule": "OVERALL COHERENCE = (subtitle_match*0.4 + hook_presence*0.3 + visual_prominence*0.3)",
+        "min_threshold": 0.70,
+        "reject_if_below": true,
+        "position": "before_publish",
+        "note": "Combina múltiples señales de coherencia"
+      }
+    ]
+  },
+
+  "section_10_final_recommendation": {
+    "video_status": "PUBLIC (visible en YouTube)",
+    "should_delete": false,
+    "should_unlist": "RECOMMENDED (but not mandatory)",
+    "should_keep_for_analysis": true,
+    "reasoning": "No es dañino (no explícito, no violencia). Pero es de baja calidad y contenido confuso. Mantener público pero bajar prioridad. Guardar para entender por qué pasó QC.",
+    "action_items": [
+      "Implement immediate fixes (subtitle coherence gates)",
+      "Add new quality gates before publishing next video",
+      "Review QC service para entender gaps",
+      "NO publicar más videos hasta que subtítulo-audio validation esté en lugar"
+    ]
+  },
+
+  "appendix_quality_metrics": {
+    "youtube_ranking_potential": "LOW (0 views después 8 minutos, probablemente mala retención esperada)",
+    "channel_reputation_damage": "MINIMAL (contenido no ofensivo, solo pobre calidad)",
+    "likelihood_viral": "< 1% (engagement esperado: bajo)",
+    "recommendation_for_growth_engine": "BLOCK this video class in future via new coherence gates"
+  }
+}
