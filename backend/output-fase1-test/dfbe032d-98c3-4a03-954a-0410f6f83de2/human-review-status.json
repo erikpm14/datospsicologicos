@@ -1,0 +1,26 @@
+{
+  "videoId": "dfbe032d-98c3-4a03-954a-0410f6f83de2",
+  "youtubePrivateId": "oHM-3KXEut0",
+  "humanReviewStatus": "FAILED",
+  "reviewedAt": "2026-05-12T09:37:00.000Z",
+  "reviewer": "Erik",
+  "publicable": false,
+  "doNotPublishPublic": true,
+  "failureReasons": [
+    "subtitles_do_not_match_voice",
+    "bad_color_backgrounds",
+    "visual_not_acceptable",
+    "script_audio_subtitle_mismatch"
+  ],
+  "failureDescription": "Vídeo privado subido a YouTube correctamente, pero revisión humana lo rechaza. El texto de los subtítulos no coincide con la voz grabada. Los fondos son visualmente pobres (colores amarillos/chillones). No apto para publicación pública.",
+  "recommendedAction": "Mantener como PRIVADO o BORRAR de YouTube. No cambiar a público bajo ninguna circunstancia.",
+  "suspectedIssue": "Audio (TTS) puede corresponder a un script diferente o hubo error en la generación.",
+  "blockReason": "HUMAN_REVIEW_FAILED_TEXT_AUDIO_MISMATCH_AND_BAD_VISUALS",
+  "uploadInfo": {
+    "uploadedAt": "2026-05-12T09:36:32.645Z",
+    "method": "manual-publish-single-real-private",
+    "privacyStatus": "private",
+    "realUpload": true,
+    "apiStatus": 200
+  }
+}

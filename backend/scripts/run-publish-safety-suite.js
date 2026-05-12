@@ -12,6 +12,7 @@ const fs = require('fs');
 const { checkAudioRealNotSilent } = require('../src/services/check-20-audio-real.service');
 const { checkSubtitlesBurned } = require('../src/services/check-21-subtitles-burned.service');
 const { checkVisualNotColorFallback } = require('../src/services/check-22-visual-real.service');
+const { checkScriptAudioSubtitleAlignment } = require('../src/services/check-24-script-audio-subtitle-alignment.service');
 
 const OUTPUT_DIR = path.resolve(process.env.OUTPUT_DIR || path.join(__dirname, '../output-fase1-test'));
 
@@ -158,6 +159,36 @@ function runSafetyChecks(videoId) {
     results.allPassed = false;
     results.checks.push({
       name: 'CHECK_22_FINAL_VISUAL_NOT_COLOR_FALLBACK',
+      result: 'ERROR',
+      error: err.message,
+    });
+  }
+
+  // CHECK 24: Script-Audio-Subtitle Alignment
+  console.log(`\n${colors.blue}[CHECK_24] SCRIPT_AUDIO_SUBTITLE_ALIGNMENT${colors.reset}`);
+  try {
+    const check24Result = checkScriptAudioSubtitleAlignment(videoPath, videoId);
+    results.checks.push({
+      name: 'CHECK_24_SCRIPT_AUDIO_SUBTITLE_ALIGNMENT',
+      result: check24Result.pass ? 'PASS' : 'FAIL',
+      details: check24Result.details,
+    });
+
+    if (check24Result.pass) {
+      const details = check24Result.details || {};
+      printPass(`Script, audio, and subtitles aligned (similarity: ${details.contentSimilarity || 'N/A'})`);
+    } else {
+      printFail(`${check24Result.error}`);
+      if (check24Result.blockReason) {
+        printWarn(`BLOCK REASON: ${check24Result.blockReason}`);
+      }
+      results.allPassed = false;
+    }
+  } catch (err) {
+    printFail(`Error running CHECK_24: ${err.message}`);
+    results.allPassed = false;
+    results.checks.push({
+      name: 'CHECK_24_SCRIPT_AUDIO_SUBTITLE_ALIGNMENT',
       result: 'ERROR',
       error: err.message,
     });

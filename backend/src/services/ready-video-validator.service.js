@@ -43,7 +43,11 @@ const OUTPUT_DIR = path.resolve(process.env.OUTPUT_DIR || './output-fase1-test')
  *       noYoutubeId: boolean,
  *       noPublishedJson: boolean,
  *       notRejected: boolean,
- *       notLegacyRender: boolean
+ *       notLegacyRender: boolean,
+ *       audioRealNotSilent: boolean,
+ *       subtitlesBurned: boolean,
+ *       visualQualityReal: boolean,
+ *       scriptAudioSubtitleAlignment: boolean
  *     }
  *   }
  */
@@ -344,6 +348,43 @@ function validateReadyVideo(videoId, options = {}) {
   }
 
   // ─────────────────────────────────────────────
+  // HUMAN REVIEW STATUS CHECK (BLOCKING)
+  // Blocks ALL publication if human review marked as failed
+  // ─────────────────────────────────────────────
+  const humanReviewPath = path.join(videoDir, 'human-review-status.json');
+  if (fs.existsSync(humanReviewPath)) {
+    try {
+      const reviewStatus = JSON.parse(fs.readFileSync(humanReviewPath, 'utf8'));
+      if (reviewStatus.humanReviewStatus === 'FAILED') {
+        errors.push(`[HUMAN_REVIEW] Video marked as FAILED by human review - NOT PUBLISHABLE`);
+        if (reviewStatus.failureReasons && Array.isArray(reviewStatus.failureReasons)) {
+          reviewStatus.failureReasons.forEach(reason => {
+            errors.push(`  └─ ${reason}`);
+          });
+        }
+      }
+    } catch (err) {
+      logger.warn(`[HUMAN_REVIEW] Could not parse human-review-status.json: ${err.message}`);
+    }
+  }
+
+  // Check qc.json for publicable flag
+  const qcPath = path.join(videoDir, 'qc.json');
+  if (fs.existsSync(qcPath)) {
+    try {
+      const qc = JSON.parse(fs.readFileSync(qcPath, 'utf8'));
+      if (qc.publicable === false || qc.doNotPublishPublic === true) {
+        errors.push(`[QC_CHECK] Video is marked as NOT PUBLISHABLE in QC`);
+        if (qc.blockReason) {
+          errors.push(`  └─ Reason: ${qc.blockReason}`);
+        }
+      }
+    } catch (err) {
+      logger.warn(`[QC_CHECK] Could not parse qc.json: ${err.message}`);
+    }
+  }
+
+  // ─────────────────────────────────────────────
   // CHECK 19: AUDIO/VIDEO SYNC (AV_DURATION_MISMATCH)
   // ─────────────────────────────────────────────
   checks.avSyncValid = false;
@@ -506,6 +547,34 @@ function validateReadyVideo(videoId, options = {}) {
   } else {
     errors.push('[CHECK_22] Cannot validate visual quality - output.mp4 does not exist');
     checks.visualQualityReal = false;
+  }
+
+  // ─────────────────────────────────────────────
+  // CHECK_24: SCRIPT_AUDIO_SUBTITLE_ALIGNMENT
+  // After audio reuse incident, must verify audio-manifest.json exists
+  // and that audio belongs to this videoId, not reused from another video
+  // ─────────────────────────────────────────────
+  if (checks.outputExists) {
+    try {
+      const { checkScriptAudioSubtitleAlignment } = require('./check-24-script-audio-subtitle-alignment.service');
+      const check24Result = checkScriptAudioSubtitleAlignment(mp4Path, videoId);
+      checks.scriptAudioSubtitleAlignment = check24Result.pass;
+
+      if (!check24Result.pass) {
+        errors.push(`[CHECK_24] ${check24Result.error}`);
+        if (check24Result.blockReason) {
+          errors.push(`  └─ BLOCK REASON: ${check24Result.blockReason}`);
+        }
+      } else {
+        logger.info(`[CHECK_24] PASS: script, audio, and subtitles validated`);
+      }
+    } catch (err) {
+      errors.push(`[CHECK_24] Script-audio-subtitle alignment validation error: ${err.message}`);
+      checks.scriptAudioSubtitleAlignment = false;
+    }
+  } else {
+    errors.push('[CHECK_24] Cannot validate script-audio-subtitle alignment - output.mp4 does not exist');
+    checks.scriptAudioSubtitleAlignment = false;
   }
 
   // ─────────────────────────────────────────────

@@ -15,7 +15,7 @@
  * - Soporta --dry-run para simular sin subir
  */
 
-require('dotenv').config({ path: require('path').resolve(__dirname, '../../.env') });
+require('dotenv').config({ path: require('path').resolve(__dirname, '../.env') });
 
 const fs = require('fs');
 const path = require('path');
@@ -178,6 +178,50 @@ async function main() {
     log(`✓ Sistema seguiría FROZEN tras publicación real`, 'green');
     log(`\n✅ DRY-RUN EXITOSO - Listo para publicación real controlada\n`, 'green');
     process.exit(0);
+  }
+
+  // 8.5. PRE-UPLOAD AUDIT - Final validation before youtube.videos.insert
+  logSection('PRE-UPLOAD AUDIT - VALIDACIÓN FINAL');
+
+  // Check humanReviewStatus
+  const humanReviewPath = path.join(videoDir, 'human-review-status.json');
+  if (fs.existsSync(humanReviewPath)) {
+    try {
+      const reviewStatus = JSON.parse(fs.readFileSync(humanReviewPath, 'utf8'));
+      if (reviewStatus.humanReviewStatus === 'FAILED' || reviewStatus.publicable === false) {
+        log(`❌ ERROR: Video ha sido marcado como NO publicable por revisión humana`, 'red');
+        log(`   Status: ${reviewStatus.humanReviewStatus}`, 'red');
+        log(`   Publicable: ${reviewStatus.publicable}`, 'red');
+        if (reviewStatus.failureReasons && reviewStatus.failureReasons.length > 0) {
+          log(`   Razones:`, 'red');
+          reviewStatus.failureReasons.forEach(r => log(`     - ${r}`, 'red'));
+        }
+        process.exit(1);
+      }
+    } catch (err) {
+      log(`⚠️  Warning: No se pudo leer human-review-status.json: ${err.message}`, 'yellow');
+    }
+  }
+  log('✓ Human review status OK (no bloqueado)\n', 'green');
+
+  // Final CHECK_24 validation
+  log('Ejecutando CHECK_24 final (validación script-audio-subtitle)...', 'yellow');
+  try {
+    const { checkScriptAudioSubtitleAlignment } = require('../src/services/check-24-script-audio-subtitle-alignment.service');
+    const check24Result = checkScriptAudioSubtitleAlignment(videoPath, videoId);
+
+    if (!check24Result.pass) {
+      log(`❌ ERROR: CHECK_24 falló`, 'red');
+      log(`   Error: ${check24Result.error}`, 'red');
+      if (check24Result.blockReason) {
+        log(`   Block reason: ${check24Result.blockReason}`, 'red');
+      }
+      process.exit(1);
+    }
+    log(`✓ CHECK_24 pasó - script, audio y subtítulos validados\n`, 'green');
+  } catch (err) {
+    log(`❌ ERROR: Error ejecutando CHECK_24: ${err.message}`, 'red');
+    process.exit(1);
   }
 
   // 9. PUBLICACIÓN REAL A YOUTUBE

@@ -1,0 +1,23 @@
+{
+  "videoId": "dfbe032d-98c3-4a03-954a-0410f6f83de2",
+  "youtubeId": "oHM-3KXEut0",
+  "publishedAt": "2026-05-12T09:36:32.645Z",
+  "method": "manual-publish-single-real-private",
+  "privacyStatus": "private",
+  "sha256": "BF6BD062E7B1330ED8E6D7CE0FAE412C24A77B0021CC15F51E52C58AA197F397",
+  "realUpload": true,
+  "simulated": false,
+  "apiResponse": {
+    "status": 200,
+    "kind": "youtube#video"
+  },
+  "humanReviewStatus": "FAILED",
+  "humanReviewFailedAt": "2026-05-12T09:37:00.000Z",
+  "humanReviewFailureReasons": [
+    "subtitles_do_not_match_voice",
+    "bad_color_backgrounds",
+    "visual_not_acceptable"
+  ],
+  "publicable": false,
+  "doNotPublishPublic": true
+}
