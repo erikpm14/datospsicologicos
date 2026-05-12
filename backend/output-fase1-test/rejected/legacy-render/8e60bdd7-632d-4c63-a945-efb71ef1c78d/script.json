@@ -1,0 +1,22 @@
+{
+  "hook": "El trauma no se cura hablando. Se integra.",
+  "viralityScore": 50,
+  "topic": "attention",
+  "title": "El trauma no se cura hablando. Se integra.",
+  "generationMode": "emergency_no_llm",
+  "sourceVideoId": "25f1efa2-a181-4ecc-9935-6c53143c742b",
+  "generatedAt": "2026-05-07T19:39:39.575Z",
+  "description": "Psicología del cerebro y la mente. El trauma no se cura hablando. Se integra.",
+  "segments": [
+    {
+      "type": "hook",
+      "content": "El trauma no se cura hablando. Se integra.",
+      "duration": 2
+    },
+    {
+      "type": "explanation",
+      "content": "Explicación sobre cómo funciona tu mente.",
+      "duration": 8
+    }
+  ]
+}

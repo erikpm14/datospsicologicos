@@ -1,0 +1,79 @@
+{
+  "videoId": "fa076ba4-0c64-47fe-bf90-2d97930499ba",
+  "generatedAt": "2026-05-07T09:13:04.037Z",
+  "generationType": "manual",
+  "generationMode": "emergency_no_llm",
+  "sourceVideoId": "455362af-7c53-4067-a2cf-2c57f3be4da1",
+  "hook": "A veces no es cansancio. Es falta de significado.",
+  "topic": "attention",
+  "viralityScore": 50,
+  "reason": "LLM quota exhausted - using emergency no-LLM generation",
+  "backgroundPlan": {
+    "primaryCategory": "particles",
+    "selectedAssets": [
+      "bg_geometric_motion_001",
+      "bg_minimal_dark_001",
+      "bg_psychology_symbolic_001"
+    ],
+    "usedCategories": [
+      "geometric_motion",
+      "minimal_dark",
+      "psychology_symbolic"
+    ],
+    "clipTimeline": [
+      {
+        "assetId": "bg_geometric_motion_001",
+        "category": "geometric_motion",
+        "start": 0,
+        "end": 2.41,
+        "duration": 2.41,
+        "transition": "cut",
+        "dominantColors": [
+          "white",
+          "black"
+        ],
+        "motionType": "geometric_transform"
+      },
+      {
+        "assetId": "bg_minimal_dark_001",
+        "category": "minimal_dark",
+        "start": 2.41,
+        "end": 6.24,
+        "duration": 3.83,
+        "transition": "cut",
+        "dominantColors": [
+          "black",
+          "dark_gray"
+        ],
+        "motionType": "slow_motion"
+      },
+      {
+        "assetId": "bg_psychology_symbolic_001",
+        "category": "psychology_symbolic",
+        "start": 6.24,
+        "end": 8.79,
+        "duration": 2.55,
+        "transition": "fade",
+        "dominantColors": [
+          "red",
+          "purple"
+        ],
+        "motionType": "symbolic_animation"
+      }
+    ],
+    "transitionTypes": [
+      "cut",
+      "fade"
+    ],
+    "diversityScore": 100,
+    "numClips": 3,
+    "appliedToRender": true,
+    "renderedAt": "2026-05-07T09:13:11.445Z",
+    "renderMode": "dynamic_background_timeline"
+  },
+  "renderMode": "dynamic_background_timeline",
+  "scriptDiversityGatePassed": true,
+  "prepublishQcPassed": true,
+  "duplicateCheckPassed": true,
+  "qcPassed": true
+}

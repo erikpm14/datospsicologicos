@@ -1,0 +1,103 @@
+{
+  "videoId": "51f843c1-d8ce-4223-b1ed-099e428b8840",
+  "generatedAt": "2026-05-05T10:00:50.886Z",
+  "generationType": "manual",
+  "generationMode": "emergency_no_llm",
+  "sourceVideoId": "455362af-7c53-4067-a2cf-2c57f3be4da1",
+  "hook": "Las decisiones no se toman con la mente. Se sienten.",
+  "topic": "attention",
+  "viralityScore": 50,
+  "reason": "LLM quota exhausted - using emergency no-LLM generation",
+  "renderMode": "dynamic_background_timeline",
+  "subtitlesBurnedIn": true,
+  "subtitlesFormat": "vtt",
+  "subtitleLanguage": "es",
+  "scriptDiversityGatePassed": true,
+  "backgroundDiversityPassed": true,
+  "prepublishQcPassed": true,
+  "qcPassed": true,
+  "duplicateCheckPassed": true,
+  "backgroundPlan": {
+    "appliedToRender": true,
+    "primaryCategory": "city_night",
+    "selectedAssets": [
+      "bg_psychology_symbolic_001",
+      "bg_dark_texture_001",
+      "bg_abstract_blue_001",
+      "bg_minimal_dark_001"
+    ],
+    "usedCategories": [
+      "psychology_symbolic",
+      "dark_texture",
+      "abstract",
+      "minimal_dark"
+    ],
+    "clipTimeline": [
+      {
+        "assetId": "bg_minimal_dark_001",
+        "category": "minimal_dark",
+        "start": 0,
+        "end": 3.14,
+        "duration": 3.14,
+        "transition": "cut",
+        "dominantColors": [
+          "black",
+          "dark_gray"
+        ],
+        "motionType": "slow_motion"
+      },
+      {
+        "assetId": "bg_geometric_motion_001",
+        "category": "geometric_motion",
+        "start": 3.14,
+        "end": 6.47,
+        "duration": 3.33,
+        "transition": "cut",
+        "dominantColors": [
+          "white",
+          "black"
+        ],
+        "motionType": "geometric_transform"
+      },
+      {
+        "assetId": "bg_dark_texture_001",
+        "category": "dark_texture",
+        "start": 6.47,
+        "end": 8.78,
+        "duration": 2.31,
+        "transition": "pan",
+        "dominantColors": [
+          "gray",
+          "black"
+        ],
+        "motionType": "subtle_texture"
+      },
+      {
+        "assetId": "bg_abstract_blue_001",
+        "category": "abstract",
+        "start": 8.78,
+        "end": 35.78,
+        "duration": 27,
+        "transition": "cut",
+        "dominantColors": [
+          "blue",
+          "cyan"
+        ],
+        "motionType": "neural_flow"
+      }
+    ],
+    "transitionTypes": [
+      "cut",
+      "fade",
+      "pan"
+    ],
+    "diversityScore": 100,
+    "numClips": 4,
+    "renderedAt": "2026-05-10T20:56:30.610Z",
+    "renderMode": "dynamic_background_timeline"
+  },
+  "reprocessedAt": "2026-05-07T20:02:33.497Z",
+  "reprocessReason": "legacy to dynamic_background_timeline conversion",
+  "audioFixAppliedAt": "2026-05-10T20:56:03.453Z",
+  "audioFixAudioDuration": 35.784777
+}

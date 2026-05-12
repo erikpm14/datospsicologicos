@@ -1,0 +1,102 @@
+{
+  "score": 65,
+  "passed": false,
+  "threshold": 30,
+  "checks": {
+    "audioExists": {
+      "ok": false,
+      "path": null,
+      "sizeKB": 0,
+      "reason": "no audio file found"
+    },
+    "audioDuration": {
+      "ok": false,
+      "duration": null,
+      "reason": "no audio to check duration"
+    },
+    "videoExists": {
+      "ok": true,
+      "sizeKB": 12571,
+      "reason": null
+    },
+    "renderMode": {
+      "ok": true,
+      "mode": "video_use",
+      "reason": null
+    },
+    "renderVisuals": {
+      "ok": true,
+      "reason": null,
+      "renderMode": "video_use"
+    },
+    "scriptComplete": {
+      "ok": false,
+      "missing": [
+        "claim",
+        "explanation",
+        "cta"
+      ],
+      "reason": "missing/empty: claim, explanation, cta"
+    },
+    "viralityScore": {
+      "ok": true,
+      "score": 50,
+      "min": 40,
+      "reason": null
+    },
+    "formatScore": {
+      "ok": true,
+      "score": 0,
+      "reason": null
+    },
+    "hasTheme": {
+      "ok": false,
+      "reason": "no theme assigned"
+    },
+    "contentVersion": {
+      "ok": false,
+      "required": "v2",
+      "reason": "content_version undefined !== v2"
+    },
+    "subtitleScriptCoherence": {
+      "ok": false,
+      "reason": "subtitle_script_mismatch",
+      "score": 0
+    },
+    "hookAudioPresence": {
+      "ok": false,
+      "reason": "hook_not_in_audio",
+      "score": 0
+    },
+    "packageIntegrity": {
+      "ok": false,
+      "reason": "package_integrity_failed",
+      "checks": {
+        "scriptExists": true,
+        "audioExists": false,
+        "subtitlesExist": true,
+        "outputExists": true,
+        "filesTimestampOrder": true,
+        "renderId": false
+      },
+      "score": 66.66666666666666
+    },
+    "publishableFile": {
+      "ok": true,
+      "duration": 35.4,
+      "hasVideoStream": true,
+      "reason": null
+    }
+  },
+  "reasons": [
+    "no audio file found",
+    "no audio to check duration",
+    "missing/empty: claim, explanation, cta",
+    "no theme assigned",
+    "content_version undefined !== v2",
+    "subtitle_script_mismatch",
+    "hook_not_in_audio",
+    "package_integrity_failed"
+  ],
+  "checkedAt": "2026-05-06T12:30:00.713Z"
+}

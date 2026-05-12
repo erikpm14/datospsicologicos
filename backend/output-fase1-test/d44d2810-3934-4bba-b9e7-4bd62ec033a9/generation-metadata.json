@@ -1,0 +1,99 @@
+{
+  "videoId": "d44d2810-3934-4bba-b9e7-4bd62ec033a9",
+  "generatedAt": "2026-05-07T09:14:41.568Z",
+  "generationType": "manual",
+  "generationMode": "emergency_no_llm",
+  "sourceVideoId": "455362af-7c53-4067-a2cf-2c57f3be4da1",
+  "hook": "A veces no es cansancio. Es falta de significado.",
+  "topic": "attention",
+  "viralityScore": 50,
+  "reason": "LLM quota exhausted - using emergency no-LLM generation",
+  "backgroundPlan": {
+    "primaryCategory": "dark_texture",
+    "selectedAssets": [
+      "bg_minimal_dark_001",
+      "bg_psychology_symbolic_001",
+      "bg_abstract_blue_001",
+      "bg_city_night_001",
+      "bg_particles_gold_001"
+    ],
+    "usedCategories": [
+      "minimal_dark",
+      "psychology_symbolic",
+      "abstract",
+      "city_night",
+      "particles"
+    ],
+    "clipTimeline": [
+      {
+        "assetId": "bg_minimal_dark_001",
+        "category": "minimal_dark",
+        "start": 0,
+        "end": 2.36,
+        "duration": 2.36,
+        "transition": "cut",
+        "dominantColors": [
+          "black",
+          "dark_gray"
+        ],
+        "motionType": "slow_motion"
+      },
+      {
+        "assetId": "bg_geometric_motion_001",
+        "category": "geometric_motion",
+        "start": 2.36,
+        "end": 5.57,
+        "duration": 3.2,
+        "transition": "fade",
+        "dominantColors": [
+          "white",
+          "black"
+        ],
+        "motionType": "geometric_transform"
+      },
+      {
+        "assetId": "bg_dark_texture_001",
+        "category": "dark_texture",
+        "start": 5.57,
+        "end": 8.08,
+        "duration": 2.51,
+        "transition": "cut",
+        "dominantColors": [
+          "gray",
+          "black"
+        ],
+        "motionType": "subtle_texture"
+      },
+      {
+        "assetId": "bg_abstract_blue_001",
+        "category": "abstract",
+        "start": 8.08,
+        "end": 35.78,
+        "duration": 27.7,
+        "transition": "cut",
+        "dominantColors": [
+          "blue",
+          "cyan"
+        ],
+        "motionType": "neural_flow"
+      }
+    ],
+    "transitionTypes": [
+      "cut",
+      "fade",
+      "pan"
+    ],
+    "diversityScore": 100,
+    "numClips": 4,
+    "appliedToRender": true,
+    "renderedAt": "2026-05-10T20:58:11.467Z",
+    "renderMode": "dynamic_background_timeline"
+  },
+  "renderMode": "dynamic_background_timeline",
+  "scriptDiversityGatePassed": true,
+  "prepublishQcPassed": true,
+  "duplicateCheckPassed": true,
+  "qcPassed": true,
+  "audioFixAppliedAt": "2026-05-10T20:57:46.482Z",
+  "audioFixAudioDuration": 35.784777
+}

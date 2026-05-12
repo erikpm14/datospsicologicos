@@ -7,6 +7,12 @@ frontend/node_modules/
 .env
 backend/.env
 **/.env
+.env.*
+**/.env.*
+**/*.env.backup
+**/*.env.bak
+backend/.env.backup
+backend/.env.bak
 
 # Outputs generados
 output/
@@ -36,6 +42,22 @@ Thumbs.db
 # Build artifacts
 frontend/dist/
 releases/
+
+# Backup directories with sensitive data
+backend/backup-*/
+backend/backup-*/**
+**/backup-*/
+**/backup-*/**
+
+# Incident directories (may contain sensitive data)
+backend/incident-*/
+backend/incident-*/**
+**/incident-*/
+**/incident-*/**
+
+# Simulated/test publication artifacts
+**/published.simulated.json
+**/published.test.json
 
 # Claude
 .claude/

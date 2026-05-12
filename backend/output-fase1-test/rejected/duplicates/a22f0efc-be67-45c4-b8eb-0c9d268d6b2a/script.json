@@ -1,0 +1,22 @@
+{
+  "hook": "Tu cerebro no busca paz. Busca control.",
+  "viralityScore": 50,
+  "topic": "attention",
+  "title": "Tu cerebro no busca paz. Busca control.",
+  "generationMode": "emergency_no_llm",
+  "sourceVideoId": "455362af-7c53-4067-a2cf-2c57f3be4da1",
+  "generatedAt": "2026-05-05T08:17:32.712Z",
+  "description": "Psicología del cerebro y la mente. Tu cerebro no busca paz. Busca control.",
+  "segments": [
+    {
+      "type": "hook",
+      "content": "Tu cerebro no busca paz. Busca control.",
+      "duration": 2
+    },
+    {
+      "type": "explanation",
+      "content": "Explicación sobre cómo funciona tu mente.",
+      "duration": 8
+    }
+  ]
+}

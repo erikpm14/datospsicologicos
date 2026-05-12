@@ -1,0 +1,114 @@
+{
+  "videoId": "c092efdf-6d6a-4674-b82e-a7737f0392c7",
+  "generatedAt": "2026-05-06T13:15:00.236Z",
+  "generationType": "manual",
+  "generationMode": "emergency_no_llm",
+  "sourceVideoId": "455362af-7c53-4067-a2cf-2c57f3be4da1",
+  "hook": "La memoria es selectiva. Guarda lo que necesita olvidar.",
+  "topic": "attention",
+  "viralityScore": 50,
+  "reason": "LLM quota exhausted - using emergency no-LLM generation",
+  "backgroundPlan": {
+    "primaryCategory": "abstract",
+    "selectedAssets": [
+      "bg_particles_gold_001",
+      "bg_dark_texture_001",
+      "bg_geometric_motion_001",
+      "bg_abstract_blue_001",
+      "bg_city_night_001",
+      "bg_minimal_dark_001"
+    ],
+    "usedCategories": [
+      "particles",
+      "dark_texture",
+      "geometric_motion",
+      "abstract",
+      "city_night",
+      "minimal_dark"
+    ],
+    "clipTimeline": [
+      {
+        "assetId": "bg_minimal_dark_001",
+        "category": "minimal_dark",
+        "start": 0,
+        "end": 3.91,
+        "duration": 3.91,
+        "transition": "cut",
+        "dominantColors": [
+          "black",
+          "dark_gray"
+        ],
+        "motionType": "slow_motion"
+      },
+      {
+        "assetId": "bg_geometric_motion_001",
+        "category": "geometric_motion",
+        "start": 3.91,
+        "end": 7.73,
+        "duration": 3.82,
+        "transition": "fade",
+        "dominantColors": [
+          "white",
+          "black"
+        ],
+        "motionType": "geometric_transform"
+      },
+      {
+        "assetId": "bg_dark_texture_001",
+        "category": "dark_texture",
+        "start": 7.73,
+        "end": 10.79,
+        "duration": 3.06,
+        "transition": "cut",
+        "dominantColors": [
+          "gray",
+          "black"
+        ],
+        "motionType": "subtle_texture"
+      },
+      {
+        "assetId": "bg_abstract_blue_001",
+        "category": "abstract",
+        "start": 10.79,
+        "end": 13.4,
+        "duration": 2.61,
+        "transition": "zoom",
+        "dominantColors": [
+          "blue",
+          "cyan"
+        ],
+        "motionType": "neural_flow"
+      },
+      {
+        "assetId": "bg_particles_gold_001",
+        "category": "particles",
+        "start": 13.4,
+        "end": 35.78,
+        "duration": 22.38,
+        "transition": "pan",
+        "dominantColors": [
+          "gold",
+          "black"
+        ],
+        "motionType": "particle_drift"
+      }
+    ],
+    "transitionTypes": [
+      "cut",
+      "pan",
+      "fade"
+    ],
+    "diversityScore": 100,
+    "numClips": 5,
+    "appliedToRender": true,
+    "renderedAt": "2026-05-10T20:57:20.880Z",
+    "renderMode": "dynamic_background_timeline"
+  },
+  "renderMode": "dynamic_background_timeline",
+  "scriptDiversityGatePassed": true,
+  "prepublishQcPassed": true,
+  "duplicateCheckPassed": true,
+  "qcPassed": true,
+  "audioFixAppliedAt": "2026-05-10T20:56:56.208Z",
+  "audioFixAudioDuration": 35.784777
+}

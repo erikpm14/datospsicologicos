@@ -1,0 +1,22 @@
+{
+  "id": "25f1efa2-a181-4ecc-9935-6c53143c742b",
+  "videoId": "25f1efa2-a181-4ecc-9935-6c53143c742b",
+  "createdAt": "2026-05-11T14:48:48.760Z",
+  "updatedAt": "2026-05-11T14:48:48.760Z",
+  "status": "done",
+  "progress": 100,
+  "importedFromExistingOutput": true,
+  "videoFile": "backend/25f1efa2-a181-4ecc-9935-6c53143c742b/output.mp4",
+  "data": {
+    "prefabScript": {
+      "topic": "auto-imported",
+      "hook": "Vídeo auto-importado desde output - 25f1efa2...",
+      "durationSeconds": 36,
+      "viralityScore": 50,
+      "humanityScore": 50
+    }
+  },
+  "qcPassed": true,
+  "publishable": true,
+  "notes": "Auto-imported from existing output.mp4 - duration 35.8s"
+}

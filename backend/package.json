@@ -16,12 +16,18 @@
     "test:quality": "node src/services/production-quality-checker.js",
     "test:quality-gate": "node src/services/content-quality-gate.js",
     "render:test": "node ../scripts/test-render.js",
-    "publish:now": "node ../scripts/publish-now.js",
+    "publish:dry-run": "node scripts/publish-dry-run.js",
     "render:video-use:test": "node ../scripts/test-video-use.js",
     "clean:generated": "node ../scripts/clean-generated.js",
     "clean:dry": "node ../scripts/clean-generated.js --dry-run",
     "reset:outputs": "node ../scripts/reset-outputs.js",
-    "reset:dry": "node ../scripts/reset-outputs.js --dry-run"
+    "reset:dry": "node ../scripts/reset-outputs.js --dry-run",
+    "manual:generate": "node scripts/manual-generate-video.js",
+    "manual:late-publish": "node scripts/manual-late-publish.js",
+    "manual:publish-until-success": "node scripts/manual-publish-until-success.js",
+    "emergency:generate-no-llm": "node scripts/emergency-generate-no-llm.js",
+    "emergency:prepare": "node scripts/emergency-generate-no-llm.js",
+    "stats:background-diversity": "node scripts/background-diversity-stats.js"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.24.0",
@@ -32,6 +38,7 @@
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
     "fluent-ffmpeg": "^2.1.3",
+    "googleapis": "^171.4.0",
     "msedge-tts": "^2.0.4",
     "node-cron": "^3.0.3",
     "p-queue": "^8.0.1",

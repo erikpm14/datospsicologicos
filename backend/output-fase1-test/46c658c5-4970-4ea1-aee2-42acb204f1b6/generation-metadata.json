@@ -1,0 +1,122 @@
+{
+  "videoId": "46c658c5-4970-4ea1-aee2-42acb204f1b6",
+  "generatedAt": "2026-05-05T21:24:28.603Z",
+  "generationType": "manual",
+  "generationMode": "emergency_no_llm",
+  "sourceVideoId": "455362af-7c53-4067-a2cf-2c57f3be4da1",
+  "hook": "Las decisiones no se toman con la mente. Se sienten.",
+  "topic": "attention",
+  "viralityScore": 50,
+  "reason": "LLM quota exhausted - using emergency no-LLM generation",
+  "backgroundPlan": {
+    "primaryCategory": "city_night",
+    "selectedAssets": [
+      "bg_psychology_symbolic_001",
+      "bg_minimal_dark_001",
+      "bg_abstract_blue_001",
+      "bg_dark_texture_001"
+    ],
+    "usedCategories": [
+      "psychology_symbolic",
+      "minimal_dark",
+      "abstract",
+      "dark_texture"
+    ],
+    "clipTimeline": [
+      {
+        "assetId": "bg_minimal_dark_001",
+        "category": "minimal_dark",
+        "start": 0,
+        "end": 3.62,
+        "duration": 3.62,
+        "transition": "cut",
+        "dominantColors": [
+          "black",
+          "dark_gray"
+        ],
+        "motionType": "slow_motion"
+      },
+      {
+        "assetId": "bg_geometric_motion_001",
+        "category": "geometric_motion",
+        "start": 3.62,
+        "end": 6.95,
+        "duration": 3.33,
+        "transition": "pan",
+        "dominantColors": [
+          "white",
+          "black"
+        ],
+        "motionType": "geometric_transform"
+      },
+      {
+        "assetId": "bg_dark_texture_001",
+        "category": "dark_texture",
+        "start": 6.95,
+        "end": 9.07,
+        "duration": 2.12,
+        "transition": "fade",
+        "dominantColors": [
+          "gray",
+          "black"
+        ],
+        "motionType": "subtle_texture"
+      },
+      {
+        "assetId": "bg_abstract_blue_001",
+        "category": "abstract",
+        "start": 9.07,
+        "end": 11.21,
+        "duration": 2.13,
+        "transition": "pan",
+        "dominantColors": [
+          "blue",
+          "cyan"
+        ],
+        "motionType": "neural_flow"
+      },
+      {
+        "assetId": "bg_particles_gold_001",
+        "category": "particles",
+        "start": 11.21,
+        "end": 15.14,
+        "duration": 3.94,
+        "transition": "fade",
+        "dominantColors": [
+          "gold",
+          "black"
+        ],
+        "motionType": "particle_drift"
+      },
+      {
+        "assetId": "bg_city_night_001",
+        "category": "city_night",
+        "start": 15.14,
+        "end": 35.78,
+        "duration": 20.64,
+        "transition": "pan",
+        "dominantColors": [
+          "blue",
+          "black"
+        ],
+        "motionType": "cinematic_pan"
+      }
+    ],
+    "transitionTypes": [
+      "cut",
+      "zoom"
+    ],
+    "diversityScore": 100,
+    "numClips": 6,
+    "appliedToRender": true,
+    "renderedAt": "2026-05-10T20:56:03.190Z",
+    "renderMode": "dynamic_background_timeline"
+  },
+  "renderMode": "dynamic_background_timeline",
+  "scriptDiversityGatePassed": true,
+  "prepublishQcPassed": true,
+  "duplicateCheckPassed": true,
+  "qcPassed": true,
+  "audioFixAppliedAt": "2026-05-10T20:55:30.432Z",
+  "audioFixAudioDuration": 35.784777
+}

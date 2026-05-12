@@ -1,0 +1,16 @@
+{
+  "needsRevalidation": true,
+  "blockedAt": "2026-05-12T07:34:31.033Z",
+  "blockReason": "BLOCKED_AFTER_BAD_UPLOAD_INCIDENT_REQUIRES_CHECKS_20_21_22_23",
+  "blockedAfterIncident": true,
+  "requiredChecks": [
+    "CHECK_20",
+    "CHECK_21",
+    "CHECK_22"
+  ],
+  "incident": {
+    "date": "2026-05-12",
+    "reason": "Double publication incident (hWL72kiFkdM, -4j9AxR1veI)",
+    "rootCause": "Script parsing bug + missing slot-level idempotency"
+  }
+}

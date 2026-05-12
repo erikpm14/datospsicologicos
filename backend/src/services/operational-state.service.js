@@ -69,9 +69,11 @@ function inspectOutputVideo(videoId) {
   const renderPath = path.join(dir, 'render-metadata.json');
   const publishedPath = path.join(dir, 'published.json');
   const discardedPath = path.join(dir, 'discarded.json');
+  const revalidationPath = path.join(dir, 'revalidation-status.json');
   const script = readJSON(scriptPath, null);
   const qc = readJSON(qcPath, null);
   const render = readJSON(renderPath, null);
+  const revalidationStatus = readJSON(revalidationPath, null);
   const stat = fs.existsSync(videoPath) ? fs.statSync(videoPath) : null;
   const ready = Boolean(
     stat &&
@@ -90,11 +92,14 @@ function inspectOutputVideo(videoId) {
     renderPath,
     publishedPath,
     discardedPath,
+    revalidationPath,
     exists: fs.existsSync(dir),
     ready,
     script,
     qc,
     render,
+    revalidationStatus,
+    needsRevalidation: revalidationStatus?.needsRevalidation === true,
     sizeBytes: stat?.size || 0,
     createdAt: stat?.mtime?.toISOString() || null,
     metadataComplete: isMetadataComplete(script),
@@ -119,6 +124,7 @@ function isReadyVideoEntry(entry) {
     entry.script &&
     !entry.published &&
     !entry.discarded &&
+    !entry.needsRevalidation &&
     isPublishAfterSatisfied(entry.script)
   );
 }

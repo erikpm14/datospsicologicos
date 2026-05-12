@@ -1,0 +1,11 @@
+{
+  "videoId": "72a85dee-f27b-44fb-a602-814ecdde5c1b",
+  "generatedAt": "2026-05-04T20:26:03.377Z",
+  "generationType": "manual",
+  "generationMode": "emergency_no_llm",
+  "sourceVideoId": "455362af-7c53-4067-a2cf-2c57f3be4da1",
+  "hook": "Tu cerebro no busca paz. Busca control.",
+  "topic": "attention",
+  "viralityScore": 50,
+  "reason": "LLM quota exhausted - using emergency no-LLM generation"
+}

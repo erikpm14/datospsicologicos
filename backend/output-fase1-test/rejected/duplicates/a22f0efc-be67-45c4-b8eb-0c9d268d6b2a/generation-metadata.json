@@ -1,0 +1,105 @@
+{
+  "videoId": "a22f0efc-be67-45c4-b8eb-0c9d268d6b2a",
+  "generatedAt": "2026-05-05T08:17:32.717Z",
+  "generationType": "manual",
+  "generationMode": "emergency_no_llm",
+  "sourceVideoId": "455362af-7c53-4067-a2cf-2c57f3be4da1",
+  "hook": "Tu cerebro no busca paz. Busca control.",
+  "topic": "attention",
+  "viralityScore": 50,
+  "reason": "LLM quota exhausted - using emergency no-LLM generation",
+  "backgroundPlan": {
+    "primaryCategory": "psychology_symbolic",
+    "selectedAssets": [
+      "bg_dark_texture_001",
+      "bg_city_night_001",
+      "bg_abstract_blue_001",
+      "bg_minimal_dark_001",
+      "bg_particles_gold_001"
+    ],
+    "usedCategories": [
+      "dark_texture",
+      "city_night",
+      "abstract",
+      "minimal_dark",
+      "particles"
+    ],
+    "clipTimeline": [
+      {
+        "assetId": "bg_dark_texture_001",
+        "category": "dark_texture",
+        "start": 0,
+        "end": 3.48,
+        "duration": 3.48,
+        "transition": "cut",
+        "dominantColors": [
+          "gray",
+          "black"
+        ],
+        "motionType": "subtle_texture"
+      },
+      {
+        "assetId": "bg_city_night_001",
+        "category": "city_night",
+        "start": 3.48,
+        "end": 7.02,
+        "duration": 3.55,
+        "transition": "cut",
+        "dominantColors": [
+          "blue",
+          "black"
+        ],
+        "motionType": "cinematic_pan"
+      },
+      {
+        "assetId": "bg_abstract_blue_001",
+        "category": "abstract",
+        "start": 7.02,
+        "end": 10.5,
+        "duration": 3.48,
+        "transition": "pan",
+        "dominantColors": [
+          "blue",
+          "cyan"
+        ],
+        "motionType": "neural_flow"
+      },
+      {
+        "assetId": "bg_minimal_dark_001",
+        "category": "minimal_dark",
+        "start": 10.5,
+        "end": 14.42,
+        "duration": 3.92,
+        "transition": "pan",
+        "dominantColors": [
+          "black",
+          "dark_gray"
+        ],
+        "motionType": "slow_motion"
+      },
+      {
+        "assetId": "bg_particles_gold_001",
+        "category": "particles",
+        "start": 14.42,
+        "end": 15,
+        "duration": 0.58,
+        "transition": "zoom",
+        "dominantColors": [
+          "gold",
+          "black"
+        ],
+        "motionType": "particle_drift"
+      }
+    ],
+    "transitionTypes": [
+      "cut",
+      "pan",
+      "zoom"
+    ],
+    "diversityScore": 100,
+    "numClips": 5,
+    "appliedToRender": true,
+    "renderedAt": "2026-05-05T08:17:38.255Z",
+    "renderMode": "dynamic_background_timeline"
+  }
+}

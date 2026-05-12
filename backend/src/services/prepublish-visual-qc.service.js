@@ -61,6 +61,7 @@ async function _detectBlackFrames(videoPath, outputDir) {
    * Retorna { hasBlackFrames, timestamps: [{ts, luminance, isBlack}] }
    */
   return new Promise((resolve, reject) => {
+    let settled = false;
     try {
       const framesDir = path.join(outputDir, '.qc-frames-temp');
       if (!fs.existsSync(framesDir)) {
@@ -82,6 +83,8 @@ async function _detectBlackFrames(videoPath, outputDir) {
       ffmpeg.stderr.on('data', (data) => { allStderr += data.toString(); });
 
       ffmpeg.on('close', (code) => {
+        if (settled) return;
+        settled = true;
         // Analizar stderr de blackdetect
         const blackDetectRegex = /black_duration:([\d.]+) black_start:([\d.]+)/g;
         let totalBlackDuration = 0;
@@ -100,10 +103,14 @@ async function _detectBlackFrames(videoPath, outputDir) {
       });
 
       ffmpeg.on('error', (err) => {
+        if (settled) return;
+        settled = true;
         logger.error(`FFmpeg CRITICAL: frame extraction failed - ${err.message} - THIS ALLOWS BLACK VIDEOS THROUGH`);
         reject(new Error(`BLACK_FRAME_CHECK_FAILED: ${err.message}`));
       });
     } catch (err) {
+      if (settled) return;
+      settled = true;
       logger.error(`Black frame detection error: ${err.message}`);
       reject(new Error(`BLACK_FRAME_CHECK_FAILED: ${err.message}`));
     }
@@ -400,11 +407,27 @@ async function validatePrepublish(videoPath, outputDir, videoId) {
     }
     results.checks.fileExists = { ok: true };
 
-    // 2. Tamaño
+    // 2. Tamaño (con excepción para dynamic backgrounds)
     const stats = fs.statSync(videoPath);
     const sizeKB = stats.size / 1024;
-    if (sizeKB < 2048) { // < 2MB
-      results.checks.fileSize = { ok: false, sizeKB, reason: 'Too small (< 2MB)' };
+
+    // Check if this is a dynamically rendered video
+    const isDynamicRender = (() => {
+      try {
+        const metadataPath = path.join(outputDir, 'generation-metadata.json');
+        if (fs.existsSync(metadataPath)) {
+          const meta = JSON.parse(fs.readFileSync(metadataPath, 'utf8'));
+          return meta.backgroundPlan && meta.backgroundPlan.appliedToRender === true;
+        }
+      } catch {}
+      return false;
+    })();
+
+    const MIN_SIZE_KB = isDynamicRender ? 800 : 2048; // 0.8MB for dynamic, 2MB for normal
+
+    if (sizeKB < MIN_SIZE_KB) {
+      const reasonSuffix = isDynamicRender ? ' (dynamic background)' : '';
+      results.checks.fileSize = { ok: false, sizeKB, reason: `Too small (< ${(MIN_SIZE_KB / 1024).toFixed(1)}MB)${reasonSuffix}` };
       results.blockedReasons.push('FILE_TOO_SMALL');
       results.ok = false;
     } else {

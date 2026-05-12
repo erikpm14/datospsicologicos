@@ -1,0 +1,114 @@
+#!/usr/bin/env node
+require('dotenv').config({ path: require('path').resolve(__dirname, '../../.env') });
+const path = require('path');
+const fs = require('fs');
+
+const OUTPUT_DIR = path.resolve(process.env.OUTPUT_DIR || path.join(__dirname, '../output-fase1-test'));
+const PRINCIPAL_ID = '9e3208ce-04d9-47b1-9b7a-d3c2b7025867';
+const BACKUP_ID = '2b260bb2-0a8c-4ac6-ad54-14ba64ceae4e';
+const TIMESTAMP = new Date().toISOString();
+
+function validateFiles(videoId) {
+  const videoPath = path.join(OUTPUT_DIR, videoId, 'output.mp4');
+  const scriptPath = path.join(OUTPUT_DIR, videoId, 'script.json');
+
+  if (!fs.existsSync(videoPath)) {
+    return { exists: false, message: `Video no encontrado: ${videoPath}` };
+  }
+  if (!fs.existsSync(scriptPath)) {
+    return { exists: false, message: `Script no encontrado: ${scriptPath}` };
+  }
+  return { exists: true };
+}
+
+async function publishVideo(videoId, isFallback = false) {
+  try {
+    const { publishAll } = require('../src/services/publisher');
+    const { validateReadyVideo } = require('../src/services/ready-video-validator.service');
+
+    const videoType = isFallback ? 'BACKUP' : 'PRINCIPAL';
+    console.log(`[SLOT_AUTO_14_30] [${TIMESTAMP}] Validando ${videoType}...`);
+
+    // Validar archivos
+    const filesCheck = validateFiles(videoId);
+    if (!filesCheck.exists) {
+      console.error(`[SLOT_AUTO_14_30] [${videoType}] ${filesCheck.message}`);
+      return null;
+    }
+
+    // Validar readiness
+    const validation = validateReadyVideo(videoId);
+    if (!validation.ready) {
+      console.log(`[SLOT_AUTO_14_30] [${videoType}] ✗ NO READY. Razón: ${validation.reason || 'desconocida'}`);
+      return null;
+    }
+
+    console.log(`[SLOT_AUTO_14_30] [${videoType}] ✓ READY. Detalles:`, JSON.stringify(validation.details || {}, null, 2));
+    console.log(`[SLOT_AUTO_14_30] [${videoType}] Publicando...`);
+
+    const videoPath = path.join(OUTPUT_DIR, videoId, 'output.mp4');
+    const scriptPath = path.join(OUTPUT_DIR, videoId, 'script.json');
+    const script = JSON.parse(fs.readFileSync(scriptPath, 'utf8'));
+    script.videoId = videoId;
+
+    const result = await publishAll(videoPath, script, null, {
+      source: 'late-slot-recovery',
+      videoId: videoId,
+      slotDate: '2026-05-11',
+      slotTime: '14:30',
+      isFallback: isFallback
+    });
+
+    const youtubeResult = result?.results?.find(r => r.platform === 'youtube');
+    if (youtubeResult && youtubeResult.videoId) {
+      console.log(`[SLOT_AUTO_14_30] ✅ PUBLICADO ${videoType}`);
+      console.log(`[SLOT_AUTO_14_30] YouTube ID: ${youtubeResult.videoId}`);
+      console.log(`[SLOT_AUTO_14_30] URL: ${youtubeResult.url}`);
+      return youtubeResult;
+    } else {
+      console.error(`[SLOT_AUTO_14_30] [${videoType}] Respuesta inválida:`, JSON.stringify(result, null, 2));
+      return null;
+    }
+
+  } catch (err) {
+    console.error(`[SLOT_AUTO_14_30] [${videoId}] Error:`, err.message);
+    if (err.details) console.error(`Detalles:`, JSON.stringify(err.details, null, 2));
+    return null;
+  }
+}
+
+async function main() {
+  try {
+    console.log(`[SLOT_AUTO_14_30] [${TIMESTAMP}] ════════════════════════════════════════`);
+    console.log(`[SLOT_AUTO_14_30] Iniciando SLOT RECOVERY 2026-05-11 14:30`);
+    console.log(`[SLOT_AUTO_14_30] Output dir: ${OUTPUT_DIR}`);
+
+    // Intentar principal
+    const principalResult = await publishVideo(PRINCIPAL_ID, false);
+    if (principalResult) {
+      console.log(`[SLOT_AUTO_14_30] [${TIMESTAMP}] ════════════════════════════════════════`);
+      console.log(`[SLOT_AUTO_14_30] ✅ ÉXITO: Principal publicado`);
+      process.exit(0);
+    }
+
+    // Fallback a backup
+    console.log(`[SLOT_AUTO_14_30] Principal no disponible. Intentando BACKUP...`);
+    const backupResult = await publishVideo(BACKUP_ID, true);
+    if (backupResult) {
+      console.log(`[SLOT_AUTO_14_30] [${TIMESTAMP}] ════════════════════════════════════════`);
+      console.log(`[SLOT_AUTO_14_30] ✅ ÉXITO: Backup publicado (FALLBACK)`);
+      process.exit(0);
+    }
+
+    console.error(`[SLOT_AUTO_14_30] [${TIMESTAMP}] ════════════════════════════════════════`);
+    console.error(`[SLOT_AUTO_14_30] ❌ FALLO: Ningún candidato disponible`);
+    process.exit(1);
+
+  } catch (err) {
+    console.error(`[SLOT_AUTO_14_30] [${TIMESTAMP}] Error fatal:`, err.message);
+    console.error(err.stack);
+    process.exit(1);
+  }
+}
+
+main();

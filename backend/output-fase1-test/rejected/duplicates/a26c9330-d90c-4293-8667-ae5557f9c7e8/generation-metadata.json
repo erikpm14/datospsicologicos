@@ -1,0 +1,90 @@
+{
+  "videoId": "a26c9330-d90c-4293-8667-ae5557f9c7e8",
+  "generatedAt": "2026-05-05T08:18:24.526Z",
+  "generationType": "manual",
+  "generationMode": "emergency_no_llm",
+  "sourceVideoId": "455362af-7c53-4067-a2cf-2c57f3be4da1",
+  "hook": "Tu cerebro no busca paz. Busca control.",
+  "topic": "attention",
+  "viralityScore": 50,
+  "reason": "LLM quota exhausted - using emergency no-LLM generation",
+  "backgroundPlan": {
+    "primaryCategory": "dark_texture",
+    "selectedAssets": [
+      "bg_abstract_blue_001",
+      "bg_city_night_001",
+      "bg_particles_gold_001",
+      "bg_minimal_dark_001"
+    ],
+    "usedCategories": [
+      "abstract",
+      "city_night",
+      "particles",
+      "minimal_dark"
+    ],
+    "clipTimeline": [
+      {
+        "assetId": "bg_abstract_blue_001",
+        "category": "abstract",
+        "start": 0,
+        "end": 2.21,
+        "duration": 2.21,
+        "transition": "cut",
+        "dominantColors": [
+          "blue",
+          "cyan"
+        ],
+        "motionType": "neural_flow"
+      },
+      {
+        "assetId": "bg_city_night_001",
+        "category": "city_night",
+        "start": 2.21,
+        "end": 4.63,
+        "duration": 2.42,
+        "transition": "zoom",
+        "dominantColors": [
+          "blue",
+          "black"
+        ],
+        "motionType": "cinematic_pan"
+      },
+      {
+        "assetId": "bg_particles_gold_001",
+        "category": "particles",
+        "start": 4.63,
+        "end": 7.88,
+        "duration": 3.25,
+        "transition": "fade",
+        "dominantColors": [
+          "gold",
+          "black"
+        ],
+        "motionType": "particle_drift"
+      },
+      {
+        "assetId": "bg_minimal_dark_001",
+        "category": "minimal_dark",
+        "start": 7.88,
+        "end": 10.73,
+        "duration": 2.85,
+        "transition": "cut",
+        "dominantColors": [
+          "black",
+          "dark_gray"
+        ],
+        "motionType": "slow_motion"
+      }
+    ],
+    "transitionTypes": [
+      "cut",
+      "zoom",
+      "fade"
+    ],
+    "diversityScore": 100,
+    "numClips": 4,
+    "appliedToRender": true,
+    "renderedAt": "2026-05-05T08:18:29.435Z",
+    "renderMode": "dynamic_background_timeline"
+  }
+}

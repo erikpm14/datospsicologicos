@@ -1,0 +1,14 @@
+{
+  "videoId": "5a81501b-7e11-49f1-980a-1e2c820ccb8d",
+  "renderMode": "dynamic_background_timeline",
+  "appliedToRender": true,
+  "backgroundPlan": "dynamic_with_diversity",
+  "scriptDiversity": true,
+  "backgroundDiversity": true,
+  "subtitlesBurnedIn": true,
+  "subtitlesFormat": "vtt",
+  "subtitleLanguage": "es",
+  "prepublishQc": true,
+  "duplicateHardBlock": true,
+  "generatedAt": "2026-04-29T08:52:43.963Z"
+}

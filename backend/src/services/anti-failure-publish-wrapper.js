@@ -23,7 +23,7 @@ const MAX_PUBLISH_RETRIES = 2;
  * @returns {Promise<boolean>} true si se publicó, false si todos los intentos fallaron
  */
 async function publishWithRetries(options) {
-  const { video, strategy = 'normal', publishAll, saveVideo, state } = options;
+  const { video, strategy = 'normal', publishAll, saveVideo, state, source = 'PublishScheduler', slotDate, slotTime } = options;
   const videoId = video.videoId;
   const maxRetries = MAX_PUBLISH_RETRIES;
 
@@ -62,7 +62,11 @@ async function publishWithRetries(options) {
       // Intentar publicar
       const script = video.script || video.prefabScript || {};
       const publishResult = await publishAll(outputPath, script, null, {
-        skipPrepublishVisualQC: strategy === 'fallback'
+        source,
+        slotDate,
+        slotTime,
+        skipPrepublishVisualQC: strategy === 'fallback',
+        isManual: false,
       });
 
       // Handle both success and failure responses

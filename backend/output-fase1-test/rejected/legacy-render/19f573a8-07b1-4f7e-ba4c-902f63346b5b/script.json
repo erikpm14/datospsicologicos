@@ -1,0 +1,22 @@
+{
+  "hook": "La memoria es selectiva. Guarda lo que necesita olvidar.",
+  "viralityScore": 50,
+  "topic": "attention",
+  "title": "La memoria es selectiva. Guarda lo que necesita olvidar.",
+  "generationMode": "emergency_no_llm",
+  "sourceVideoId": "455362af-7c53-4067-a2cf-2c57f3be4da1",
+  "generatedAt": "2026-05-06T13:13:03.674Z",
+  "description": "Psicología del cerebro y la mente. La memoria es selectiva. Guarda lo que necesita olvidar.",
+  "segments": [
+    {
+      "type": "hook",
+      "content": "La memoria es selectiva. Guarda lo que necesita olvidar.",
+      "duration": 2
+    },
+    {
+      "type": "explanation",
+      "content": "Explicación sobre cómo funciona tu mente.",
+      "duration": 8
+    }
+  ]
+}

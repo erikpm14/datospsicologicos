@@ -1,0 +1,22 @@
+{
+  "id": "c092efdf-6d6a-4674-b82e-a7737f0392c7",
+  "videoId": "c092efdf-6d6a-4674-b82e-a7737f0392c7",
+  "createdAt": "2026-05-11T14:48:49.103Z",
+  "updatedAt": "2026-05-11T14:48:49.103Z",
+  "status": "done",
+  "progress": 100,
+  "importedFromExistingOutput": true,
+  "videoFile": "backend/c092efdf-6d6a-4674-b82e-a7737f0392c7/output.mp4",
+  "data": {
+    "prefabScript": {
+      "topic": "auto-imported",
+      "hook": "Vídeo auto-importado desde output - c092efdf...",
+      "durationSeconds": 36,
+      "viralityScore": 50,
+      "humanityScore": 50
+    }
+  },
+  "qcPassed": true,
+  "publishable": true,
+  "notes": "Auto-imported from existing output.mp4 - duration 35.9s"
+}

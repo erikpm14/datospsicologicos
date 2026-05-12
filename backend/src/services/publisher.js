@@ -21,6 +21,8 @@ const { validatePrepublish } = require('./prepublish-visual-qc.service');
 const performanceTracker = require('./performance-tracker.service');
 const duplicateDetector = require('./duplicate-detector.service');
 const duplicateTracker = require('./duplicate-tracker');
+const { assertPublishAllowed, recordAuthorizedPublish } = require('./publish-guard.service');
+const { acquirePublishLock, releasePublishLock } = require('./publish-idempotency-lock.service');
 const PUBLISH_RETRY_DELAY_MS = Math.max(1000, parseInt(process.env.PUBLISH_RETRY_DELAY_MS || '4000', 10) || 4000);
 const PUBLISH_MAX_RETRIES = Math.max(1, parseInt(process.env.PUBLISH_MAX_RETRIES || '3', 10) || 3);
 
@@ -311,15 +313,84 @@ async function waitForInstagramProcessing(creationId, accessToken, maxWait = 300
 
 /**
  * Publica en YouTube Shorts vía YouTube Data API v3.
+ *
+ * DEFENSA DEFENSIVA: Este function NO debe ser llamado directamente.
+ * publishAll() es el único caller autorizado (pasa por guard).
  */
-async function publishToYouTube(videoPath, script) {
+async function publishToYouTube(videoPath, script, _publishGuardContext) {
+  // DEFENSIVE GATE: Bloquear llamada directa sin contexto de guard
+  if (!_publishGuardContext || _publishGuardContext.allowed !== true) {
+    const msg = 'publishToYouTube() called without valid publish guard context — direct calls blocked';
+    logger.error(`[PUBLISH_BLOCKED_DIRECT_UPLOAD_CALL] ${msg}`);
+    throw new Error(msg);
+  }
+
+  const videoId = script?.videoId || script?.id;
+
+  // ═══════════════════════════════════════════════════════════════
+  // SLOT-LEVEL IDEMPOTENCY: One video per slot maximum
+  // NEW FIX: Prevent principal + backup both publishing to same slot
+  // ═══════════════════════════════════════════════════════════════
+  let slotLockAcquired = false;
+  let slotKey = null;
+
+  if (_publishGuardContext.slotDate && _publishGuardContext.slotTime) {
+    const {
+      acquireSlotLock,
+      markSlotAsFailed,
+      markSlotAsPublished,
+    } = require('./slot-idempotency-lock.service');
+
+    slotKey = `${_publishGuardContext.slotDate}_${_publishGuardContext.slotTime}`;
+
+    const slotLockResult = acquireSlotLock(
+      _publishGuardContext.slotDate,
+      _publishGuardContext.slotTime,
+      videoId
+    );
+
+    if (!slotLockResult.acquired) {
+      const msg = slotLockResult.detail || slotLockResult.reason;
+      logger.error(`[PUBLISH_BLOCKED_BY_SLOT_LOCK] ${msg}`, {
+        slotKey,
+        videoId,
+        existingLock: slotLockResult.existingLock,
+      });
+      throw new Error(`Cannot publish: Slot already has publication (${msg})`);
+    }
+
+    slotLockAcquired = true;
+    logger.info('[SLOT_LOCK_ACQUIRED]', { slotKey, videoId });
+  }
+
+  // ═══════════════════════════════════════════════════════════════
+  // CRITICAL: ATOMIC IDEMPOTENCY LOCK (VIDEO-LEVEL)
+  // Prevents concurrent uploads of same videoId to YouTube
+  // ═══════════════════════════════════════════════════════════════
+  const lockResult = acquirePublishLock(videoId, {
+    source: _publishGuardContext.source,
+    reason: 'youtube_upload',
+  });
+
+  if (!lockResult.acquired) {
+    // Si adquirimos slot lock, necesitamos marcarlo como fallido
+    if (slotLockAcquired && slotKey) {
+      const { markSlotAsFailed } = require('./slot-idempotency-lock.service');
+      markSlotAsFailed(slotKey, videoId, 'Failed to acquire video-level lock');
+    }
+
+    const msg = lockResult.error || 'Failed to acquire publish lock';
+    logger.error(`[PUBLISH_BLOCKED_BY_IDEMPOTENCY_LOCK] videoId=${videoId} reason=${msg}`);
+    throw new Error(`Cannot publish: ${msg}`);
+  }
+
   logger.info(`Publishing to YouTube Shorts`);
 
-  const accessToken = await getYouTubeAccessToken();
-  const caption = buildCaption(script);
-  const videoSize = fs.statSync(videoPath).size;
-
   try {
+    const accessToken = await getYouTubeAccessToken();
+    const caption = buildCaption(script);
+    const videoSize = fs.statSync(videoPath).size;
+
     // Paso 1: Inicializar upload resumible
     const initResponse = await axios.post(
       'https://www.googleapis.com/upload/youtube/v3/videos?uploadType=resumable&part=snippet,status',
@@ -360,16 +431,44 @@ async function publishToYouTube(videoPath, script) {
       timeout: 300000,
     });
 
-    const videoId = uploadResponse.data.id;
-    logger.info(`YouTube Shorts published | video_id: ${videoId}`);
+    const publishedYouTubeId = uploadResponse.data.id;
+    logger.info(`YouTube Shorts published | video_id: ${publishedYouTubeId}`);
+
+    // Release lock with success
+    releasePublishLock(videoId, true, publishedYouTubeId);
+
+    // ═══════════════════════════════════════════════════════════════
+    // MARK SLOT AS PUBLISHED (prevents backup from publishing)
+    // ═══════════════════════════════════════════════════════════════
+    if (slotLockAcquired && slotKey) {
+      const { markSlotAsPublished } = require('./slot-idempotency-lock.service');
+      markSlotAsPublished(slotKey, videoId, publishedYouTubeId);
+      logger.info('[SLOT_LOCK_PUBLISHED]', {
+        slotKey,
+        videoId,
+        youtubeId: publishedYouTubeId,
+      });
+    }
+
     return {
       platform: 'youtube',
-      videoId,
-      url: `https://www.youtube.com/shorts/${videoId}`,
+      videoId: publishedYouTubeId,
+      url: `https://www.youtube.com/shorts/${publishedYouTubeId}`,
       status: 'published',
     };
   } catch (err) {
     logger.error(`YouTube publish failed: ${err.response?.data?.error?.message || err.message}`);
+    // Release lock with failure - allows retry
+    releasePublishLock(videoId, false);
+
+    // ═══════════════════════════════════════════════════════════════
+    // MARK SLOT AS FAILED (allows backup attempt)
+    // ═══════════════════════════════════════════════════════════════
+    if (slotLockAcquired && slotKey) {
+      const { markSlotAsFailed } = require('./slot-idempotency-lock.service');
+      markSlotAsFailed(slotKey, videoId, err.message);
+    }
+
     throw new Error(`YouTube publish error: ${err.message}`);
   }
 }
@@ -423,10 +522,13 @@ async function getYouTubeAccessToken() {
 /**
  * Publica en todas las plataformas disponibles (según tokens configurados).
  * Solo intenta plataformas con credenciales reales (no "RELLENAR").
+ *
+ * REQUERIDO: source obligatorio para auditoría de seguridad
+ *
  * @param {string} videoPath
  * @param {object} script
  * @param {string} videoUrl - optional
- * @param {object} options - { skipPrepublishVisualQC: boolean }
+ * @param {object} options - { source?, skipPrepublishVisualQC?, slotDate?, slotTime? }
  */
 async function publishAll(videoPath, script, videoUrl = null, options = {}) {
   const videoId = script?.videoId || script?.id || path.basename(path.dirname(videoPath || 'unknown'));
@@ -434,6 +536,48 @@ async function publishAll(videoPath, script, videoUrl = null, options = {}) {
     script?.data?.prefabScript ||
     script?.prefabScript
   );
+
+  // ═══════════════════════════════════════════════════════════════
+  // PUBLISH GUARD: Verificar autorización ANTES de cualquier action
+  // ═══════════════════════════════════════════════════════════════
+  const source = options.source || options.caller;
+  if (!source) {
+    logger.error('PUBLISH_GUARD_BLOCKED | videoId', {
+      videoId,
+      error: 'source requerido',
+      received: options,
+    });
+    return {
+      success: false,
+      error: 'PUBLISH_GUARD_FAILED',
+      reason: 'source es obligatorio (opción options.source)',
+      discarded: false,
+    };
+  }
+
+  const guardResult = assertPublishAllowed({
+    videoId,
+    source,
+    slotDate: options.slotDate,
+    slotTime: options.slotTime,
+    isManual: options.isManual === true,
+  });
+
+  if (!guardResult.allowed) {
+    logger.error('PUBLISH_GUARD_BLOCKED | videoId', {
+      videoId,
+      source,
+      reason: guardResult.reason,
+      errors: guardResult.errors,
+    });
+    return {
+      success: false,
+      error: 'PUBLISH_GUARD_BLOCKED',
+      reason: guardResult.reason,
+      errors: guardResult.errors,
+      discarded: false,
+    };
+  }
 
   // ═══════════════════════════════════════════════════════════════
   // GATE 0: VALIDAR ARCHIVOS LOCALES (PREVIO A TODO)
@@ -647,8 +791,25 @@ async function publishAll(videoPath, script, videoUrl = null, options = {}) {
   const ytRefresh = process.env.YOUTUBE_REFRESH_TOKEN;
   if (ytRefresh && ytRefresh !== 'RELLENAR') {
     try {
-      const ytResult = await runWithRetry('YouTube', () => publishToYouTube(videoPath, script));
+      // Pass guardResult context to publishToYouTube to prevent direct calls
+      const ytResult = await runWithRetry('YouTube', () => publishToYouTube(videoPath, script, guardResult));
       results.push(ytResult);
+
+      // AUDIT TRAIL: Registrar publicación autorizada
+      if (ytResult && ytResult.videoId) {
+        try {
+          recordAuthorizedPublish(
+            videoId,
+            ytResult.videoId,
+            source,
+            options.slotDate || null,
+            options.slotTime || null,
+            process.env.OPERATOR || 'system'
+          );
+        } catch (err) {
+          logger.warn(`[audit_trail] Failed to record publish: ${err.message}`);
+        }
+      }
 
       // PERFORMANCE TRACKING (non-blocking)
       if (ytResult && ytResult.videoId) {

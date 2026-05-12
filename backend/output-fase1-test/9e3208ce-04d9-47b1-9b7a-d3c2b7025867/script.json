@@ -1,0 +1,22 @@
+{
+  "hook": "Tu cuerpo guarda lo que tu mente rechaza.",
+  "viralityScore": 50,
+  "topic": "attention",
+  "title": "Tu cuerpo guarda lo que tu mente rechaza.",
+  "generationMode": "emergency_no_llm",
+  "sourceVideoId": "25f1efa2-a181-4ecc-9935-6c53143c742b",
+  "generatedAt": "2026-05-07T20:46:54.791Z",
+  "description": "Psicología del cerebro y la mente. Tu cuerpo guarda lo que tu mente rechaza.",
+  "segments": [
+    {
+      "type": "hook",
+      "content": "Tu cuerpo guarda lo que tu mente rechaza.",
+      "duration": 2
+    },
+    {
+      "type": "explanation",
+      "content": "Explicación sobre cómo funciona tu mente.",
+      "duration": 8
+    }
+  ]
+}

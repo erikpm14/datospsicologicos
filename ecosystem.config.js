@@ -2,30 +2,20 @@ module.exports = {
   apps: [
     {
       name: 'backend',
-      script: 'src/server.js',
-      cwd: './backend',
+      script: 'backend/src/server.js',
       env: {
         NODE_ENV: 'development'
       },
-      watch: ['src'],
+      watch: ['backend/src'],
       ignore_watch: ['node_modules', 'logs', 'dist']
     },
     {
-      name: 'frontend',
-      script: 'vite',
-      cwd: './frontend',
-      env: {
-        NODE_ENV: 'development'
-      }
-    },
-    {
       name: 'worker',
-      script: 'src/queue/video-processor.js',
-      cwd: './backend',
+      script: 'backend/src/queue/video-processor.js',
       env: {
         NODE_ENV: 'development'
       },
-      watch: ['src/queue', 'src/services']
+      watch: ['backend/src/queue', 'backend/src/services']
     }
   ]
 };

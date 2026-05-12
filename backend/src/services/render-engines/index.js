@@ -2,6 +2,7 @@ require('dotenv').config();
 const logger = require('../../utils/logger');
 const { renderWithVideoUse } = require('./video-use-renderer');
 const { renderHyperframe } = require('../../renderers/hyperframe-renderer');
+const { renderDynamicBackgroundTimeline } = require('../dynamic-background-renderer');
 const fs = require('fs');
 const path = require('path');
 
@@ -39,6 +40,55 @@ async function renderVideoWithRouter(options = {}) {
       `[render-router] Video duración ${audioDuration.toFixed(2)}s < mínimo requerido ${MIN_VIDEO_DURATION}s. ` +
       `Genera un script más largo (objetivo: 26-32s).`
     );
+  }
+
+  // NUEVO: Verificar si existe backgroundPlan.clipTimeline en generation-metadata.json
+  const metadataPath = path.join(outputDir, 'generation-metadata.json');
+  let hasDynamicBackground = false;
+  let clipTimeline = null;
+
+  if (fs.existsSync(metadataPath)) {
+    try {
+      const metadata = JSON.parse(fs.readFileSync(metadataPath, 'utf8'));
+      if (metadata.backgroundPlan && Array.isArray(metadata.backgroundPlan.clipTimeline)) {
+        hasDynamicBackground = true;
+        clipTimeline = metadata.backgroundPlan.clipTimeline;
+        logger.info(`[render-router] Dynamic background detected: ${clipTimeline.length} clips`);
+      }
+    } catch (err) {
+      logger.warn(`[render-router] Failed to read generation-metadata.json: ${err.message}`);
+    }
+  }
+
+  // Si existe clipTimeline, usar renderDynamicBackgroundTimeline
+  if (hasDynamicBackground && clipTimeline && clipTimeline.length > 0) {
+    logger.info('[render-router] Using dynamic background timeline renderer');
+    try {
+      const result = await renderDynamicBackgroundTimeline({
+        audioPath: options.audioPath,
+        outputPath,
+        clipTimeline,
+        audioDuration: audioDuration || 30,
+        outputDir,
+      });
+
+      // Marcar que fue aplicado
+      const metadata = JSON.parse(fs.readFileSync(metadataPath, 'utf8'));
+      metadata.backgroundPlan.appliedToRender = true;
+      metadata.backgroundPlan.renderedAt = new Date().toISOString();
+      metadata.backgroundPlan.renderMode = 'dynamic_background_timeline';
+      fs.writeFileSync(metadataPath, JSON.stringify(metadata, null, 2));
+
+      return {
+        success: true,
+        renderMode: 'dynamic_background_timeline',
+        fallbackUsed: false,
+        outputPath,
+      };
+    } catch (error) {
+      logger.error(`[render-router] Dynamic background render failed: ${error.message}`);
+      throw error;
+    }
   }
 
   // Estrategia de rendering: Hyperframe (si habilitado) + fallback a video_use

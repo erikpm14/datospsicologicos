@@ -42,6 +42,7 @@ const themes = require('../templates/visual-themes.json');
 const logger = require('../utils/logger');
 const { createPerfTracker, formatDurationMs } = require('../utils/perf-tracker');
 const { validateVideoV4 } = require('../contracts/video-v4.contract');
+const { detectNearestSlot, reserveSlot } = require('../services/nearest-slot-protection.service');
 
 // ─────────────────────────────────────────────
 //  PATHS DE LA COLA
@@ -373,6 +374,37 @@ async function processPipeline(job) {
     // Modo diferido: el publish-scheduler.service.js publica a las horas configuradas
     logger.info(`[Job ${job.id}] 4/5 Render done — deferred publication (AUTO_PUBLISH_ENABLED=true)`);
 
+    // ═══════════════════════════════════════════════════════════════
+    // NEAREST SLOT PROTECTION: Reserve slot if available
+    // ═══════════════════════════════════════════════════════════════
+    try {
+      const slotDetection = await detectNearestSlot();
+
+      if (slotDetection.success) {
+        const slot = slotDetection.slot;
+
+        if (!slotDetection.locked) {
+          const reserveResult = reserveSlot(slot, videoId, {
+            scriptDiversity: true,
+            backgroundDiversity: script.backgroundPlan?.diversityScore >= 70,
+            dynamicRenderApplied: script.backgroundPlan?.appliedToRender === true,
+            prepublishQc: qcResult.passed,
+            duplicateHardBlock: true,
+          });
+
+          if (reserveResult.success) {
+            logger.info(`[Job ${job.id}] [NEAREST_SLOT_LOCKED] videoId=${videoId} for slot ${slot.date} ${slot.time}`);
+          }
+        } else {
+          logger.info(`[Job ${job.id}] [NEAREST_SLOT_ALREADY_LOCKED] existing videoId=${slotDetection.videoId}`);
+        }
+      } else {
+        logger.warn(`[Job ${job.id}] [NEAREST_SLOT_DETECTION_FAILED] ${slotDetection.error}`);
+      }
+    } catch (err) {
+      logger.error(`[Job ${job.id}] [NEAREST_SLOT_PROTECTION_ERROR] ${err.message}`);
+    }
+
     job.progress = 100;
     job.result = { videoId, deferred: true, readyAt: new Date().toISOString() };
     job.completedAt = new Date().toISOString();
@@ -681,19 +713,37 @@ function getQueueStatus() {
 //  Cuando el growth engine está activo, él gestiona la generación.
 // ─────────────────────────────────────────────
 
-if (process.env.AUTO_GENERATION_ENABLED !== 'true') {
+// ─────────────────────────────────────────────
+//  LEGACY CRON — DESACTIVADO
+// ─────────────────────────────────────────────
+// RAZÓN: El legacy cron intentaba generar vídeos en los mismos horarios que
+// PublishScheduler necesita publicar. Si la generación fallaba (LLM limit),
+// contaminaba el slot de publicación real.
+//
+// SOLUCIÓN: PublishScheduler es ahora el único responsable de los slots oficiales.
+// La generación debe ocurrir en preflight (30 min antes), no en el slot real.
+//
+// Si en futuro se necesita generación automática por horario:
+// - Usar variable LEGACY_GENERATION_CRON_ENABLED=true
+// - Cambiar horarios para NO coincidir con PUBLISH_TIMES_CET
+// - Implementar mecanismo de lock para evitar conflictos
+
+const LEGACY_CRON_ENABLED = process.env.LEGACY_GENERATION_CRON_ENABLED === 'true';
+
+if (LEGACY_CRON_ENABLED && process.env.AUTO_GENERATION_ENABLED !== 'true') {
+  logger.warn('[LEGACY_CRON_ENABLED] Legacy generation cron is ACTIVE — conflicts possible with PublishScheduler');
   const publishTimes = (process.env.PUBLISH_TIMES_CET || '15:00,18:00,21:00').split(',');
 
   publishTimes.forEach((time) => {
     const [hour, minute] = time.split(':');
     const cronExpr = `${minute} ${hour} * * *`;
 
-    logger.info(`Legacy cron scheduled: ${time} CET → ${cronExpr}`);
+    logger.warn(`⚠️  [LEGACY_CRON_SCHEDULED] ${time} CET (CONFLICT RISK with PublishScheduler)`);
 
     cron.schedule(
       cronExpr,
       async () => {
-        logger.info(`Legacy cron fired: ${time} CET — queuing video`);
+        logger.warn(`⚠️  [LEGACY_CRON_FIRED] ${time} CET — attempting generation (may interfere with publish)`);
         try {
           await addVideoToQueue({ topic: null });
         } catch (err) {
@@ -703,8 +753,11 @@ if (process.env.AUTO_GENERATION_ENABLED !== 'true') {
       { timezone: 'Europe/Madrid' }
     );
   });
+} else if (!LEGACY_CRON_ENABLED) {
+  logger.info('[LEGACY_CRON_DISABLED] Legacy generation cron is OFF — PublishScheduler owns all publish slots');
+  logger.info('[PUBLISH_SCHEDULER_OWNS_SLOT] Generation deferred to preflight scheduler (30 min before publish)');
 } else {
-  logger.info('Legacy publish cron disabled — growth engine scheduler is active');
+  logger.info('Legacy generation cron disabled — growth engine scheduler is active');
 }
 
 // Polling de analytics cada hora

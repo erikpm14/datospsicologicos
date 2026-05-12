@@ -104,7 +104,11 @@ console.log(`╚═════════════════════�
     // 5. Intentar publicar
     console.log(`4️⃣  PUBLISHING VIDEO\n`);
 
-    const publishResult = await publishAll(videoPath, script);
+    const publishResult = await publishAll(videoPath, script, null, {
+      source: 'retry-publish-video',
+      isManual: true,
+      skipPrepublishVisualQC: false,
+    });
 
     console.log(`════════════════════════════════════════════════════════\n`);
 

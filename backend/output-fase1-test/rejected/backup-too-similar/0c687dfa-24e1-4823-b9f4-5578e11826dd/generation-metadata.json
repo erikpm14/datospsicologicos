@@ -1,0 +1,94 @@
+{
+  "videoId": "0c687dfa-24e1-4823-b9f4-5578e11826dd",
+  "generatedAt": "2026-05-07T09:52:56.509Z",
+  "generationType": "manual",
+  "generationMode": "emergency_no_llm",
+  "sourceVideoId": "455362af-7c53-4067-a2cf-2c57f3be4da1",
+  "hook": "La ansiedad habla el idioma del futuro.",
+  "topic": "attention",
+  "viralityScore": 50,
+  "reason": "LLM quota exhausted - using emergency no-LLM generation",
+  "backgroundPlan": {
+    "primaryCategory": "psychology_symbolic",
+    "selectedAssets": [
+      "bg_abstract_blue_001",
+      "bg_minimal_dark_001",
+      "bg_particles_gold_001",
+      "bg_geometric_motion_001"
+    ],
+    "usedCategories": [
+      "abstract",
+      "minimal_dark",
+      "particles",
+      "geometric_motion"
+    ],
+    "clipTimeline": [
+      {
+        "assetId": "bg_abstract_blue_001",
+        "category": "abstract",
+        "start": 0,
+        "end": 3.39,
+        "duration": 3.39,
+        "transition": "cut",
+        "dominantColors": [
+          "blue",
+          "cyan"
+        ],
+        "motionType": "neural_flow"
+      },
+      {
+        "assetId": "bg_minimal_dark_001",
+        "category": "minimal_dark",
+        "start": 3.39,
+        "end": 6.91,
+        "duration": 3.52,
+        "transition": "cut",
+        "dominantColors": [
+          "black",
+          "dark_gray"
+        ],
+        "motionType": "slow_motion"
+      },
+      {
+        "assetId": "bg_particles_gold_001",
+        "category": "particles",
+        "start": 6.91,
+        "end": 9.15,
+        "duration": 2.25,
+        "transition": "cut",
+        "dominantColors": [
+          "gold",
+          "black"
+        ],
+        "motionType": "particle_drift"
+      },
+      {
+        "assetId": "bg_geometric_motion_001",
+        "category": "geometric_motion",
+        "start": 9.15,
+        "end": 13.11,
+        "duration": 3.96,
+        "transition": "zoom",
+        "dominantColors": [
+          "white",
+          "black"
+        ],
+        "motionType": "geometric_transform"
+      }
+    ],
+    "transitionTypes": [
+      "cut",
+      "zoom"
+    ],
+    "diversityScore": 100,
+    "numClips": 4,
+    "appliedToRender": true,
+    "renderedAt": "2026-05-07T09:53:05.797Z",
+    "renderMode": "dynamic_background_timeline"
+  },
+  "renderMode": "dynamic_background_timeline",
+  "scriptDiversityGatePassed": true,
+  "prepublishQcPassed": true,
+  "duplicateCheckPassed": true,
+  "qcPassed": true
+}

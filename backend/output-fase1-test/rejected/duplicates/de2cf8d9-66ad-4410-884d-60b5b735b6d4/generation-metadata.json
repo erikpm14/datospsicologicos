@@ -1,0 +1,74 @@
+{
+  "videoId": "de2cf8d9-66ad-4410-884d-60b5b735b6d4",
+  "generatedAt": "2026-05-05T08:17:01.227Z",
+  "generationType": "manual",
+  "generationMode": "emergency_no_llm",
+  "sourceVideoId": "455362af-7c53-4067-a2cf-2c57f3be4da1",
+  "hook": "Tu cerebro no busca paz. Busca control.",
+  "topic": "attention",
+  "viralityScore": 50,
+  "reason": "LLM quota exhausted - using emergency no-LLM generation",
+  "backgroundPlan": {
+    "primaryCategory": "geometric_motion",
+    "selectedAssets": [
+      "bg_psychology_symbolic_001",
+      "bg_dark_texture_001",
+      "bg_abstract_blue_001"
+    ],
+    "usedCategories": [
+      "psychology_symbolic",
+      "dark_texture",
+      "abstract"
+    ],
+    "clipTimeline": [
+      {
+        "assetId": "bg_psychology_symbolic_001",
+        "category": "psychology_symbolic",
+        "start": 0,
+        "end": 3.82,
+        "duration": 3.82,
+        "transition": "cut",
+        "dominantColors": [
+          "red",
+          "purple"
+        ],
+        "motionType": "symbolic_animation"
+      },
+      {
+        "assetId": "bg_dark_texture_001",
+        "category": "dark_texture",
+        "start": 3.82,
+        "end": 6.6,
+        "duration": 2.78,
+        "transition": "cut",
+        "dominantColors": [
+          "gray",
+          "black"
+        ],
+        "motionType": "subtle_texture"
+      },
+      {
+        "assetId": "bg_abstract_blue_001",
+        "category": "abstract",
+        "start": 6.6,
+        "end": 10.19,
+        "duration": 3.59,
+        "transition": "fade",
+        "dominantColors": [
+          "blue",
+          "cyan"
+        ],
+        "motionType": "neural_flow"
+      }
+    ],
+    "transitionTypes": [
+      "cut",
+      "fade"
+    ],
+    "diversityScore": 100,
+    "numClips": 3,
+    "appliedToRender": true,
+    "renderedAt": "2026-05-05T08:17:05.182Z",
+    "renderMode": "dynamic_background_timeline"
+  }
+}

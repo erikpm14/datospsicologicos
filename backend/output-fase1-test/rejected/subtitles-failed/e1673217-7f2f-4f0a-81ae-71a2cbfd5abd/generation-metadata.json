@@ -1,0 +1,126 @@
+{
+  "videoId": "e1673217-7f2f-4f0a-81ae-71a2cbfd5abd",
+  "generatedAt": "2026-05-06T21:56:30.007Z",
+  "generationType": "manual",
+  "generationMode": "emergency_no_llm",
+  "sourceVideoId": "455362af-7c53-4067-a2cf-2c57f3be4da1",
+  "hook": "A veces no es cansancio. Es falta de significado.",
+  "topic": "attention",
+  "viralityScore": 50,
+  "reason": "LLM quota exhausted - using emergency no-LLM generation",
+  "backgroundPlan": {
+    "primaryCategory": "abstract",
+    "selectedAssets": [
+      "bg_particles_gold_001",
+      "bg_minimal_dark_001",
+      "bg_geometric_motion_001",
+      "bg_dark_texture_001",
+      "bg_abstract_blue_001",
+      "bg_city_night_001"
+    ],
+    "usedCategories": [
+      "particles",
+      "minimal_dark",
+      "geometric_motion",
+      "dark_texture",
+      "abstract",
+      "city_night"
+    ],
+    "clipTimeline": [
+      {
+        "assetId": "bg_particles_gold_001",
+        "category": "particles",
+        "start": 0,
+        "end": 3.66,
+        "duration": 3.66,
+        "transition": "cut",
+        "dominantColors": [
+          "gold",
+          "black"
+        ],
+        "motionType": "particle_drift"
+      },
+      {
+        "assetId": "bg_minimal_dark_001",
+        "category": "minimal_dark",
+        "start": 3.66,
+        "end": 7.64,
+        "duration": 3.98,
+        "transition": "zoom",
+        "dominantColors": [
+          "black",
+          "dark_gray"
+        ],
+        "motionType": "slow_motion"
+      },
+      {
+        "assetId": "bg_geometric_motion_001",
+        "category": "geometric_motion",
+        "start": 7.64,
+        "end": 9.84,
+        "duration": 2.2,
+        "transition": "pan",
+        "dominantColors": [
+          "white",
+          "black"
+        ],
+        "motionType": "geometric_transform"
+      },
+      {
+        "assetId": "bg_dark_texture_001",
+        "category": "dark_texture",
+        "start": 9.84,
+        "end": 12.9,
+        "duration": 3.05,
+        "transition": "fade",
+        "dominantColors": [
+          "gray",
+          "black"
+        ],
+        "motionType": "subtle_texture"
+      },
+      {
+        "assetId": "bg_abstract_blue_001",
+        "category": "abstract",
+        "start": 12.9,
+        "end": 16.46,
+        "duration": 3.56,
+        "transition": "pan",
+        "dominantColors": [
+          "blue",
+          "cyan"
+        ],
+        "motionType": "neural_flow"
+      },
+      {
+        "assetId": "bg_city_night_001",
+        "category": "city_night",
+        "start": 16.46,
+        "end": 20.1,
+        "duration": 3.64,
+        "transition": "zoom",
+        "dominantColors": [
+          "blue",
+          "black"
+        ],
+        "motionType": "cinematic_pan"
+      }
+    ],
+    "transitionTypes": [
+      "cut",
+      "zoom",
+      "pan",
+      "fade"
+    ],
+    "diversityScore": 100,
+    "numClips": 6,
+    "appliedToRender": true,
+    "renderedAt": "2026-05-06T21:56:41.493Z",
+    "renderMode": "dynamic_background_timeline"
+  },
+  "renderMode": "dynamic_background_timeline",
+  "scriptDiversityGatePassed": true,
+  "prepublishQcPassed": true,
+  "duplicateCheckPassed": true,
+  "qcPassed": true
+}

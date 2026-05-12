@@ -22,6 +22,7 @@ const cron   = require('node-cron');
 const fs     = require('fs');
 const path   = require('path');
 const logger = require('../utils/logger');
+const { loadSlotState, isVideoReady, rearmedNextSlot } = require('./nearest-slot-protection.service');
 const { evaluateCandidate, discardVideo, loadPublishLog } = require('./content-quality-gate');
 const { checkProductionQuality, saveQCResult } = require('./production-quality-checker');
 const { recordPublication } = require('../../../content-engine/tracking/publication-attribution');
@@ -57,6 +58,7 @@ const {
   publishWithRetries,
   ensureAtLeastOnePublishable,
 } = require('./anti-failure-publish-wrapper');
+const { validateReadyVideo } = require('./ready-video-validator.service');
 
 const OUTPUT_DIR         = path.resolve(process.env.OUTPUT_DIR || './output');
 const PUBLISH_LOG_PATH   = path.resolve('./data/publish-log.json');
@@ -613,6 +615,79 @@ async function runPublishCycle({ force = false } = {}) {
       return;
     }
 
+    // ═══════════════════════════════════════════════════════════════
+    // NEAREST SLOT PROTECTION: Check for reserved video
+    // ═══════════════════════════════════════════════════════════════
+    try {
+      const slotState = loadSlotState();
+      const now = new Date();
+      const currentDate = now.toISOString().split('T')[0];
+      const currentTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+
+      if (slotState?.nearestSlot && slotState.nearestSlot.locked && slotState.nearestSlot.videoId) {
+        const reserved = slotState.nearestSlot;
+
+        // Verify it's the correct slot (same date and time)
+        if (reserved.date === currentDate && reserved.time === currentTime) {
+          const readyCheck = isVideoReady(reserved.videoId);
+
+          if (readyCheck.ready) {
+            logger.info(`PublishScheduler: [PUBLISHING_RESERVED_SLOT_VIDEO] videoId=${reserved.videoId}`);
+
+            // Load the reserved video and publish it
+            const reservedVideo = getReadyToPublishVideos().find(v => v.videoId === reserved.videoId);
+
+            if (reservedVideo) {
+              try {
+                const validation = await validateReadyCandidate(reservedVideo, false);
+
+                if (validation.coreValidation?.hardPassed) {
+                  const { publishAll } = require('./publisher');
+                  const { saveVideo } = require('./analytics-tracker');
+
+                  const published = await publishWithRetries({
+                    video: reservedVideo,
+                    strategy: 'reserved_slot',
+                    publishAll,
+                    saveVideo,
+                    state,
+                    source: 'PublishScheduler',
+                    slotDate: currentDate,
+                    slotTime: currentTime,
+                  });
+
+                  if (published) {
+                    logger.info(`PublishScheduler: ✅ [RESERVED_SLOT_PUBLISHED] videoId=${reserved.videoId} | invalidating reservation and rearming next slot`);
+
+                    // Invalidate consumed reservation and rearm next slot
+                    setImmediate(() => rearmedNextSlot(reserved.videoId).catch(err => {
+                      logger.error(`PublishScheduler: rearmedNextSlot error: ${err.message}`);
+                    }));
+
+                    return;
+                  } else {
+                    logger.warn(`PublishScheduler: [RESERVED_SLOT_PUBLISH_FAILED] videoId=${reserved.videoId}, falling back to normal flow`);
+                  }
+                } else {
+                  logger.warn(`PublishScheduler: [RESERVED_VIDEO_HARD_BLOCKS] videoId=${reserved.videoId}, hard blocks detected, falling back`);
+                }
+              } catch (err) {
+                logger.error(`PublishScheduler: [RESERVED_SLOT_EXCEPTION] videoId=${reserved.videoId} | ${err.message}`);
+              }
+            } else {
+              logger.warn(`PublishScheduler: [RESERVED_VIDEO_NOT_FOUND] videoId=${reserved.videoId}`);
+            }
+          } else {
+            logger.warn(`PublishScheduler: [RESERVED_VIDEO_NOT_READY] videoId=${reserved.videoId} | reason=${readyCheck.reason}`);
+          }
+        } else {
+          logger.info(`PublishScheduler: [RESERVED_SLOT_MISMATCH] expected=${reserved.date} ${reserved.time}, current=${currentDate} ${currentTime}`);
+        }
+      }
+    } catch (err) {
+      logger.error(`PublishScheduler: [NEAREST_SLOT_PROTECTION_ERROR] ${err.message}`);
+    }
+
     let readyVideos = getReadyToPublishVideos();
     if (readyVideos.length === 0) {
       logger.info('PublishScheduler: no videos ready to publish');
@@ -695,7 +770,8 @@ async function runPublishCycle({ force = false } = {}) {
         if (hardDelete) {
           try { fs.rmSync(path.join(OUTPUT_DIR, video.videoId), { recursive: true, force: true }); } catch {}
         }
-        await triggerGenerationTopUp(true);
+        // BLINDAGE: No triggerGenerationTopUp in publish slot — this is publish-only time
+        // Schedule generation topup via preflight scheduler, not in slot
         continue;
       }
 
@@ -735,12 +811,26 @@ async function runPublishCycle({ force = false } = {}) {
       );
 
       try {
+        // Centralized ready video validation before publishing
+        const readyValidation = validateReadyVideo(video.videoId);
+        if (!readyValidation.ready) {
+          logger.warn(`PublishScheduler: [READY_VALIDATION_FAILED] videoId=${video.videoId} errors=${readyValidation.errors.join('; ')}`);
+          continue;
+        }
+
+        const now = new Date();
+        const currentDate = now.toISOString().split('T')[0];
+        const currentTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+
         const published = await publishWithRetries({
           video,
           strategy: 'normal',
           publishAll,
           saveVideo,
           state,
+          source: 'PublishScheduler',
+          slotDate: currentDate,
+          slotTime: currentTime,
         });
 
         if (!published) {
@@ -749,7 +839,8 @@ async function runPublishCycle({ force = false } = {}) {
         }
 
         publishedThisSlot++;
-        await triggerGenerationTopUp(false);
+        // BLINDAGE: Post-publish generation topup moved to preflight scheduler
+        // Do NOT call triggerGenerationTopUp() in publish slot
         const postPublishSnapshot = getQueueSnapshot();
         if (postPublishSnapshot.readyCount < thresholds.minReady) {
           await notifyQueueLow({
@@ -763,7 +854,8 @@ async function runPublishCycle({ force = false } = {}) {
         return;
       } catch (err) {
         logger.error(`PublishScheduler: exception during QC-passed publish ${video.videoId}: ${err.message}`);
-        await triggerGenerationTopUp(true);
+        // BLINDAGE: Do NOT trigger generation in publish slot on exception
+        // Exception handling stays in slot, but generation is deferred to preflight
         continue;
       }
     }
@@ -788,18 +880,25 @@ async function runPublishCycle({ force = false } = {}) {
         );
 
         try {
+          const now = new Date();
+          const currentDate = now.toISOString().split('T')[0];
+          const currentTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+
           const published = await publishWithRetries({
             video: picked.video,
             strategy: 'force',
             publishAll,
             saveVideo,
             state,
+            source: 'PublishScheduler',
+            slotDate: currentDate,
+            slotTime: currentTime,
           });
 
           if (published) {
             logger.info(`✅ [QC_OVERRIDE_EXECUTED] videoId=${picked.video.videoId} | slot_protected_by_hardpassed`);
             publishedThisSlot++;
-            await triggerGenerationTopUp(true);
+            // BLINDAGE: Generation topup moved to preflight, never in publish slot
             return;
           } else {
             logger.warn(`PublishScheduler: QC override retry exhausted ${picked.video.videoId}, trying best-valid fallback`);
@@ -817,18 +916,25 @@ async function runPublishCycle({ force = false } = {}) {
           `videoId=${fallbackCandidate.videoId} | virality=${fallbackCandidate.script?.viralityScore || 0}`
         );
         try {
+          const now = new Date();
+          const currentDate = now.toISOString().split('T')[0];
+          const currentTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+
           const published = await publishWithRetries({
             video: { ...fallbackCandidate, script: fallbackCandidate.validation.snapshot.script, qc: fallbackCandidate.validation.qc },
             strategy: 'fallback',
             publishAll,
             saveVideo,
             state,
+            source: 'PublishScheduler',
+            slotDate: currentDate,
+            slotTime: currentTime,
           });
 
           if (published) {
             logger.info(`✅ [FALLBACK_PUBLISH_USED] strategy=best_valid_output | videoId=${fallbackCandidate.videoId}`);
             publishedThisSlot++;
-            await triggerGenerationTopUp(true);
+            // BLINDAGE: Generation topup moved to preflight, never in publish slot
             return;
           } else {
             logger.warn(`PublishScheduler: Fallback retry exhausted ${fallbackCandidate.videoId}`);
@@ -886,7 +992,7 @@ async function runPublishCycle({ force = false } = {}) {
             await notifySlotFailed({ reason: 'discarded', discards: discardSummary, slot: slotTime });
           } catch {}
         }
-        await triggerGenerationTopUp(true);
+        // BLINDAGE: No triggerGenerationTopUp in publish slot — generation handled by preflight scheduler
       } else {
         logger.error(`🔴 [SLOT_LOST_FINAL] slot=${slotTime} CET | reason=no_ready_videos (queue empty)`);
         await triggerGenerationTopUp(true);
