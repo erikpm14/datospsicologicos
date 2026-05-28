@@ -23,6 +23,7 @@ const ffmpegInstaller  = require('@ffmpeg-installer/ffmpeg');
 const ffprobeInstaller = require('@ffprobe-installer/ffprobe');
 const ffmpeg  = require('fluent-ffmpeg');
 const logger  = require('../utils/logger');
+const { detectBlackVideo } = require('../utils/black-frame-detector');
 
 ffmpeg.setFfmpegPath(ffmpegInstaller.path);
 ffmpeg.setFfprobePath(ffprobeInstaller.path);
@@ -308,6 +309,28 @@ async function checkProductionQuality(outputDir, script = null) {
   checks.renderMode = checkRenderMetadata(outputDir);
   checks.renderVisuals = checkRenderableVisuals(outputDir);
 
+  // 3b. BLACK FRAME DETECTION (NEW: Block videos with no visible content)
+  let blackVideoCheck = { ok: true, isBlackVideo: false, reason: null };
+  if (checks.videoExists.ok) {
+    try {
+      const videoPath = path.join(outputDir, 'output.mp4');
+      const blackAnalysis = await detectBlackVideo(videoPath);
+      blackVideoCheck = {
+        ok: !blackAnalysis.isBlackVideo,
+        isBlackVideo: blackAnalysis.isBlackVideo,
+        reason: blackAnalysis.isBlackVideo ? `Black video detected: ${blackAnalysis.reason}` : null,
+        samples: blackAnalysis.samples,
+      };
+      if (blackAnalysis.isBlackVideo) {
+        logger.error(`[QC] BLACK VIDEO DETECTED: ${blackAnalysis.reason}`);
+      }
+    } catch (err) {
+      logger.warn(`[QC] Black frame detection failed: ${err.message}`);
+      // Conservative: if detection fails, still pass (avoid false positives)
+    }
+  }
+  checks.blackFrameDetection = blackVideoCheck;
+
   // 4. Script
   checks.scriptComplete  = checkScript(script);
   checks.viralityScore   = checkViralityScore(script);
@@ -356,7 +379,7 @@ async function checkProductionQuality(outputDir, script = null) {
   // HOTFIX: En RECOVERY_MODE, solo require los checks fundamentales
   const hardFailChecks = RECOVERY_MODE_ENABLED
     ? ['videoExists', 'scriptComplete', 'publishableFile']  // Solo lo mínimo
-    : ['videoExists', 'renderVisuals', 'scriptComplete', 'publishableFile', 'subtitleScriptCoherence', 'hookAudioPresence', 'packageIntegrity'];
+    : ['videoExists', 'renderVisuals', 'scriptComplete', 'publishableFile', 'subtitleScriptCoherence', 'hookAudioPresence', 'packageIntegrity', 'blackFrameDetection'];
 
   const hardFailed = hardFailChecks.some((key) => !checks[key]?.ok);
   const passed  = !hardFailed && score >= MIN_QUALITY_SCORE;
@@ -389,25 +412,60 @@ async function checkProductionQuality(outputDir, script = null) {
  * Valida que subtítulos y script sean coherentes (primeras 25 palabras).
  * Mínimo 80% de similitud.
  */
-function checkSubtitleScriptCoherence(outputDir, script) {
-  try {
-    const subtitlePath = path.join(outputDir, 'subtitles.srt');
-    if (!fs.existsSync(subtitlePath)) {
-      return { ok: false, reason: 'subtitles_missing', score: 0 };
-    }
+function loadSubtitleTextForQC(outputDir, { maxWords = 25, maxLines = 999 } = {}) {
+  const srtPath = path.join(outputDir, 'subtitles.srt');
+  const assPath = path.join(outputDir, 'subtitles.ass');
+  const subtitlePath = fs.existsSync(srtPath) ? srtPath : (fs.existsSync(assPath) ? assPath : null);
+  if (!subtitlePath) return { ok: false, reason: 'subtitles_missing', text: '' };
 
-    const subtitleContent = fs.readFileSync(subtitlePath, 'utf-8');
-    const subtitleWords = subtitleContent
+  const raw = fs.readFileSync(subtitlePath, 'utf-8');
+
+  if (subtitlePath.endsWith('.srt')) {
+    const words = raw
       .split('\n')
       .filter(line => line.trim() && !/^\d+$/.test(line.trim()) && !line.includes('-->'))
       .map(line => line.trim())
-      .filter(line => line.length > 0)
+      .slice(0, maxLines)
       .flatMap(line => line.split(/\s+/))
+      .slice(0, maxWords)
+      .join(' ');
+    return { ok: true, reason: null, text: words };
+  }
+
+  const words = raw
+    .split('\n')
+    .filter((line) => line.startsWith('Dialogue:'))
+    .map((line) => {
+      const parts = line.split(',');
+      const textPart = parts.length >= 10 ? parts.slice(9).join(',') : '';
+      return textPart
+        .replace(/\{[^}]*\}/g, '')
+        .replace(/\\N/g, ' ')
+        .trim();
+    })
+    .filter(Boolean)
+    .slice(0, maxLines)
+    .flatMap((line) => line.split(/\s+/))
+    .slice(0, maxWords)
+    .join(' ');
+
+  return { ok: true, reason: null, text: words };
+}
+
+function checkSubtitleScriptCoherence(outputDir, script) {
+  try {
+    const subtitleLoaded = loadSubtitleTextForQC(outputDir, { maxWords: 25, maxLines: 999 });
+    if (!subtitleLoaded.ok) {
+      return { ok: false, reason: subtitleLoaded.reason, score: 0 };
+    }
+
+    const subtitleWords = String(subtitleLoaded.text || '')
+      .split(/\s+/)
       .slice(0, 25)
       .join(' ')
       .toLowerCase();
 
-    const scriptText = ((script?.explanation || script?.hook || '') + ' ' + (script?.claim || ''))
+    const scriptText = (script?.fullScript || ((script?.explanation || script?.hook || '') + ' ' + (script?.claim || '')))
       .split(' ')
       .filter(w => w.length > 0)
       .slice(0, 25)
@@ -447,9 +505,9 @@ function checkSubtitleScriptCoherence(outputDir, script) {
  */
 function checkHookAudioPresence(outputDir, script) {
   try {
-    const subtitlePath = path.join(outputDir, 'subtitles.srt');
-    if (!fs.existsSync(subtitlePath)) {
-      return { ok: false, reason: 'subtitles_missing', score: 0 };
+    const subtitleLoaded = loadSubtitleTextForQC(outputDir, { maxWords: 120, maxLines: 8 });
+    if (!subtitleLoaded.ok) {
+      return { ok: false, reason: subtitleLoaded.reason, score: 0 };
     }
 
     const hook = (script?.hook || '').toLowerCase();
@@ -462,13 +520,7 @@ function checkHookAudioPresence(outputDir, script) {
       return { ok: false, reason: 'hook_empty', score: 0 };
     }
 
-    const subtitleContent = fs.readFileSync(subtitlePath, 'utf-8');
-    const firstSubtitles = subtitleContent
-      .split('\n')
-      .filter(line => line.trim() && !/^\d+$/.test(line.trim()) && !line.includes('-->'))
-      .slice(0, 5)
-      .join(' ')
-      .toLowerCase();
+    const firstSubtitles = String(subtitleLoaded.text || '').toLowerCase();
 
     const foundKeywords = hookKeywords.filter(kw => firstSubtitles.includes(kw));
     const presence = hookKeywords.length > 0 ? foundKeywords.length / hookKeywords.length : 0;

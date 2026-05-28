@@ -1,7 +1,7 @@
 {
-  "name": "psychology-shorts-backend",
+  "name": "ai-avatar-video-backend",
   "version": "1.0.0",
-  "description": "Automated psychology facts shorts generator and publisher",
+  "description": "Automated AI avatar / AI tools shorts generator (render-first, publish disabled by default)",
   "main": "src/server.js",
   "scripts": {
     "start": "node src/server.js",

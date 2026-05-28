@@ -22,7 +22,6 @@ const { v4: uuidv4 } = require('uuid');
 const { generateScript } = require('../services/content-generator');
 const { generateFruitDrama } = require('../services/fruit-drama-generator');
 const { renderFruitDrama }   = require('../services/fruit-drama-renderer');
-const { generateBestScript } = require('../../../content-engine/decision-engine');
 const { synthesizeVoice } = require('../services/voice-synthesizer');
 const { renderVideoWithRouter, shouldBlockPublish } = require('../services/render-engines');
 const { publishAll } = require('../services/publisher');
@@ -184,7 +183,7 @@ async function processPipeline(job) {
   let script = job.data.prefabScript
     ? job.data.prefabScript
     : await withRetries(`[Job ${job.id}] script_generation`, async () => (
-      await generateScript({ topic, hookId, forceHighScore: true }) || generateBestScript({ topic })
+      await generateScript({ topic, hookId, forceHighScore: true })
     ), { attempts: parseInt(process.env.GENERATION_STEP_RETRIES || '3', 10) || 3, baseDelayMs: 2000 });
   script = script.slotTracking?.exactTraceAvailable
     ? script
@@ -433,52 +432,27 @@ async function processPipeline(job) {
       // auto-import no disponible, ignorar
     }
   } else {
-    // Modo inmediato: publicar ahora
-    logger.info(`[Job ${job.id}] 4/5 Publishing...`);
-    perf.start('publish');
-    const { results, errors } = await publishAll(videoPath, script);
-    const publishPhase = perf.end({ platforms: results.map((r) => r.platform), errors: errors.length });
-    logger.info(`[Job ${job.id}] publish done in ${formatDurationMs(publishPhase.durationMs)}`);
-
-    const publishedIds = {};
-    for (const r of results) {
-      if (r.platform === 'tiktok') publishedIds.tiktokId = r.publishId;
-      if (r.platform === 'instagram') publishedIds.instagramId = r.mediaId;
-      if (r.platform === 'youtube') publishedIds.youtubeId = r.videoId;
-    }
-
-    await saveVideo({
-      id: videoId, title: script.title, topic: script.topic, hook: script.hook,
-      viralityScore: script.viralityScore, themeId, script, tracking: script.slotTracking, ...publishedIds,
-    });
-    recordPublication({
-      script,
-      publishedVideoId: videoId,
-      platformVideoId: publishedIds.youtubeId || publishedIds.tiktokId || publishedIds.instagramId || null,
-      publishedAt: new Date().toISOString(),
-      executionStatus: 'published'
-    });
+    // MODO SEGURO: render OK, pero NO publicar automÃ¡ticamente
+    logger.info(`[Job ${job.id}] 4/5 AUTO_PUBLISH_ENABLED=false — render only (not published)`);
 
     job.progress = 100;
-    job.result = { videoId, platforms: results.map((r) => r.platform), errors };
+    job.result = { videoId, ready: true, published: false, readyAt: new Date().toISOString() };
     job.completedAt = new Date().toISOString();
     job.status = 'done';
-    job.performance = perf.snapshot({ result: 'published' });
+    job.performance = perf.snapshot({ result: 'render_only' });
     fs.writeFileSync(path.join(outputDir, 'pipeline-metrics.json'), JSON.stringify(job.performance, null, 2));
 
     moveJob(DIRS.active, DIRS.done, job);
     trimDoneFolder(50);
 
-    logger.info(`[Job ${job.id}] Done! Published to: ${results.map((r) => r.platform).join(', ') || 'none'} | total=${formatDurationMs(job.performance.totalMs)}`);
-    if (errors.length > 0) logger.warn(`[Job ${job.id}] Publish errors: ${JSON.stringify(errors)}`);
-
-    await notifyVideoPublished({ script, results, errors, videoId });
     touchPipelineState({
       lastProgressAt: new Date().toISOString(),
-      lastProgressType: 'video_published_immediate',
-      lastPublishedVideoId: videoId,
+      lastProgressType: 'video_ready',
+      lastReadyVideoId: videoId,
       pipelineActive: false,
     });
+
+    logger.info(`[Job ${job.id}] Done! Video ${videoId} ready at output/${videoId}/output.mp4 — NOT PUBLISHED | total=${formatDurationMs(job.performance.totalMs)}`);
   }
 
   if (job.result?.deferred) {
@@ -529,8 +503,8 @@ async function processFruitDramaPipeline(job) {
   // 3. Publicar o diferir
   const publishScript = {
     hook:      script.hook,
-    topic:     'relationships',
-    hashtags:  ['#drama', '#fruta', '#pareja', '#celos', '#psicologia'],
+    topic:     'experimental',
+    hashtags:  ['#shorts', '#experimental'],
     cta:       script.cliffhanger || '',
   };
 
@@ -548,34 +522,15 @@ async function processFruitDramaPipeline(job) {
 
     logger.info(`[Job ${job.id}] 🍓 FruitDrama done! Video ${videoId} ready — awaiting scheduled publish`);
   } else {
-    logger.info(`[Job ${job.id}] 3/3 Publishing...`);
-    const { results, errors } = await publishAll(videoPath, publishScript);
+    logger.info(`[Job ${job.id}] 3/3 AUTO_PUBLISH_ENABLED=false — render only (not published)`);
 
-    const publishedIds = {};
-    for (const r of results) {
-      if (r.platform === 'youtube') publishedIds.youtubeId = r.videoId;
-    }
-
-    await saveVideo({
-      id: videoId, title: script.seriesTitle, topic: 'relationships',
-      hook: script.hook, viralityScore: 0, themeId: 'fruit_drama', script: publishScript, tracking: publishScript.slotTracking, ...publishedIds,
-    });
-    recordPublication({
-      script: publishScript,
-      publishedVideoId: videoId,
-      platformVideoId: publishedIds.youtubeId || null,
-      publishedAt: new Date().toISOString(),
-      executionStatus: 'published'
-    });
-
-    job.progress  = 100;
-    job.result    = { videoId, platforms: results.map(r => r.platform), errors };
+    job.progress = 100;
+    job.result = { videoId, ready: true, published: false, readyAt: new Date().toISOString() };
     job.completedAt = new Date().toISOString();
     moveJob(DIRS.active, DIRS.done, job);
     trimDoneFolder(50);
 
-    logger.info(`[Job ${job.id}] 🍓 FruitDrama done! | ${script.scenes.length} scenes`);
-    await notifyVideoPublished({ script: publishScript, results, errors, videoId });
+    logger.info(`[Job ${job.id}] 🍓 FruitDrama done! Video ${videoId} ready — NOT PUBLISHED`);
   }
 
   return job.result;

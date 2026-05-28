@@ -1,0 +1,30 @@
+{
+  "name": "videosia-visual-engine-v2",
+  "version": "2.0.0",
+  "description": "Remotion Visual Compositor for VIDEOSIA - Premium vertical shorts generator",
+  "type": "module",
+  "main": "dist/index.js",
+  "scripts": {
+    "studio": "remotion studio",
+    "render": "remotion render",
+    "render:sample": "node scripts/render-sample.mjs",
+    "test:composition": "node scripts/test-composition.mjs",
+    "typecheck": "tsc --noEmit",
+    "build": "remotion bundle",
+    "lint": "tsc --noEmit && echo 'Types OK'"
+  },
+  "dependencies": {
+    "remotion": "^4.0.99",
+    "@remotion/cli": "^4.0.99"
+  },
+  "devDependencies": {
+    "typescript": "^5.3.3",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "@types/react": "^18.2.37",
+    "@types/node": "^20.10.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

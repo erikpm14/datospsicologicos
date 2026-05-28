@@ -3,6 +3,7 @@ const logger = require('../../utils/logger');
 const { renderWithVideoUse } = require('./video-use-renderer');
 const { renderHyperframe } = require('../../renderers/hyperframe-renderer');
 const { renderDynamicBackgroundTimeline } = require('../dynamic-background-renderer');
+const { renderVideoWithRemotionRouter } = require('./remotion-renderer-router');
 const fs = require('fs');
 const path = require('path');
 
@@ -153,19 +154,32 @@ async function renderVideoWithRouter(options = {}) {
         );
       }
     }
+  } else if (RENDER_MODE === 'remotion') {
+    logger.info('[render-router] Using Remotion renderer');
+    return renderVideoWithRemotionRouter(options);
   } else {
     logger.info(`[render-router] Using configured render mode: ${RENDER_MODE}`);
-    return renderWithVideoUse(options);
+    return renderWithVideoUse({ ...options, captions: buildCaptionsFromOptions(options) });
   }
 }
 
 function buildCaptionsFromOptions(options) {
   // Convertir subtitleBlocks del script a formato de captions
   const { script = {}, wordBoundaries = [] } = options;
+  const emphasizeAss = (text, words = []) => {
+    const list = (words || []).map(w => String(w || '').trim()).filter(Boolean);
+    if (list.length === 0) return String(text || '');
+    let out = String(text || '');
+    for (const w of list) {
+      const safe = w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      out = out.replace(new RegExp(`\\b${safe}\\b`, 'gi'), '{\\\\b1}$&{\\\\b0}');
+    }
+    return out;
+  };
 
   if (script.subtitleBlocks && Array.isArray(script.subtitleBlocks)) {
     return script.subtitleBlocks.map((block) => ({
-      text: block.text,
+      text: emphasizeAss(block.text, block.highlights || block.emphasisWords || []),
       start: block.start,
       end: block.end,
     }));

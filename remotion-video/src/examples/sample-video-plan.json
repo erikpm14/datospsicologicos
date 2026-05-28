@@ -1,0 +1,193 @@
+{
+  "videoId": "sample_remotion_001",
+  "createdAt": "2026-05-27T00:00:00Z",
+  "durationSeconds": 30,
+  "fps": 30,
+  "format": "shorts_9_16",
+  "template": "avatar_explainer",
+  "styleProfile": {
+    "mood": "cinematic",
+    "energy": "high",
+    "visualDensity": "medium-high",
+    "colorMode": "dark-premium",
+    "colorPalette": {
+      "primary": "#00E5FF",
+      "secondary": "#FFE500",
+      "accent": "#FF3B30",
+      "background": "#0a0a0a",
+      "text": "#F3F7FF"
+    }
+  },
+  "audio": {
+    "voiceoverPath": "",
+    "musicPath": null,
+    "musicVolume": 0.15,
+    "voiceoverVolume": 0.95
+  },
+  "avatar": {
+    "enabled": false,
+    "characterId": "default_videosia",
+    "position": "bottom-right",
+    "scale": 1.15,
+    "expressionMode": "beat_based",
+    "lipSyncMode": "word_boundaries_basic",
+    "enableMicroMovement": true,
+    "enableEyeMovement": false
+  },
+  "scenes": [
+    {
+      "id": "scene_hook",
+      "start": 0,
+      "end": 3.5,
+      "type": "hook",
+      "text": "Esto está cambiando internet.",
+      "avatarExpression": "surprised",
+      "visualIntent": "stop_scroll",
+      "camera": {
+        "motion": "slow_push_in",
+        "intensity": 0.75
+      },
+      "background": {
+        "type": "fallback",
+        "color": "#0a0a0a"
+      }
+    },
+    {
+      "id": "scene_claim",
+      "start": 3.5,
+      "end": 10,
+      "type": "claim",
+      "text": "Las máquinas pueden generar vídeos por sí solas ahora.",
+      "avatarExpression": "speaking",
+      "visualIntent": "maintain_attention",
+      "camera": {
+        "motion": "parallax",
+        "intensity": 0.5
+      },
+      "background": {
+        "type": "fallback",
+        "blur": 0,
+        "brightness": 0
+      }
+    },
+    {
+      "id": "scene_revelation",
+      "start": 10,
+      "end": 20,
+      "type": "revelation",
+      "text": "Tu canal puede tener 10 vídeos nuevos cada semana sin intervención.",
+      "avatarExpression": "excited",
+      "visualIntent": "build_tension",
+      "camera": {
+        "motion": "slow_pan_left",
+        "intensity": 0.6
+      }
+    },
+    {
+      "id": "scene_cta",
+      "start": 20,
+      "end": 30,
+      "type": "cta",
+      "text": "¿Quieres saber cómo? Mira mi último vídeo.",
+      "avatarExpression": "excited",
+      "visualIntent": "release",
+      "camera": {
+        "motion": "none",
+        "intensity": 0
+      }
+    }
+  ],
+  "captions": [
+    {
+      "start": 0.2,
+      "end": 1.5,
+      "text": "Esto está",
+      "section": "hook",
+      "emphasis": ["Esto"],
+      "effect": "bounce_in",
+      "effectDurationMs": 300
+    },
+    {
+      "start": 1.5,
+      "end": 3.2,
+      "text": "cambiando internet",
+      "section": "hook",
+      "emphasis": ["cambiando"],
+      "effect": "bounce_in",
+      "effectDurationMs": 300
+    },
+    {
+      "start": 3.8,
+      "end": 6,
+      "text": "Las máquinas pueden",
+      "section": "claim",
+      "effect": "fade_in"
+    },
+    {
+      "start": 6,
+      "end": 8.5,
+      "text": "generar vídeos automáticamente",
+      "section": "claim",
+      "emphasis": ["generar", "automáticamente"],
+      "effect": "fade_in"
+    },
+    {
+      "start": 10.2,
+      "end": 13,
+      "text": "Tu canal puede tener",
+      "section": "revelation",
+      "effect": "scale_in"
+    },
+    {
+      "start": 13,
+      "end": 16,
+      "text": "10 vídeos nuevos cada semana",
+      "section": "revelation",
+      "emphasis": ["10"],
+      "effect": "scale_in"
+    },
+    {
+      "start": 20.2,
+      "end": 23,
+      "text": "¿Quieres saber cómo?",
+      "section": "cta",
+      "effect": "slide_in"
+    },
+    {
+      "start": 23,
+      "end": 30,
+      "text": "Mira mi último vídeo",
+      "section": "cta",
+      "emphasis": ["último"],
+      "effect": "slide_in"
+    }
+  ],
+  "wordBoundaries": [
+    {
+      "word": "Esto",
+      "startTime": 0.2,
+      "endTime": 0.5,
+      "wordIndex": 0
+    },
+    {
+      "word": "está",
+      "startTime": 0.5,
+      "endTime": 0.9,
+      "wordIndex": 1
+    },
+    {
+      "word": "cambiando",
+      "startTime": 1.5,
+      "endTime": 2.1,
+      "wordIndex": 2
+    }
+  ],
+  "metadata": {
+    "topic": "ia_video_generation",
+    "hook": "Esto está cambiando internet.",
+    "cta": "Mira mi último vídeo",
+    "hashtags": ["#IA", "#Automatización", "#Shorts"],
+    "contentType": "explainer",
+    "abVariant": "v1_avatar_emphasis"
+  }
+}

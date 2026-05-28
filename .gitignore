@@ -16,9 +16,28 @@ backend/.env.bak
 
 # Outputs generados
 output/
+output-fase1-test/
+exports/
+analytics/
+queue/
+backend/output/
+backend/output-fase1-test/
+backend/output-fase*/
 backend/queue/
 backend/data/
+backend/exports/
+backend/analytics/
 data/
+remotion-video/output/
+
+# Remotion temp & test artifacts
+.tmp_svg_test/
+backend/*.mp4
+backend/*.wav
+backend/*.mp3
+backend/render-metadata.json
+backend/video-plan.json
+backend/remotion-props.json
 
 # Logs
 logs/
