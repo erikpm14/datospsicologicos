@@ -7,20 +7,17 @@ import {
 import axios from 'axios';
 
 const TOPICS = [
-  { value:'',                  label:'Auto-selección',       emoji:'🎲' },
-  { value:'dark_psychology',   label:'Psicología oscura',    emoji:'🌑' },
-  { value:'relationships',     label:'Relaciones tóxicas',   emoji:'💔' },
-  { value:'emotions',          label:'Emociones',            emoji:'🧠' },
-  { value:'cognitive_biases',  label:'Sesgos cognitivos',    emoji:'🔀' },
-  { value:'body_language',     label:'Lenguaje corporal',    emoji:'👁' },
-  { value:'self_esteem',       label:'Autoestima',           emoji:'💪' },
-  { value:'motivation',        label:'Motivación',           emoji:'⚡' },
-  { value:'memory',            label:'Memoria',              emoji:'💾' },
-  { value:'social_skills',     label:'Hab. sociales',        emoji:'🤝' },
-  { value:'workplace',         label:'Trabajo',              emoji:'💼' },
-  { value:'first_impressions', label:'Primera impresión',    emoji:'👋' },
-  { value:'habits',            label:'Hábitos',              emoji:'📅' },
-  { value:'communication',     label:'Comunicación',         emoji:'💬' },
+  { value:'',                    label:'Auto-selección',          emoji:'🎲' },
+  { value:'ai_tools',             label:'Herramientas IA',         emoji:'🧰' },
+  { value:'automation',           label:'Automatización',          emoji:'⚙️' },
+  { value:'ai_agents',            label:'Agentes IA',              emoji:'🤖' },
+  { value:'auto_channels',        label:'Canales automáticos',     emoji:'📺' },
+  { value:'productivity',         label:'Productividad',           emoji:'⏱️' },
+  { value:'ai_video_editing',     label:'Edición de vídeo IA',     emoji:'🎬' },
+  { value:'content_creation',     label:'Creación de contenido',   emoji:'✍️' },
+  { value:'nocode_lowcode',       label:'No-code / Low-code',      emoji:'🧩' },
+  { value:'tech_experiments',     label:'Experimentos',            emoji:'🧪' },
+  { value:'digital_opportunities',label:'Oportunidades digitales', emoji:'💡' },
 ];
 
 function VideoPlayer({ videoId, onClose }) {

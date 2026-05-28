@@ -62,8 +62,7 @@ async function runGenerationCycle({ urgent = false } = {}) {
   touchPipelineState({ generationLastStartedAt: lastRun, generationRunning: true });
 
   try {
-    const { runGrowthCycle }  = require('./growth-engine');
-    const { getQueueStatus }  = require('../queue/video-processor');
+    const { addVideoToQueue, getQueueStatus }  = require('../queue/video-processor');
     const thresholds = getOperationalThresholds();
     const snapshot = getQueueSnapshot();
     const publishable = snapshot.readyCount;
@@ -123,17 +122,16 @@ async function runGenerationCycle({ urgent = false } = {}) {
     let succeeded   = false;
 
     for (let i = 0; i < maxCycles; i++) {
-      const result = await runGrowthCycle({ forceGenerate: needsUrgent, maxRetries: parseInt(process.env.GROWTH_MAX_RETRIES || '3', 10) || 3 });
+      const topic = process.env.CONTENT_DOMAIN || 'ai_tools';
+      const jobId = await addVideoToQueue({ topic });
 
       lastResult = {
-        success:          result.success,
-        reason:           result.reason,
-        jobId:            result.jobId,
-        topic:            result.script?.topic,
-        viralityScore:    result.script?.viralityScore,
-        formatMatchScore: result.script?.formatMatchScore,
-        attempts:         result.attempts,
-        totalMs:          result.totalMs,
+        success: true,
+        reason: 'job_queued',
+        jobId,
+        topic,
+        attempts: i + 1,
+        totalMs: Date.now() - cycleStartedMs,
         urgent:           needsUrgent,
         cycleAt:          lastRun,
       };
@@ -142,29 +140,16 @@ async function runGenerationCycle({ urgent = false } = {}) {
       log.unshift(lastResult);
       writeJSON(SCHEDULER_LOG_PATH, log.slice(0, 100));
 
-      if (result.success) {
-        logger.info(`GenerationScheduler: success | jobId=${result.jobId} topic=${result.script?.topic}${needsUrgent ? ' [urgent]' : ''}`);
-        succeeded = true;
-        const updatedSnapshot = getQueueSnapshot();
-        if (updatedSnapshot.readyCount >= thresholds.targetReady) {
-          logger.info(`GenerationScheduler: target ready reached | ready=${updatedSnapshot.readyCount}/${thresholds.targetReady}`);
-        } else {
-          logger.info(`GenerationScheduler: top-up still pending | ready=${updatedSnapshot.readyCount}/${thresholds.targetReady} | inPipeline=${updatedSnapshot.inPipeline}`);
-        }
-        touchPipelineState({
-          generationLastSuccessfulAt: new Date().toISOString(),
-          lastProgressAt: new Date().toISOString(),
-          lastProgressType: 'generation_success',
-          lastGeneratedJobId: result.jobId,
-        });
-        await notifySystemRecovered({ scope: 'generation', detail: `job ${result.jobId}` });
-        break;
-      } else {
-        logger.warn(`GenerationScheduler: attempt ${i + 1}/${maxCycles} failed | reason=${result.reason}`);
-        if (needsUrgent && i < maxCycles - 1) {
-          await new Promise((r) => setTimeout(r, 2000));
-        }
-      }
+      logger.info(`GenerationScheduler: queued | jobId=${jobId} topic=${topic}${needsUrgent ? ' [urgent]' : ''}`);
+      succeeded = true;
+      touchPipelineState({
+        generationLastSuccessfulAt: new Date().toISOString(),
+        lastProgressAt: new Date().toISOString(),
+        lastProgressType: 'generation_queued',
+        lastGeneratedJobId: jobId,
+      });
+      await notifySystemRecovered({ scope: 'generation', detail: `job ${jobId}` });
+      break;
     }
 
     if (needsUrgent && !succeeded) {

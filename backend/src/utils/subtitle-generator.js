@@ -23,12 +23,58 @@ const HIGHLIGHT_KEYWORDS = new Set([
  * @returns {Array} Array de { word, start, end, highlight }
  */
 function generateSubtitles(script, totalDuration) {
-  const sections = [
-    { text: script.hook, durationRatio: 0.05 },        // 0-3s
-    { text: script.claim, durationRatio: 0.20 },        // 3-15s
-    { text: script.explanation, durationRatio: 0.42 },  // 15-40s
-    { text: script.cta, durationRatio: 0.33 },          // 40-60s
-  ];
+  const beats = Array.isArray(script?.beats) ? script.beats : null;
+  if (beats && beats.length > 0) {
+    const subtitles = [];
+    const beatTexts = beats
+      .map((b) => ({
+        text: String(b?.text || '').trim(),
+        emphasisWords: Array.isArray(b?.emphasisWords) ? b.emphasisWords : [],
+        durationHint: Number(b?.durationHint || 0),
+      }))
+      .filter((b) => b.text.length > 0);
+
+    const totalHint = beatTexts.reduce((sum, b) => sum + (Number.isFinite(b.durationHint) ? b.durationHint : 0), 0);
+    const normalizedTotal = totalHint > 0 ? totalHint : beatTexts.length;
+
+    let currentTime = 0;
+    for (const beat of beatTexts) {
+      const sectionDuration = totalDuration * ((beat.durationHint > 0 ? beat.durationHint : 1) / normalizedTotal);
+      const words = beat.text.trim().split(/\s+/).filter(Boolean);
+      if (words.length === 0) continue;
+      const baseWordDuration = sectionDuration / words.length;
+
+      const emphasisSet = new Set((beat.emphasisWords || []).map((w) => String(w || '').toLowerCase()));
+
+      for (const word of words) {
+        const cleanWord = word.toLowerCase().replace(/[Â¿?Â¡!.,;:]/g, '');
+        const isPunctuation = /[.!?]$/.test(word);
+        const wordDuration = isPunctuation ? baseWordDuration * 1.4 : baseWordDuration;
+
+        subtitles.push({
+          word: word,
+          start: parseFloat(currentTime.toFixed(3)),
+          end: parseFloat((currentTime + wordDuration).toFixed(3)),
+          highlight: emphasisSet.has(cleanWord) || HIGHLIGHT_KEYWORDS.has(cleanWord) || /^\d+%?$/.test(cleanWord),
+        });
+
+        currentTime += wordDuration;
+      }
+    }
+
+    logger.debug(`Generated ${subtitles.length} subtitle entries for ${totalDuration}s audio`);
+    return subtitles;
+  }
+
+  const fullScript = typeof script?.fullScript === 'string' ? script.fullScript.trim() : '';
+  const sections = fullScript.length >= 20
+    ? [{ text: fullScript, durationRatio: 1.0 }]
+    : [
+      { text: script.hook, durationRatio: 0.05 },
+      { text: script.claim, durationRatio: 0.20 },
+      { text: script.explanation, durationRatio: 0.42 },
+      { text: script.cta, durationRatio: 0.33 },
+    ];
 
   const subtitles = [];
   let currentTime = 0;

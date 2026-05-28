@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+﻿import { useEffect, useState } from 'react';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 import {
   Flame, Zap, TrendingUp, Clock, AlertTriangle, Loader,
@@ -6,13 +6,16 @@ import {
 } from 'lucide-react';
 
 const TOPIC_ES = {
-  body_language:'Lenguaje corporal', cognitive_biases:'Sesgos cognitivos',
-  relationships:'Relaciones',        workplace:'Trabajo',
-  first_impressions:'1ª impresión',  social_skills:'Hab. sociales',
-  habits:'Hábitos',                  communication:'Comunicación',
-  emotions:'Emociones',              memory:'Memoria',
-  motivation:'Motivación',           dark_psychology:'Psic. oscura',
-  self_esteem:'Autoestima',
+  ai_tools: 'Herramientas IA',
+  automation: 'Automatización',
+  ai_agents: 'Agentes IA',
+  auto_channels: 'Canales automáticos',
+  productivity: 'Productividad',
+  ai_video_editing: 'Edición de vídeo IA',
+  content_creation: 'Creación de contenido',
+  nocode_lowcode: 'No-code / Low-code',
+  tech_experiments: 'Experimentos',
+  digital_opportunities: 'Oportunidades digitales',
 };
 
 function Section({ title, icon: Icon, iconColor='text-violet-400', children }) {
@@ -66,7 +69,7 @@ export default function ViralInsights() {
         <BookOpen size={40} className="mx-auto mb-4 text-white/15"/>
         <p className="text-white font-bold mb-2">Sin datos de investigación</p>
         <p className="text-white/30 text-sm mb-6 max-w-xs mx-auto leading-relaxed">
-          Lanza la investigación para analizar los vídeos más virales de psicología en YouTube
+          Lanza la investigación para analizar los vídeos más virales de IA y automatización en YouTube
         </p>
         <button onClick={trigger} disabled={running}
           className="inline-flex items-center gap-2 bg-violet-600 hover:bg-violet-500 text-white font-bold text-sm px-6 py-3 rounded-xl disabled:opacity-50 active:scale-95 transition-all">

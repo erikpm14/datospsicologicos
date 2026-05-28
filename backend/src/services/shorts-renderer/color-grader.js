@@ -17,7 +17,9 @@ const COLOR_GRADE_PRESETS = {
   // Warm cinematic: cálido, golden hour, para momentos de revelación
   warm_cinematic: 'eq=contrast=1.12:brightness=-0.02:saturation=0.88,colorbalance=rs=0.02:gs=0.0:bs=-0.03',
 
-  // Dark psychology: alto contraste + saturación moderada, estética sombría
+  // Dark depth: alto contraste + saturación moderada, estética sobria
+  dark_depth: 'eq=contrast=1.18:brightness=-0.03:saturation=1.05:gamma=0.94,colorbalance=rs=-0.01:gs=-0.01:bs=0.04',
+  // Legacy alias (no usar en el nuevo dominio)
   dark_psychology: 'eq=contrast=1.18:brightness=-0.03:saturation=1.05:gamma=0.94,colorbalance=rs=-0.01:gs=-0.01:bs=0.04',
 
   // High energy: máximo contraste + saturación + brillo, para picos emocionales
@@ -29,12 +31,12 @@ const COLOR_GRADE_PRESETS = {
  * Usado cuando VIDEO_RENDER_ENGINE=shorts en la primera activación
  */
 const THEME_GRADE_MAP = {
-  dark_neural: 'dark_psychology',
+  dark_neural: 'dark_depth',
   midnight_red: 'high_energy',
-  purple_psychology: 'warm_cinematic',
+  purple_depth: 'warm_cinematic',
   clean_white: 'subtle',
   cyberpunk_blue: 'high_energy',
-  mystery_black: 'dark_psychology',
+  mystery_black: 'dark_depth',
   _default: 'neutral_punch',
 };
 
@@ -42,11 +44,11 @@ const THEME_GRADE_MAP = {
  * Mapa segmento narrativo → intensidad → preset recomendado
  */
 const SEGMENT_GRADE_OVERRIDE = {
-  hook: { muy_alta: 'high_energy', alta: 'dark_psychology', media: 'neutral_punch' },
+  hook: { muy_alta: 'high_energy', alta: 'dark_depth', media: 'neutral_punch' },
   open_loop: { muy_alta: 'warm_cinematic', alta: 'neutral_punch', media: 'subtle' },
   micro_value: { muy_alta: 'high_energy', alta: 'warm_cinematic', media: 'neutral_punch' },
-  escalation: { muy_alta: 'high_energy', alta: 'dark_psychology', media: 'warm_cinematic' },
-  reengage: { muy_alta: 'high_energy', alta: 'high_energy', media: 'dark_psychology' },
+  escalation: { muy_alta: 'high_energy', alta: 'dark_depth', media: 'warm_cinematic' },
+  reengage: { muy_alta: 'high_energy', alta: 'high_energy', media: 'dark_depth' },
   peak: { muy_alta: 'high_energy', alta: 'high_energy', media: 'warm_cinematic' },
   open_ending: { muy_alta: 'warm_cinematic', alta: 'neutral_punch', media: 'subtle' },
   soft_cta: { muy_alta: 'warm_cinematic', alta: 'warm_cinematic', media: 'subtle' },
@@ -71,7 +73,7 @@ function selectColorGrade(themeId, segmentKey, intensity) {
 
 /**
  * Retorna el filtro FFmpeg listo para usar en el complexFilter
- * @param {string} presetName - nombre del preset (ej: 'dark_psychology')
+ * @param {string} presetName - nombre del preset (ej: 'dark_depth')
  * @returns {string} - filtro FFmpeg
  */
 function getGradeFilter(presetName) {

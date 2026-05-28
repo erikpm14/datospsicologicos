@@ -98,50 +98,50 @@ function registerFallbackUsage(type, key) {
 }
 
 function pickEmergencyVariant(decision = {}) {
-  const topic = decision.nextTopic || 'social_patterns';
+  const topic = decision.nextTopic || 'ai_tools';
   const state = getFallbackState();
   const variants = [
     {
-      id: 'validation_loop',
-      effectName: 'SESGO DE VALIDACION',
-      hook: 'Cuando dudas, te manipulan mas facil',
-      open_loop: 'Y casi siempre pasa sin que lo notes.',
-      micro_value: 'Se llama SESGO DE VALIDACION. Tu mente protege lo que ya quiere creer.',
-      escalation: 'Filtra lo incomodo. Ignora senales claras. Justifica detalles pequenos. Y lo hace automaticamente.',
-      reengage: 'Y ahi es donde te atrapa de verdad.',
-      peak: 'Lo hacen contigo en mensajes, discusiones y decisiones rapidas, justo cuando crees que estas pensando con calma.',
-      open_ending: 'Y ese patron aparece mas veces de las que imaginas.',
-      soft_cta: 'Te has visto cayendo en esto alguna vez?',
-      viralTrigger: 'identificacion',
-      emotionalTrigger: 'validation',
-    },
-    {
-      id: 'social_pressure',
-      effectName: 'PRESION SOCIAL',
-      hook: 'Si dudas de ti, ya te movieron',
-      open_loop: 'Y suele empezar con algo minimo.',
-      micro_value: 'Se llama PRESION SOCIAL. Ajustas tu juicio para no sentirte fuera.',
-      escalation: 'Lees la sala. Copias el tono. Bajas tu criterio. Y ni siquiera lo nombras.',
-      reengage: 'Y ahi empieza el problema.',
-      peak: 'Pasa en pareja, en grupos y en el trabajo, justo cuando quieres evitar conflicto.',
-      open_ending: 'Y cuanto mas lo repites, menos lo ves.',
-      soft_cta: 'Te ha pasado en una conversacion reciente?',
-      viralTrigger: 'identificacion',
-      emotionalTrigger: 'urgency',
-    },
-    {
-      id: 'attention_hijack',
-      effectName: 'SESGO DE SALIENCIA',
-      hook: 'Lo mas obvio no siempre es verdad',
-      open_loop: 'Pero tu mente cae ahi primero.',
-      micro_value: 'Se llama SESGO DE SALIENCIA. Recuerdas lo intenso y olvidas lo importante.',
-      escalation: 'Tu foco se estrecha. Tu juicio se acelera. Tu seguridad sube. Y te equivocas igual.',
-      reengage: 'Y en ese momento ya te gano.',
-      peak: 'Lo usan contigo en titulares, discusiones y mensajes cortos, justo cuando respondes sin pensar.',
-      open_ending: 'Y ese truco aparece mas de lo que crees.',
-      soft_cta: 'Cuantas veces has caido en algo asi?',
+      id: 'agent_inbox',
+      effectName: 'AGENTE DE INBOX',
+      hook: 'Este agente te limpia el inbox solo',
+      open_loop: 'Y lo mejor: no necesitas tocar nada.',
+      micro_value: 'Regla simple: clasifica, resume y crea una tarea.',
+      escalation: 'Entra un email. Se resume. Se guarda en Notion. Y se manda un aviso a Telegram. Todo automÃ¡tico.',
+      reengage: 'Y cuando te das cuenta, ya estÃ¡ hecho.',
+      peak: 'El truco es separar entrada, reglas y salida. AsÃ­ lo reutilizas para cualquier proceso.',
+      open_ending: 'Y esto escala a soporte, leads y facturas.',
+      soft_cta: 'Â¿QuÃ© parte de tu trabajo automatizarÃ­as hoy?',
       viralTrigger: 'utilidad',
       emotionalTrigger: 'curiosity',
+    },
+    {
+      id: 'nocode_webhook',
+      effectName: 'WEBHOOK + IA',
+      hook: 'Un webhook y esta IA hace el resto',
+      open_loop: 'En serio: es un cambio de juego.',
+      micro_value: 'Paso 1: capturas el evento. Paso 2: decides con IA. Paso 3: ejecutas la acciÃ³n.',
+      escalation: 'Ejemplo: llega un formulario. Se valida. Se genera respuesta. Se crea un ticket. Y se notifica por Slack.',
+      reengage: 'Y no tienes que escribir cÃ³digo si no quieres.',
+      peak: 'Si puedes describir el workflow, lo puedes automatizar.',
+      open_ending: 'Lo siguiente es aÃ±adir memoria y herramientas.',
+      soft_cta: 'Â¿Lo harÃ­as con n8n, Make o Zapier?',
+      viralTrigger: 'utilidad',
+      emotionalTrigger: 'surprise',
+    },
+    {
+      id: 'auto_channel',
+      effectName: 'CANAL AUTOMÃTICO',
+      hook: 'AsÃ­ se monta un canal automÃ¡tico con IA',
+      open_loop: 'Y no es magia: es pipeline.',
+      micro_value: 'Idea â†’ guion â†’ voz â†’ captions â†’ render. Todo por lotes.',
+      escalation: 'Un generador crea 10 guiones. El worker renderiza. Y guardas los que pasan QC. Luego publicas manualmente.',
+      reengage: 'En una tarde lo dejas montado.',
+      peak: 'La clave es el control de slots y anti-duplicados para no repetir ideas.',
+      open_ending: 'DespuÃ©s, le metes overlays y un avatar real.',
+      soft_cta: 'Â¿Quieres que te pase la estructura base?',
+      viralTrigger: 'curiosity',
+      emotionalTrigger: 'anticipation',
     },
   ];
 
@@ -155,11 +155,22 @@ function buildEmergencyScript({ topic, reason = 'llm_failure', decision = {} } =
   const resolvedTopic = picked.topic;
   const { variant } = picked;
 
+  const beats = [
+    { text: variant.hook, emotion: 'surprised', avatarAction: 'surprised', visualCue: 'Hook', emphasisWords: ['IA'], durationHint: 1.8 },
+    { text: variant.open_loop, emotion: 'explaining', avatarAction: 'talking', visualCue: 'Open loop', emphasisWords: [], durationHint: 2.4 },
+    { text: variant.micro_value, emotion: 'explaining', avatarAction: 'talking', visualCue: 'Paso clave', emphasisWords: ['regla'], durationHint: 4.0 },
+    { text: variant.escalation, emotion: 'pointing', avatarAction: 'pointing', visualCue: 'Mira esto', emphasisWords: ['mira', 'automatiza'], durationHint: 4.8 },
+    { text: variant.reengage, emotion: 'explaining', avatarAction: 'talking', visualCue: 'Reenganche', emphasisWords: [], durationHint: 2.4 },
+    { text: variant.peak, emotion: 'warning', avatarAction: 'pointing', visualCue: 'Insight', emphasisWords: ['solo'], durationHint: 3.2 },
+    { text: variant.open_ending, emotion: 'explaining', avatarAction: 'talking', visualCue: 'Cierre', emphasisWords: [], durationHint: 2.6 },
+    { text: variant.soft_cta, emotion: 'excited', avatarAction: 'excited', visualCue: 'CTA', emphasisWords: ['hoy'], durationHint: 2.2 },
+  ].filter((b) => typeof b.text === 'string' && b.text.trim().length > 0);
+
   const script = ensureLegacyFields({
     title: `emergency_${resolvedTopic}_${variant.id}_${Date.now()}`,
     topic: resolvedTopic,
     effectName: variant.effectName,
-    psychologicalFact: `${variant.effectName} hace que tu mente tome atajos y te haga sentir que tienes razon demasiado pronto.`,
+    psychologicalFact: `${variant.effectName}: un truco simple para automatizar tareas reales en minutos.`,
     hook: variant.hook,
     open_loop: variant.open_loop,
     micro_value: variant.micro_value,
@@ -171,10 +182,13 @@ function buildEmergencyScript({ topic, reason = 'llm_failure', decision = {} } =
     viralTrigger: variant.viralTrigger,
     emotionalTrigger: variant.emotionalTrigger,
     keywords: ['human reaction', 'phone checking', 'thinking person'],
-    hashtags: ['#psicologia', '#mente', '#shorts'],
+    hashtags: ['#ia', '#automatizacion', '#shorts'],
     structureVersion: 'open_loop_escalation_v1',
     hasReengage: true,
     fullScript: [variant.hook, variant.open_loop, variant.micro_value, variant.escalation, variant.reengage, variant.peak, variant.open_ending, variant.soft_cta].join(' '),
+    beats,
+    targetAudience: 'creadores y builders de automatización/IA',
+    visualStyle: 'avatar_explainer',
     videoInstructions: normalizeVideoInstructions({
       topic: resolvedTopic,
       keywords: ['human reaction', 'phone checking', 'thinking person'],

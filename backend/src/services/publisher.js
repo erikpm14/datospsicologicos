@@ -27,30 +27,20 @@ const PUBLISH_RETRY_DELAY_MS = Math.max(1000, parseInt(process.env.PUBLISH_RETRY
 const PUBLISH_MAX_RETRIES = Math.max(1, parseInt(process.env.PUBLISH_MAX_RETRIES || '3', 10) || 3);
 
 // Hashtags base siempre incluidos — #Shorts es obligatorio para clasificación de YouTube
-const BASE_HASHTAGS = ['#Shorts', '#psicologia', '#cerebro', '#hechosdepsicologia', '#mentalidad', '#psychology'];
+const BASE_HASHTAGS = ['#Shorts', '#IA', '#Automatizacion', '#HerramientasIA', '#ProductividadDigital'];
 
 // Hashtags adicionales por topic — cubre todos los topics del decision engine
 const TOPIC_HASHTAGS = {
-  habits:            ['#habitos', '#productividad', '#mindset'],
-  dopamine:          ['#dopamina', '#motivacion', '#neurociencia'],
-  procrastination:   ['#procrastinacion', '#productividad', '#habitos'],
-  cognitive_biases:  ['#sesgosCognitivos', '#pensamiento', '#cognitiveScience'],
-  body_language:     ['#lenguajecorporal', '#comunicacion', '#bodyLanguage'],
-  emotional_patterns:['#emocionalmente', '#inteligenciaEmocional', '#emociones'],
-  relationships:     ['#relaciones', '#pareja', '#toxicPeople'],
-  decision_making:   ['#decisiones', '#pensamiento', '#racional'],
-  attention:         ['#concentracion', '#foco', '#atencion'],
-  memory:            ['#memoria', '#aprendizaje', '#neurociencia'],
-  social_patterns:   ['#comportamiento', '#social', '#psicologiaSocial'],
-  perception:        ['#percepcion', '#realidad', '#mente'],
-  motivation:        ['#motivacion', '#exito', '#mindset'],
-  self_talk:         ['#autoestima', '#mentePositiva', '#desarrolloPersonal'],
-  emotions:          ['#emociones', '#inteligenciaEmocional', '#bienestar'],
-  // legacy
-  workplace:         ['#trabajo', '#liderazgo', '#inteligenciaEmocional'],
-  first_impressions: ['#primeraImpresion', '#social', '#personalidad'],
-  social_skills:     ['#habilidadesSociales', '#carisma', '#networking'],
-  communication:     ['#comunicacion', '#conversacion', '#influencia'],
+  ai_tools:              ['#AITools', '#IA', '#HerramientasIA'],
+  automation:            ['#Automatizacion', '#Workflows', '#NoCode'],
+  ai_agents:             ['#AgentesIA', '#AI', '#Automation'],
+  auto_channels:         ['#CanalAutomatico', '#IA', '#ShortsFactory'],
+  productivity:          ['#Productividad', '#Notion', '#Sistemas'],
+  ai_video_editing:      ['#EdicionDeVideo', '#Captions', '#IA'],
+  content_creation:      ['#CreacionDeContenido', '#Guiones', '#IA'],
+  nocode_lowcode:        ['#NoCode', '#LowCode', '#Automatizacion'],
+  tech_experiments:      ['#Tech', '#Experimentos', '#IA'],
+  digital_opportunities: ['#NegociosDigitales', '#Plantillas', '#IA'],
 };
 
 /**
@@ -72,11 +62,12 @@ function buildCaption(script) {
   const hookUpper = script.hook.toUpperCase();
   const topicHashtags = (TOPIC_HASHTAGS[script.topic] || []).slice(0, 2);
   const allHashtags = [...BASE_HASHTAGS, ...topicHashtags, ...(script.hashtags || [])];
+  const cta = script.cta || script.soft_cta || script.open_ending || '';
 
   // Elimina duplicados
   const uniqueHashtags = [...new Set(allHashtags)].slice(0, 10);
 
-  return `${hookUpper} 🧠\n\n${script.cta}\n\n${uniqueHashtags.join(' ')}`;
+  return `${hookUpper} 🧠\n\n${cta}\n\n${uniqueHashtags.join(' ')}`;
 }
 
 /**

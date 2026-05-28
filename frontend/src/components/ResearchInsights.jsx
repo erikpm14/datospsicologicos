@@ -59,7 +59,7 @@ export default function ResearchInsights() {
         <BookOpen size={40} className="mx-auto mb-4 text-gray-700" />
         <p className="text-white font-bold mb-1">Sin datos todavía</p>
         <p className="text-gray-500 text-sm mb-6 max-w-xs mx-auto">
-          Ejecuta la investigación para analizar los vídeos más virales de psicología en YouTube
+          Ejecuta la investigación para analizar los vídeos más virales de IA y automatización en YouTube
         </p>
         <button
           onClick={trigger}

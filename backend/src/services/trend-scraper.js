@@ -23,12 +23,12 @@ const { spawnSync }    = require('child_process');
 const { createRequire } = require('module');
 
 // Usar dependencias del backend
-const backendRequire = createRequire(path.join(__dirname, '../backend/package.json'));
-backendRequire('dotenv').config({ path: path.join(__dirname, '../backend/.env') });
+const backendRequire = createRequire(path.join(__dirname, '../../package.json'));
+backendRequire('dotenv').config({ path: path.join(__dirname, '../../.env') });
 const axios = backendRequire('axios');
 
-const OUTPUT_PATH   = path.join(__dirname, '../backend/data/trends.json');
-const RESEARCH_PATH = path.join(__dirname, '../backend/data/viral-research.json');
+const OUTPUT_PATH   = path.join(__dirname, '../../data/trends.json');
+const RESEARCH_PATH = path.join(__dirname, '../../data/viral-research.json');
 
 // ─────────────────────────────────────────────────────────────────────────────
 //  KEYWORD → TOPIC MAP
@@ -36,67 +36,85 @@ const RESEARCH_PATH = path.join(__dirname, '../backend/data/viral-research.json'
 // ─────────────────────────────────────────────────────────────────────────────
 
 const KEYWORD_TOPIC_MAP = {
-  habit:           'habits',
-  hábito:          'habits',
-  rutina:          'habits',
-  routine:         'habits',
-  dopamine:        'dopamine',
-  dopamina:        'dopamine',
-  reward:          'dopamine',
-  recompensa:      'dopamine',
-  procrastin:      'procrastination',
-  postergac:       'procrastination',
-  bias:            'cognitive_biases',
-  sesgo:           'cognitive_biases',
-  heuristic:       'cognitive_biases',
-  anchoring:       'cognitive_biases',
-  'body language': 'body_language',
-  'lenguaje corporal': 'body_language',
-  gesture:         'body_language',
-  gesto:           'body_language',
-  emotion:         'emotions',
-  emoción:         'emotions',
-  emocional:       'emotions',
-  feeling:         'emotions',
-  relationship:    'relationships',
-  relación:        'relationships',
-  toxic:           'relationships',
-  tóxico:          'relationships',
-  decision:        'decision_making',
-  decisión:        'decision_making',
-  choice:          'decision_making',
-  attention:       'attention',
-  atención:        'attention',
-  focus:           'attention',
-  foco:            'attention',
-  memory:          'memory',
-  memoria:         'memory',
-  recall:          'memory',
-  social:          'social_patterns',
-  conformity:      'social_patterns',
-  conformidad:     'social_patterns',
-  peer:            'social_patterns',
-  motivat:         'motivation',
-  motivac:         'motivation',
-  self:            'self_talk',
-  autoestima:      'self_talk',
-  'self-esteem':   'self_talk',
-  perception:      'perception',
-  percepción:      'perception',
-  illusion:        'perception',
-  ilusión:         'perception',
+  // AI tools
+  'ai tool':        'ai_tools',
+  'ai tools':       'ai_tools',
+  herramienta:      'ai_tools',
+  herramientas:     'ai_tools',
+  chatgpt:          'ai_tools',
+  claude:           'ai_tools',
+  perplexity:       'ai_tools',
+  gemini:           'ai_tools',
+
+  // Automation / no-code
+  automatiz:        'automation',
+  automation:       'automation',
+  workflow:         'automation',
+  pipeline:         'automation',
+  webhook:          'automation',
+  zapier:           'automation',
+  make:             'automation',
+  n8n:              'automation',
+
+  nocode:           'nocode_lowcode',
+  'no code':        'nocode_lowcode',
+  lowcode:          'nocode_lowcode',
+  'low code':       'nocode_lowcode',
+  airtable:         'nocode_lowcode',
+  sheets:           'nocode_lowcode',
+  spreadsheet:      'nocode_lowcode',
+
+  // Agents
+  agent:            'ai_agents',
+  agents:           'ai_agents',
+  agente:           'ai_agents',
+  'ai agent':       'ai_agents',
+  'tool calling':   'ai_agents',
+  rag:              'ai_agents',
+
+  // Productivity
+  productividad:    'productivity',
+  productivity:     'productivity',
+  notion:           'productivity',
+  obsidian:         'productivity',
+  raycast:          'productivity',
+
+  // AI video / content creation
+  captions:         'ai_video_editing',
+  subtitles:        'ai_video_editing',
+  ffmpeg:           'ai_video_editing',
+  edit:             'ai_video_editing',
+  video:            'ai_video_editing',
+
+  guion:            'content_creation',
+  guiones:          'content_creation',
+  script:           'content_creation',
+  hooks:            'content_creation',
+  contenido:        'content_creation',
+
+  // Experiments / opportunities
+  benchmark:        'tech_experiments',
+  compare:          'tech_experiments',
+  comparativa:      'tech_experiments',
+  experimento:      'tech_experiments',
+  experiment:       'tech_experiments',
+
+  'micro saas':     'digital_opportunities',
+  microsaas:        'digital_opportunities',
+  plantilla:        'digital_opportunities',
+  template:         'digital_opportunities',
 };
 
 /**
- * VIRALITY RANKING — Priorizar temas de máxima viralidad
- * TIER_1: sesgo cognitivo, error en relaciones, sabotaje mental, creencias limitantes
- * TIER_2: patrón de comportamiento, comunicación, autoestima, ansiedad
- * TIER_3: productividad, motivación
+ * VIRALITY RANKING — Priorizar temas por potencial de viralidad (dominio IA/tools)
+ * TIER_1: herramientas/automatización/agentes
+ * TIER_2: productividad/no-code/creación de contenido
+ * TIER_3: edición de vídeo IA/experimentos/oportunidades
  */
 const VIRALITY_RANKING = {
-  TIER_1_VIRAL: ['cognitive_biases', 'relationships', 'self_talk', 'habits'],
-  TIER_2_HIGH: ['social_patterns', 'communication', 'emotions', 'body_language'],
-  TIER_3_GOOD: ['motivation', 'attention'],
+  TIER_1_VIRAL: ['ai_tools', 'automation', 'ai_agents'],
+  TIER_2_HIGH: ['productivity', 'nocode_lowcode', 'content_creation', 'auto_channels'],
+  TIER_3_GOOD: ['ai_video_editing', 'tech_experiments', 'digital_opportunities'],
 };
 
 function getViralityRank(topic) {
@@ -111,7 +129,7 @@ function detectTopic(text) {
   for (const [keyword, topic] of Object.entries(KEYWORD_TOPIC_MAP)) {
     if (lower.includes(keyword)) return topic;
   }
-  return 'cognitive_biases'; // fallback más genérico y viral (TIER_1)
+  return 'ai_tools'; // fallback del nuevo dominio
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -121,23 +139,20 @@ function detectTopic(text) {
 // ─────────────────────────────────────────────────────────────────────────────
 
 const REDDIT_HEADERS = {
-  'User-Agent': 'datos-psicologicos-bot/1.0 (research; contact: noreply@example.com)',
+  'User-Agent': 'ai-tools-video-bot/1.0 (research; contact: noreply@example.com)',
   'Accept': 'application/json',
 };
 
 const REDDIT_SOURCES = [
-  // Comunidades en español — alta relevancia directa
-  { subreddit: 'psicologia',           lang: 'es', weight: 5 },
-  { subreddit: 'neurociencia',         lang: 'es', weight: 5 },
-  { subreddit: 'es',                   lang: 'es', weight: 2 },
-  { subreddit: 'mexico',               lang: 'es', weight: 2 },
-  // Comunidades en inglés — mayor volumen, extraemos conceptos
-  { subreddit: 'psychology',           lang: 'en', weight: 4 },
-  { subreddit: 'socialskills',         lang: 'en', weight: 3 },
-  { subreddit: 'BehavioralEconomics',  lang: 'en', weight: 3 },
-  { subreddit: 'cogsci',               lang: 'en', weight: 3 },
-  { subreddit: 'DecidingToBeBetter',   lang: 'en', weight: 2 },
-  { subreddit: 'productivity',         lang: 'en', weight: 2 },
+  { subreddit: 'automation',       lang: 'en', weight: 4 },
+  { subreddit: 'nocode',           lang: 'en', weight: 3 },
+  { subreddit: 'n8n',              lang: 'en', weight: 3 },
+  { subreddit: 'MachineLearning',  lang: 'en', weight: 4 },
+  { subreddit: 'artificial',       lang: 'en', weight: 4 },
+  { subreddit: 'LocalLLaMA',       lang: 'en', weight: 4 },
+  { subreddit: 'OpenAI',           lang: 'en', weight: 3 },
+  { subreddit: 'ChatGPT',          lang: 'en', weight: 3 },
+  { subreddit: 'productivity',     lang: 'en', weight: 2 },
 ];
 
 async function scrapeReddit(subreddit, timeframe = 'week') {
@@ -322,7 +337,7 @@ function loadGoogleTrends() {
 
 async function runTrendScraper() {
   console.log('\n========================================');
-  console.log('  Trend Scraper — datos-psicologicos');
+  console.log('  Trend Scraper — ai-tools');
   console.log('========================================');
 
   const allItems = [];

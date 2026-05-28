@@ -3,13 +3,16 @@ import { Film, RefreshCw, Youtube, ChevronDown, ChevronUp, Clock, Zap, ExternalL
 import axios from 'axios';
 
 const TOPIC_LABELS = {
-  body_language:'Lenguaje corporal', cognitive_biases:'Sesgos cognitivos',
-  relationships:'Relaciones',        workplace:'Trabajo',
-  first_impressions:'1ª impresión',  social_skills:'Habilidades sociales',
-  habits:'Hábitos',                  communication:'Comunicación',
-  emotions:'Emociones',              memory:'Memoria',
-  motivation:'Motivación',           dark_psychology:'Psicología oscura',
-  self_esteem:'Autoestima',
+  ai_tools: 'Herramientas IA',
+  automation: 'Automatización',
+  ai_agents: 'Agentes IA',
+  auto_channels: 'Canales automáticos',
+  productivity: 'Productividad',
+  ai_video_editing: 'Edición de vídeo IA',
+  content_creation: 'Creación de contenido',
+  nocode_lowcode: 'No-code / Low-code',
+  tech_experiments: 'Experimentos',
+  digital_opportunities: 'Oportunidades digitales',
 };
 
 function ScoreRing({ score }) {

@@ -21,7 +21,7 @@ const H = 1920;
  * @param {string} globalColorGrade - preset de color grade global
  * @returns {{ filterGraph: string, outputLabels: { video, audio } }}
  */
-function buildComplexFilter(segments, inputMap, assFilePath, globalColorGrade = 'dark_psychology') {
+function buildComplexFilter(segments, inputMap, assFilePath, globalColorGrade = 'dark_depth') {
   const videoFilters = [];
   const audioFilters = [];
   const videoLabels = [];

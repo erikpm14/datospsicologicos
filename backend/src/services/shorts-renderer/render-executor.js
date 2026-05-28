@@ -164,8 +164,8 @@ function writeRenderMetadata(outputDir, renderPlan, result) {
       segmentCount: renderPlan.segments ? renderPlan.segments.length : 0,
       success: result.success || false,
       outputSize: result.size || 0,
-      colorGrade: renderPlan.colorGrade || 'dark_psychology',
-      videoStyle: 'viral_psychology_short',
+      colorGrade: renderPlan.colorGrade || 'dark_depth',
+      videoStyle: 'shorts_style_v1',
     };
 
     const metadataPath = path.join(outputDir, 'render-metadata.json');

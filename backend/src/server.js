@@ -42,11 +42,12 @@ const { startPipelineWatchdog } = require('./services/pipeline-watchdog.service'
 const { initAutoImport, shutdownAutoImport } = require('./services/auto-import-startup');
 const { getQueueSnapshot } = require('./services/operational-state.service');
 const { getVideoStatus, getNextSlot, getHealth } = require('./services/dashboard-stats.service');
-const hooksData = require('./templates/psychology-hooks.json');
+const hooksData = require('./templates/ai-tools-hooks.json');
 const themesData = require('./templates/visual-themes.json');
+const { createReviewRouter } = require('./routes/review.routes');
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3001;
 
 // ─────────────────────────────────────────────
 //  MIDDLEWARES
@@ -54,7 +55,7 @@ const PORT = process.env.PORT || 3000;
 
 app.use(cors({
   origin: process.env.NODE_ENV === 'production'
-    ? ['https://psychology-shorts.vercel.app']
+    ? ['https://ai-avatar-shorts.vercel.app']
     : ['http://localhost:5173', 'http://localhost:3001'],
 }));
 app.use(express.json());
@@ -72,6 +73,8 @@ app.use((req, _res, next) => {
 app.get('/health', (_req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString(), free: true });
 });
+
+app.use(createReviewRouter());
 
 // ─────────────────────────────────────────────
 //  YOUTUBE OAUTH — renovar refresh token
@@ -842,13 +845,13 @@ app.post('/api/youtube/sync', async (_req, res) => {
       saveVideo({
         id:            `yt_${ytId}`,
         title:         snippet.title,
-        topic:         'psychology',
+        topic:         process.env.CONTENT_DOMAIN || 'ai_tools',
         hook:          snippet.title,
         viralityScore: 0,
         youtubeId:     ytId,
         script: {
           hook:            snippet.title,
-          psychologicalFact: snippet.description?.slice(0, 200) || '',
+          summary: snippet.description?.slice(0, 200) || '',
         },
       });
 
@@ -1378,11 +1381,15 @@ async function start() {
 
   // Arrancar schedulers autónomos (después del servidor para que los logs sean ordenados)
   setTimeout(() => {
-    startGenerationScheduler();
-    startPublishScheduler();
-    initializePreflightScheduler(); // 30 min BEFORE each publish slot
-    startPipelineWatchdog();
-    initAutoImport();
+    if (String(process.env.REVIEW_PANEL_ONLY || 'false').toLowerCase() !== 'true') {
+      startGenerationScheduler();
+      startPublishScheduler();
+      initializePreflightScheduler(); // 30 min BEFORE each publish slot
+      startPipelineWatchdog();
+      initAutoImport();
+    } else {
+      logger.info('REVIEW_PANEL_ONLY=true (schedulers disabled)');
+    }
   }, 2000);
 }
 

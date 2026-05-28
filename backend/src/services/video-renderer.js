@@ -41,6 +41,16 @@ const PEXELS_SEARCH_CACHE_TTL_MS = Math.max(60_000, (parseInt(process.env.PEXELS
 
 // Queries por topic: array de opciones → se elige aleatoriamente para variedad
 const TOPIC_QUERIES = {
+  ai_tools:         ['ai tool interface screen recording', 'developer using ai assistant on laptop', 'app dashboard ai productivity'],
+  automation:       ['workflow automation diagram nodes', 'no-code automation dashboard', 'webhook integration dashboard'],
+  ai_agents:        ['ai agent robot abstract animation', 'developer tools api integration', 'agent workflow on screen'],
+  auto_channels:    ['content creator analytics dashboard', 'social media scheduling dashboard', 'creator working on shorts'],
+  productivity:     ['productivity workspace laptop minimal', 'digital note taking workflow', 'time blocking calendar screen'],
+  ai_video_editing: ['video editing timeline subtitles', 'captions on video screen', 'creator editing vertical video'],
+  content_creation: ['writing script on laptop', 'content planning board', 'creator brainstorming ideas'],
+  nocode_lowcode:   ['no-code builder interface', 'drag and drop workflow editor', 'database spreadsheet automation'],
+  tech_experiments: ['benchmark charts on screen', 'testing tools on laptop', 'tech experiment lab desk'],
+  digital_opportunities: ['online business dashboard', 'digital product creator workspace', 'side project planning'],
   body_language:    ['person talking gestures close up', 'body language communication nonverbal', 'face expression emotion person'],
   cognitive_biases: ['brain neurons thinking close up', 'human mind decision psychology', 'person thinking contemplating'],
   relationships:    ['couple conversation emotional', 'friends talking laughing together', 'person alone reflection'],
@@ -272,7 +282,7 @@ function buildPexelsQueries(script) {
   const hookMatch = HOOK_VISUAL_MAP.find(m => m.pattern.test(hook));
   if (hookMatch) {
     const emotionalQuery = EMOTIONAL_VISUAL_QUERIES[eTrig]?.[0] || null;
-    const q2 = emotionalQuery || (TOPIC_QUERIES[topic] ? TOPIC_QUERIES[topic][Math.floor(Math.random() * TOPIC_QUERIES[topic].length)] : 'human behavior psychology');
+    const q2 = emotionalQuery || (TOPIC_QUERIES[topic] ? TOPIC_QUERIES[topic][Math.floor(Math.random() * TOPIC_QUERIES[topic].length)] : 'ai automation workflow');
       logger.info(`Pexels V2: hook-match → "${hookMatch.query}" | "${q2}"`);
       return [humanize(hookMatch.query), humanize(q2)];
   }
@@ -281,7 +291,7 @@ function buildPexelsQueries(script) {
   const emotionalScenes = EMOTIONAL_VISUAL_QUERIES[eTrig];
   if (emotionalScenes) {
     const topicOpts = TOPIC_QUERIES[topic];
-    const q2 = Array.isArray(topicOpts) ? topicOpts[Math.floor(Math.random() * topicOpts.length)] : 'psychology human behavior';
+    const q2 = Array.isArray(topicOpts) ? topicOpts[Math.floor(Math.random() * topicOpts.length)] : 'ai tools workflow';
       logger.info(`Pexels V2: emotional → "${emotionalScenes[0]}" | "${q2}"`);
       return [humanize(emotionalScenes[0]), humanize(q2)];
   }
@@ -294,7 +304,7 @@ function buildPexelsQueries(script) {
   if (keywords.length === 1) {
     const topicFallback = Array.isArray(TOPIC_QUERIES[topic])
       ? TOPIC_QUERIES[topic][Math.floor(Math.random() * TOPIC_QUERIES[topic].length)]
-      : 'psychology mind brain';
+      : 'ai automation workflow';
     return [humanize(keywords[0]), humanize(topicFallback)];
   }
 
@@ -400,7 +410,7 @@ async function getPexelsVideo(script, bgStyle, forcePage = null, forceQuery = nu
       const topicOpts = TOPIC_QUERIES[script.topic];
       const fallbackQuery = Array.isArray(topicOpts)
         ? topicOpts[Math.floor(Math.random() * topicOpts.length)]
-        : (topicOpts || 'psychology mind brain');
+        : (topicOpts || 'ai automation workflow');
       logger.warn(`No results for "${query}", falling back to "${fallbackQuery}"`);
       const fallback = await axios.get('https://api.pexels.com/videos/search', {
         headers: { Authorization: process.env.PEXELS_API_KEY },
@@ -874,7 +884,7 @@ async function renderVideo({ script, audioPath, audioDuration, outputPath, theme
   }
 
   // 4. Logo watermark
-  const logoPath = path.resolve('./assets/logo_dato_psicologico.png');
+  const logoPath = path.resolve(process.env.BRANDING_LOGO_PATH || './assets/logo.png');
   const hasLogo = fs.existsSync(logoPath);
 
   // Enriquecer sectionDurations con voiceSegments detectados si está disponible

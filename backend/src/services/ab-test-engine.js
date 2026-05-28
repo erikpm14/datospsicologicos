@@ -151,7 +151,7 @@ function buildSegmentVariantPrompt(script, plan, originalHookType = 'original') 
     .map((field) => `${field.toUpperCase()}: ${script[field] || ''}`)
     .join('\n');
 
-  return `Eres un copywriter de retención para YouTube Shorts de psicología.
+  return `Eres un copywriter de retención para YouTube Shorts de IA y automatización.
 
 Quiero generar SOLO una variante B del segmento "${plan.segmentType}".
 No reescribas el vídeo entero. Solo cambia ese segmento.
@@ -212,7 +212,7 @@ Devuelve SOLO este JSON (sin markdown):
 
 IMPORTANTE:
 - NO uses el mismo tipo que el original
-- revelation → "Tu cerebro/mente hace X sin que lo notes"
+- revelation → "Tu workflow hace X sin que lo notes"
 - pattern    → "Cada vez que X, tu cerebro está haciendo Y"
 - challenge  → "El N% de personas X (comportamiento sorprendente)"
 - warning    → "Si haces X, tu cerebro ya está haciendo Y"

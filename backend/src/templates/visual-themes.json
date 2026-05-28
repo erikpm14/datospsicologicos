@@ -15,9 +15,9 @@
       "overlayOpacity": 0.85
     },
     {
-      "id": "purple_psychology",
-      "name": "Purple Psychology",
-      "description": "Morado profundo con dorado — autoridad y sabiduría",
+      "id": "purple_depth",
+      "name": "Purple Depth",
+      "description": "Morado profundo con dorado — contraste alto y buena legibilidad",
       "background": {
         "type": "gradient",
         "colors": ["#1a0533", "#2d1b69", "#150050"],
@@ -72,5 +72,5 @@
     }
   ],
   "defaultTheme": "dark_neural",
-  "rotation": ["dark_neural", "purple_psychology", "midnight_red", "dark_neural", "ocean_depth"]
+  "rotation": ["dark_neural", "purple_depth", "midnight_red", "dark_neural", "ocean_depth"]
 }

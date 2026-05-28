@@ -1,6 +1,6 @@
 /**
  * style-config.js
- * Configuración viral_psychology_short para shorts de psicología.
+ * Configuración shorts_style_v1 para shorts de IA/herramientas.
  * Define constantes de edición, timing, colores, movimientos.
  */
 
@@ -16,28 +16,28 @@ const SEGMENT_DEFAULTS = {
     movement: 'push-in-rapido',
     intensity: 'muy-alta',
     transition: 'hard-cut',
-    colorGrade: 'dark_psychology',
+    colorGrade: 'dark_depth',
   },
   open_loop: {
     durationSeconds: 2.8,
     movement: 'zoom-lento',
     intensity: 'alta',
     transition: 'match-cut',
-    colorGrade: 'dark_psychology',
+    colorGrade: 'dark_depth',
   },
   micro_value: {
     durationSeconds: 3.2,
     movement: 'micro-paneo',
     intensity: 'media',
     transition: 'hard-cut',
-    colorGrade: 'dark_psychology',
+    colorGrade: 'dark_depth',
   },
   escalation: {
     durationSeconds: 3.4,
     movement: 'acercamiento-progresivo',
     intensity: 'alta',
     transition: 'whip-cut',
-    colorGrade: 'dark_psychology',
+    colorGrade: 'dark_depth',
   },
   reengage: {
     durationSeconds: 2.6,
@@ -58,7 +58,7 @@ const SEGMENT_DEFAULTS = {
     movement: 'zoom-out-suave',
     intensity: 'media',
     transition: 'fade-cut',
-    colorGrade: 'dark_psychology',
+    colorGrade: 'dark_depth',
   },
   soft_cta: {
     durationSeconds: 2.7,
